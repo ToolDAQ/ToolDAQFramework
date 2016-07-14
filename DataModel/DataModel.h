@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-//#include "TTree.h"
+#include "TTree.h"
 
 #include "Store.h"
 #include "Logging.h"
@@ -18,28 +18,21 @@ class DataModel {
  public:
   
   DataModel();
-  //TTree* GetTTree(std::string name);
-  //void AddTTree(std::string name,TTree *tree);
-
+  TTree* GetTTree(std::string name);
+  void AddTTree(std::string name,TTree *tree);
+  void DeleteTTree(std::string name);
+  
   Store vars;
   Logging *Log;
-
+  
   zmq::context_t* context;
 
+  int Energy;
+  long Time;  
 
-  //  bool (*Log)(std::string, int);
-
-  /*  
-  template<Type T>
-    struct Log {
-      typedef bool (*type)(T message,int verboselevel);
-    };
-  */
  private:
-
-
   
-  //std::map<std::string,TTree*> m_trees; 
+  std::map<std::string,TTree*> m_trees; 
   
   
   
