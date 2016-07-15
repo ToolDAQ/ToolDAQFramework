@@ -18,6 +18,7 @@ bool RootWriter::Initialise(std::string configfile, DataModel &data){
 
   tree->Branch("eventnum",&m_data->eventnum,"eventnum/L");
   tree->Branch("Channels",&localcard.Channels,"Channels/I");
+  tree->Branch("CardID",&localcard.CardID,"CardID/I");
   tree->Branch("Energy",&localcard.Energy);
   tree->Branch("Time",&localcard.Time);
   tree->Branch("Channel",&localcard.Channel);
@@ -39,6 +40,7 @@ bool RootWriter::Execute(){
   for(int card=0;card<m_data->Cards.size();card++){
     
     localcard.Channels=m_data->Cards.at(card)->Channels;
+    localcard.CardID=m_data->Cards.at(card)->CardID;
     localcard.Energy.clear();
     localcard.Energy=m_data->Cards.at(card)->Energy;
     localcard.Time.clear();

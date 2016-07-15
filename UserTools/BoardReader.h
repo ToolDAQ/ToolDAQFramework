@@ -25,7 +25,7 @@ class BoardReader: public Tool {
  private:
 
   int Channels;
-
+  int CardID;
 
 
 };
