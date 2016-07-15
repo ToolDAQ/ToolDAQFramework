@@ -20,6 +20,7 @@ class DataModel {
   DataModel();
   //TTree* GetTTree(std::string name);
   //void AddTTree(std::string name,TTree *tree);
+  //void DeleteTTree(std::string name,TTree *tree);
 
   Store vars;
   Logging *Log;
