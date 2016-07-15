@@ -1,19 +1,17 @@
-#ifndef Filter_H
-#define Filter_H
+#ifndef BinaryWriter_H
+#define BinaryWriter_H
 
 #include <string>
 #include <iostream>
 
 #include "Tool.h"
 
-#include "TTree.h"
-
-class Filter: public Tool {
+class BinaryWriter: public Tool {
 
 
  public:
 
-  Filter();
+  BinaryWriter();
   bool Initialise(std::string configfile,DataModel &data);
   bool Execute();
   bool Finalise();
@@ -21,9 +19,9 @@ class Filter: public Tool {
 
  private:
 
-  int threshold;
-
-
+  std::string outfile;
+  std::ofstream *ofs;
+  boost::archive::text_oarchive *oa;
 
 };
 

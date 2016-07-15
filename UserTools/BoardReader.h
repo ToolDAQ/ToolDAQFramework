@@ -9,8 +9,10 @@
 #include <stdlib.h>
 #include <ctime>
 
+
 class BoardReader: public Tool {
 
+  //Simple class to simulate reading a card that has multiple channels saving an energy and time varable for each channel;
 
  public:
 
@@ -22,7 +24,7 @@ class BoardReader: public Tool {
 
  private:
 
-
+  int Channels;
 
 
 

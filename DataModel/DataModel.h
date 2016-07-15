@@ -12,6 +12,8 @@
 
 #include <zmq.hpp>
 
+#include "CardData.h"
+
 class DataModel {
 
 
@@ -27,14 +29,13 @@ class DataModel {
   
   zmq::context_t* context;
 
-  int Energy;
-  long Time;  
+  std::vector<CardData*> Cards; 
+  long eventnum;
 
  private:
   
   std::map<std::string,TTree*> m_trees; 
-  
-  
+   
   
 };
 

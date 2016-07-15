@@ -1,2 +1,6 @@
-test1 DummyTool configfiles/DummyToolConfig
-test2 DummyTool configfiles/DummyToolConfig
+#test1 DummyTool configfiles/DummyToolConfig
+#test2 DummyTool configfiles/DummyToolConfig
+BoardReader BoardReader configfiles/BoardReaderConfig
+#Filter Filter configfiles/FilterConfig
+#BinaryWriter BinaryWriter configfiles/BinaryWriterConfig
+RootWriter RootWriter configfiles/RootWriterConfig

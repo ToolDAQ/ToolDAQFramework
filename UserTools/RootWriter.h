@@ -6,6 +6,9 @@
 
 #include "Tool.h"
 
+#include "TTree.h"
+#include "TFile.h"
+
 class RootWriter: public Tool {
 
 
@@ -19,8 +22,8 @@ class RootWriter: public Tool {
 
  private:
 
-
-
+  TFile *out;
+  CardData localcard;
 
 
 };

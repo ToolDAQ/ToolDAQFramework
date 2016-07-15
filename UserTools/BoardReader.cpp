@@ -11,8 +11,10 @@ bool BoardReader::Initialise(std::string configfile, DataModel &data){
   m_data= &data;
 
   int seed=0;
-  m_variables("seed",seed);
+  m_variables.Get("seed",seed);
   srand(seed);
+
+  m_variables.Get("channels",Channels);
 
   return true;
 }
@@ -20,10 +22,18 @@ bool BoardReader::Initialise(std::string configfile, DataModel &data){
 
 bool BoardReader::Execute(){
 
-  m_data->Energy=rand() %100;
-  m_data->Time=std::time(NULL);
+  CardData* cd=new CardData;
 
+  cd->Channels=Channels;
 
+  for(int i=0;i<Channels;i++){
+    cd->Energy.push_back(rand() %100);
+    cd->Time.push_back(std::time(NULL));
+    cd->Channel.push_back(i);
+  }
+
+  m_data->Cards.push_back(cd);
+  
   return true;
 }
 
