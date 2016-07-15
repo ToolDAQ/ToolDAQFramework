@@ -13,7 +13,8 @@ bool BinaryWriter::Initialise(std::string configfile, DataModel &data){
   m_variables.Get("outfile",outfile);
 
   ofs=new std::ofstream(outfile.c_str());
-  oa=new boost::archive::text_oarchive(*ofs);
+  //oa=new boost::archive::text_oarchive(*ofs);
+  oa=new boost::archive::binary_oarchive(*ofs);
   
 
   return true;

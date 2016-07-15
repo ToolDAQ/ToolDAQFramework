@@ -21,7 +21,8 @@ class BinaryWriter: public Tool {
 
   std::string outfile;
   std::ofstream *ofs;
-  boost::archive::text_oarchive *oa;
+  //boost::archive::text_oarchive *oa;
+  boost::archive::binary_oarchive *oa;
 
 };
 
