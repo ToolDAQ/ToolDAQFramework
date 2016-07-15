@@ -1,0 +1,4 @@
+# RootWriter config file
+
+verbose 1
+outpath out.root

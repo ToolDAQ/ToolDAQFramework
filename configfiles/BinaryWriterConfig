@@ -1,0 +1,4 @@
+# BinaryWriter config file
+
+verbose 1
+outfile output

@@ -1,0 +1,6 @@
+# BoardReader config file
+
+seed 34
+verbose 1
+channels 4
+cardID 5
