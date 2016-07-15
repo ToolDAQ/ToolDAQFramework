@@ -42,6 +42,7 @@ cd root
 make
 make install
 
+source ./bin/thisroot.sh
 
 cd ../../
 
