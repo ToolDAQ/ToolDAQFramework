@@ -50,10 +50,9 @@ bool RootWriter::Execute(){
  
     delete m_data->Cards.at(card);
       m_data->Cards.at(card)=0;
-    
+
+      m_data->GetTTree("Raw")->Fill();    
   }
-  
-  m_data->GetTTree("Raw")->Fill();
 
   m_data->Cards.clear();
   
