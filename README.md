@@ -16,29 +16,3 @@ For more information consult the ToolDAQ doc.pdf
 
 https://github.com/ToolDAQ/ToolDAQFramework/blob/master/ToolDAQ%20doc.pdf
 
-****************************
-#Building
-****************************
-
-make clean
-make
-
-
-****************************
-#Usage 
-****************************
-
-./main
-
-note all configuration variables are passed through config files to the Tools
-
-****************************
-#Customising
-****************************
-
-To adapt for your own uses you need to:
-
- Create user tools : see README in UserTools/
- Modify data model : see README in DataModel/
- Modify main : see README in src/ 
- Modify Makefile : For simple applications the only modification needed is to populate the variables for your data model and user tool dependancies.  	
