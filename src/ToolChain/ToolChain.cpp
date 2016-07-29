@@ -73,11 +73,12 @@ ToolChain::ToolChain(std::string configfile){
   
 }
 
-ToolChain::ToolChain(int verbose, int errorlevel, std::string service, std::string logmode, std::string log_service, int log_port, int pub_sec, int kick_sec){
+ToolChain::ToolChain(int verbose, int errorlevel, std::string service, std::string logmode,std::string log_local_path, std::string log_service, int log_port, int pub_sec, int kick_sec){
 
   m_verbose=verbose;
   m_errorlevel=errorlevel;
   m_log_mode = logmode;
+  m_log_local_path=log_local_path;
   m_service=service;
   m_log_service=log_service;
   m_log_port=log_port;
