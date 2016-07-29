@@ -54,16 +54,19 @@ ToolChain::ToolChain(std::string configfile){
   config.Get("Inline",Inline);
   config.Get("Interactive",interactive);
   config.Get("Remote",remote);
+
+  bool receiveflag=true;
+  if(m_kick_sec<0) receiveflag=false;
  
   if(Inline>0){
-    ServiceDiscovery *SD=new ServiceDiscovery(false, true, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
+    ServiceDiscovery *SD=new ServiceDiscovery(false, receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
     Initialise();
     Execute(Inline);
     Finalise();
     exit(0);
   }
   else if(interactive){
-    ServiceDiscovery *SD=new ServiceDiscovery(false, true, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
+    ServiceDiscovery *SD=new ServiceDiscovery(false, receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
     Interactive();
   }
   else if(remote)Remote(m_remoteport, m_multicastaddress, m_multicastport);
@@ -553,7 +556,13 @@ void ToolChain::Remote(int portnum, std::string SD_address, int SD_port){
   //m_verbose=false;
   exeloop=false;
 
-  ServiceDiscovery *SD=new ServiceDiscovery(true,true, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
+  bool sendflag=true;
+  bool receiveflag=true;
+
+  if(m_pub_sec<0) sendflag=false;
+  if(m_kick_sec<0) receiveflag=false;
+
+  ServiceDiscovery *SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
 
   
   std::stringstream tcp;
