@@ -2,6 +2,8 @@
 
 ToolChain::ToolChain(std::string configfile){
   
+  m_data.vars.Initialise(configfile);
+
   Store config;
   config.Initialise(configfile);
   config.Get("verbose",m_verbose);
