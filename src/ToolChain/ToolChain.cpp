@@ -63,7 +63,7 @@ ToolChain::ToolChain(std::string configfile){
     Initialise();
     Execute(Inline);
     Finalise();
-    exit(0);
+    //exit(0);
   }
   else if(interactive){
     ServiceDiscovery *SD=new ServiceDiscovery(false, receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
@@ -493,7 +493,7 @@ std::string ToolChain::ExecuteCommand(std::string command){
   }
   else if (command=="Quit"){
     returnmsg<<"Quitting";
-    if (interactive)exit(0);
+    // if (interactive)exit(0);
 }
   else if (command=="Start"){
     int ret=Initialise();
@@ -629,7 +629,7 @@ void ToolChain::Remote(int portnum, std::string SD_address, int SD_port){
 	snprintf ((char *) Qsignal2.data(), 256 , "%s" ,tmp.c_str()) ;
 	ServicePublisher.send(Qsignal1);
 	ServiceDiscovery.send(Qsignal2);
-	exit(0);
+	//exit(0);
       }
 
       command="";
