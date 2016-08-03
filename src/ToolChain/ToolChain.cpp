@@ -1,7 +1,7 @@
 #include "ToolChain.h"
 
 ToolChain::ToolChain(std::string configfile){
- 
+  
   Store config;
   config.Initialise(configfile);
   config.Get("verbose",m_verbose);
@@ -18,7 +18,7 @@ ToolChain::ToolChain(std::string configfile){
   config.Get("service_publish_sec",m_pub_sec);
   config.Get("service_kick_sec",m_kick_sec);
  
-
+  
   Init();
 
   std::string toolsfile="";
@@ -59,14 +59,14 @@ ToolChain::ToolChain(std::string configfile){
   if(m_kick_sec<0) receiveflag=false;
  
   if(Inline>0){
-    ServiceDiscovery *SD=new ServiceDiscovery(false, receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
+    SD=new ServiceDiscovery(false, receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
     Initialise();
     Execute(Inline);
     Finalise();
     //exit(0);
   }
   else if(interactive){
-    ServiceDiscovery *SD=new ServiceDiscovery(false, receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
+    SD=new ServiceDiscovery(false, receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
     Interactive();
   }
   else if(remote)Remote(m_remoteport, m_multicastaddress, m_multicastport);
@@ -437,8 +437,10 @@ void ToolChain::Interactive(){
   Ireceiver.bind("inproc://control");
   
   pthread_create (&thread[0], NULL, ToolChain::InteractiveThread, context);
+
+  bool running=true; 
   
-  while (true){
+  while (running){
     
     zmq::message_t message;
     std::string command="";
@@ -452,7 +454,7 @@ void ToolChain::Interactive(){
       printf("%s \n\n",logmessage.str().c_str());
       //m_data.Log->Log( logmessage.str(),0,m_verbose);
       logmessage.str("");
-
+      if(command=="Quit")running=false;
       command="";
       //std::cout<<"Please type command : Start, Pause, Unpause, Stop, Quit (Initialise, Execute, Finalise)"<<std::endl;
       //std::cout<<">";
@@ -465,7 +467,7 @@ void ToolChain::Interactive(){
     }
     
     ExecuteCommand(command);
-  }  
+  }
   
   
 }  
@@ -563,7 +565,7 @@ void ToolChain::Remote(int portnum, std::string SD_address, int SD_port){
   if(m_pub_sec<0) sendflag=false;
   if(m_kick_sec<0) receiveflag=false;
 
-  ServiceDiscovery *SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
+  SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
 
   
   std::stringstream tcp;
@@ -576,8 +578,9 @@ void ToolChain::Remote(int portnum, std::string SD_address, int SD_port){
   
   Ireceiver.bind(tcp.str().c_str());
   
+  bool running=true;
   
-  while (true){
+  while (running){
 
     zmq::message_t message;
     std::string command="";
@@ -616,20 +619,22 @@ void ToolChain::Remote(int portnum, std::string SD_address, int SD_port){
       // std::cout<<"received "<<command<<std::endl;
       //std::cout<<"sent "<<tmp<<std::endl;
       if(command=="Quit"){
-	
-	zmq::socket_t ServicePublisher (*context, ZMQ_PUSH);
-	ServicePublisher.connect("inproc://ServicePublish");
-	zmq::socket_t ServiceDiscovery (*context, ZMQ_DEALER);	
-	ServiceDiscovery.connect("inproc://ServiceDiscovery");
-
-	zmq::message_t Qsignal1(256);
-	zmq::message_t Qsignal2(256);
-	std::string tmp="Quit";
-	snprintf ((char *) Qsignal1.data(), 256 , "%s" ,tmp.c_str()) ;
-	snprintf ((char *) Qsignal2.data(), 256 , "%s" ,tmp.c_str()) ;
-	ServicePublisher.send(Qsignal1);
-	ServiceDiscovery.send(Qsignal2);
-	//exit(0);
+	running=false;
+	/*
+	  zmq::socket_t ServicePublisher (*context, ZMQ_PUSH);
+	  ServicePublisher.connect("inproc://ServicePublish");
+	  zmq::socket_t ServiceDiscovery (*context, ZMQ_DEALER);	
+	  ServiceDiscovery.connect("inproc://ServiceDiscovery");
+	  
+	  zmq::message_t Qsignal1(256);
+	  zmq::message_t Qsignal2(256);
+	  std::string tmp="Quit";
+	  snprintf ((char *) Qsignal1.data(), 256 , "%s" ,tmp.c_str()) ;
+	  snprintf ((char *) Qsignal2.data(), 256 , "%s" ,tmp.c_str()) ;
+	  ServicePublisher.send(Qsignal1);
+	  ServiceDiscovery.send(Qsignal2);
+	  //exit(0);
+	  */
       }
 
       command="";
@@ -701,10 +706,12 @@ static  void *LogThread(void* arg){
 }
 */
 
+
 ToolChain::~ToolChain(){
-  printf("%s /n","tdebug 1");
+    
+  //  printf("%s /n","tdebug 1");
   delete SD;
-  printf("%s /n","tdebug 2");
+  //printf("%s /n","tdebug 2");
   SD=0;
   delete context;
   context=0;
@@ -713,4 +720,6 @@ ToolChain::~ToolChain(){
   out=0;
   delete m_data.Log;
   m_data.Log=0;
+  
 }
+

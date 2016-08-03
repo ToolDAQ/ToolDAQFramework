@@ -1,7 +1,8 @@
 #include "ServiceDiscovery.h"
 
 ServiceDiscovery::ServiceDiscovery(bool Send, bool Receive, int remoteport, std::string address, int multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec, int kicksec){
-  
+ 
+    
   m_UUID=UUID;
   context=incontext;
   m_multicastport=multicastport;
@@ -13,9 +14,9 @@ ServiceDiscovery::ServiceDiscovery(bool Send, bool Receive, int remoteport, std:
 
   args= new thread_args(m_UUID, context, m_multicastaddress, m_multicastport, m_service, m_remoteport, pubsec, kicksec);
 
-  if (Receive) pthread_create (&thread[0], NULL, ServiceDiscovery::MulticastListenThread, args);
+    if (Receive) pthread_create (&thread[0], NULL, ServiceDiscovery::MulticastListenThread, args);
   
-  if (Send) pthread_create (&thread[1], NULL, ServiceDiscovery::MulticastPublishThread, args);
+    if (Send) pthread_create (&thread[1], NULL, ServiceDiscovery::MulticastPublishThread, args);
   
   //sleep(2);
   
@@ -30,7 +31,7 @@ ServiceDiscovery::ServiceDiscovery(bool Send, bool Receive, int remoteport, std:
 }
 
 ServiceDiscovery::ServiceDiscovery( std::string address, int multicastport, zmq::context_t * incontext, int kicksec){
-
+  
   context=incontext;
   m_multicastport=multicastport;
   m_multicastaddress=address;
@@ -45,7 +46,7 @@ ServiceDiscovery::ServiceDiscovery( std::string address, int multicastport, zmq:
   pthread_create (&thread[0], NULL, ServiceDiscovery::MulticastListenThread, args);
 
   //  sleep(2);
-
+  
 
 }
 
@@ -74,7 +75,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   struct ip_mreq mreq;
   
   
-  /* set up socket */
+  // set up socket //
   sock = socket(AF_INET, SOCK_DGRAM, 0);
   //fcntl(sock, F_SETFL, O_NONBLOCK); 
   if (sock < 0) {
@@ -87,7 +88,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   addr.sin_port = htons(m_multicastport);
   addrlen = sizeof(addr);
   
-  /* send */
+  // send //
   addr.sin_addr.s_addr = inet_addr(m_multicastaddress.c_str());
   
   std::vector<Store> PubServices;
@@ -206,6 +207,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  
 	  std::cout<<" 5d[UUID] = "<<d["uuid"].GetString()<<std::endl;
 	*/ 
+
 	bool statusquery=false;
 	PubServices.at(i).Get("status_query",statusquery);
 	Store mm;
@@ -309,7 +311,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	     std::string hhh=buffer.GetString();
 	     std::cout<< "bufer = "<<hhh<<std::endl;
 	  */	
-	  
+  
 	  msg_id++;
 	  
 	  //	  PubServices.at(i).Set("uuid",m_UUID);
@@ -339,7 +341,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	    }
 	  */
 	  
-	 
+ 
       }
       
       sleep(args->pubsec);
@@ -349,14 +351,15 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
     
   }
   
-  return (NULL);
+  pthread_exit(NULL);
+  //return (NULL);
   
   
 }
 
 
 void* ServiceDiscovery::MulticastListenThread(void* arg){
- 
+
   thread_args* args= static_cast<thread_args*>(arg);
   zmq::context_t * context = args->context;
   boost::uuids::uuid m_UUID=args->UUID;
@@ -367,6 +370,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   zmq::socket_t Ireceive (*context, ZMQ_DEALER);
   Ireceive.bind("inproc://ServiceDiscovery");  
   
+
   /*
   zmq::message_t config;
   Ireceive.recv (&config);
@@ -380,14 +384,14 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 
   ///// multi cast /////
   
-  
+ 
   
   struct sockaddr_in addr;
   int addrlen, sock, cnt;
   struct ip_mreq mreq;
   char message[512];
   
-  /* set up socket */
+  // set up socket //
   sock = socket(AF_INET, SOCK_DGRAM, 0);
   int a =1;
   setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &a, sizeof(int));
@@ -402,7 +406,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   addr.sin_port = htons(m_multicastport);
   addrlen = sizeof(addr);
   
-  /* receive */
+  // receive //
   if (bind(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {        
     perror("bind");
     exit(1);
@@ -602,50 +606,53 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
     RemoteServices.erase(it->first);
   }
     
-  return (NULL);
+
+  pthread_exit(NULL);
+  //return (NULL);
   
 }
 
-
+   
 
 ServiceDiscovery::~ServiceDiscovery(){
-
+  
+  sleep(1);  
   if(args!=0){
     delete args;
     args=0;
   }
-
+  
   
   //kill publish thread
-
-  if (m_send){
   
+  if (m_send){
+    
     zmq::socket_t ServicePublish (*context, ZMQ_PUSH);
     //int a=120000;
     //ServicePublish.setsockopt(ZMQ_RCVTIMEO, a);
     //ServicePublish.setsockopt(ZMQ_SNDTIMEO, a);
     ServicePublish.connect("inproc://ServicePublish");
 
-  
- 
+    
+    
     zmq::message_t command(256);
     snprintf ((char *) command.data(), 256 , "%s" ,"Quit") ;
     ServicePublish.send(command);
-  
-    pthread_join(thread[1], NULL);
-      
-  }
     
+    pthread_join(thread[1], NULL);
+    
+  }
+  
     //  zmq::socket_t ServiceDiscovery (*context, ZMQ_REQ);
     //ServiceDiscovery.connect("inproc://ServiceDiscovery");
-
+  
 
     //zmq::socket_t ServicePublish (*context, ZMQ_PUSH);
     //ServicePublish.connect("inproc://ServicePublish");
 
     //kill listener //zmq::socket_t Ireceive (*context, ZMQ_DEALER);
     //Ireceive.bind("inproc://ServiceDiscovery");
-
+  
   if(m_receive){
   
     zmq::socket_t ServiceDiscovery (*context, ZMQ_DEALER);
@@ -667,7 +674,8 @@ ServiceDiscovery::~ServiceDiscovery(){
     pthread_join(thread[0], NULL);
     
   }
- 
-
+  
+  
 }
+
 

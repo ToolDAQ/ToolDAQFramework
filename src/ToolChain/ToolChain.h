@@ -32,7 +32,7 @@ class ToolChain{
   ToolChain(int verbose=1, int errorlevel=0, std::string service="test", std::string logmode="Interactive", std::string log_local_path="./log",  std::string log_service="", int log_port=0, int pub_sec=5, int kick_sec=60); 
   //verbosity: true= print out status messages , false= print only error messages;
   //errorlevels: 0= do not exit; error 1= exit if unhandeled error ; exit 2= exit on handeled and unhandeled errors; 
-  ~ToolChain(); 
+   ~ToolChain(); 
   void Add(std::string name,Tool *tool,std::string configfile="");
   int Initialise();
   int Execute(int repeates=1);
@@ -62,7 +62,7 @@ private:
 
   // bool Log(std::string message, int messagelevel=1,bool verbose=true);
 
-  ServiceDiscovery *SD;
+   ServiceDiscovery *SD;
 
   //Tools configs and data
   std::vector<Tool*> m_tools;

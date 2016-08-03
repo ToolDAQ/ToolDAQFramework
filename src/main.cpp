@@ -8,7 +8,7 @@ int main(int argc, char* argv[]){
   if (argc==1)conffile="configfiles/ToolChainConfig";
   else conffile=argv[1];
 
-  ToolChain tools(conffile);
+    ToolChain tools(conffile);
 
   //DummyTool dummytool;    
 
