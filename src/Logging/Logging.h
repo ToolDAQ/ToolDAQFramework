@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <map>
 
 #include <zmq.hpp>
 
@@ -102,6 +103,8 @@ class Logging: public std::ostream {
   } 
 
   bool ChangeOutFile(std::string localpath){return buffer.ChangeOutFile(localpath);}
+
+  
 
 
   /* 

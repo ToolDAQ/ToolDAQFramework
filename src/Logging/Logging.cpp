@@ -1,14 +1,16 @@
 #include "Logging.h"
 
 Logging::MyStreamBuf::~MyStreamBuf(){
-
+  //printf("%s \n","destructor running");
   if(m_mode=="Local")file.close();
 
   if(m_mode=="Remote"){
-
-    zmq::message_t Send(256);
-    snprintf ((char *) Send.data(), 256 , "%s" ,"Quit");
+    //printf("%s \n","in remote destructor");
+    zmq::message_t Send(5);
+    snprintf ((char *) Send.data(), 5 , "%s" ,"Quit");
     LogSender->send(Send);
+
+    pthread_join(thread, NULL);
     delete LogSender;
     LogSender=0;
     delete args;
@@ -66,16 +68,24 @@ int Logging::MyStreamBuf::sync ( )
 
   
     if (m_mode=="Remote"){
+      //printf("in remote sync ");
+      zmq::pollitem_t items [] = {
+        { LogSender, 0, ZMQ_POLLOUT, 0 },
+      };
+   
+      //     zmq::poll(&items[0], 1, 1000);
       
-      
-      std::stringstream tmp;
-      
-      tmp << "{"<<m_service<<":"<<t<<"} ["<<m_messagelevel<<"]: "<< str();
-      str("");
-      std::string line=tmp.str();
-      zmq::message_t Send(line.length()+1);
-      snprintf ((char *) Send.data(), line.length()+1 , "%s" ,line.c_str());
-      LogSender->send(Send);
+      //  if (items[0].revents & ZMQ_POLLOUT) {
+	std::stringstream tmp;
+	//printf("sync send");	
+	tmp << "{"<<m_service<<":"<<t<<"} ["<<m_messagelevel<<"]: "<< str();
+	str("");
+	std::string line=tmp.str();
+	
+	zmq::message_t Send(line.length()+1);
+	snprintf ((char *) Send.data(), line.length()+1 , "%s" ,line.c_str());
+	LogSender->send(Send);
+	//      }
     }
     
     else if(m_mode=="Local"){
@@ -99,10 +109,12 @@ int Logging::MyStreamBuf::sync ( )
 
 bool Logging::MyStreamBuf::ChangeOutFile(std::string localpath){
 
+  if(m_mode=="Local"){
   file.close();
   file.open(localpath.c_str());
   psbuf = file.rdbuf();
   output.rdbuf(psbuf);
+  }
   
 }
 
@@ -168,6 +180,7 @@ void Logging::Log(std::ostringstream& message, int messagelevel, int verbose){
       std::cout<<"tmp = "<<tmp.str()<<std::endl;
       std::cout<<"lines size = "<<lines.size()<<std::endl;
       for(int i=0;i<lines.size();i++){ 
+src/Logging/Logging.{h,cpp} -nw
 
 	std::cout<<"i = "<<i<<" "<<lines.at(i)<<std::endl;
 	if(i!=lines.size()-1)	std::cout<<"["<<messagelevel<<"] "<<lines.at(i)<<std::endl;
@@ -241,120 +254,218 @@ void Logging::Log(std::ostringstream& message, int messagelevel, int verbose){
    std::string logservice=args->logservice;
    boost::uuids::uuid UUID=args->UUID;
    int logport=args->logport;
-  
+   
    zmq::socket_t LogReceiver(*context, ZMQ_PULL);
    LogReceiver.bind("inproc://LogSender");
    
-   std::vector<Store*> RemoteServices;
+   std::map<std::string,Store*> RemoteServices;
+   std::map<std::string,zmq::socket_t*> RemoteConnections;
    zmq::socket_t Ireceive (*context, ZMQ_DEALER);
    Ireceive.connect("inproc://ServiceDiscovery");
    
    long msg_id=0;   
    bool running =true;
    
+
+   zmq::pollitem_t items [] = {
+     { LogReceiver, 0, ZMQ_POLLIN, 0 }
+   };
+
    while(running){
-     
+     //printf("%s \n","in log loop");
+  
+     if (RemoteConnections.size()!=0) zmq::poll(&items[0],1,10000);
+     else sleep(1);
+
+     if (items[0].revents & ZMQ_POLLIN ){ //log a message so send it
+       //printf("received message to send");
+
+
+
+       zmq::message_t Receive;
+       if(LogReceiver.recv (&Receive)){
+	 std::istringstream ss(static_cast<char*>(Receive.data()));
+
+
+	 boost::posix_time::ptime t = boost::posix_time::microsec_clock::universal_time();
+	 std::stringstream isot;
+	 isot<<boost::posix_time::to_iso_extended_string(t) << "Z";
+
+	 msg_id++;
+
+	 Store outmessage;
+
+	 outmessage.Set("uuid",UUID);
+	 outmessage.Set("msg_id",msg_id);
+	 *outmessage["msg_time"]=isot.str();
+	 *outmessage["msg_type"]="Log";
+	 outmessage.Set("msg_value",ss.str());
+
+
+	 for(std::map<std::string,zmq::socket_t*>::iterator it=RemoteConnections.begin(); it!=RemoteConnections.end(); ++it){
+
+	   
+	   std::string rmessage;
+	   outmessage>>rmessage;
+	   //	   printf("...%s...",rmessage.c_str());
+	   zmq::message_t rlogmessage(rmessage.length()+1);
+	   snprintf ((char *) rlogmessage.data(), rmessage.length()+1 , "%s", rmessage.c_str()) ;
+      	   //printf("%s %s \n","debug test of remote logger sending: ",rmessage.c_str());
+
+
+	   zmq::pollitem_t itemssend [] = {{ *(it->second), 0, ZMQ_POLLOUT, 0 } };
+	   
+	   zmq::poll(&itemssend[0],1,1000);
+	   if (itemssend[0].revents & ZMQ_POLLOUT ){
+	     it->second->send(rlogmessage);
+	     //printf("%s \n","sent");
+	   }
+
+
+	 }
+	 
+	 
+	 if(ss.str()=="Quit"){
+	   //printf("%s \n","received quit");
+	   running=false;
+	 }
+       }
+     }
+
    
-     zmq::message_t Receive;
-     LogReceiver.recv (&Receive);
-     std::istringstream ss(static_cast<char*>(Receive.data()));
- 
-     boost::posix_time::ptime t = boost::posix_time::microsec_clock::universal_time();
-     std::stringstream isot;
-     isot<<boost::posix_time::to_iso_extended_string(t) << "Z";
-     
-     msg_id++;
-     
-     Store outmessage;
 
-     outmessage.Set("uuid",UUID);
-     outmessage.Set("msg_id",msg_id);
-     *outmessage["msg_time"]=isot.str();
-     *outmessage["msg_type"]="Log";
-     outmessage.Set("msg_value",ss.str());
-     
-     zmq::message_t send(256);
-     snprintf ((char *) send.data(), 256 , "%s" ,"All NULL") ;
-     
-     Ireceive.send(send);
-     
-     zmq::message_t receive;
-     Ireceive.recv(&receive);
-     std::istringstream iss(static_cast<char*>(receive.data()));
-     
-     int size;
-     iss>>size;
-     
 
-     for(int i=0;i<RemoteServices.size();i++){
 
-       delete RemoteServices.at(i);
-       RemoteServices.at(i)=0;
+
+
+
+
+
+
+
+
+
+
+
+
+     else { // find new log store sources
+	 
+       //printf("finding services \n");
+
+       zmq::message_t send(9);
+       snprintf ((char *) send.data(), 9 , "%s" ,"All NULL") ;
+       
+       if(Ireceive.send(send)){
+	 
+	 zmq::message_t receive;
+	 if(Ireceive.recv(&receive)){
+	   std::istringstream iss(static_cast<char*>(receive.data()));
+	   
+	   int size;
+	   iss>>size;
+	   
+	   for(std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
+
+	     delete it->second;
+	     it->second=0;;
+	     
+	   }
+	   	   
+
+	   RemoteServices.clear();
+	   
+	   
+	   for(int i=0;i<size;i++){
+	     
+	     Store *service = new Store;
+	     
+	     zmq::message_t servicem;
+	     Ireceive.recv(&servicem);
+	     
+	     std::istringstream ss(static_cast<char*>(servicem.data()));
+	     service->JsonPaser(ss.str());
+	     
+	     std::string servicetype;
+	     std::string uuid;
+	     service->Get("msg_value",servicetype);
+	     service->Get("uuid",uuid);
+	     //printf("%s \n",servicetype.c_str());
+	     if(servicetype==logservice){
+	       RemoteServices[uuid]=service;
+	        //printf("found %s \n",uuid.c_str());
+	       if(RemoteConnections[uuid]==0){
+		 //printf("%s doesnt exist \n",uuid.c_str());
+		 std::string ip;
+		 (*service).Get("ip",ip);
+
+		 zmq::socket_t *RemoteSend =new zmq::socket_t(*context, ZMQ_PUSH);
+		 
+		 std::stringstream tmp;
+		 tmp<<"tcp://"<<"localhost"<<":"<<logport;
+		  //printf("%s \n",tmp.str().c_str());
+		 RemoteSend->connect(tmp.str().c_str());
+		 RemoteConnections[uuid]=RemoteSend;
+
+
+	       }
+
+	     }
+	     
+	     else delete service  ; 
+	   }
+
+	   Ireceive.recv(&receive); //dodgy 0 at end 
+
+	   std::vector<std::map<std::string,zmq::socket_t*>::iterator> dels;
+	   for(std::map<std::string,zmq::socket_t*>::iterator it=RemoteConnections.begin(); it!=RemoteConnections.end(); ++it){
+	     //printf("checking %s serivces size %i\n",it->first.c_str(),RemoteServices.count(it->first));
+
+	     if(RemoteServices.count(it->first)==0){
+	       // printf("service %s has died, deleting\n",it->first.c_str());
+	       delete it->second;
+	       it->second=0;
+	       dels.push_back(it);
+	     }
+
+	   }
+
+	   for(int i=0;i< dels.size();i++){
+	     RemoteConnections.erase(dels.at(i));
+	   }
+	 
+	   
+	 } //receive if  
+       } //send if
+
      }
-
-     RemoteServices.clear();
      
-     
-     for(int i=0;i<size;i++){
-            
-       Store *service = new Store;
-       
-       zmq::message_t servicem;
-       Ireceive.recv(&servicem);
-       
-       std::istringstream ss(static_cast<char*>(servicem.data()));
-       service->JsonPaser(ss.str());
-       
-       std::string servicetype;
-       service->Get("msg_value",servicetype);
-       //printf("%s \n",servicetype.c_str());
-       if(servicetype==logservice)  RemoteServices.push_back(service);
-       else delete service  ;
-       
-     } 
-     
-     for(int i=0;i<RemoteServices.size();i++){
-       
-       std::string ip;
-       //int logport=24010;
-       
-       //*(it->second)>> output;
-       ip=*((*(RemoteServices.at(i)))["ip"]);
-       
-       
-       zmq::socket_t RemoteSend (*context, ZMQ_PUSH);
-       int a=12000;
-       RemoteSend.setsockopt(ZMQ_SNDTIMEO, a);
-       std::stringstream tmp;
-       tmp<<"tcp://"<<ip<<":"<<logport;
-       // printf("%s \n",tmp.str().c_str());
-       RemoteSend.connect(tmp.str().c_str());
-      
-       //add time out
-       
-       //probably poll and buffer
 
-       std::string rmessage="";
-       outmessage>>rmessage;
-       zmq::message_t rlogmessage(rmessage.length()+1);
-       snprintf ((char *) rlogmessage.data(), rmessage.length()+1 , "%s" , rmessage.c_str()) ;
-       // printf("%s \n",rmessage.c_str());       
-       RemoteSend.send(rlogmessage);
-    
-     }
 
-     if(ss.str()=="Quit")running=false;
    }
 
-   for(int i=0;i<RemoteServices.size();i++){
 
-     delete RemoteServices.at(i);
-     RemoteServices.at(i)=0;
+   ////////////// delete services and sockets
+
+   for(std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
+
+     delete it->second;
+     it->second=0;;
+
    }
 
    RemoteServices.clear();
 
- }
+   for(std::map<std::string,zmq::socket_t*>::iterator it=RemoteConnections.begin(); it!=RemoteConnections.end(); ++it){
 
+     delete it->second;
+     it->second=0;;
+
+   }
+
+   RemoteConnections.clear();
+
+
+   pthread_exit(NULL);
+ }
 
 

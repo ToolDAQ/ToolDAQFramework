@@ -10,6 +10,7 @@ int main(int argc, char* argv[]){
 
     ToolChain tools(conffile);
 
+
   //DummyTool dummytool;    
 
   //tools.Add("DummyTool",&dummytool,"configfiles/DummyToolConfig");

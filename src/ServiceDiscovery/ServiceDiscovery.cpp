@@ -234,8 +234,8 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  //std::string command="Status;
 	
 	  
-	  zmq::message_t Esend(256);
-	  snprintf ((char *) Esend.data(), 256 , "%s" ,command.c_str()) ;
+	  zmq::message_t Esend(command.length()+1);
+	  snprintf ((char *) Esend.data(), command.length()+1 , "%s" ,command.c_str()) ;
 	  StatusCheck.send(Esend);
 	  
 	  
@@ -526,7 +526,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 
 
 	   snprintf ((char *) sizem.data(), 512 , "%d" ,size) ;
-	    Ireceive.send(sizem);	    
+	   Ireceive.send(sizem);	    
 	    
   
 	  for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
@@ -582,7 +582,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	if(arg1=="Quit"){
 	  
 	  running=false;
-	
+	  //printf("quitting \n");	
 	}
 	
 	
@@ -593,7 +593,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	std::string tmp="0";
 	snprintf ((char *) send.data(), 256 , "%s" ,tmp.c_str()) ;
 	Ireceive.send(send);
-
+	//printf("sent \n");
       }  
       
     }
@@ -603,10 +603,11 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 
   for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
     delete it->second;
-    RemoteServices.erase(it->first);
+    it->second=0;
+  
   }
-    
-
+  RemoteServices.clear();
+  //printf("exiting sd listen thread \n");
   pthread_exit(NULL);
   //return (NULL);
   
@@ -616,6 +617,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 
 ServiceDiscovery::~ServiceDiscovery(){
   
+  //printf("in sd destructor \n");
   sleep(1);  
   if(args!=0){
     delete args;
@@ -626,7 +628,7 @@ ServiceDiscovery::~ServiceDiscovery(){
   //kill publish thread
   
   if (m_send){
-    
+    //printf("in sd send kill \n");
     zmq::socket_t ServicePublish (*context, ZMQ_PUSH);
     //int a=120000;
     //ServicePublish.setsockopt(ZMQ_RCVTIMEO, a);
@@ -654,7 +656,7 @@ ServiceDiscovery::~ServiceDiscovery(){
     //Ireceive.bind("inproc://ServiceDiscovery");
   
   if(m_receive){
-  
+    //printf("in sd receive kill \n");
     zmq::socket_t ServiceDiscovery (*context, ZMQ_DEALER);
     //  int a=60000;
     //ServiceDiscovery.setsockopt(ZMQ_RCVTIMEO, a);
@@ -666,16 +668,17 @@ ServiceDiscovery::~ServiceDiscovery(){
     snprintf ((char *) command.data(), 256 , "%s" ,"Quit 0") ;
     ServiceDiscovery.send(command);
   
-
+    //printf("sent waiting for receive \n");
     zmq::message_t ret;
     ServiceDiscovery.recv(&ret);
       //std::istringstream tmp(static_cast<char*>(ret.data()));
 
+    //printf("received waiting fir join \n");
     pthread_join(thread[0], NULL);
     
   }
   
-  
+  //printf("finnish sd destructor \n");
 }
 
 

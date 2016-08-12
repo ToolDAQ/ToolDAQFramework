@@ -73,6 +73,7 @@ ToolChain::ToolChain(std::string configfile){
   }
   else if(remote)Remote(m_remoteport, m_multicastaddress, m_multicastport);
   
+  //printf("%s \n","finnished constructor");
 }
 
 ToolChain::ToolChain(int verbose, int errorlevel, std::string service, std::string logmode,std::string log_local_path, std::string log_service, int log_port, int pub_sec, int kick_sec){
@@ -134,18 +135,18 @@ void ToolChain::Add(std::string name,Tool *tool,std::string configfile){
     logmessage<<"Adding Tool=\""<<name<<"\" tool chain";
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
-
+    
     m_tools.push_back(tool);
     m_toolnames.push_back(name);
     m_configfiles.push_back(configfile);
-
+    
     //    if(m_verbose)*(m_data.Log)<<"Tool=\""<<name<<"\" added successfully"<<std::endl<<std::endl; 
     logmessage<<"Tool=\""<<name<<"\" added successfully"<<std::endl;
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
-  
-
-}
+    
+    
+  }
 }
 
 
@@ -454,9 +455,13 @@ void ToolChain::Interactive(){
       // std::cout<<ExecuteCommand(command)<<std::endl<<std::endl;
       logmessage<<ExecuteCommand(command);
       printf("%s \n\n",logmessage.str().c_str());
+      //printf("%s%s%s\n\n",".",command.c_str(),"."); 
       //m_data.Log->Log( logmessage.str(),0,m_verbose);
       logmessage.str("");
-      if(command=="Quit")running=false;
+      if(command=="Quit"){
+	running=false;
+	//printf("%s \n","running false");
+      }
       command="";
       //std::cout<<"Please type command : Start, Pause, Unpause, Stop, Quit (Initialise, Execute, Finalise)"<<std::endl;
       //std::cout<<">";
@@ -465,12 +470,14 @@ void ToolChain::Interactive(){
       //   m_data.Log->Log( logmessage.str(),0,m_verbose);
       printf("%s \n %s",logmessage.str().c_str(),">");
       logmessage.str("");
-      
+      //printf("%s \n","Received Quit");
     }
-    
+    //if(!running) printf("%s \n","before command execute");
     ExecuteCommand(command);
+    //if(!running) printf("%s \n","after command execute");
   }
-  
+  pthread_join(thread[0], NULL);
+  //printf("%s \n","out of running loop");
   
 }  
 
@@ -621,6 +628,7 @@ void ToolChain::Remote(int portnum, std::string SD_address, int SD_port){
       // std::cout<<"received "<<command<<std::endl;
       //std::cout<<"sent "<<tmp<<std::endl;
       if(command=="Quit"){
+	//printf("%s /n","receved quit");
 	running=false;
 	/*
 	  zmq::socket_t ServicePublisher (*context, ZMQ_PUSH);
@@ -645,7 +653,7 @@ void ToolChain::Remote(int portnum, std::string SD_address, int SD_port){
     ExecuteCommand(command);
    
   }  
-  
+  //printf("%s /n","finnished remote");
   
 }
 
@@ -681,8 +689,10 @@ void* ToolChain::InteractiveThread(void* arg){
 
     if (tmp=="Quit")running=false;
   }
+  //printf("quitting interactive threadd");
 
-  return (NULL);
+  pthread_exit(NULL);
+  //return (NULL);
 
 }
 
@@ -710,18 +720,30 @@ static  void *LogThread(void* arg){
 
 
 ToolChain::~ToolChain(){
-    
-  //  printf("%s /n","tdebug 1");
-  delete SD;
-  //printf("%s /n","tdebug 2");
-  SD=0;
-  delete context;
-  context=0;
-  std::cout.rdbuf(bcout);
-  delete out;
-  out=0;
-  delete m_data.Log;
+  
+  //printf("%s \n","tdebug 1");
+  delete m_data.Log;  
+  //printf("%s \n","tdebug 2");
   m_data.Log=0;
+  //printf("%s \n","tdebug 3");  
+  delete SD;
+  //printf("%s \n","tdebug 4");
+  SD=0;  
+  //printf("%s \n","tdebug 5");
+  //sleep(30);
+  //printf("%s \n","tdebug 6");
+  context->close();
+  //printf("%s \n","tdebug 6.5");
+  delete context;
+  //printf("%s \n","tdebug 7");
+  context=0;
+  //printf("%s \n","tdebug 8");
+  std::cout.rdbuf(bcout);
+  //printf("%s \n","tdebug 9");
+  delete out;
+  //printf("%s \n","tdebug 10");
+  out=0;
+  //printf("%s \n","tdebug 11");
   
 }
 
