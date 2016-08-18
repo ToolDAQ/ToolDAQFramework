@@ -721,7 +721,7 @@ static  void *LogThread(void* arg){
 
 ToolChain::~ToolChain(){
   
-  //printf("%s \n","tdebug 1");
+  // printf("%s \n","tdebug 1");
   delete m_data.Log;  
   //printf("%s \n","tdebug 2");
   m_data.Log=0;
@@ -732,7 +732,7 @@ ToolChain::~ToolChain(){
   //printf("%s \n","tdebug 5");
   //sleep(30);
   //printf("%s \n","tdebug 6");
-  context->close();
+  //  context->close();
   //printf("%s \n","tdebug 6.5");
   delete context;
   //printf("%s \n","tdebug 7");
