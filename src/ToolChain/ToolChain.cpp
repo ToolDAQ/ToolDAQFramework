@@ -100,13 +100,14 @@ void ToolChain::Init(){
 
   m_UUID = boost::uuids::random_generator()();
 
+  if(m_log_mode!="Off"){
  
   bcout=std::cout.rdbuf();
   out=new  std::ostream(bcout);
-
+  }
   m_data.Log= new Logging(*out, context, m_UUID, m_service, m_log_mode, m_log_local_path, m_log_service, m_log_port);
 
-  std::cout.rdbuf(&(m_data.Log->buffer));
+  if(m_log_mode!="Off") std::cout.rdbuf(&(m_data.Log->buffer));
   /*
     if(m_verbose){ 
     *(m_data.Log)<<"UUID = "<<m_UUID<<std::endl;
@@ -118,6 +119,7 @@ void ToolChain::Init(){
   logmessage<<"UUID = "<<m_UUID<<std::endl<<"********************************************************"<<std::endl<<"**** Tool chain created ****"<<std::endl<<"********************************************************"<<std::endl;
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
+
 
   execounter=0;
   Initialised=false;
@@ -721,7 +723,7 @@ static  void *LogThread(void* arg){
 
 ToolChain::~ToolChain(){
   
-  // printf("%s \n","tdebug 1");
+  //  printf("%s \n","tdebug 1");
   delete m_data.Log;  
   //printf("%s \n","tdebug 2");
   m_data.Log=0;
@@ -735,15 +737,16 @@ ToolChain::~ToolChain(){
   //  context->close();
   //printf("%s \n","tdebug 6.5");
   delete context;
-  //printf("%s \n","tdebug 7");
+  // printf("%s \n","tdebug 7");
   context=0;
   //printf("%s \n","tdebug 8");
-  std::cout.rdbuf(bcout);
-  //printf("%s \n","tdebug 9");
+  if(m_log_mode!="Off"){
+std::cout.rdbuf(bcout);
+//printf("%s \n","tdebug 9");
   delete out;
   //printf("%s \n","tdebug 10");
   out=0;
   //printf("%s \n","tdebug 11");
-  
+  }  
 }
 

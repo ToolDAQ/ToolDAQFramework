@@ -618,15 +618,20 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 ServiceDiscovery::~ServiceDiscovery(){
   
   //printf("in sd destructor \n");
-  sleep(1);  
+    sleep(1);  
+  //printf("finnish sleep \n");
   if(args!=0){
+    //printf("in arg if \n");
     delete args;
+    //printf("finnished arg delete \n");
     args=0;
+    //printf("finnish Set args=0 \n");
   }
-  
+  //printf("deleted args \n");
   
   //kill publish thread
   
+  //printf("checking send \n");
   if (m_send){
     //printf("in sd send kill \n");
     zmq::socket_t ServicePublish (*context, ZMQ_PUSH);
@@ -654,7 +659,7 @@ ServiceDiscovery::~ServiceDiscovery(){
 
     //kill listener //zmq::socket_t Ireceive (*context, ZMQ_DEALER);
     //Ireceive.bind("inproc://ServiceDiscovery");
-  
+  //printf("checking receive \n");
   if(m_receive){
     //printf("in sd receive kill \n");
     zmq::socket_t ServiceDiscovery (*context, ZMQ_DEALER);
