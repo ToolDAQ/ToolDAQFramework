@@ -147,7 +147,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
       else if(command=="Delete"){
        	std::vector<Store>::iterator it;
 	for (it = PubServices.begin() ; it != PubServices.end(); ++it){
-	  std::cout<<"d3.5 "<<*((*it)["msg_value"])<<std::endl;
+	  //std::cout<<"d3.5 "<<*((*it)["msg_value"])<<std::endl;
 	  
 	  if(*((*it)["msg_value"])==service)break;
 	  

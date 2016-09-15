@@ -47,6 +47,7 @@ private:
 
   static  void *InteractiveThread(void* arg);
   std::string ExecuteCommand(std::string connand);
+  void Remote();
   /*
   template <type T> bool Log(T message,int verboselevel=1){
     if(m_verbose>0){

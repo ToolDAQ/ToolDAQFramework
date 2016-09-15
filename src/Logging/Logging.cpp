@@ -68,24 +68,28 @@ int Logging::MyStreamBuf::sync ( )
 
   
     if (m_mode=="Remote"){
-      //printf("in remote sync ");
-      zmq::pollitem_t items [] = {
-        { LogSender, 0, ZMQ_POLLOUT, 0 },
-      };
+      // printf("in remote sync \n");
+          zmq::pollitem_t items[] = {
+        { *LogSender, 0, ZMQ_POLLOUT, 0 }
+       };
    
-      //     zmq::poll(&items[0], 1, 1000);
-      
-      //  if (items[0].revents & ZMQ_POLLOUT) {
+	  // printf("starting poll \n");
+      zmq::poll(&items[0], 1, 1000);
+      // printf("finnished poll \n");
+
+      if (items[0].revents & ZMQ_POLLOUT) {
 	std::stringstream tmp;
-	//printf("sync send");	
+	//printf("in sync send \n");	
 	tmp << "{"<<m_service<<":"<<t<<"} ["<<m_messagelevel<<"]: "<< str();
 	str("");
 	std::string line=tmp.str();
 	
 	zmq::message_t Send(line.length()+1);
 	snprintf ((char *) Send.data(), line.length()+1 , "%s" ,line.c_str());
+	//printf(" sync sending %s\n",line.c_str());
 	LogSender->send(Send);
-	//      }
+	//printf("sync sent \n");
+      }
     }
     
     else if(m_mode=="Local"){
@@ -274,11 +278,11 @@ src/Logging/Logging.{h,cpp} -nw
    while(running){
      //printf("%s \n","in log loop");
   
-     if (RemoteConnections.size()!=0) zmq::poll(&items[0],1,10000);
-     else sleep(1);
+     //  if (RemoteConnections.size()==0) sleep(1);
+     zmq::poll(&items[0],1,1000);
 
-     if (items[0].revents & ZMQ_POLLIN ){ //log a message so send it
-       //printf("received message to send");
+     if (items[0].revents & ZMQ_POLLIN ){ //log a 1message so send it
+       // printf("received message to send \n");
 
 
 
@@ -307,11 +311,11 @@ src/Logging/Logging.{h,cpp} -nw
 	   
 	   std::string rmessage;
 	   outmessage>>rmessage;
-	   //	   printf("...%s...",rmessage.c_str());
+	   //  printf("...%s...\n",rmessage.c_str());
 	   zmq::message_t rlogmessage(rmessage.length()+1);
 	   snprintf ((char *) rlogmessage.data(), rmessage.length()+1 , "%s", rmessage.c_str()) ;
-      	   //printf("%s %s \n","debug test of remote logger sending: ",rmessage.c_str());
-
+	   // printf("%s %s \n","debug test of remote logger sending: ",rmessage.c_str());
+	   
 
 	   zmq::pollitem_t itemssend [] = {{ *(it->second), 0, ZMQ_POLLOUT, 0 } };
 	   
@@ -354,13 +358,16 @@ src/Logging/Logging.{h,cpp} -nw
 
        zmq::message_t send(9);
        snprintf ((char *) send.data(), 9 , "%s" ,"All NULL") ;
-       
+       // printf("sending sd req \n");
+
        if(Ireceive.send(send)){
-	 
+
+	 //printf("sent sd req \n");	 
 	 zmq::message_t receive;
 	 if(Ireceive.recv(&receive)){
 	   std::istringstream iss(static_cast<char*>(receive.data()));
-	   
+	   //printf("received from sd \n");	   
+
 	   int size;
 	   iss>>size;
 	   
@@ -392,7 +399,7 @@ src/Logging/Logging.{h,cpp} -nw
 	     //printf("%s \n",servicetype.c_str());
 	     if(servicetype==logservice){
 	       RemoteServices[uuid]=service;
-	        //printf("found %s \n",uuid.c_str());
+	       // printf("found %s \n",uuid.c_str());
 	       if(RemoteConnections[uuid]==0){
 		 //printf("%s doesnt exist \n",uuid.c_str());
 		 std::string ip;
@@ -402,7 +409,7 @@ src/Logging/Logging.{h,cpp} -nw
 		 
 		 std::stringstream tmp;
 		 tmp<<"tcp://"<<"localhost"<<":"<<logport;
-		  //printf("%s \n",tmp.str().c_str());
+		 //printf("%s \n",tmp.str().c_str());
 		 RemoteSend->connect(tmp.str().c_str());
 		 RemoteConnections[uuid]=RemoteSend;
 

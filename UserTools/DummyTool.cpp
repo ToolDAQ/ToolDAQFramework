@@ -21,7 +21,7 @@ bool DummyTool::Initialise(std::string configfile, DataModel &data){
 bool DummyTool::Execute(){
   
   Log("test 2",2,m_verbose);
-
+  sleep(2);
   return true;
 }
 

@@ -23,33 +23,6 @@ ToolChain::ToolChain(std::string configfile){
   
   Init();
 
-  std::string toolsfile="";
-  config.Get("Tools_File",toolsfile);
-
-  if(toolsfile!=""){
-    std::ifstream file(toolsfile.c_str());
-    std::string line;
-    if(file.is_open()){
-      
-      while (getline(file,line)){
-	if (line.size()>0){
-	  if (line.at(0)=='#')continue;
-	  std::string name;
-	  std::string tool;
-	  std::string conf;
-	  std::stringstream stream(line);
-	  
-	  if(stream>>name>>tool>>conf) Add(name,Factory(tool),conf);
-	 
-	}
-	
-      }
-    }
-    
-    file.close();
-    
-  }
-
   Inline=0;
   interactive=false;
   remote=false;
@@ -57,22 +30,59 @@ ToolChain::ToolChain(std::string configfile){
   config.Get("Interactive",interactive);
   config.Get("Remote",remote);
 
+  bool sendflag=true;
   bool receiveflag=true;
+
+  if(m_pub_sec<0 || Inline>0 || interactive) sendflag=false;
   if(m_kick_sec<0) receiveflag=false;
  
+  SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
+
+  if(m_log_mode=="Remote") sleep(10); //needed to allow service discovery find time                                                                                       
+  logmessage<<"UUID = "<<m_UUID<<std::endl<<"********************************************************"<<std::endl<<"**** Tool chain created ****"<<std::endl<<"********************************************************"<<std::endl;
+  m_data.Log->Log(logmessage.str(),1,m_verbose);
+  logmessage.str("");
+
+
+  std::string toolsfile="";
+  config.Get("Tools_File",toolsfile);
+
+  if(toolsfile!=""){
+    std::ifstream file(toolsfile.c_str());
+    std::string line;
+    if(file.is_open()){
+
+      while (getline(file,line)){
+        if (line.size()>0){
+          if (line.at(0)=='#')continue;
+	  std::string name;
+	  std::string tool;
+	  std::string conf;
+	  std::stringstream stream(line);
+
+          if(stream>>name>>tool>>conf) Add(name,Factory(tool),conf);
+
+        }
+      }
+    }
+
+    file.close();
+
+  }
+
+
   if(Inline>0){
-    SD=new ServiceDiscovery(false, receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
     Initialise();
     Execute(Inline);
     Finalise();
     //exit(0);
   }
-  else if(interactive){
-    SD=new ServiceDiscovery(false, receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
-    Interactive();
-  }
-  else if(remote)Remote(m_remoteport, m_multicastaddress, m_multicastport);
+
+  else if(interactive) Interactive();
   
+  else if(remote) Remote();
+  
+    
   //printf("%s \n","finnished constructor");
 }
 
@@ -116,9 +126,9 @@ void ToolChain::Init(){
     *(m_data.Log)<<"********************************************************"<<std::endl;
     }
   */
-  logmessage<<"UUID = "<<m_UUID<<std::endl<<"********************************************************"<<std::endl<<"**** Tool chain created ****"<<std::endl<<"********************************************************"<<std::endl;
-    m_data.Log->Log(logmessage.str(),1,m_verbose);
-    logmessage.str("");
+  //  logmessage<<"UUID = "<<m_UUID<<std::endl<<"********************************************************"<<std::endl<<"**** Tool chain created ****"<<std::endl<<"********************************************************"<<std::endl;
+  // m_data.Log->Log(logmessage.str(),1,m_verbose);
+  //logmessage.str("");
 
 
   execounter=0;
@@ -134,7 +144,7 @@ void ToolChain::Init(){
 void ToolChain::Add(std::string name,Tool *tool,std::string configfile){
   if(tool!=0){
     // if(m_verbose)*(m_data.Log)<<"Adding Tool=\""<<name<<"\" tool chain"<<std::endl;
-    logmessage<<"Adding Tool=\""<<name<<"\" tool chain";
+    logmessage<<"Adding Tool='"<<name<<"' tool chain";
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
     
@@ -143,7 +153,7 @@ void ToolChain::Add(std::string name,Tool *tool,std::string configfile){
     m_configfiles.push_back(configfile);
     
     //    if(m_verbose)*(m_data.Log)<<"Tool=\""<<name<<"\" added successfully"<<std::endl<<std::endl; 
-    logmessage<<"Tool=\""<<name<<"\" added successfully"<<std::endl;
+    logmessage<<"Tool='"<<name<<"' added successfully"<<std::endl;
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
     
@@ -563,22 +573,28 @@ std::string ToolChain::ExecuteCommand(std::string command){
 
 
 void ToolChain::Remote(int portnum, std::string SD_address, int SD_port){
-
+  
   m_remoteport=portnum;
   m_multicastport=SD_port;
   m_multicastaddress=SD_address;
+  
+  bool sendflag=true;
+  bool receiveflag=true;
+  
+  if(m_pub_sec<0) sendflag=false;
+  if(m_kick_sec<0) receiveflag=false;
+  
+  SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
+  
+  Remote();
+  
+}
+
+void ToolChain::Remote(){
+  
   //m_verbose=false;
   exeloop=false;
 
-  bool sendflag=true;
-  bool receiveflag=true;
-
-  if(m_pub_sec<0) sendflag=false;
-  if(m_kick_sec<0) receiveflag=false;
-
-  SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
-
-  
   std::stringstream tcp;
   tcp<<"tcp://*:"<<m_remoteport;
 
