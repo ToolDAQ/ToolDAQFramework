@@ -453,8 +453,9 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	
 	std::string uuid;
 	newservice->Get("uuid",uuid);
-	RemoteServices[uuid]=newservice;
-
+	if(RemoteServices.count(uuid)) delete RemoteServices[uuid];
+	  RemoteServices[uuid]=newservice;
+	
 	//	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
 
       }
