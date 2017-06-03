@@ -14,7 +14,7 @@ class Store{
 
   Store();
   void Initialise(std::string filename);
-  void JsonPaser(std::string input); 
+  void JsonParser(std::string input); 
   void Print();
   void Delete();
 

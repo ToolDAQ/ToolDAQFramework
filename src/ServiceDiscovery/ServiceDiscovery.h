@@ -18,13 +18,6 @@
 
 #include "zmq.hpp"
 
-/*
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/reader.h"
-#include "rapidjson/stringbuffer.h"
-*/
-
 #include "Store.h"
 
 struct thread_args{
@@ -65,21 +58,21 @@ class ServiceDiscovery{
   
   static  void *MulticastPublishThread(void* arg);
   static  void *MulticastListenThread(void* arg);
-
+  
   boost::uuids::uuid m_UUID;
   zmq::context_t *context;
   pthread_t thread[2];
   thread_args *args;
-
+  
   int m_multicastport;
   std::string m_multicastaddress;
   std::string m_service;
   int m_remoteport;
-
+  
   bool m_send;
   bool m_receive;
-
- 
+  
+  
   
 };
 

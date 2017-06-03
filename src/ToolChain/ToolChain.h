@@ -25,6 +25,15 @@
 #include "Store.h"
 #include "ServiceDiscovery.h"
 
+struct ToolChainargs{
+
+  ToolChainargs(){};
+
+  zmq::context_t* context;
+  bool *msgflag;
+
+};
+
 class ToolChain{
   
  public:
@@ -48,6 +57,7 @@ private:
   static  void *InteractiveThread(void* arg);
   std::string ExecuteCommand(std::string connand);
   void Remote();
+
   /*
   template <type T> bool Log(T message,int verboselevel=1){
     if(m_verbose>0){
@@ -104,6 +114,8 @@ private:
   long msg_id;
   int m_pub_sec;
   int m_kick_sec;
+
+  bool msgflag;
 };
 
 #endif

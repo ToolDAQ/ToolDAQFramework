@@ -47,7 +47,7 @@ void Store::Delete(){
 }
 
 
-void Store::JsonPaser(std::string input){ 
+void Store::JsonParser(std::string input){ 
 
   int type=0;
   std::string key;

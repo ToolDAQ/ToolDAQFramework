@@ -80,6 +80,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   //fcntl(sock, F_SETFL, O_NONBLOCK); 
   if (sock < 0) {
     perror("socket");
+    printf("Failed to connect to multicast publish socket");
     exit(1);
   }
   bzero((char *)&addr, sizeof(addr));
@@ -216,14 +217,16 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	if(statusquery){
 	  
 	  zmq::socket_t StatusCheck (*context, ZMQ_REQ);
-	  int a=12000;
-	  StatusCheck.setsockopt(ZMQ_RCVTIMEO, a);
-	  StatusCheck.setsockopt(ZMQ_SNDTIMEO, a);
+	  //int a=12000;
+	  //StatusCheck.setsockopt(ZMQ_RCVTIMEO, a);
+	  //StatusCheck.setsockopt(ZMQ_SNDTIMEO, a);
 	  std::stringstream connection;
 	  connection<<"tcp://localhost:"<<*(PubServices.at(i)["remote_port"]);
 	  StatusCheck.connect(connection.str().c_str());
-	  
-	  
+	
+	  zmq::pollitem_t out[]={{StatusCheck,0,ZMQ_POLLOUT,0}};  
+	  zmq::pollitem_t in[]={{StatusCheck,0,ZMQ_POLLIN,0}};
+
 	  mm.Set("msg_type","Command");
 	  mm.Set("msg_value","Status");
 	  
@@ -236,16 +239,22 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  
 	  zmq::message_t Esend(command.length()+1);
 	  snprintf ((char *) Esend.data(), command.length()+1 , "%s" ,command.c_str()) ;
-	  StatusCheck.send(Esend);
+	 
+	  zmq::poll(out,1,1000);
 	  
-	  
-	  //std::cout<<"waiting for message "<<std::endl;
-	  
-	  zmq::message_t Ereceive;
-	  if(StatusCheck.recv (&Ereceive)){
-	    std::istringstream ss(static_cast<char*>(Ereceive.data()));
+	  if(out[0].revents & ZMQ_POLLOUT){
+	    StatusCheck.send(Esend);
 	    
-	    mm.JsonPaser(ss.str());
+	    
+	    //std::cout<<"waiting for message "<<std::endl;
+	    zmq::poll(in,1,1000);
+	    if(in[0].revents & ZMQ_POLLIN){
+	      zmq::message_t Ereceive;
+	      StatusCheck.recv (&Ereceive);
+	      std::istringstream ss(static_cast<char*>(Ereceive.data()));
+	      
+	      mm.JsonParser(ss.str());
+	    }
 	  }
 	}
 	/*
@@ -321,17 +330,17 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  // bb.Set("msg_value",m_service);
 	  //bb.Set("remote_port",m_remoteport);
 	 	if(statusquery) *(PubServices.at(i))["status"]=*mm["msg_value"]; 
-		else *(PubServices.at(i))["status"]= "Unknown";
+		else *(PubServices.at(i))["status"]= "N/A";
 	  std::string pubmessage;
-	   PubServices.at(i)>>pubmessage;
+	  PubServices.at(i)>>pubmessage;
 	  
 	  //std::stringstream pubmessage;
 	  
 	  //pubmessage<<"{\"uuid\":\""<<m_UUID<<"\",\"msg_id\":"<<msg_id<<",\"msg_time\":\""<<isot.str()<<"\",\"msg_type\":\"Service Discovery\",\"msg_value\":\""<<m_service<<"\",\"params\":{\"port\":"<<m_remoteport<<",\"status\":\""<<ss.str()<<"\"}}";
-	 char message[512];
+	  char message[pubmessage.length()+1];
 
 	  //    snprintf (message, 512 , "%s" , buffer.GetString()) ;
-	  snprintf (message, 512 , "%s" , pubmessage.c_str() ) ;
+	  snprintf (message, pubmessage.length()+1 , "%s" , pubmessage.c_str() ) ;
 	  //	  printf("sending: %s\n", message);
 	   cnt = sendto(sock, message, sizeof(message), 0,(struct sockaddr *) &addr, addrlen);
 	  
@@ -409,12 +418,14 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   // receive //
   if (bind(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {        
     perror("bind");
+    printf("Failed to bind to multicast listen socket");
     exit(1);
   }    
   mreq.imr_multiaddr.s_addr = inet_addr(m_multicastaddress.c_str());         
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);         
   if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,&mreq, sizeof(mreq)) < 0) {
     perror("setsockopt mreq");
+    printf("Failed to goin multicast group listen thread");
     exit(1);
   }         
   
@@ -424,6 +435,10 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   zmq::pollitem_t items [] = {
     { NULL, sock, ZMQ_POLLIN, 0 },
     { Ireceive, 0, ZMQ_POLLIN, 0 }
+  };
+
+  zmq::pollitem_t out[] = {
+    {Ireceive, 0, ZMQ_POLLOUT, 0}
   };
   
   std::map<std::string,Store*> RemoteServices;
@@ -446,19 +461,20 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	//printf("%s: message = \"%s\"\n", inet_ntoa(addr.sin_addr), message);
 	
 
-
+	
 	Store* newservice= new Store();
 	newservice->Set("ip",inet_ntoa(addr.sin_addr));
-	newservice->JsonPaser(message);
+	newservice->JsonParser(message);
 	
 	std::string uuid;
 	newservice->Get("uuid",uuid);
+	if(RemoteServices.count(uuid)) delete RemoteServices[uuid];
 	RemoteServices[uuid]=newservice;
-
+	
 	//	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
-
+	
       }
-
+      
 
       
     }
@@ -499,6 +515,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
       // std::cout<<"mins = "<<td_tm.tm_min<<std::endl; 
        if(((td_tm.tm_min*60)+td_tm.tm_sec)>args->kicksec){
 	delete it->second;
+	it->second=0;
 	RemoteServices.erase(it->first);
 	
       }
@@ -517,49 +534,77 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	std::string arg1="";
 	std::string arg2="";
 
-	iss>>arg1>>arg2;
+	iss>>arg1;
 
 	if(arg1=="All"){
 	
-	   zmq::message_t sizem(512);
-	   int size= RemoteServices.size();
-
-
-	   snprintf ((char *) sizem.data(), 512 , "%d" ,size) ;
-	   Ireceive.send(sizem);	    
-	    
-  
-	  for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
-	    
-	    zmq::message_t send(512);
-	    std::string service;
-	    *(it->second)>>service;
-	    snprintf ((char *) send.data(), 512 , "%s" ,service.c_str()) ;
-	    Ireceive.send(send);	    
-	
-	  }
 	  
+	  //zmq::message_t sizem(512);
+	   int size= RemoteServices.size();
+	   zmq::message_t sizem(sizeof size);
+
+	   snprintf ((char *) sizem.data(), sizeof size , "%d" ,size) ;
+	  
+	   zmq::poll(out,1,1000);
+	   
+	   if (out[0].revents & ZMQ_POLLOUT){ 
+	    
+	     Ireceive.send(sizem);	    
+	    
+	     
+	     for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
+	    
+	       std::string service;
+	       *(it->second)>>service;
+	       zmq::message_t send(service.length()+1);
+	       snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
+	    
+	       zmq::poll(out,1,1000);
+	    
+	       if (out[0].revents & ZMQ_POLLOUT){
+		 
+		 Ireceive.send(send);
+		 	     
+	       }
+	       else {
+		 break;
+	       }
+	       
+	     }
+	   }
+	   
 	}
 	
+	
 	if(arg1=="Service"){
+	  
+	  iss>>arg1>>arg2;
 	  
 	  for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
 	    
 	    std::string test;
 	    it->second->Get("service",test);
-
+	    
 	    if(arg2==test){
-	      zmq::message_t send(512);
+	      
 	      std::string service;
 	      *(it->second)>>service;
-	      snprintf ((char *) send.data(), 512 , "%s" ,service.c_str()) ;
-	      Ireceive.send(send);	    
+	      zmq::message_t send(service.length()+1);
+	      snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
+
+	      zmq::poll(out,1,1000);
+	      
+	      if(out[0].revents & ZMQ_POLLOUT) Ireceive.send(send);	    
 	    }
 	  }
 	  
 	}
+
+
 	
 	if(arg1=="UUID"){
+
+	  iss>>arg1>>arg2;
 	  
 	  for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
 	    
@@ -569,16 +614,19 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	    
 	    if(arg2==test){
 	      
-	      zmq::message_t send(512);
 	      std::string service;
 	      *(it->second)>>service;
-	      snprintf ((char *) send.data(), 512 , "%s" ,service.c_str()) ;
-	      Ireceive.send(send);	    
+	      zmq::message_t send(service.length()+1);
+	      snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
+
+	      zmq::poll(out,1,1000);
+
+	      if(out[0].revents & ZMQ_POLLOUT) Ireceive.send(send);	    
 	    }
 	  }
 	  
 	}
-
+	
 	if(arg1=="Quit"){
 	  
 	  running=false;
@@ -588,13 +636,14 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	
         
 	
-	
-	zmq::message_t send(256);
+	/*
 	std::string tmp="0";
-	snprintf ((char *) send.data(), 256 , "%s" ,tmp.c_str()) ;
+	zmq::message_t send(tmp.length()+1);
+	snprintf ((char *) send.data(), tmp.length()+1 , "%s" ,tmp.c_str()) ;
 	Ireceive.send(send);
 	//printf("sent \n");
-      }  
+	*/
+      }
       
     }
 
@@ -604,7 +653,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
     delete it->second;
     it->second=0;
-  
+    
   }
   RemoteServices.clear();
   //printf("exiting sd listen thread \n");
@@ -620,14 +669,6 @@ ServiceDiscovery::~ServiceDiscovery(){
   //printf("in sd destructor \n");
     sleep(1);  
   //printf("finnish sleep \n");
-  if(args!=0){
-    //printf("in arg if \n");
-    delete args;
-    //printf("finnished arg delete \n");
-    args=0;
-    //printf("finnish Set args=0 \n");
-  }
-  //printf("deleted args \n");
   
   //kill publish thread
   
@@ -642,8 +683,8 @@ ServiceDiscovery::~ServiceDiscovery(){
 
     
     
-    zmq::message_t command(256);
-    snprintf ((char *) command.data(), 256 , "%s" ,"Quit") ;
+    zmq::message_t command(5);
+    snprintf ((char *) command.data(), 5 , "%s" ,"Quit") ;
     ServicePublish.send(command);
     
     pthread_join(thread[1], NULL);
@@ -669,19 +710,29 @@ ServiceDiscovery::~ServiceDiscovery(){
     ServiceDiscovery.connect("inproc://ServiceDiscovery");
   
 
-    zmq::message_t command(256);
-    snprintf ((char *) command.data(), 256 , "%s" ,"Quit 0") ;
+    zmq::message_t command(7);
+    snprintf ((char *) command.data(), 7 , "%s" ,"Quit") ;
     ServiceDiscovery.send(command);
   
     //printf("sent waiting for receive \n");
-    zmq::message_t ret;
-    ServiceDiscovery.recv(&ret);
+    //zmq::message_t ret;
+    //ServiceDiscovery.recv(&ret);
       //std::istringstream tmp(static_cast<char*>(ret.data()));
 
     //printf("received waiting fir join \n");
     pthread_join(thread[0], NULL);
     
   }
+
+  if(args!=0){
+    //printf("in arg if \n");
+    delete args;
+    //printf("finnished arg delete \n");
+    args=0;
+    //printf("finnish Set args=0 \n");
+  }
+  //printf("deleted args \n");
+
   
   //printf("finnish sd destructor \n");
 }

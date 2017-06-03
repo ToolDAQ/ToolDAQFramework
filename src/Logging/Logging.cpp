@@ -356,8 +356,8 @@ src/Logging/Logging.{h,cpp} -nw
 	 
        //printf("finding services \n");
 
-       zmq::message_t send(9);
-       snprintf ((char *) send.data(), 9 , "%s" ,"All NULL") ;
+       zmq::message_t send(4);
+       snprintf ((char *) send.data(), 4 , "%s" ,"All") ;
        // printf("sending sd req \n");
 
        if(Ireceive.send(send)){
@@ -390,7 +390,7 @@ src/Logging/Logging.{h,cpp} -nw
 	     Ireceive.recv(&servicem);
 	     
 	     std::istringstream ss(static_cast<char*>(servicem.data()));
-	     service->JsonPaser(ss.str());
+	     service->JsonParser(ss.str());
 	     
 	     std::string servicetype;
 	     std::string uuid;
@@ -400,7 +400,7 @@ src/Logging/Logging.{h,cpp} -nw
 	     if(servicetype==logservice){
 	       RemoteServices[uuid]=service;
 	       // printf("found %s \n",uuid.c_str());
-	       if(RemoteConnections[uuid]==0){
+	       if(RemoteConnections.count(uuid)==0){
 		 //printf("%s doesnt exist \n",uuid.c_str());
 		 std::string ip;
 		 (*service).Get("ip",ip);
@@ -421,7 +421,7 @@ src/Logging/Logging.{h,cpp} -nw
 	     else delete service  ; 
 	   }
 
-	   Ireceive.recv(&receive); //dodgy 0 at end 
+	   // Ireceive.recv(&receive); //dodgy 0 at end 
 
 	   std::vector<std::map<std::string,zmq::socket_t*>::iterator> dels;
 	   for(std::map<std::string,zmq::socket_t*>::iterator it=RemoteConnections.begin(); it!=RemoteConnections.end(); ++it){

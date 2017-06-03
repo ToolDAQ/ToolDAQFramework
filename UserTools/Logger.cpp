@@ -49,7 +49,7 @@ bool Logger::Execute(){
       
       Store bb;
       
-      bb.JsonPaser(ss.str());
+      bb.JsonParser(ss.str());
       
       std::cout<<*(bb["msg_value"])<<std::flush;
     }

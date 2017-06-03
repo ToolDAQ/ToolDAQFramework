@@ -18,8 +18,8 @@ bool ServiceAdd::Initialise(std::string configfile, DataModel &data){
   m_UUID = boost::uuids::random_generator()();
   std::stringstream test;
   test<<"Add "<< "testservice "<<m_UUID<<" 1111 "<<"0";
-  zmq::message_t send(256);
-  snprintf ((char *) send.data(), 256 , "%s" ,test.str().c_str()) ;
+  zmq::message_t send(test.str().length());
+  snprintf ((char *) send.data(), test.str().length() , "%s" ,test.str().c_str()) ;
   Ireceive.send(send);
 
 
@@ -34,12 +34,13 @@ bool ServiceAdd::Execute(){
 
 
 bool ServiceAdd::Finalise(){
+
   zmq::socket_t Ireceive (*m_data->context, ZMQ_PUSH);
   Ireceive.connect("inproc://ServicePublish");
   std::stringstream test;
   test<<"Delete "<< "testservice ";
-  zmq::message_t send(256);
-  snprintf ((char *) send.data(), 256 , "%s" ,test.str().c_str()) ;
+  zmq::message_t send(test.str().length()+1);
+  snprintf ((char *) send.data(), test.str().length()+1 , "%s" ,test.str().c_str()) ;
   Ireceive.send(send);
 
   return true;

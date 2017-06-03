@@ -364,7 +364,7 @@ int ToolChain::Finalise(){
     if(m_verbose){
       *(m_data.Log)<<"********************************************************"<<std::endl;
       *(m_data.Log)<<"**** Finalising tools in toolchain ****"<<std::endl;
-      *(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
+      *(m_data.Log)<<"***`<*****************************************************"<<std::endl<<std::endl;
     }  
     */
     logmessage<<"********************************************************"<<std::endl<<"**** Finalising tools in toolchain ****"<<std::endl<<"********************************************************"<<std::endl;
@@ -451,44 +451,61 @@ void ToolChain::Interactive(){
   zmq::socket_t Ireceiver (*context, ZMQ_PAIR);
   Ireceiver.bind("inproc://control");
   
-  pthread_create (&thread[0], NULL, ToolChain::InteractiveThread, context);
+  ToolChainargs* args=new ToolChainargs;
+  args->context=context;
+  args->msgflag=&msgflag;
+
+  pthread_create (&thread[0], NULL, ToolChain::InteractiveThread, args);
 
   bool running=true; 
   
+  //zmq::pollitem_t in[]={{Ireceiver,0,ZMQ_POLLIN,0}};
+  msgflag=false;
+ 
   while (running){
     
     zmq::message_t message;
     std::string command="";
-    if(Ireceiver.recv (&message, ZMQ_NOBLOCK)){
-      
-      std::istringstream iss(static_cast<char*>(message.data()));
-      iss >> command;
-      
-      // std::cout<<ExecuteCommand(command)<<std::endl<<std::endl;
-      logmessage<<ExecuteCommand(command);
-      printf("%s \n\n",logmessage.str().c_str());
-      //printf("%s%s%s\n\n",".",command.c_str(),"."); 
-      //m_data.Log->Log( logmessage.str(),0,m_verbose);
-      logmessage.str("");
-      if(command=="Quit"){
-	running=false;
-	//printf("%s \n","running false");
-      }
-      command="";
-      //std::cout<<"Please type command : Start, Pause, Unpause, Stop, Quit (Initialise, Execute, Finalise)"<<std::endl;
-      //std::cout<<">";
 
-      logmessage<<"Please type command : Start, Pause, Unpause, Stop, Status, Quit, ?, (Initialise, Execute, Finalise)";
-      //   m_data.Log->Log( logmessage.str(),0,m_verbose);
-      printf("%s \n %s",logmessage.str().c_str(),">");
-      logmessage.str("");
-      //printf("%s \n","Received Quit");
+    //    zmq::poll(in,1,0);
+    //if(in[0].revents & ZMQ_POLLIN){
+    if(msgflag){  
+      //std::cout<<"in msgflag"<<std::endl;
+      if(Ireceiver.recv (&message,ZMQ_NOBLOCK)){
+	
+	std::istringstream iss(static_cast<char*>(message.data()));
+	iss >> command;
+	
+	// std::cout<<ExecuteCommand(command)<<std::endl<<std::endl;
+	logmessage<<ExecuteCommand(command);
+	printf("%s \n\n",logmessage.str().c_str());
+	//printf("%s%s%s\n\n",".",command.c_str(),"."); 
+	//m_data.Log->Log( logmessage.str(),0,m_verbose);
+	logmessage.str("");
+	if(command=="Quit"){
+	  running=false;
+	  //printf("%s \n","running false");
+	}
+	
+	command="";
+	//std::cout<<"Please type command : Start, Pause, Unpause, Stop, Quit (Initialise, Execute, Finalise)"<<std::endl;
+	//std::cout<<">";
+	
+	logmessage<<"Please type command : Start, Pause, Unpause, Stop, Status, Quit, ?, (Initialise, Execute, Finalise)";
+	//   m_data.Log->Log( logmessage.str(),0,m_verbose);
+	printf("%s \n %s",logmessage.str().c_str(),">");
+	logmessage.str("");
+	//printf("%s \n","Received Quit");
+	msgflag=false;
+      }
     }
     //if(!running) printf("%s \n","before command execute");
     ExecuteCommand(command);
     //if(!running) printf("%s \n","after command execute");
   }
   pthread_join(thread[0], NULL);
+  delete args;
+  args=0;
   //printf("%s \n","out of running loop");
   
 }  
@@ -498,73 +515,75 @@ void ToolChain::Interactive(){
 std::string ToolChain::ExecuteCommand(std::string command){
   std::stringstream returnmsg;
   
-  if(command=="Initialise"){
-    int ret=Initialise();
-    if (ret==0)returnmsg<<"Initialising ToolChain";
-    else returnmsg<<"Error Code "<<ret;
-  }
-  else if (command=="Execute"){
-    int ret=Execute();
-    if (ret==0)returnmsg<<"Executing ToolChain";
-    else returnmsg<<"Error Code "<<ret;
-  }
-  else if (command=="Finalise"){
-    exeloop=false;
-     int ret=Finalise();
-    if (ret==0)returnmsg<<"Finalising  ToolChain";
-    else returnmsg<<"Error Code "<<ret;
-  }
-  else if (command=="Quit"){
-    returnmsg<<"Quitting";
-    // if (interactive)exit(0);
-}
-  else if (command=="Start"){
-    int ret=Initialise();
-    exeloop=true;
-    execounter=0;
-    if (ret==0)returnmsg<<"Starting ToolChain";
-    else returnmsg<<"Error Code "<<ret;
-  }
-  else if(command=="Pause"){
-    exeloop=false;
-    paused=true;
-    returnmsg<<"Pausing ToolChain";
-  }
-  else if(command=="Unpause"){
-    exeloop=true;
-    paused=false;
-    returnmsg<<"Unpausing ToolChain";
-  }
-  else if(command=="Stop") {
-    exeloop=false;
-    int ret=Finalise();
-    if (ret==0)returnmsg<<"Stopping ToolChain";
-    else returnmsg<<"Error Code "<<ret;
-  }
-
-  else if(command=="Restart") {
-    int ret=Finalise()+Initialise();
-    if (ret==0)returnmsg<<"Restarting ToolChain";
-    else returnmsg<<"Error Code "<<ret;
-  }
-
-  else if(command=="Status"){
-    std::stringstream tmp;
-    if(Finalised) tmp<<"Waiting to Initialise ToolChain";
-    if(Initialised && execounter==0) tmp<<"Initialised waiting to Execute ToolChain";
-    if(Initialised && execounter>0){
-      if(paused)tmp<<"ToolChain execution pasued";
-      else tmp<<"ToolChain running (loop counter="<<execounter<<")";
+  if(command!=""){
+    if(command=="Initialise"){
+      int ret=Initialise();
+      if (ret==0)returnmsg<<"Initialising ToolChain";
+      else returnmsg<<"Error Code "<<ret;
     }
-
-    if(*(m_data.vars["Status"])!="") tmp<<" : "<<*(m_data.vars["Status"]);
-    returnmsg<<tmp.str();
+    else if (command=="Execute"){
+      int ret=Execute();
+      if (ret==0)returnmsg<<"Executing ToolChain";
+      else returnmsg<<"Error Code "<<ret;
+    }
+    else if (command=="Finalise"){
+      exeloop=false;
+      int ret=Finalise();
+      if (ret==0)returnmsg<<"Finalising  ToolChain";
+      else returnmsg<<"Error Code "<<ret;
+    }
+    else if (command=="Quit"){
+      returnmsg<<"Quitting";
+      // if (interactive)exit(0);
+    }
+    else if (command=="Start"){
+      int ret=Initialise();
+      exeloop=true;
+      execounter=0;
+      if (ret==0)returnmsg<<"Starting ToolChain";
+      else returnmsg<<"Error Code "<<ret;
+    }
+    else if(command=="Pause"){
+      exeloop=false;
+      paused=true;
+      returnmsg<<"Pausing ToolChain";
+    }
+    else if(command=="Unpause"){
+      exeloop=true;
+      paused=false;
+      returnmsg<<"Unpausing ToolChain";
+    }
+    else if(command=="Stop") {
+      exeloop=false;
+      int ret=Finalise();
+      if (ret==0)returnmsg<<"Stopping ToolChain";
+      else returnmsg<<"Error Code "<<ret;
+    }
+    
+    else if(command=="Restart") {
+      int ret=Finalise()+Initialise();
+      if (ret==0)returnmsg<<"Restarting ToolChain";
+      else returnmsg<<"Error Code "<<ret;
+    }
+    
+    else if(command=="Status"){
+      std::stringstream tmp;
+      if(Finalised) tmp<<"Waiting to Initialise ToolChain";
+      if(Initialised && execounter==0) tmp<<"Initialised waiting to Execute ToolChain";
+      if(Initialised && execounter>0){
+	if(paused)tmp<<"ToolChain execution pasued";
+	else tmp<<"ToolChain running (loop counter="<<execounter<<")";
+      }
+      
+      if(*(m_data.vars["Status"])!="") tmp<<" : "<<*(m_data.vars["Status"]);
+      returnmsg<<tmp.str();
+    }
+    else if(command=="?")returnmsg<<" Available commands: Initialise, Execute, Finalise, Start, Stop, Restart, Pause, Unpause, Quit, Status, ?";
+    else if(command!=""){
+      returnmsg<<"command not recognised please try again";
+    }
   }
- else if(command=="?")returnmsg<<" Available commands: Initialise, Execute, Finalise, Start, Stop, Restart, Pause, Unpause, Quit, Status, ?";
-  else if(command!=""){
-    returnmsg<<"command not recognised please try again";
-  }
-
+  
   if(exeloop) Execute();
   return returnmsg.str();
 }
@@ -599,12 +618,14 @@ void ToolChain::Remote(){
   tcp<<"tcp://*:"<<m_remoteport;
 
   zmq::socket_t Ireceiver (*context, ZMQ_REP);
-  int a=120000;
-  Ireceiver.setsockopt(ZMQ_RCVTIMEO, a);
-  Ireceiver.setsockopt(ZMQ_SNDTIMEO, a);
+  //int a=120000;
+  //Ireceiver.setsockopt(ZMQ_RCVTIMEO, a);
+  //Ireceiver.setsockopt(ZMQ_SNDTIMEO, a);
   
   Ireceiver.bind(tcp.str().c_str());
   
+  zmq::pollitem_t out[]={{Ireceiver,0,ZMQ_POLLOUT,0}};
+
   bool running=true;
   
   while (running){
@@ -617,11 +638,9 @@ void ToolChain::Remote(){
       command=iss.str();
 
       Store rr;
-      rr.JsonPaser(command);
+      rr.JsonParser(command);
       if(*rr["msg_type"]=="Command") command=*rr["msg_value"];
       else command="NULL";
-	     
-      zmq::message_t send(256);
 
 
        boost::posix_time::ptime t = boost::posix_time::microsec_clock::universal_time();
@@ -640,8 +659,11 @@ void ToolChain::Remote(){
 
       std::string tmp="";
       bb>>tmp;
-      snprintf ((char *) send.data(), 256 , "%s" ,tmp.c_str()) ;
-      Ireceiver.send(send);
+      zmq::message_t send(tmp.length()+1);
+      snprintf ((char *) send.data(), tmp.length()+1 , "%s" ,tmp.c_str()) ;
+    
+      zmq::poll(out,1,2000);
+      if (out[0].revents & ZMQ_POLLOUT)  Ireceiver.send(send);
       
       // std::cout<<"received "<<command<<std::endl;
       //std::cout<<"sent "<<tmp<<std::endl;
@@ -679,8 +701,10 @@ void ToolChain::Remote(){
 
 void* ToolChain::InteractiveThread(void* arg){
 
-  zmq::context_t * context = static_cast<zmq::context_t*>(arg);
+  ToolChainargs* args=static_cast<ToolChainargs*>(arg);
+  //zmq::context_t * context = static_cast<zmq::context_t*>(arg);
 
+  zmq::context_t * context=args->context;
   zmq::socket_t Isend (*context, ZMQ_PAIR);
 
   std::stringstream socketstr;
@@ -701,10 +725,10 @@ void* ToolChain::InteractiveThread(void* arg){
 
     std::string tmp;
     std::cin>>tmp;
-    zmq::message_t message(256);
-    snprintf ((char *) message.data(), 256 , "%s" ,tmp.c_str()) ;
+    zmq::message_t message(tmp.length()+1);
+    snprintf ((char *) message.data(), tmp.length()+1 , "%s" ,tmp.c_str()) ;
     Isend.send(message);
-
+    *(args->msgflag)=true;
     if (tmp=="Quit")running=false;
   }
   //printf("quitting interactive threadd");
@@ -734,10 +758,18 @@ static  void *LogThread(void* arg){
 
 
 }
+
 */
 
 
 ToolChain::~ToolChain(){
+  
+  for (int i=0;i<m_tools.size();i++){
+    delete m_tools.at(i);
+    m_tools.at(i)=0;
+  }
+  
+  m_tools.clear();
   
   //  printf("%s \n","tdebug 1");
   delete m_data.Log;  
@@ -757,12 +789,15 @@ ToolChain::~ToolChain(){
   context=0;
   //printf("%s \n","tdebug 8");
   if(m_log_mode!="Off"){
-std::cout.rdbuf(bcout);
-//printf("%s \n","tdebug 9");
-  delete out;
-  //printf("%s \n","tdebug 10");
-  out=0;
-  //printf("%s \n","tdebug 11");
+    std::cout.rdbuf(bcout);
+    //printf("%s \n","tdebug 9");
+    delete out;
+    //printf("%s \n","tdebug 10");
+    out=0;
+    //printf("%s \n","tdebug 11");
   }  
+  
+  
+  
 }
 

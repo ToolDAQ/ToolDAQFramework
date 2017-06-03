@@ -11,6 +11,13 @@
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#define MULTICAST_ADDRESS "239.192.1.1"
+#define MULTICAST_PORT 5000
+#define KICK_TIME_SEC 30
+#define COMMAND_REPLY_WAIT 120000
+#define FILE_SEND_WAIT 120000
+#define FILE_SEND_PORT 24001
+
 int main(int argc, char** argv){
 
   //  if (argc!=3) return 1;
@@ -26,19 +33,18 @@ int main(int argc, char** argv){
   
   std::vector<Store*> RemoteServices;
 
-  std::string address("239.192.1.1");
-  std::stringstream tmp ("5000");
-
-  int port=5000;
+  //std::string address(MULTICAST_ADDRESS);
+  //  std::stringstream tmp ("5000");
+  // int port=5000;
   //  tmp>>port;
 
-  ServiceDiscovery SD(address,port,&context,30);
+  ServiceDiscovery SD(MULTICAST_ADDRESS,MULTICAST_PORT,&context,KICK_TIME_SEC);
 
   bool running=true;
 
   zmq::socket_t Ireceive (context, ZMQ_DEALER);
   Ireceive.connect("inproc://ServiceDiscovery");
-
+  
   while(running){
 
     std::cout<< " Please type \"List\" to find services. To send a command to a service type \"Command\" then ther service number followed by the command e.g. ( Command 2 Status). Use command \"?\" to list commands for that service. Type \"Quit\" to end"<<std::endl<<std::endl;
@@ -54,11 +60,12 @@ int main(int argc, char** argv){
 
     if (input.str()=="List"){
 
-      zmq::message_t send(256);
-      snprintf ((char *) send.data(), 256 , "%s" ,"All NULL") ;
+      zmq::message_t send(4);
+      snprintf ((char *) send.data(), 4 , "%s" ,"All") ;
 
+      
       Ireceive.send(send);
-
+      
       
       zmq::message_t receive;
       Ireceive.recv(&receive);
@@ -69,6 +76,7 @@ int main(int argc, char** argv){
 
      for(int i=0;i<RemoteServices.size();i++){
        delete RemoteServices.at(i);
+       RemoteServices.at(i)=0;
      }
      RemoteServices.clear();
 
@@ -81,18 +89,18 @@ int main(int argc, char** argv){
        Ireceive.recv(&servicem);
 
        std::istringstream ss(static_cast<char*>(servicem.data()));
-       service->JsonPaser(ss.str());
+       service->JsonParser(ss.str());
 
        RemoteServices.push_back(service);
 
      }
 
 
-      zmq::message_t tmp;
-      Ireceive.recv(&tmp);
+     //      zmq::message_t tmp;
+     // Ireceive.recv(&tmp);
  
       std::cout<<std::endl<<"-----------------------------------------------------------------------------------------------"<<std::endl;
-      std::cout<<" [Service number]    IP  ,   Service name  ,  Service status"<<std::endl;
+      std::cout<<" [Service number]    IP  ,   Service name  ,  Service status , Time"<<std::endl;
       std::cout<<"-----------------------------------------------------------------------------------------------"<<std::endl<<std::endl;;
 
       for(int i=0;i<RemoteServices.size();i++){
@@ -100,13 +108,15 @@ int main(int argc, char** argv){
 	std::string ip;
 	std::string service;
 	std::string status;
+	std::string time;
 	
 	//*(it->second)>> output;
 	ip=*((*(RemoteServices.at(i)))["ip"]);
 	service=*((*(RemoteServices.at(i)))["msg_value"]);
 	status=*((*(RemoteServices.at(i)))["status"]);
+	time=*((*(RemoteServices.at(i)))["msg_time"]);
 
-	std::cout<<"["<<i<<"]  "<<ip<<" , "<<service<<" , "<<status<<std::endl;
+	std::cout<<"["<<i<<"]  "<<ip<<" , "<<service<<" , "<<status<<" , "<<time<<std::endl;
     
       }
 
@@ -135,16 +145,13 @@ int main(int argc, char** argv){
 	if(ServiceNum<RemoteServices.size()){
 
 	zmq::socket_t ServiceSend (context, ZMQ_REQ);
-	int a=120000;
+	int a=COMMAND_REPLY_WAIT;
 	ServiceSend.setsockopt(ZMQ_RCVTIMEO, a);
 	ServiceSend.setsockopt(ZMQ_SNDTIMEO, a);
 
 	std::stringstream connection;
 	connection<<"tcp://"<<*((*(RemoteServices.at(ServiceNum)))["ip"])<<":"<<*((*(RemoteServices.at(ServiceNum)))["remote_port"]);
 	ServiceSend.connect(connection.str().c_str());
-
-
-	zmq::message_t send(256);
 
 
 	boost::posix_time::ptime t = boost::posix_time::microsec_clock::universal_time();
@@ -164,21 +171,22 @@ int main(int argc, char** argv){
 	
 	std::string tmp="";
 	bb>>tmp;
-	snprintf ((char *) send.data(), 256 , "%s" ,tmp.c_str()) ;
+	zmq::message_t send(tmp.length()+1);
+	snprintf ((char *) send.data(), tmp.length()+1 , "%s" ,tmp.c_str()) ;
 	
 	ServiceSend.send(send);
 	
-
+	
 	
 	/////////////////////////////////
 	if(Send=="File"){
 
 	  std::stringstream connection;
-	  connection<<"tcp://"<<*((*(RemoteServices.at(ServiceNum)))["ip"])<<":"<<24001;
+	  connection<<"tcp://"<<*((*(RemoteServices.at(ServiceNum)))["ip"])<<":"<<FILE_SEND_PORT;
 
 	   
 	  zmq::socket_t ftp (context, ZMQ_PUSH);
-	  int a=120000;
+	  int a=FILE_SEND_WAIT;
 	  ftp.setsockopt(ZMQ_RCVTIMEO, a);
 	  ftp.setsockopt(ZMQ_SNDTIMEO, a);
 	  ftp.connect(connection.str().c_str());
@@ -196,20 +204,19 @@ int main(int argc, char** argv){
 		  // memcpy(file.data(), line.c_str(), line.length());
 		  snprintf ((char *) file.data(), line.length()+1 , "%s" ,line.c_str()) ;
 		  //std::cout<<"sending part"<<std::endl;
-		  ftp.send(file,ZMQ_SNDMORE);
+		  if(!ftp.send(file,ZMQ_SNDMORE))break;
 		  //ftp.send(file);
 		  //std::cout<<"sendt part ="<<line.c_str()<<std::endl;
 		}
 	      myfile.close();
 	    }
 	  
-	  zmq::message_t end(256);
+	  zmq::message_t end(2);
 	  std::string tmp2="";
-	  snprintf ((char *) end.data(), 256 , "%s" ,tmp2.c_str()) ;
+	  snprintf ((char *) end.data(), 2 , "%s" ,tmp2.c_str()) ;
 	  //std::cout<<"sending end"<<std::endl;
 	  ftp.send(end,0);
 	  //std::cout<<"sent end"<<std::endl;
-	  
 	  
 	  
 	  
@@ -218,17 +225,18 @@ int main(int argc, char** argv){
 
 
         zmq::message_t receive;
-        ServiceSend.recv(&receive);
-        std::istringstream iss(static_cast<char*>(receive.data()));
-
-        std::string answer;
-        answer=iss.str();
-
-        Store rr;
-        rr.JsonPaser(answer);
-        if(*rr["msg_type"]=="Command Reply") std::cout<<std::endl<<*rr["msg_value"]<<std::endl<<std::endl;
-
-	
+        if(ServiceSend.recv(&receive)){
+	  std::istringstream iss(static_cast<char*>(receive.data()));
+	  
+	  std::string answer;
+	  answer=iss.str();
+	  
+	  Store rr;
+	  rr.JsonParser(answer);
+	  if(*rr["msg_type"]=="Command Reply") std::cout<<std::endl<<*rr["msg_value"]<<std::endl<<std::endl;
+	}
+	else std::cout<<std::endl<<"message timed out"<<std::endl; 
+	  
 	}
 	
 	else std::cout<< "Service number out of range"<<std::endl<<std::endl;
