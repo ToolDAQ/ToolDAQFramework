@@ -70,6 +70,17 @@ ToolChain::ToolChain(std::string configfile){
 
   }
 
+  if(Inline==-1){
+    bool StopLoop=false;
+    m_data.vars.Set("StopLoop",StopLoop);
+    Initialise();
+    while(!StopLoop){
+      Execute();
+      m_data.vars.Get("StopLoop",StopLoop);
+    }
+    Finalise();
+
+  }
 
   if(Inline>0){
     Initialise();

@@ -2,7 +2,7 @@
 ZMQLib= -L ../zeromq-4.0.7/lib -lzmq 
 ZMQInclude= -I ../zeromq-4.0.7/include/ 
 
-BoostLib= -L ../boost_1_60_0/install/lib -lboost_date_time
+BoostLib= -L ../boost_1_60_0/install/lib -lboost_date_time -lboost_serialization
 BoostInclude= -I ../boost_1_60_0/install/include/
 
 DataModelInclude =
@@ -18,8 +18,8 @@ all: lib/libMyTools.so lib/libToolChain.so lib/libStore.so include/Tool.h lib/li
 
 lib/libStore.so:
 
-	cp src/Store/Store.h include/
-	g++  -shared -fPIC -I inlcude src/Store/Store.cpp -o lib/libStore.so
+	cp src/Store/*.h include/
+	g++  -shared -fPIC -I include src/Store/*.cpp -o lib/libStore.so $(BoostLib) $(BoostInclude)
 
 
 include/Tool.h:
