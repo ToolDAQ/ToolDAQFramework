@@ -19,7 +19,7 @@ bool BoostStore::Initialise(std::string filename, int type){
 	if(m_typechecking)ia & m_type_info;
       }
       else if(m_format==2){
-       	
+	
 	entryfile=filename;
 	arch = new boost::archive::binary_iarchive(*file);
 	*arch & m_variables;
@@ -299,7 +299,6 @@ bool BoostStore::Close(){
 
    if(m_format==2){
      if(arch!=0){
-       
        delete arch; 
        arch=0;        
        file->close();      
@@ -335,9 +334,9 @@ bool BoostStore::GetHeader(){
       return true;
     }
     
-  else return false;
-
+    else return false;
+    
   }
-
+  
   else return false;
 }

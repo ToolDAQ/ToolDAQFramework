@@ -263,7 +263,7 @@ int ToolChain::Execute(int repeates){
 
     if(Inline){
     logmessage<<"********************************************************"<<std::endl<<"**** Executing toolchain "<<repeates<<" times ****"<<std::endl<<"********************************************************"<<std::endl;
-    m_data.Log->Log( logmessage.str(),1,m_verbose);
+    m_data.Log->Log( logmessage.str(),2,m_verbose);
     logmessage.str("");
     }
 
@@ -343,7 +343,7 @@ o execute (uncaught error)"<<std::endl;
     execounter++;
     if(Inline){
       logmessage<<"********************************************************"<<std::endl<<"**** Executed toolchain "<<repeates<<" times ****"<<std::endl<<"********************************************************"<<std::endl;
-      m_data.Log->Log( logmessage.str(),1,m_verbose);
+      m_data.Log->Log( logmessage.str(),2,m_verbose);
       logmessage.str("");
     }
   }
