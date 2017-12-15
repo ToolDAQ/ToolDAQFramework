@@ -15,6 +15,7 @@ addons:
     - libxpm-dev
     - libxft-dev
     - libxext-dev
+    - libbzip2-dev
 
 install: true
 

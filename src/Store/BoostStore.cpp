@@ -321,7 +321,7 @@ bool BoostStore::Close(){
      
      if(oarch!=0){
        outfilter->pop();
-       delete oarch;     
+       //delete oarch;     
        oarch=0;
        ofs->close();
        ofs=0;
