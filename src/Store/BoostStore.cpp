@@ -19,13 +19,18 @@ bool BoostStore::Initialise(std::string filename, int type){
 	if(m_typechecking)ia & m_type_info;
       }
       else if(m_format==2){
-	
 	entryfile=filename;
-	arch = new boost::archive::binary_iarchive(*file);
+	infilter=new boost::iostreams::filtering_stream<boost::iostreams::input>;	
+	infilter->push(boost::iostreams::gzip_decompressor());
+	infilter->push(*file);
+	arch = new boost::archive::binary_iarchive(*infilter);
+
 	*arch & m_variables;
-	if(m_typechecking) *arch & m_type_info;
+ 
+ 	if(m_typechecking) *arch & m_type_info;
+     
 	Get("TotalEntries",totalentries);
-	m_variables.clear();
+ 	m_variables.clear();
 	m_type_info.clear();
 	*arch & m_variables;
 	if(m_typechecking) *arch & m_type_info;
@@ -170,28 +175,35 @@ void BoostStore::Save(std::string filename){
   
   if(m_format!=2){
     std::ofstream ofs(filename.c_str());
-    
+    boost::iostreams::filtering_stream<boost::iostreams::output> filter;
+    filter.push(boost::iostreams::gzip_compressor());
+    filter.push(ofs);
+
     if(!m_format){
-      boost::archive::binary_oarchive oa(ofs);
+      boost::archive::binary_oarchive oa(filter);
       oa & m_variables;
       if(m_typechecking)  oa & m_type_info;
     }
     else{
-      boost::archive::text_oarchive oa(ofs);
+      boost::archive::text_oarchive oa(filter);
       oa & m_variables;
       if(m_typechecking)  oa & m_type_info;
     }
+    filter.pop();
     ofs.close();
   }
   
   else {
     if(oarch==0){
-      ofs=new std::ofstream(filename.c_str());
-      oarch=new boost::archive::binary_oarchive(*ofs);
+      ofs=new std::ofstream(filename.c_str());  
+      outfilter=new boost::iostreams::filtering_stream<boost::iostreams::output>;
+      outfilter->push(boost::iostreams::gzip_compressor());
+      outfilter->push(*ofs);
+      oarch=new boost::archive::binary_oarchive(*outfilter);
     }
-    
+  
     *oarch & m_variables;
-    
+ 
     if(m_typechecking)  *oarch & m_type_info;
 
   }
@@ -243,18 +255,20 @@ std::string BoostStore::Type(std::string key){
 bool BoostStore::GetEntry(unsigned long entry){
 
   if(entry<totalentries && m_format==2){
+
     if(entry==currententry) return true;
 
     else if(entry>currententry){
-     
+
       for(unsigned long i=currententry; i<entry; i++){
-	
+
 	m_variables.clear();
 	m_type_info.clear();
 	*arch & m_variables;
 	if(m_typechecking) *arch & m_type_info;
 	currententry=i+1;
-      }
+	     
+}
       return true;
       
     }
@@ -306,6 +320,7 @@ bool BoostStore::Close(){
      }
      
      if(oarch!=0){
+       outfilter->pop();
        delete oarch;     
        oarch=0;
        ofs->close();
@@ -325,12 +340,15 @@ bool BoostStore::GetHeader(){
     
     std::ifstream tmp(entryfile.c_str());
     if(tmp.is_open(), std::ios::binary){
-      boost::archive::binary_iarchive ia(tmp);
+      boost::iostreams::filtering_stream<boost::iostreams::input> filter;
+      filter.push(boost::iostreams::gzip_decompressor());
+      filter.push(tmp);
+      boost::archive::binary_iarchive ia(filter);
       m_variables.clear();
       m_type_info.clear();
       ia & m_variables;
       if(m_typechecking) ia & m_type_info;
-      
+    
       return true;
     }
     

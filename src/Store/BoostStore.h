@@ -22,7 +22,8 @@
 
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
-
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
 class BoostStore{
   
@@ -244,7 +245,10 @@ class BoostStore{
   std::ofstream *ofs;
   boost::archive::binary_iarchive* arch; 
   boost::archive::binary_oarchive* oarch;
-    
+  boost::iostreams::filtering_stream<boost::iostreams::output>* outfilter;
+  boost::iostreams::filtering_stream<boost::iostreams::input>* infilter;
+  std::stringstream test;    
+
   int m_format;
   bool m_typechecking;
   std::string m_archiveheader;
