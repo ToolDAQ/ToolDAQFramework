@@ -36,6 +36,7 @@ bool BoostStore::Initialise(std::string filename, int type){
 	if(m_typechecking) *arch & m_type_info;
 	currententry=0;
 	ofs=0;
+	reload=false;
       }
       
       if(m_format!=2){
@@ -253,35 +254,44 @@ std::string BoostStore::Type(std::string key){
 
 
 bool BoostStore::GetEntry(unsigned long entry){
-
+  
   if(entry<totalentries && m_format==2){
 
-    if(entry==currententry) return true;
-
+    if(entry==currententry && !reload)  return true;
+    
     else if(entry>currententry){
-
+      reload=false;
       for(unsigned long i=currententry; i<entry; i++){
-
+	
 	m_variables.clear();
 	m_type_info.clear();
 	*arch & m_variables;
 	if(m_typechecking) *arch & m_type_info;
 	currententry=i+1;
-	     
-}
+	
+      }
       return true;
       
     }
-    else if(entry<currententry){
+    else if(entry<currententry || reload){
+
+      reload=false;
       delete arch;
       arch=0;
       file->close();
       file=0;
-     
+      delete infilter;
+      infilter=0;
 
       file= new std::ifstream(entryfile.c_str());
+    
       if(file->is_open(), std::ios::binary){
-	arch = new boost::archive::binary_iarchive(*file);
+
+	infilter=new boost::iostreams::filtering_stream<boost::iostreams::input>;
+        infilter->push(boost::iostreams::gzip_decompressor());
+        infilter->push(*file);
+        arch = new boost::archive::binary_iarchive(*infilter);
+
 	m_variables.clear();
 	m_type_info.clear();
 	*arch & m_variables;
@@ -348,7 +358,7 @@ bool BoostStore::GetHeader(){
       m_type_info.clear();
       ia & m_variables;
       if(m_typechecking) ia & m_type_info;
-    
+      reload=true;
       return true;
     }
     

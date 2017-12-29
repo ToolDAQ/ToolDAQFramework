@@ -251,6 +251,7 @@ class BoostStore{
 
   int m_format;
   bool m_typechecking;
+  bool reload;
   std::string m_archiveheader;
   std::map<std::string,std::string> m_variables;
   std::map<std::string,std::string> m_type_info;
