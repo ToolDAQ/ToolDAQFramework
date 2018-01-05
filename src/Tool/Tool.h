@@ -13,6 +13,7 @@ class Tool{
   virtual bool Initialise(std::string configfile,DataModel &data)=0;
   virtual bool Execute()=0;
   virtual bool Finalise()=0;
+  virtual ~Tool(){};
   
  protected:
   
