@@ -107,12 +107,12 @@ void BoostStore::Delete(){
   
   m_variables.clear();
   m_type_info.clear();
-  for (std::map<std::string,void*>::iterator it=m_ptrs.begin(); it!=m_ptrs.end(); ++it){
+  // for (std::map<std::string,void*>::iterator it=m_ptrs.begin(); it!=m_ptrs.end(); ++it){
 
-      delete it->second;
-      it->second=0;
+  //  delete it->second;
+  //   it->second=0;
     
-  }
+  //}
   m_ptrs.clear();
 
   for (std::map<std::string,SerialisableObject*>::iterator it=m_Managedptrs.begin(); it!=m_Managedptrs.end(); ++it){
@@ -140,8 +140,8 @@ void BoostStore::Remove(std::string key){
   for (std::map<std::string,void*>::iterator it=m_ptrs.begin(); it!=m_ptrs.end(); ++it){
 
     if(it->first==key){
-      delete it->second;
-      it->second=0;
+      //   delete it->second;
+      //it->second=0;
       m_ptrs.erase(it);
       break;
     }
