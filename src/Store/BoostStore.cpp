@@ -327,6 +327,8 @@ bool BoostStore::Close(){
        arch=0;        
        file->close();      
        file=0;
+       delete infilter;
+       infilter=0;
      }
      
      if(oarch!=0){
@@ -335,6 +337,8 @@ bool BoostStore::Close(){
        oarch=0;
        ofs->close();
        ofs=0;
+       delete outfilter;
+       outfilter=0;
      }
      
      return true;

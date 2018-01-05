@@ -249,8 +249,8 @@ class BoostStore{
   boost::iostreams::filtering_stream<boost::iostreams::input>* infilter;
   std::stringstream test;    
 
-  int m_format;
   bool m_typechecking;
+  int m_format;
   bool reload;
   std::string m_archiveheader;
   std::map<std::string,std::string> m_variables;
