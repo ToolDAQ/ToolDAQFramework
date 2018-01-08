@@ -29,20 +29,25 @@ class BoostStore{
   
  public:
   
-  BoostStore(bool typechecking=true, int format=0): m_typechecking(typechecking),m_format(format) {findheader();oarch=0;arch=0;} // format 0=binary, 1=text, 2=multievent.
-  BoostStore(std::map<std::string,std::string> invariables):m_variables(invariables){findheader();oarch=0;arch=0;}
-  BoostStore(std::map<std::string,std::string> invariables, std::map<std::string,std::string> ininfo):m_variables(invariables), m_type_info(ininfo){findheader();oarch=0;arch=0;}
+ BoostStore(bool typechecking=true, int format=0): m_typechecking(typechecking),m_format(format) {findheader();oarch=0;arch=0;totalentries=0;
+    if(m_format==2){
+      Header = new BoostStore(typechecking,0);
+    }
+    
+  } // format 0=binary, 1=text, 2=multievent.
+ BoostStore(std::map<std::string,std::string> invariables):m_variables(invariables){findheader();oarch=0;arch=0;}
+ BoostStore(std::map<std::string,std::string> invariables, std::map<std::string,std::string> ininfo):m_variables(invariables), m_type_info(ininfo){findheader();oarch=0;arch=0;}
   bool Initialise(std::string filename, int type=0); //type 0=boost archive, config file 
   void JsonParser(std::string input); 
   void Print();
   void Delete();
   void Remove(std::string key);
-  void Save(std::string fimename);
+  void Save(std::string fimename="Output");
   std::string Type(std::string key);
   bool GetEntry(unsigned long entry);
-  bool GetHeader();
   bool Close();
   //  ~BoostStore();
+  BoostStore *Header;
 
     
   template<typename T> bool Get(std::string name,T &out){
@@ -241,17 +246,16 @@ class BoostStore{
   unsigned long currententry;
   unsigned long totalentries;
   std::string entryfile;
+  std::string outfile;
   std::ifstream *file;
   std::ofstream *ofs;
   boost::archive::binary_iarchive* arch; 
   boost::archive::binary_oarchive* oarch;
   boost::iostreams::filtering_stream<boost::iostreams::output>* outfilter;
-  boost::iostreams::filtering_stream<boost::iostreams::input>* infilter;
-  std::stringstream test;    
+  boost::iostreams::filtering_stream<boost::iostreams::input>* infilter;    
 
   bool m_typechecking;
   int m_format;
-  bool reload;
   std::string m_archiveheader;
   std::map<std::string,std::string> m_variables;
   std::map<std::string,std::string> m_type_info;

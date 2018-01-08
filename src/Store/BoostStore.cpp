@@ -5,16 +5,19 @@ bool BoostStore::Initialise(std::string filename, int type){
 
   file= new std::ifstream(filename.c_str());
   //  std::ifstream test(filename.c_str());
+  boost::iostreams::filtering_stream<boost::iostreams::input> filter;
+  filter.push(boost::iostreams::gzip_decompressor());
+  filter.push(*file);
   
   if(type==0){
     if(file->is_open(), std::ios::binary){
       if(!m_format){
-	boost::archive::binary_iarchive ia(*file);
+	boost::archive::binary_iarchive ia(filter);
 	ia & m_variables;
 	if(m_typechecking)ia & m_type_info;
       }
       else if(m_format==1){
-	boost::archive::text_iarchive ia(*file);
+	boost::archive::text_iarchive ia(filter);
 	ia & m_variables;
 	if(m_typechecking)ia & m_type_info;
       }
@@ -25,18 +28,17 @@ bool BoostStore::Initialise(std::string filename, int type){
 	infilter->push(*file);
 	arch = new boost::archive::binary_iarchive(*infilter);
 
-	*arch & m_variables;
- 
- 	if(m_typechecking) *arch & m_type_info;
-     
-	Get("TotalEntries",totalentries);
+	*arch & Header->m_variables;
+       
+	if(m_typechecking) *arch & Header->m_type_info;
+
+	Header->Get("TotalEntries",totalentries);
  	m_variables.clear();
 	m_type_info.clear();
 	*arch & m_variables;
 	if(m_typechecking) *arch & m_type_info;
 	currententry=0;
 	ofs=0;
-	reload=false;
       }
       
       if(m_format!=2){
@@ -179,7 +181,9 @@ void BoostStore::Save(std::string filename){
     boost::iostreams::filtering_stream<boost::iostreams::output> filter;
     filter.push(boost::iostreams::gzip_compressor());
     filter.push(ofs);
-
+    Set("m_format",m_format);
+    Set("m_typechecking",m_typechecking);
+    
     if(!m_format){
       boost::archive::binary_oarchive oa(filter);
       oa & m_variables;
@@ -196,13 +200,22 @@ void BoostStore::Save(std::string filename){
   
   else {
     if(oarch==0){
-      ofs=new std::ofstream(filename.c_str());  
+      outfile=filename;
+      std::stringstream tmp;
+      tmp<<filename<<".data";
+      ofs=new std::ofstream(tmp.str().c_str());  
       outfilter=new boost::iostreams::filtering_stream<boost::iostreams::output>;
       outfilter->push(boost::iostreams::gzip_compressor());
-      outfilter->push(*ofs);
+      outfilter->push(tmp);
       oarch=new boost::archive::binary_oarchive(*outfilter);
+      *oarch & m_variables;
+      if(m_typechecking)  *oarch & m_type_info;
+      outfilter->pop();
+      outfilter->push(*ofs);
     }
   
+    totalentries++;
+
     *oarch & m_variables;
  
     if(m_typechecking)  *oarch & m_type_info;
@@ -257,10 +270,10 @@ bool BoostStore::GetEntry(unsigned long entry){
   
   if(entry<totalentries && m_format==2){
 
-    if(entry==currententry && !reload)  return true;
+    if(entry==currententry)  return true;
     
     else if(entry>currententry){
-      reload=false;
+
       for(unsigned long i=currententry; i<entry; i++){
 	
 	m_variables.clear();
@@ -273,9 +286,8 @@ bool BoostStore::GetEntry(unsigned long entry){
       return true;
       
     }
-    else if(entry<currententry || reload){
+    else if(entry<currententry){
 
-      reload=false;
       delete arch;
       arch=0;
       file->close();
@@ -295,7 +307,7 @@ bool BoostStore::GetEntry(unsigned long entry){
 	m_variables.clear();
 	m_type_info.clear();
 	*arch & m_variables;
-	if(m_typechecking) *arch & m_type_info;	
+	//	if(m_typechecking) *arch & m_type_info;	
 	Get("TotalEntries",totalentries);
 	m_variables.clear();
 	m_type_info.clear();
@@ -332,43 +344,44 @@ bool BoostStore::Close(){
      }
      
      if(oarch!=0){
-       outfilter->pop();
-       //delete oarch;     
+       delete oarch;     
+       outfilter->pop();       
        oarch=0;
        ofs->close();
        ofs=0;
        delete outfilter;
-       outfilter=0;
+       outfilter=0;       
+
+       std::ofstream out(outfile.c_str());
+       boost::iostreams::filtering_stream<boost::iostreams::output> filter;
+       filter.push(boost::iostreams::gzip_compressor());
+       filter.push(out);
+       boost::archive::binary_oarchive* oa =new boost::archive::binary_oarchive(filter);
+       Header->Set("TotalEntries",totalentries);
+       Header->Set("m_format",m_format);
+       Header->Set("m_typechecking",m_typechecking);
+       *oa & Header->m_variables;
+       if(m_typechecking)  *oa & Header->m_type_info;
+       delete oa;
+       filter.pop();
+       
+       std::stringstream tmp;
+       tmp<<outfile<<".data";
+       std::ifstream data(tmp.str().c_str());
+       out<<data.rdbuf();
+       out.close();
+       data.close();
+       tmp.str("");
+       tmp<< "rm "<<outfile<<".data";
+       system(tmp.str().c_str());
+       
      }
      
      return true;
+     
    }
+   
    else return false;
    
    
-}
-
-bool BoostStore::GetHeader(){
-  
-  if(m_format==2){
-    
-    std::ifstream tmp(entryfile.c_str());
-    if(tmp.is_open(), std::ios::binary){
-      boost::iostreams::filtering_stream<boost::iostreams::input> filter;
-      filter.push(boost::iostreams::gzip_decompressor());
-      filter.push(tmp);
-      boost::archive::binary_iarchive ia(filter);
-      m_variables.clear();
-      m_type_info.clear();
-      ia & m_variables;
-      if(m_typechecking) ia & m_type_info;
-      reload=true;
-      return true;
-    }
-    
-    else return false;
-    
-  }
-  
-  else return false;
 }
