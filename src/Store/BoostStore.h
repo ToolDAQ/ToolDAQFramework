@@ -204,7 +204,15 @@ class BoostStore{
   template<typename T> void SetManagedPtr(std::string name,T *in, bool persist=true){
     std::stringstream stream;
 
-    m_Managedptrs[name]=in;
+    if(m_Managedptrs[name]!=in){
+      if(m_Managedptrs.count(name)>0){
+	delete m_Managedptrs[name];
+	m_Managedptrs[name]=0;	
+      }
+      m_Managedptrs[name]=in;
+    }
+
+
     if(persist){
       if(m_format==0 ||m_format==2){
 	boost::archive::binary_oarchive oa(stream);
