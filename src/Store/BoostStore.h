@@ -14,6 +14,7 @@
 #include <sstream>
 #include <typeinfo>
 #include <SerialisableObject.h>
+#include <PointerWrapper.h>
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -46,10 +47,10 @@ class BoostStore{
   std::string Type(std::string key);
   bool GetEntry(unsigned long entry);
   bool Close();
-  //  ~BoostStore();
+  ~BoostStore();
   BoostStore *Header;
-
-    
+  
+  
   template<typename T> bool Get(std::string name,T &out){
     
     if(m_variables.count(name)>0){
@@ -78,68 +79,36 @@ class BoostStore{
   }
 
 
-  template<typename T> bool GetPtr(std::string name,T* &out){
-    
+  template<typename T> bool Get(std::string name,T* &out){  
+
     if(m_variables.count(name)>0){
       if(m_type_info[name]==typeid(T).name() || !m_typechecking){
-	if(m_ptrs[name]==0){
+	if(m_ptrs.count(name)==0){
 	  
-	  m_ptrs[name]=new T;
+	  T* tmp=new T;
+	  m_ptrs[name]=new PointerWrapper<T>(tmp);
 	  std::stringstream stream(m_variables[name]);
 	  stream.str(m_archiveheader+stream.str());
 	  
-	  if(m_format==0||m_format==2){
-      	    
-	    boost::archive::binary_iarchive ia(stream);	    
-	    ia & *(static_cast<T*>(m_ptrs[name]));
+	  
+	  if(m_format==0 || m_format==2){
+	    
+	    boost::archive::binary_iarchive ia(stream);
+	    ia & *tmp;
 	    
 	  }
 	  else{
 	    boost::archive::text_iarchive ia(stream);
-	    ia & *(static_cast<T*>(m_ptrs[name]));
+	    ia & *tmp;
 	  }
-	  
-	}	
-		
-	out=static_cast<T*>(m_ptrs[name]);
+	}
+	
+	
+	PointerWrapper<T>* tmp=static_cast<PointerWrapper<T>* >(m_ptrs[name]); 
+	out=tmp->pointer;
+	
 	return true;
 	
-      }
-      else return false;
-      
-    }
-    
-    else return false;
-    
-  }
-
-    
-  template<typename T> bool GetManagedPtr(std::string name,T* &out){
-
-    if(m_variables.count(name)>0){
-      if(m_type_info[name]==typeid(T).name() || !m_typechecking){
-	if(m_Managedptrs[name]==0){
-
-	  m_Managedptrs[name]=new T;
-	  std::stringstream stream(m_variables[name]);
-	  stream.str(m_archiveheader+stream.str());
-
-	  if(m_format==0 || m_format==2){
-
-	    boost::archive::binary_iarchive ia(stream);
-	    ia & *(static_cast<T*>(m_Managedptrs[name]));
-
-	  }
-	  else{
-	    boost::archive::text_iarchive ia(stream);
-	    ia & *(static_cast<T*>(m_Managedptrs[name]));
-	  }
-
-	}
-
-	out=static_cast<T*>(m_Managedptrs[name]);
-	return true;
-
       }
       else return false;
 
@@ -179,40 +148,25 @@ class BoostStore{
   }
   
 
-  template<typename T> void SetPtr(std::string name,T *in,bool persist=true){
+  template<typename T> void Set(std::string name,T* in, bool persist=true){
+    
     std::stringstream stream;
     
-    m_ptrs[name]=in;
-    if (persist){
-      if(m_format==0 ||m_format==2 ){
-	boost::archive::binary_oarchive oa(stream);
-	oa & *in;
-	stream.str(stream.str().replace(0,40,""));
-      }
-      else{
-	boost::archive::text_oarchive oa(stream);
-	oa & *in;
-	stream.str(stream.str().replace(0,28,""));
-    }
+    if(m_ptrs.count(name)>0){
+      PointerWrapper<T> *tmp =  static_cast<PointerWrapper<T> *>(m_ptrs[name]);
       
       
-      m_variables[name]=stream.str();
-      if(m_typechecking) m_type_info[name]=typeid(*in).name();
-    }
-  }
-
-  template<typename T> void SetManagedPtr(std::string name,T *in, bool persist=true){
-    std::stringstream stream;
-
-    if(m_Managedptrs[name]!=in){
-      if(m_Managedptrs.count(name)>0){
-	delete m_Managedptrs[name];
-	m_Managedptrs[name]=0;	
+      if(tmp->pointer!=in){
+	delete m_ptrs[name];
+	m_ptrs[name]=0;	
+	
+	m_ptrs[name]= new PointerWrapper<T>(in);
       }
-      m_Managedptrs[name]=in;
     }
 
-
+    else if(m_ptrs.count(name)==0)  m_ptrs[name]= new PointerWrapper<T>(in);
+    
+    
     if(persist){
       if(m_format==0 ||m_format==2){
 	boost::archive::binary_oarchive oa(stream);
@@ -268,8 +222,7 @@ class BoostStore{
   std::map<std::string,std::string> m_variables;
   std::map<std::string,std::string> m_type_info;
   
-  std::map<std::string,void*>m_ptrs;
-  std::map<std::string,SerialisableObject*>m_Managedptrs;
+  std::map<std::string,PointerWrapperBase*> m_ptrs;
   
   friend class boost::serialization::access;
   
