@@ -16,11 +16,11 @@ class SerialisableObject{
   
   virtual bool Print()=0;
   virtual ~SerialisableObject(){};
+  bool serialise;
   
  protected:
   
   std::string type;
-  bool serialise;
   std::string version;
   
   template<class Archive> void serialize(Archive & ar, const unsigned int version){  
