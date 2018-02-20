@@ -94,11 +94,13 @@ bool BoostStore::Initialise(std::string filename, int type){
 }
 
 
-void BoostStore::Print(){
+void BoostStore::Print(bool values){
 
   for (std::map<std::string,std::string>::iterator it=m_variables.begin(); it!=m_variables.end(); ++it){
    
-    std::cout<< it->first << " => " << it->second <<" : "<<m_type_info[it->first]<<std::endl;
+    std::cout<< it->first << " => ";
+    if(values) std::cout << it->second <<" :";
+    std::cout<<" "<<m_type_info[it->first]<<std::endl;
 
   }
 

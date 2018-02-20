@@ -40,7 +40,7 @@ class BoostStore{
  BoostStore(std::map<std::string,std::string> invariables, std::map<std::string,std::string> ininfo):m_variables(invariables), m_type_info(ininfo){findheader();oarch=0;arch=0;}
   bool Initialise(std::string filename, int type=0); //type 0=boost archive, config file 
   void JsonParser(std::string input); 
-  void Print();
+  void Print(bool values=true);
   void Delete();
   void Remove(std::string key);
   void Save(std::string fimename="Output");
