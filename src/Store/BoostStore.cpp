@@ -5,12 +5,14 @@ bool BoostStore::Initialise(std::string filename, int type){
 
   file= new std::ifstream(filename.c_str());
   //  std::ifstream test(filename.c_str());
-  boost::iostreams::filtering_stream<boost::iostreams::input> filter;
-  filter.push(boost::iostreams::gzip_decompressor());
-  filter.push(*file);
-  
   if(type==0){
-    if(file->is_open(), std::ios::binary){
+    // if(file->is_open(), std::ios::binary){
+    if(file->is_open()){     
+      std::cout<<"debug 1"<<std::endl;
+      boost::iostreams::filtering_stream<boost::iostreams::input> filter;
+      filter.push(boost::iostreams::gzip_decompressor());
+      filter.push(*file);
+      
       if(!m_format){
 	boost::archive::binary_iarchive ia(filter);
 	ia & m_variables;
@@ -27,11 +29,11 @@ bool BoostStore::Initialise(std::string filename, int type){
 	infilter->push(boost::iostreams::gzip_decompressor());
 	infilter->push(*file);
 	arch = new boost::archive::binary_iarchive(*infilter);
-
+	
 	*arch & Header->m_variables;
        
 	if(m_typechecking) *arch & Header->m_type_info;
-
+	
 	Header->Get("TotalEntries",totalentries);
  	m_variables.clear();
 	m_type_info.clear();
@@ -48,10 +50,14 @@ bool BoostStore::Initialise(std::string filename, int type){
       }
       return true;
     }
-    else return false;
+    else{
+      std::cout<<"Error Bad Filename: Cannot open "<<filename<<std::endl;   
+      return false;
+    }
+    
   }
   
-	  
+  
   
   else{
     std::string line;
@@ -87,7 +93,10 @@ bool BoostStore::Initialise(std::string filename, int type){
       return true;
     }
     
-    else return false;
+    else{
+      std::cout<<"Error Bad Filename: Cannot open "<<filename<<std::endl;
+      return false;
+    }
   }
   
   
