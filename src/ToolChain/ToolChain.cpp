@@ -168,8 +168,13 @@ void ToolChain::Add(std::string name,Tool *tool,std::string configfile){
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
     
-    
   }
+  else{
+    logmessage<<"WARNING!!! Tool='"<<name<<"' Does Not Exist in factory!!! "<<std::endl;
+    m_data.Log->Log(logmessage.str(),0,m_verbose);
+    logmessage.str("");
+  }
+
 }
 
 
