@@ -155,7 +155,7 @@ void ToolChain::Init(){
 void ToolChain::Add(std::string name,Tool *tool,std::string configfile){
   if(tool!=0){
     // if(m_verbose)*(m_data.Log)<<"Adding Tool=\""<<name<<"\" tool chain"<<std::endl;
-    logmessage<<"Adding Tool='"<<name<<"' tool chain";
+    logmessage<<"Adding Tool='"<<name<<"' to ToolChain";
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
     
