@@ -332,6 +332,7 @@ bool BoostStore::GetEntry(unsigned long entry){
   
 }	  
 
+
 bool BoostStore::Close(){
 
    if(m_format==2){
@@ -386,6 +387,14 @@ bool BoostStore::Close(){
    
    
 }
+
+bool BoostStore::Has(std::string key){
+
+  if(m_variables.count(key)>0) return true;
+  else return false;
+
+}
+
 
 BoostStore::~BoostStore() {
 

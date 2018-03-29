@@ -47,6 +47,7 @@ class BoostStore{
   std::string Type(std::string key);
   bool GetEntry(unsigned long entry);
   bool Close();
+  bool Has(std::string key);
   ~BoostStore();
   BoostStore *Header;
   
