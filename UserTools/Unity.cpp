@@ -1,3 +1,3 @@
-#include "DummyTool.cpp"
-#include "Logger.cpp"
-#include "ServiceAdd.cpp"
+#include "DummyTool/DummyTool.cpp"
+#include "Logger/Logger.cpp"
+#include "ServiceAdd/ServiceAdd.cpp"

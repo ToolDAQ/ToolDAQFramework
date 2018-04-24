@@ -19,7 +19,7 @@ service_publish_sec 5
 service_kick_sec 60
 
 ##### Tools To Add #####
-Tools_File configfiles/LoggerTools
+Tools_File configfiles/Logger/ToolsConfig
 
 ##### Run Type #####
 Inline 0
