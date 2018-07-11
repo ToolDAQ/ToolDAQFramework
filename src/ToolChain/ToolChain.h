@@ -49,7 +49,9 @@ class ToolChain{
 
   void Interactive();
   void Remote(int portnum, std::string SD_address="239.192.1.1", int SD_port=5000);
-   
+
+  DataModel m_data;   
+
 private:
 
   void Init();
@@ -79,7 +81,7 @@ private:
   std::vector<Tool*> m_tools;
   std::vector<std::string> m_toolnames;
   std::vector<std::string> m_configfiles;
-  DataModel m_data;
+  //DataModel m_data;
   std::streambuf  *bcout;
   std::ostream *out;
   
