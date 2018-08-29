@@ -112,6 +112,13 @@ void BoostStore::Print(bool values){
     std::cout<<" "<<m_type_info[it->first]<<std::endl;
 
   }
+  for (std::map<std::string,PointerWrapperBase*>::iterator it=m_ptrs.begin(); it!=m_ptrs.end(); ++it){
+    if(m_variables.count(it->first)==0){
+      std::cout<< it->first << " => ";
+      if(values) std::cout << it->second <<" :";
+      std::cout<<" "<<m_type_info[it->first]<<std::endl;
+   }
+ }
 
 }
 

@@ -82,7 +82,7 @@ class BoostStore{
 
   template<typename T> bool Get(std::string name,T* &out){  
 
-    if(m_variables.count(name)>0){
+    if(m_variables.count(name)>0 || m_ptrs.count(name)>0){
       if(m_type_info[name]==typeid(T).name() || !m_typechecking){
 	if(m_ptrs.count(name)==0){
 	  
@@ -182,8 +182,8 @@ class BoostStore{
       
       
       m_variables[name]=stream.str();
-      if(m_typechecking) m_type_info[name]=typeid(*in).name();
     }
+    if(m_typechecking) m_type_info[name]=typeid(*in).name();
   }
   
   
