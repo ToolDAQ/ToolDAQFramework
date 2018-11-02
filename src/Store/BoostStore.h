@@ -85,8 +85,8 @@ class BoostStore{
 
   template<typename T> bool Get(std::string name,T* &out){  
 
-    if(m_variables.count(name)>0){
-      if(m_type_info[name]==typeid(T).name() || !m_typechecking){
+    if(m_variables.count(name)>0 || m_ptrs.count(name)>0){
+      if((m_type_info[name]==typeid(T).name() || !m_typechecking ) || (m_ptrs.count(name)>0 && m_variables.count(name)==0)){
 	if(m_ptrs.count(name)==0){
 	  
 	  T* tmp=new T;
