@@ -15,6 +15,7 @@
 #include <typeinfo>
 #include <SerialisableObject.h>
 #include <PointerWrapper.h>
+#include <stdio.h>
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -25,6 +26,8 @@
 #include <boost/serialization/map.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
+#include <ctime>
+#include <stdlib.h> 
 
 class BoostStore{
   
@@ -224,6 +227,7 @@ class BoostStore{
   std::map<std::string,std::string> m_type_info;
   
   std::map<std::string,PointerWrapperBase*> m_ptrs;
+  std::string tmpfile;
   
   friend class boost::serialization::access;
   
@@ -245,8 +249,36 @@ class BoostStore{
   template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
-      ar & m_variables;
-      if(m_typechecking)    ar & m_type_info;
+      if(m_format!=2){
+	ar & m_variables;
+	if(m_typechecking)    ar & m_type_info;
+      }
+      else{
+	if (oarch!=0){
+	  Close();
+	  std::ifstream tmp(outfile.c_str());
+	  std::stringstream tmp2;
+	  tmp2<<tmp.rdbuf();
+	  std::string tmp3(tmp2.str());
+	  ar & tmp3;
+	  tmp.close();
+	  remove (outfile.c_str());
+	}
+	else{
+	  std::stringstream out;
+	  out<<"/tmp/"<<time(0)<<(rand() % 999999999);
+	  tmpfile=out.str();
+	  std::ofstream tmp(tmpfile.c_str());
+	  std::string tmp2;
+	  ar & tmp2;
+	  std::stringstream tmp3(tmp2);
+	  tmp<<tmp2;
+	  tmp.close();
+	  m_format=2;
+	  Initialise(tmpfile.c_str(),0);
+	}
+      
+      }
       
     }
   

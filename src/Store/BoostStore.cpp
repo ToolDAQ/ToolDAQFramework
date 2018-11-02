@@ -8,7 +8,6 @@ bool BoostStore::Initialise(std::string filename, int type){
   if(type==0){
     // if(file->is_open(), std::ios::binary){
     if(file->is_open()){     
-      std::cout<<"debug 1"<<std::endl;
       boost::iostreams::filtering_stream<boost::iostreams::input> filter;
       filter.push(boost::iostreams::gzip_decompressor());
       filter.push(*file);
@@ -397,7 +396,7 @@ bool BoostStore::Has(std::string key){
 
 
 BoostStore::~BoostStore() {
-
   Delete();
+  remove(tmpfile.c_str());
 
 }
