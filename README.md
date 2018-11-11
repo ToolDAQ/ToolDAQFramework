@@ -1,6 +1,6 @@
 # ToolDAQ Framework
 
-ToolDAQ is an open source general DAQ FrameWork, with built in service discovery.
+ToolDAQ is an open source general modular DAQ FrameWork, with built in service discovery.
 
 ****************************
 #Concept
