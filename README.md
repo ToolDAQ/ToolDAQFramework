@@ -16,3 +16,5 @@ For more information consult the ToolDAQ doc.pdf
 
 https://github.com/ToolDAQ/ToolDAQFramework/blob/master/ToolDAQ%20doc.pdf
 
+
+Copyright (c) 2016 Benjamin Richards
