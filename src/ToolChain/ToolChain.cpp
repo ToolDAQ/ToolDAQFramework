@@ -24,7 +24,7 @@ ToolChain::ToolChain(std::string configfile){
   config.Get("IO_Threads",IO_Threads);
  
   
-  Init();
+  Init(IO_Threads);
 
   Inline=0;
   interactive=false;
@@ -100,7 +100,7 @@ ToolChain::ToolChain(std::string configfile){
   //printf("%s \n","finnished constructor");
 }
 
-ToolChain::ToolChain(int verbose, int errorlevel, std::string service, std::string logmode,std::string log_local_path, std::string log_service, int log_port, int pub_sec, int kick_sec){
+ToolChain::ToolChain(int verbose, int errorlevel, std::string service, std::string logmode,std::string log_local_path, std::string log_service, int log_port, int pub_sec, int kick_sec,unsigned int IO_Threads){
 
   m_verbose=verbose;
   m_errorlevel=errorlevel;
@@ -112,7 +112,7 @@ ToolChain::ToolChain(int verbose, int errorlevel, std::string service, std::stri
   m_pub_sec=pub_sec;
   m_kick_sec=kick_sec;
 
-  Init();
+  Init(IO_Threads);
 
   
 }
