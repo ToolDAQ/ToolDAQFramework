@@ -54,7 +54,7 @@ class ToolChain{
 
 private:
 
-  void Init();
+  void Init(unisgned int IO_Threads);
 
   static  void *InteractiveThread(void* arg);
   std::string ExecuteCommand(std::string connand);

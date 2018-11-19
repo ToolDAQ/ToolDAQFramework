@@ -19,6 +19,9 @@ ToolChain::ToolChain(std::string configfile){
   config.Get("log_port",m_log_port);
   config.Get("service_publish_sec",m_pub_sec);
   config.Get("service_kick_sec",m_kick_sec);
+
+  unsigned int IO_Threads=1;
+  config.Get("IO_Threads",IO_Threads);
  
   
   Init();
@@ -114,9 +117,9 @@ ToolChain::ToolChain(int verbose, int errorlevel, std::string service, std::stri
   
 }
 
-void ToolChain::Init(){
+void ToolChain::Init(unsigned int IO_Threads){
 
-  context=new zmq::context_t(5);
+  context=new zmq::context_t(IO_Threads);
   m_data.context=context;
 
   m_UUID = boost::uuids::random_generator()();

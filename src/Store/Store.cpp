@@ -23,6 +23,7 @@ void Store::Initialise(std::string filename){
       
     }
   }
+  else std::cout<<"WARNING!!!: Config file "<<filename<<" does not exist no config loaded"<<std::endl;
   
   file.close();
   
