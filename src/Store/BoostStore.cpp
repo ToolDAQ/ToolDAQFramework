@@ -374,6 +374,7 @@ bool BoostStore::Close(){
        delete oa;
        filter.pop();
        
+       
        std::stringstream tmp;
        tmp<<outfile<<".data";
        std::ifstream data(tmp.str().c_str());
@@ -382,7 +383,8 @@ bool BoostStore::Close(){
        data.close();
        tmp.str("");
        tmp<< "rm "<<outfile<<".data";
-       system(tmp.str().c_str());
+       remove(tmp.str().c_str());
+       //system(tmp.str().c_str());
        
      }
      
