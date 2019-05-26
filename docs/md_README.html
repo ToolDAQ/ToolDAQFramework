@@ -38,6 +38,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li class="current"><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -61,7 +63,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -80,9 +82,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <hr/>
 <p> #Concept </p>
 <hr/>
-<p>The main executable creates a ToolChain which is an object that holds Tools. Tools are added to the ToolChain and then the ToolChain can be told to Initialise Execute and Finalise each tool in the chain.</p>
-<p>The ToolChain also holds a uesr defined DataModel which each tool has access too and can read ,update and modify. This is the method by which data is passed between Tools.</p>
-<p>User Tools can be generated for use in the tool chain by incuding a Tool header. This can be done manually or by use of the newTool.sh script.</p>
+<p>The main executable creates a <a class="el" href="classToolChain.html">ToolChain</a> which is an object that holds Tools. Tools are added to the <a class="el" href="classToolChain.html">ToolChain</a> and then the <a class="el" href="classToolChain.html">ToolChain</a> can be told to Initialise Execute and Finalise each tool in the chain.</p>
+<p>The <a class="el" href="classToolChain.html">ToolChain</a> also holds a uesr defined <a class="el" href="classDataModel.html">DataModel</a> which each tool has access too and can read ,update and modify. This is the method by which data is passed between Tools.</p>
+<p>User Tools can be generated for use in the tool chain by incuding a <a class="el" href="classTool.html">Tool</a> header. This can be done manually or by use of the newTool.sh script.</p>
 <p>For more information consult the ToolDAQ doc.pdf</p>
 <p><a href="https://github.com/ToolDAQ/ToolDAQFramework/blob/master/ToolDAQ%20doc.pdf">https://github.com/ToolDAQ/ToolDAQFramework/blob/master/ToolDAQ%20doc.pdf</a></p>
 <p>Copyright (c) 2016 Benjamin Richards </p>
