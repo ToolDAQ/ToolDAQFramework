@@ -63,6 +63,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
       <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
+      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -70,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -88,20 +89,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">DataModel Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="DataModel_8h_source.html">DataModel.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a4baac5fe364a7a23762d70d2c2216486"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4baac5fe364a7a23762d70d2c2216486"></a>
-<a class="el" href="classStore.html">Store</a>&#160;</td><td class="memItemRight" valign="bottom"><b>vars</b></td></tr>
+<a class="el" href="classStore.html">Store</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#a4baac5fe364a7a23762d70d2c2216486">vars</a></td></tr>
+<tr class="memdesc:a4baac5fe364a7a23762d70d2c2216486"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple constructor. <br/></td></tr>
 <tr class="separator:a4baac5fe364a7a23762d70d2c2216486"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa777da4c632e4659ee5b1447ad513458"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa777da4c632e4659ee5b1447ad513458"></a>
-<a class="el" href="classLogging.html">Logging</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>Log</b></td></tr>
+<a class="el" href="classLogging.html">Logging</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#aa777da4c632e4659ee5b1447ad513458">Log</a></td></tr>
+<tr class="memdesc:aa777da4c632e4659ee5b1447ad513458"><td class="mdescLeft">&#160;</td><td class="mdescRight">This store can be used for any variables It is inefficent ascii mased storage. <br/></td></tr>
 <tr class="separator:aa777da4c632e4659ee5b1447ad513458"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c6dfd692e50f90e55338970ea7f8d61"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c6dfd692e50f90e55338970ea7f8d61"></a>
-zmq::context_t *&#160;</td><td class="memItemRight" valign="bottom"><b>context</b></td></tr>
+zmq::context_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#a2c6dfd692e50f90e55338970ea7f8d61">context</a></td></tr>
+<tr class="memdesc:a2c6dfd692e50f90e55338970ea7f8d61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log class pointer for use in tools, it can be used to send messages which can have multiple error levels and destination end points. <br/></td></tr>
 <tr class="separator:a2c6dfd692e50f90e55338970ea7f8d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>This class Is a transient data model class for your Tools within the <a class="el" href="classToolChain.html">ToolChain</a>. If Tools need to comunicate they pass all data objects through the data model. There fore inter tool data objects should be deffined in this class.</p>
+<dl class="section author"><dt>Author</dt><dd>(last to touch it) </dd></dl>
+<dl class="section rcs"><dt>Author:</dt><dd>B.Richards </dd></dl>
+<dl class="section date"><dt>Date</dt><dd></dd></dl>
+<dl class="section rcs"><dt>Date:</dt><dd>2019/05/26 18:34:00 </dd></dl>
+<p>Contact: <a href="#" onclick="location.href='mai'+'lto:'+'b.r'+'ic'+'har'+'ds'+'@qm'+'ul'+'.ac'+'.u'+'k'; return false;">b.ric<span style="display: none;">.nosp@m.</span>hard<span style="display: none;">.nosp@m.</span>s@qmu<span style="display: none;">.nosp@m.</span>l.ac<span style="display: none;">.nosp@m.</span>.uk</a> </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>DataModel/<a class="el" href="DataModel_8h_source.html">DataModel.h</a></li>
 <li>DataModel/DataModel.cpp</li>
 </ul>

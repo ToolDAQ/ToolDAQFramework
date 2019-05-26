@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -108,7 +108,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <a class="code" href="classStore.html">Store</a> m_variables;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <a class="code" href="classDataModel.html">DataModel</a> *m_data;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;  <span class="keywordtype">void</span> Log(T message, <span class="keywordtype">int</span> messagelevel=1, <span class="keywordtype">int</span> verbosity=1){m_data-&gt;Log-&gt;Log(message,messagelevel,verbosity);}</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;  <span class="keywordtype">void</span> Log(T message, <span class="keywordtype">int</span> messagelevel=1, <span class="keywordtype">int</span> verbosity=1){m_data-&gt;<a class="code" href="classDataModel.html#aa777da4c632e4659ee5b1447ad513458">Log</a>-&gt;Log(message,messagelevel,verbosity);}</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  </div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  </div>
@@ -119,9 +119,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;};</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classDataModel_html_aa777da4c632e4659ee5b1447ad513458"><div class="ttname"><a href="classDataModel.html#aa777da4c632e4659ee5b1447ad513458">DataModel::Log</a></div><div class="ttdeci">Logging * Log</div><div class="ttdoc">This store can be used for any variables It is inefficent ascii mased storage. </div><div class="ttdef"><b>Definition:</b> DataModel.h:43</div></div>
 <div class="ttc" id="classTool_html"><div class="ttname"><a href="classTool.html">Tool</a></div><div class="ttdef"><b>Definition:</b> Tool.h:9</div></div>
 <div class="ttc" id="classStore_html"><div class="ttname"><a href="classStore.html">Store</a></div><div class="ttdef"><b>Definition:</b> Store.h:19</div></div>
-<div class="ttc" id="classDataModel_html"><div class="ttname"><a href="classDataModel.html">DataModel</a></div><div class="ttdef"><b>Definition:</b> DataModel.h:15</div></div>
+<div class="ttc" id="classDataModel_html"><div class="ttname"><a href="classDataModel.html">DataModel</a></div><div class="ttdef"><b>Definition:</b> DataModel.h:31</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
