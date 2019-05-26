@@ -19,9 +19,9 @@
  * This class Is a transient data model class for your Tools within the ToolChain. If Tools need to comunicate they pass all data objects through the data model. There fore inter tool data objects should be deffined in this class. 
  *
  *
- * \author (last to touch it) $Author: B.Richards $
+ * $Author: B.Richards $
  *
- * \date $Date: 2019/05/26 18:34:00 $
+ * $Date: 2019/05/26 18:34:00 $
  *
  * Contact: b.richards@qmul.ac.uk
  *
