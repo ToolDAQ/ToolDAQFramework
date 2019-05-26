@@ -28,7 +28,9 @@ include/Tool.h: src/Tool/Tool.h
 
 	@echo -e "\n*************** Making " $@ "****************"
 	cp src/Tool/Tool.h include/
-
+	cp UserTools/*.h include/
+	cp UserTools/*/*.h include/
+	cp DataModel/*.h include/	
 
 lib/libToolChain.so: src/ToolChain/* lib/libStore.so include/Tool.h lib/libServiceDiscovery.so lib/libLogging.so |  lib/libDataModel.so lib/libMyTools.so 
 
@@ -47,6 +49,7 @@ clean:
 	rm -f RemoteControl
 	rm -f NodeDaemon
 	rm -f UserTools/*/*.o
+	rm -f DataModel/*.o
 
 lib/libDataModel.so: DataModel/* lib/libLogging.so lib/libStore.so  $(patsubst DataModel/%.cpp, DataModel/%.o, $(wildcard DataModel/*.cpp))
 
@@ -59,8 +62,8 @@ lib/libDataModel.so: DataModel/* lib/libLogging.so lib/libStore.so  $(patsubst D
 lib/libMyTools.so: UserTools/*/* UserTools/* lib/libStore.so include/Tool.h lib/libLogging.so $(patsubst UserTools/%.cpp, UserTools/%.o, $(wildcard UserTools/*/*.cpp))| lib/libDataModel.so 
 
 	@echo -e "\n*************** Making " $@ "****************"
+	cp UserTools/*.h include/
 	cp UserTools/*/*.h include/
-	cp UserTools/Factory/*.h include/
 	#g++   -shared -fPIC UserTools/Factory/Factory.cpp -I include -L lib -lStore -lDataModel -lLogging -o lib/libMyTools.so $(MyToolsInclude) $(DataModelInclude) $(MyToolsLib) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
 	g++   -shared -fPIC UserTools/*/*.o -I include -L lib -lStore -lDataModel -lLogging -o lib/libMyTools.so $(MyToolsInclude) $(DataModelInclude) $(MyToolsLib) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
 
