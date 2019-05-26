@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['datamodel',['DataModel',['../classDataModel.html',1,'']]],
+  ['datamodel',['DataModel',['../classDataModel.html',1,'DataModel'],['../classDataModel.html#abff03aef2cb531142a35781bb87c3365',1,'DataModel::DataModel()']]],
   ['dummytool',['DummyTool',['../classDummyTool.html',1,'']]],
   ['daqframework',['DAQFramework',['../md_include_README.html',1,'']]],
   ['daqframework',['DAQFramework',['../md_lib_README.html',1,'']]],

@@ -33,16 +33,16 @@ class DataModel {
 
  public:
   
-  DataModel(); ///Simple constructor 
+  DataModel(); ///< Simple constructor 
 
   //TTree* GetTTree(std::string name);
   //void AddTTree(std::string name,TTree *tree);
   //void DeleteTTree(std::string name,TTree *tree);
 
-  Store vars; /// This store can be used for any variables It is inefficent ascii mased storage
-  Logging *Log; /// Log class pointer for use in tools, it can be used to send messages which can have multiple error levels and destination end points
+  Store vars; ///< This store can be used for any variables It is inefficent ascii mased storage
+  Logging *Log; ///< Log class pointer for use in tools, it can be used to send messages which can have multiple error levels and destination end points
 
-  zmq::context_t* context; /// ZMQ contex used for producing zmq sockets for inter thread,  process, or computer communication
+  zmq::context_t* context; ///< ZMQ contex used for producing zmq sockets for inter thread,  process, or computer communication
 
 
   //  bool (*Log)(std::string, int);
