@@ -111,7 +111,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af7839ee68729b066da269cc012b1fcc9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#af7839ee68729b066da269cc012b1fcc9">Log</a> (T message, int messagelevel=1, int verbose=1)</td></tr>
 <tr class="separator:af7839ee68729b066da269cc012b1fcc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a0c89c152ad81fb41a849ed9d81e429"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a7a0c89c152ad81fb41a849ed9d81e429">ChangeOutFile</a> (std::string localpath)</td></tr>
-<tr class="memdesc:a7a0c89c152ad81fb41a849ed9d81e429"><td class="mdescLeft">&#160;</td><td class="mdescRight">localpath = path to new log file  <a href="#a7a0c89c152ad81fb41a849ed9d81e429">More...</a><br/></td></tr>
 <tr class="separator:a7a0c89c152ad81fb41a849ed9d81e429"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -147,9 +146,14 @@ MyStreamBuf&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b></td
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>localpath = path to new log file </p>
-<p>Function to change the logs out file if set to a local path. Variables are: </p>
+<p>Functionn to change the logs out file if set to a local path.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">localpath</td><td>path to new log file. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>value is sucsess of opening new logfile. </dd></dl>
 
 </div>
 </div>
@@ -192,7 +196,15 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Function to create a log message. Variables are: message = templated log message text. message level = priority level of the message being sent (e.g. if messagelevel&gt;= verbose then message is sent). verbose = verbosity level of the current <a class="el" href="classTool.html">Tool</a>. </p>
+<p>Function to create a log messages.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>templated log message text. </td></tr>
+    <tr><td class="paramname">messagepriority</td><td>level of the message being sent (e.g. if 'messagelevel&gt;= verbose' Then message is sent). </td></tr>
+    <tr><td class="paramname">verbose</td><td>verbosity level of the current <a class="el" href="classTool.html">Tool</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

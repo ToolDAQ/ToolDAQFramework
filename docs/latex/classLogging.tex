@@ -20,7 +20,7 @@ Inheritance diagram for Logging\-:\begin{figure}[H]
 {\footnotesize template$<$typename T $>$ }\\void \hyperlink{classLogging_af7839ee68729b066da269cc012b1fcc9}{Log} (T message, int messagelevel=1, int verbose=1)
 \item 
 bool \hyperlink{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}{Change\-Out\-File} (std\-::string localpath)
-\begin{DoxyCompactList}\small\item\em localpath = path to new log file \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -48,11 +48,17 @@ Contact\-: \href{mailto:b.richards@qmul.ac.uk}{\tt b.\-richards@qmul.\-ac.\-uk}
 \item[{std\-::string}]{localpath}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}
+Functionn to change the logs out file if set to a local path.
 
 
-localpath = path to new log file 
-
-Function to change the logs out file if set to a local path. Variables are\-: \hypertarget{classLogging_af7839ee68729b066da269cc012b1fcc9}{\index{Logging@{Logging}!Log@{Log}}
+\begin{DoxyParams}{Parameters}
+{\em localpath} & path to new log file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value is sucsess of opening new logfile. 
+\end{DoxyReturn}
+\hypertarget{classLogging_af7839ee68729b066da269cc012b1fcc9}{\index{Logging@{Logging}!Log@{Log}}
 \index{Log@{Log}!Logging@{Logging}}
 \subsubsection[{Log}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Logging\-::\-Log (
 \begin{DoxyParamCaption}
@@ -61,7 +67,18 @@ Function to change the logs out file if set to a local path. Variables are\-: \h
 \item[{int}]{verbose = {\ttfamily 1}}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLogging_af7839ee68729b066da269cc012b1fcc9}
-Function to create a log message. Variables are\-: message = templated log message text. message level = priority level of the message being sent (e.\-g. if messagelevel$>$= verbose then message is sent). verbose = verbosity level of the current \hyperlink{classTool}{Tool}. 
+Function to create a log messages.
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & templated log message text. \\
+\hline
+{\em messagepriority} & level of the message being sent (e.\-g. if 'messagelevel$>$= verbose' Then message is sent). \\
+\hline
+{\em verbose} & verbosity level of the current \hyperlink{classTool}{Tool}. \\
+\hline
+\end{DoxyParams}
+
 
 The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 

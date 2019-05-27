@@ -114,6 +114,16 @@ class Logging: public std::ostream {
   //  void Log(std::string message, int messagelevel=1, int verbose=1);
   //  void Log(std::ostringstream& ost, int messagelevel=1, int verbose=1);
 
+  /**  
+       Function to create a log messages. 
+ 
+       @param message templated log message text.
+       @param messagepriority level of the message being sent (e.g. if 'messagelevel>= verbose' Then message is sent). 
+       @param verbose verbosity level of the current Tool.    
+       
+  */
+
+
   template <typename T>  void Log(T message, int messagelevel=1, int verbose=1){
     std::stringstream tmp;
     tmp<<message;
@@ -122,13 +132,19 @@ class Logging: public std::ostream {
     std::cout<<tmp.str()<<std::endl;
     buffer.m_messagelevel=1;
     buffer.m_verbose=1;
-  } ///< Function to create a log message. Variables are:
-  ///< message = templated log message text.
-  ///< message level = priority level of the message being sent (e.g. if messagelevel>= verbose then message is sent).
-  ///< verbose = verbosity level of the current Tool. 
+  } 
 
-  bool ChangeOutFile(std::string localpath){return buffer.ChangeOutFile(localpath);} ///< Function to change the logs out file if set to a local path. Variables are:
-  ///< localpath = path to new log file
+
+  /**
+
+     Functionn to change the logs out file if set to a local path.
+
+     @param localpath path to new log file.
+     @return value is sucsess of opening new logfile.
+ 
+ */
+
+  bool ChangeOutFile(std::string localpath){return buffer.ChangeOutFile(localpath);} 
 
   
 
