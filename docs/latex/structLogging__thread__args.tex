@@ -1,31 +1,43 @@
 \hypertarget{structLogging__thread__args}{\section{Logging\-\_\-thread\-\_\-args Struct Reference}
 \label{structLogging__thread__args}\index{Logging\-\_\-thread\-\_\-args@{Logging\-\_\-thread\-\_\-args}}
 }
+
+
+{\ttfamily \#include $<$Logging.\-h$>$}
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{structLogging__thread__args_a9496cec11539e17b104d3cbdf3174fdb}{{\bfseries Logging\-\_\-thread\-\_\-args} (zmq\-::context\-\_\-t $\ast$incontext, boost\-::uuids\-::uuid in\-U\-U\-I\-D, std\-::string inlogservice, int inlogport)}\label{structLogging__thread__args_a9496cec11539e17b104d3cbdf3174fdb}
+\hypertarget{structLogging__thread__args_a9496cec11539e17b104d3cbdf3174fdb}{\hyperlink{structLogging__thread__args_a9496cec11539e17b104d3cbdf3174fdb}{Logging\-\_\-thread\-\_\-args} (zmq\-::context\-\_\-t $\ast$incontext, boost\-::uuids\-::uuid in\-U\-U\-I\-D, std\-::string inlogservice, int inlogport)}\label{structLogging__thread__args_a9496cec11539e17b104d3cbdf3174fdb}
 
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Simplue constructor to assing thread variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{structLogging__thread__args_addacf7a55861c13832a75b88d74c006c}{zmq\-::context\-\_\-t $\ast$ {\bfseries context}}\label{structLogging__thread__args_addacf7a55861c13832a75b88d74c006c}
+\hypertarget{structLogging__thread__args_addacf7a55861c13832a75b88d74c006c}{zmq\-::context\-\_\-t $\ast$ \hyperlink{structLogging__thread__args_addacf7a55861c13832a75b88d74c006c}{context}}\label{structLogging__thread__args_addacf7a55861c13832a75b88d74c006c}
 
-\item 
-\hypertarget{structLogging__thread__args_a3a7c5617b7fa5214c6da407a23266d57}{boost\-::uuids\-::uuid {\bfseries U\-U\-I\-D}}\label{structLogging__thread__args_a3a7c5617b7fa5214c6da407a23266d57}
+\begin{DoxyCompactList}\small\item\em pointer to Z\-M\-Q context for socket creation \end{DoxyCompactList}\item 
+\hypertarget{structLogging__thread__args_a3a7c5617b7fa5214c6da407a23266d57}{boost\-::uuids\-::uuid \hyperlink{structLogging__thread__args_a3a7c5617b7fa5214c6da407a23266d57}{U\-U\-I\-D}}\label{structLogging__thread__args_a3a7c5617b7fa5214c6da407a23266d57}
 
-\item 
-\hypertarget{structLogging__thread__args_aca2cf6dcba1d9051506134e9bf26d786}{std\-::string {\bfseries remoteservice}}\label{structLogging__thread__args_aca2cf6dcba1d9051506134e9bf26d786}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classToolChain}{Tool\-Chain} U\-U\-I\-D for unique labelling of log messages. \end{DoxyCompactList}\item 
+\hypertarget{structLogging__thread__args_a5a8e255209f5c171a7fbd78f0e308087}{std\-::string \hyperlink{structLogging__thread__args_a5a8e255209f5c171a7fbd78f0e308087}{logservice}}\label{structLogging__thread__args_a5a8e255209f5c171a7fbd78f0e308087}
 
-\item 
-\hypertarget{structLogging__thread__args_a5a8e255209f5c171a7fbd78f0e308087}{std\-::string {\bfseries logservice}}\label{structLogging__thread__args_a5a8e255209f5c171a7fbd78f0e308087}
+\begin{DoxyCompactList}\small\item\em Remote service name to connect to. \end{DoxyCompactList}\item 
+\hypertarget{structLogging__thread__args_ad5ab1c21e226a694c7f813bcb3ef9002}{int \hyperlink{structLogging__thread__args_ad5ab1c21e226a694c7f813bcb3ef9002}{logport}}\label{structLogging__thread__args_ad5ab1c21e226a694c7f813bcb3ef9002}
 
-\item 
-\hypertarget{structLogging__thread__args_ad5ab1c21e226a694c7f813bcb3ef9002}{int {\bfseries logport}}\label{structLogging__thread__args_ad5ab1c21e226a694c7f813bcb3ef9002}
+\begin{DoxyCompactList}\small\item\em Port to connect to to send remote logging information. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
-\end{DoxyCompactItemize}
 
+\subsection{Detailed Description}
+This struct holds the initalisation variables to be passed to the loggig thread.
+
+\begin{DoxyParagraph}{Author\-:}
+B.\-Richards 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Date\-:}
+2019/05/27 18\-:34\-:00 
+\end{DoxyParagraph}
+Contact\-: \href{mailto:b.richards@qmul.ac.uk}{\tt b.\-richards@qmul.\-ac.\-uk} 
 
 The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 

@@ -19,6 +19,17 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "Store.h"
+
+/**
+ * \struct Logging_thread_args
+ *
+ *This struct holds the initalisation variables to be passed to the loggig thread.
+ *
+ *
+ * $Author: B.Richards $ 
+ * $Date: 2019/05/27 18:34:00 $ 
+ * Contact: b.richards@qmul.ac.uk
+ */
  
 
 struct Logging_thread_args{
@@ -28,15 +39,26 @@ struct Logging_thread_args{
     logservice=inlogservice;
     UUID=inUUID;
     logport=inlogport;
-  }
+  } ///< Simplue constructor to assing thread variables
 
-  zmq::context_t *context;
-  boost::uuids::uuid UUID;
-  std::string remoteservice;
-  std::string logservice;
-  int logport;
+  zmq::context_t *context; ///< pointer to ZMQ context for socket creation
+  boost::uuids::uuid UUID; ///< ToolChain UUID for unique labelling of log messages
+  //std::string remoteservice; 
+  std::string logservice; ///< Remote service name to connect to 
+  int logport; ///< Port to connect to to send remote logging information
 };
 
+
+/**
+ * \class Logging
+ *
+ *This class handels the logging, which can be directed to screen or file or over the via the ToolChain Config file
+ *
+ *
+ * $Author: B.Richards $
+ * $Date: 2019/05/27 18:34:00 $
+ * Contact: b.richards@qmul.ac.uk
+ */
 
 
 class Logging: public std::ostream {
@@ -100,9 +122,13 @@ class Logging: public std::ostream {
     std::cout<<tmp.str()<<std::endl;
     buffer.m_messagelevel=1;
     buffer.m_verbose=1;
-  } 
+  } ///< Function to create a log message. Variables are:
+  ///< message = templated log message text.
+  ///< message level = priority level of the message being sent (e.g. if messagelevel>= verbose then message is sent).
+  ///< verbose = verbosity level of the current Tool. 
 
-  bool ChangeOutFile(std::string localpath){return buffer.ChangeOutFile(localpath);}
+  bool ChangeOutFile(std::string localpath){return buffer.ChangeOutFile(localpath);} ///< Function to change the logs out file if set to a local path. Variables are:
+  ///< localpath = path to new log file
 
   
 

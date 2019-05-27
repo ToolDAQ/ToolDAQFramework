@@ -1,6 +1,10 @@
 \hypertarget{classLogging}{\section{Logging Class Reference}
 \label{classLogging}\index{Logging@{Logging}}
 }
+
+
+{\ttfamily \#include $<$Logging.\-h$>$}
+
 Inheritance diagram for Logging\-:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -13,12 +17,10 @@ Inheritance diagram for Logging\-:\begin{figure}[H]
 \hypertarget{classLogging_ae7cc7299c697019f273b75cbfefff848}{{\bfseries Logging} (std\-::ostream \&str, zmq\-::context\-\_\-t $\ast$context, boost\-::uuids\-::uuid U\-U\-I\-D, std\-::string service, std\-::string mode, std\-::string localpath=\char`\"{}\char`\"{}, std\-::string logservice=\char`\"{}\char`\"{}, int logport=0)}\label{classLogging_ae7cc7299c697019f273b75cbfefff848}
 
 \item 
-\hypertarget{classLogging_af7839ee68729b066da269cc012b1fcc9}{{\footnotesize template$<$typename T $>$ }\\void {\bfseries Log} (T message, int messagelevel=1, int verbose=1)}\label{classLogging_af7839ee68729b066da269cc012b1fcc9}
-
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classLogging_af7839ee68729b066da269cc012b1fcc9}{Log} (T message, int messagelevel=1, int verbose=1)
 \item 
-\hypertarget{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}{bool {\bfseries Change\-Out\-File} (std\-::string localpath)}\label{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}
-
-\end{DoxyCompactItemize}
+bool \hyperlink{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}{Change\-Out\-File} (std\-::string localpath)
+\begin{DoxyCompactList}\small\item\em localpath = path to new log file \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -26,6 +28,40 @@ Inheritance diagram for Logging\-:\begin{figure}[H]
 
 \end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+This class handels the logging, which can be directed to screen or file or over the via the \hyperlink{classToolChain}{Tool\-Chain} Config file
+
+\begin{DoxyParagraph}{Author\-:}
+B.\-Richards 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Date\-:}
+2019/05/27 18\-:34\-:00 
+\end{DoxyParagraph}
+Contact\-: \href{mailto:b.richards@qmul.ac.uk}{\tt b.\-richards@qmul.\-ac.\-uk} 
+
+\subsection{Member Function Documentation}
+\hypertarget{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}{\index{Logging@{Logging}!Change\-Out\-File@{Change\-Out\-File}}
+\index{Change\-Out\-File@{Change\-Out\-File}!Logging@{Logging}}
+\subsubsection[{Change\-Out\-File}]{\setlength{\rightskip}{0pt plus 5cm}bool Logging\-::\-Change\-Out\-File (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{localpath}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}
+
+
+localpath = path to new log file 
+
+Function to change the logs out file if set to a local path. Variables are\-: \hypertarget{classLogging_af7839ee68729b066da269cc012b1fcc9}{\index{Logging@{Logging}!Log@{Log}}
+\index{Log@{Log}!Logging@{Logging}}
+\subsubsection[{Log}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Logging\-::\-Log (
+\begin{DoxyParamCaption}
+\item[{T}]{message, }
+\item[{int}]{messagelevel = {\ttfamily 1}, }
+\item[{int}]{verbose = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLogging_af7839ee68729b066da269cc012b1fcc9}
+Function to create a log message. Variables are\-: message = templated log message text. message level = priority level of the message being sent (e.\-g. if messagelevel$>$= verbose then message is sent). verbose = verbosity level of the current \hyperlink{classTool}{Tool}. 
 
 The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 

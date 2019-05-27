@@ -39,7 +39,7 @@ class DataModel {
   //void AddTTree(std::string name,TTree *tree);
   //void DeleteTTree(std::string name,TTree *tree);
 
-  Store vars; ///< This store can be used for any variables It is inefficent ascii mased storage
+  Store vars; ///< This store can be used for any variables. It is an inefficent ascii based storage
   Logging *Log; ///< Log class pointer for use in tools, it can be used to send messages which can have multiple error levels and destination end points
 
   zmq::context_t* context; ///< ZMQ contex used for producing zmq sockets for inter thread,  process, or computer communication
