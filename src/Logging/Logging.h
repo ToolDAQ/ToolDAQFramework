@@ -23,7 +23,7 @@
 /**
  * \struct Logging_thread_args
  *
- *This struct holds the initalisation variables to be passed to the loggig thread.
+ *This struct holds the initalisation variables to be passed to the logging thread.
  *
  *
  * $Author: B.Richards $ 
@@ -39,7 +39,7 @@ struct Logging_thread_args{
     logservice=inlogservice;
     UUID=inUUID;
     logport=inlogport;
-  } ///< Simplue constructor to assing thread variables
+  } ///< Simple constructor to assign thread variables
 
   zmq::context_t *context; ///< pointer to ZMQ context for socket creation
   boost::uuids::uuid UUID; ///< ToolChain UUID for unique labelling of log messages
@@ -106,15 +106,28 @@ class Logging: public std::ostream {
     }; 
 
  public:
-  MyStreamBuf buffer;
+  
+  MyStreamBuf buffer; ///< Stream buffer used to replace std::cout for redirection to coustom output.
+ 
+  /**
+Constructor for Logging class
 
+@param str
+@param context Pointer to ZMW context used for creating sockets
+@param UUID ToolChain UUID for unique labelling of log messages
+@param service 
+@param mode
+@param localpath Local path for log output file 
+@param logservice Remote service to connect to to send logs
+@param logport remothe port to send logging information to
+   */
  Logging(std::ostream& str,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath="", std::string logservice="", int logport=0):std::ostream(&buffer),buffer(str, context, UUID, service, mode, localpath, logservice, logport){};
 
   
   //  void Log(std::string message, int messagelevel=1, int verbose=1);
   //  void Log(std::ostringstream& ost, int messagelevel=1, int verbose=1);
 
-  /**  
+  /**
        Function to create a log messages. 
  
        @param message templated log message text.
@@ -122,8 +135,6 @@ class Logging: public std::ostream {
        @param verbose verbosity level of the current Tool.    
        
   */
-
-
   template <typename T>  void Log(T message, int messagelevel=1, int verbose=1){
     std::stringstream tmp;
     tmp<<message;
@@ -136,14 +147,12 @@ class Logging: public std::ostream {
 
 
   /**
-
      Functionn to change the logs out file if set to a local path.
 
      @param localpath path to new log file.
-     @return value is sucsess of opening new logfile.
+     @return value is bool success of opening new logfile.
  
  */
-
   bool ChangeOutFile(std::string localpath){return buffer.ChangeOutFile(localpath);} 
 
   
