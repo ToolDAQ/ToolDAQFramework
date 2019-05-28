@@ -91,10 +91,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="include_2ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a6b3383444ec19a7bd2969229e1b87d2f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b3383444ec19a7bd2969229e1b87d2f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structthread__args.html#a6b3383444ec19a7bd2969229e1b87d2f">thread_args</a> (boost::uuids::uuid inUUID, zmq::context_t *incontext, std::string inmulticastaddress, int inmulticastport, std::string inservice, int inremoteport, int inpubsec=5, int inkicksec=5)</td></tr>
+<tr class="memdesc:a6b3383444ec19a7bd2969229e1b87d2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple construtor to assign thread variables. <br/></td></tr>
+<tr class="separator:a6b3383444ec19a7bd2969229e1b87d2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b3383444ec19a7bd2969229e1b87d2f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b3383444ec19a7bd2969229e1b87d2f"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structthread__args.html#a6b3383444ec19a7bd2969229e1b87d2f">thread_args</a> (boost::uuids::uuid inUUID, zmq::context_t *incontext, std::string inmulticastaddress, int inmulticastport, std::string inservice, int inremoteport, int inpubsec=5, int inkicksec=5)</td></tr>
 <tr class="memdesc:a6b3383444ec19a7bd2969229e1b87d2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple construtor to assign thread variables. <br/></td></tr>
@@ -106,10 +110,10 @@ Public Attributes</h2></td></tr>
 boost::uuids::uuid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structthread__args.html#a707586ba05cc2c8be29cf22769b67634">UUID</a></td></tr>
 <tr class="memdesc:a707586ba05cc2c8be29cf22769b67634"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique UUID identifier for the <a class="el" href="classToolChain.html">ToolChain</a> to be used is service beacons. <br/></td></tr>
 <tr class="separator:a707586ba05cc2c8be29cf22769b67634"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a217d01ac4eb4fd9c9ed1ebe4d02ca330"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a217d01ac4eb4fd9c9ed1ebe4d02ca330"></a>
-zmq::context_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structthread__args.html#a217d01ac4eb4fd9c9ed1ebe4d02ca330">context</a></td></tr>
-<tr class="memdesc:a217d01ac4eb4fd9c9ed1ebe4d02ca330"><td class="mdescLeft">&#160;</td><td class="mdescRight">ZMQ context pointer requred for creating sockets. <br/></td></tr>
-<tr class="separator:a217d01ac4eb4fd9c9ed1ebe4d02ca330"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ff7c18d701d18b1f43f30116c448d8e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9ff7c18d701d18b1f43f30116c448d8e"></a>
+zmq::context_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structthread__args.html#a9ff7c18d701d18b1f43f30116c448d8e">context</a></td></tr>
+<tr class="memdesc:a9ff7c18d701d18b1f43f30116c448d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">ZMQ context pointer requred for creating sockets. <br/></td></tr>
+<tr class="separator:a9ff7c18d701d18b1f43f30116c448d8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15f6bcc7a120e51d1074bb8703322ed5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15f6bcc7a120e51d1074bb8703322ed5"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structthread__args.html#a15f6bcc7a120e51d1074bb8703322ed5">multicastaddress</a></td></tr>
 <tr class="memdesc:a15f6bcc7a120e51d1074bb8703322ed5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multicast address to send beacons. <br/></td></tr>
@@ -140,8 +144,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <dl class="section rcs"><dt>Author:</dt><dd>B.Richards </dd></dl>
 <dl class="section rcs"><dt>Date:</dt><dd>2019/05/27 18:34:00 </dd></dl>
 <p>Contact: <a href="#" onclick="location.href='mai'+'lto:'+'b.r'+'ic'+'har'+'ds'+'@qm'+'ul'+'.ac'+'.u'+'k'; return false;">b.ric<span style="display: none;">.nosp@m.</span>hard<span style="display: none;">.nosp@m.</span>s@qmu<span style="display: none;">.nosp@m.</span>l.ac<span style="display: none;">.nosp@m.</span>.uk</a> </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/ServiceDiscovery/<a class="el" href="ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a></li>
+</div><hr/>The documentation for this struct was generated from the following files:<ul>
+<li>include/<a class="el" href="include_2ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a></li>
+<li>src/ServiceDiscovery/<a class="el" href="src_2ServiceDiscovery_2ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

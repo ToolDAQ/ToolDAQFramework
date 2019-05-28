@@ -90,10 +90,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="include_2ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ab69c2cacaf5a388fac88e57f3361b576"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServiceDiscovery.html#ab69c2cacaf5a388fac88e57f3361b576">ServiceDiscovery</a> (bool Send, bool Receive, int remoteport, std::string address, int multicastport, zmq::context_t *incontext, boost::uuids::uuid UUID, std::string service, int pubsec=5, int kicksec=60)</td></tr>
+<tr class="separator:ab69c2cacaf5a388fac88e57f3361b576"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3dbd15f19345b0c9746731308e26b034"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServiceDiscovery.html#a3dbd15f19345b0c9746731308e26b034">ServiceDiscovery</a> (std::string address, int multicastport, zmq::context_t *incontext, int kicksec=60)</td></tr>
+<tr class="separator:a3dbd15f19345b0c9746731308e26b034"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee64ecb3b4c07b7f2a070a66ecb7dc70"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee64ecb3b4c07b7f2a070a66ecb7dc70"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServiceDiscovery.html#aee64ecb3b4c07b7f2a070a66ecb7dc70">~ServiceDiscovery</a> ()</td></tr>
+<tr class="memdesc:aee64ecb3b4c07b7f2a070a66ecb7dc70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple destructor. <br/></td></tr>
+<tr class="separator:aee64ecb3b4c07b7f2a070a66ecb7dc70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab69c2cacaf5a388fac88e57f3361b576"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServiceDiscovery.html#ab69c2cacaf5a388fac88e57f3361b576">ServiceDiscovery</a> (bool Send, bool Receive, int remoteport, std::string address, int multicastport, zmq::context_t *incontext, boost::uuids::uuid UUID, std::string service, int pubsec=5, int kicksec=60)</td></tr>
 <tr class="separator:ab69c2cacaf5a388fac88e57f3361b576"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3dbd15f19345b0c9746731308e26b034"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServiceDiscovery.html#a3dbd15f19345b0c9746731308e26b034">ServiceDiscovery</a> (std::string address, int multicastport, zmq::context_t *incontext, int kicksec=60)</td></tr>
@@ -239,8 +247,139 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ab69c2cacaf5a388fac88e57f3361b576"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ServiceDiscovery::ServiceDiscovery </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>Send</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>Receive</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>remoteport</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>address</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>multicastport</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">zmq::context_t *&#160;</td>
+          <td class="paramname"><em>incontext</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">boost::uuids::uuid&#160;</td>
+          <td class="paramname"><em>UUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>service</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pubsec</em> = <code>5</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>kicksec</em> = <code>60</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Constructor for SErviceDiscovery</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Send</td><td>bool to determin if the publish thread is created to send multicast beacons </td></tr>
+    <tr><td class="paramname">Receive</td><td>boot to determin if the listen thread is created to receive and collate incomming multicast beacons </td></tr>
+    <tr><td class="paramname">remoteport</td><td>Port number to publish for remote connections to control the <a class="el" href="classToolChain.html">ToolChain</a> </td></tr>
+    <tr><td class="paramname">address</td><td></td></tr>
+    <tr><td class="paramname">multicastport</td><td>Port to use for multicast beacons </td></tr>
+    <tr><td class="paramname">incontext</td><td>Pointer to ZMQ contect for socket creation </td></tr>
+    <tr><td class="paramname">UUID</td><td>Unique UUID identifier for the <a class="el" href="classToolChain.html">ToolChain</a> to be used is service beacons </td></tr>
+    <tr><td class="paramname">service</td><td>Name to broadcast to identify the <a class="el" href="classToolChain.html">ToolChain</a> type in beacon </td></tr>
+    <tr><td class="paramname">pubsec</td><td>The number of seconds between sending multicast beacons </td></tr>
+    <tr><td class="paramname">kicksec</td><td>The number of seconds without receiving a beacon from a remote service to remove them from the services list. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a3dbd15f19345b0c9746731308e26b034"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ServiceDiscovery::ServiceDiscovery </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>address</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>multicastport</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">zmq::context_t *&#160;</td>
+          <td class="paramname"><em>incontext</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>kicksec</em> = <code>60</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Simpler constructor for only receiving multicast beacons and not sending. This therefor doesnt require the UUID and plublish variables, so can be used for passive listener.</p>
+<p>variables are the same as above. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/ServiceDiscovery/<a class="el" href="ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a></li>
+<li>include/<a class="el" href="include_2ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a></li>
+<li>src/ServiceDiscovery/<a class="el" href="src_2ServiceDiscovery_2ServiceDiscovery_8h_source.html">ServiceDiscovery.h</a></li>
 <li>src/ServiceDiscovery/ServiceDiscovery.cpp</li>
 </ul>
 </div><!-- contents -->

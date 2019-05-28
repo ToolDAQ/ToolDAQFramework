@@ -19,6 +19,12 @@ Inheritance diagram for Logging\-:\begin{figure}[H]
 {\footnotesize template$<$typename T $>$ }\\void \hyperlink{classLogging_af7839ee68729b066da269cc012b1fcc9}{Log} (T message, int messagelevel=1, int verbose=1)
 \item 
 bool \hyperlink{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}{Change\-Out\-File} (std\-::string localpath)
+\item 
+\hyperlink{classLogging_ae7cc7299c697019f273b75cbfefff848}{Logging} (std\-::ostream \&str, zmq\-::context\-\_\-t $\ast$context, boost\-::uuids\-::uuid U\-U\-I\-D, std\-::string service, std\-::string mode, std\-::string localpath=\char`\"{}\char`\"{}, std\-::string logservice=\char`\"{}\char`\"{}, int logport=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classLogging_af7839ee68729b066da269cc012b1fcc9}{Log} (T message, int messagelevel=1, int verbose=1)
+\item 
+bool \hyperlink{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}{Change\-Out\-File} (std\-::string localpath)
 \end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -75,9 +81,61 @@ Constructor for \hyperlink{classLogging}{Logging} class
 {\em logport} & remothe port to send logging information to \\
 \hline
 \end{DoxyParams}
+\hypertarget{classLogging_ae7cc7299c697019f273b75cbfefff848}{\index{Logging@{Logging}!Logging@{Logging}}
+\index{Logging@{Logging}!Logging@{Logging}}
+\subsubsection[{Logging}]{\setlength{\rightskip}{0pt plus 5cm}Logging\-::\-Logging (
+\begin{DoxyParamCaption}
+\item[{std\-::ostream \&}]{str, }
+\item[{zmq\-::context\-\_\-t $\ast$}]{context, }
+\item[{boost\-::uuids\-::uuid}]{U\-U\-I\-D, }
+\item[{std\-::string}]{service, }
+\item[{std\-::string}]{mode, }
+\item[{std\-::string}]{localpath = {\ttfamily \char`\"{}\char`\"{}}, }
+\item[{std\-::string}]{logservice = {\ttfamily \char`\"{}\char`\"{}}, }
+\item[{int}]{logport = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLogging_ae7cc7299c697019f273b75cbfefff848}
+Constructor for \hyperlink{classLogging}{Logging} class
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & \\
+\hline
+{\em context} & Pointer to Z\-M\-W context used for creating sockets \\
+\hline
+{\em U\-U\-I\-D} & \hyperlink{classToolChain}{Tool\-Chain} U\-U\-I\-D for unique labelling of log messages \\
+\hline
+{\em service} & \\
+\hline
+{\em mode} & \\
+\hline
+{\em localpath} & Local path for log output file \\
+\hline
+{\em logservice} & Remote service to connect to to send logs \\
+\hline
+{\em logport} & remothe port to send logging information to \\
+\hline
+\end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
+\hypertarget{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}{\index{Logging@{Logging}!Change\-Out\-File@{Change\-Out\-File}}
+\index{Change\-Out\-File@{Change\-Out\-File}!Logging@{Logging}}
+\subsubsection[{Change\-Out\-File}]{\setlength{\rightskip}{0pt plus 5cm}bool Logging\-::\-Change\-Out\-File (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{localpath}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}
+Functionn to change the logs out file if set to a local path.
+
+
+\begin{DoxyParams}{Parameters}
+{\em localpath} & path to new log file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value is bool success of opening new logfile. 
+\end{DoxyReturn}
 \hypertarget{classLogging_a7a0c89c152ad81fb41a849ed9d81e429}{\index{Logging@{Logging}!Change\-Out\-File@{Change\-Out\-File}}
 \index{Change\-Out\-File@{Change\-Out\-File}!Logging@{Logging}}
 \subsubsection[{Change\-Out\-File}]{\setlength{\rightskip}{0pt plus 5cm}bool Logging\-::\-Change\-Out\-File (
@@ -115,8 +173,29 @@ Function to create a log messages.
 {\em verbose} & verbosity level of the current \hyperlink{classTool}{Tool}. \\
 \hline
 \end{DoxyParams}
+\hypertarget{classLogging_af7839ee68729b066da269cc012b1fcc9}{\index{Logging@{Logging}!Log@{Log}}
+\index{Log@{Log}!Logging@{Logging}}
+\subsubsection[{Log}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Logging\-::\-Log (
+\begin{DoxyParamCaption}
+\item[{T}]{message, }
+\item[{int}]{messagelevel = {\ttfamily 1}, }
+\item[{int}]{verbose = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classLogging_af7839ee68729b066da269cc012b1fcc9}
+Function to create a log messages.
 
 
-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\begin{DoxyParams}{Parameters}
+{\em message} & templated log message text. \\
+\hline
+{\em messagelevel} & message verbosity level of the message being sent (e.\-g. if 'messagelevel$>$= verbose' Then message is sent). \\
+\hline
+{\em verbose} & verbosity level of the current \hyperlink{classTool}{Tool}. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
+include/Logging.\-h\item 
 src/\-Logging/Logging.\-h\end{DoxyCompactItemize}

@@ -10,17 +10,18 @@
 \item 
 \hypertarget{classDataModel_abff03aef2cb531142a35781bb87c3365}{\hyperlink{classDataModel_abff03aef2cb531142a35781bb87c3365}{Data\-Model} ()}\label{classDataModel_abff03aef2cb531142a35781bb87c3365}
 
+\begin{DoxyCompactList}\small\item\em Simple constructor. \end{DoxyCompactList}\item 
+\hypertarget{classDataModel_abff03aef2cb531142a35781bb87c3365}{\hyperlink{classDataModel_abff03aef2cb531142a35781bb87c3365}{Data\-Model} ()}\label{classDataModel_abff03aef2cb531142a35781bb87c3365}
+
 \begin{DoxyCompactList}\small\item\em Simple constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classDataModel_a4baac5fe364a7a23762d70d2c2216486}{\hyperlink{classStore}{Store} \hyperlink{classDataModel_a4baac5fe364a7a23762d70d2c2216486}{vars}}\label{classDataModel_a4baac5fe364a7a23762d70d2c2216486}
-
-\begin{DoxyCompactList}\small\item\em This store can be used for any variables. It is an inefficent ascii based storage. \end{DoxyCompactList}\item 
-\hypertarget{classDataModel_aa777da4c632e4659ee5b1447ad513458}{\hyperlink{classLogging}{Logging} $\ast$ \hyperlink{classDataModel_aa777da4c632e4659ee5b1447ad513458}{Log}}\label{classDataModel_aa777da4c632e4659ee5b1447ad513458}
-
-\begin{DoxyCompactList}\small\item\em Log class pointer for use in tools, it can be used to send messages which can have multiple error levels and destination end points. \end{DoxyCompactList}\item 
-\hypertarget{classDataModel_a2c6dfd692e50f90e55338970ea7f8d61}{zmq\-::context\-\_\-t $\ast$ \hyperlink{classDataModel_a2c6dfd692e50f90e55338970ea7f8d61}{context}}\label{classDataModel_a2c6dfd692e50f90e55338970ea7f8d61}
+\hyperlink{classStore}{Store} \hyperlink{classDataModel_a4baac5fe364a7a23762d70d2c2216486}{vars}
+\begin{DoxyCompactList}\small\item\em This \hyperlink{classStore}{Store} can be used for any variables. It is an inefficent ascii based storage. \end{DoxyCompactList}\item 
+\hyperlink{classLogging}{Logging} $\ast$ \hyperlink{classDataModel_a3cb335c70a8fe3f4852dbd96844f9417}{Log}
+\begin{DoxyCompactList}\small\item\em Log class pointer for use in Tools, it can be used to send messages which can have multiple error levels and destination end points. \end{DoxyCompactList}\item 
+\hypertarget{classDataModel_aff20e7d5015b744d4efc9398f6902f8f}{zmq\-::context\-\_\-t $\ast$ \hyperlink{classDataModel_aff20e7d5015b744d4efc9398f6902f8f}{context}}\label{classDataModel_aff20e7d5015b744d4efc9398f6902f8f}
 
 \begin{DoxyCompactList}\small\item\em Z\-M\-Q contex used for producing zmq sockets for inter thread, process, or computer communication. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
@@ -31,16 +32,30 @@ This class Is a transient data model class for your Tools within the \hyperlink{
 \begin{DoxyParagraph}{Author\-:}
 B.\-Richards 
 \end{DoxyParagraph}
-
-
 \begin{DoxyParagraph}{Date\-:}
 2019/05/26 18\-:34\-:00 
 \end{DoxyParagraph}
-
-
 Contact\-: \href{mailto:b.richards@qmul.ac.uk}{\tt b.\-richards@qmul.\-ac.\-uk} 
+
+\subsection{Member Data Documentation}
+\hypertarget{classDataModel_a3cb335c70a8fe3f4852dbd96844f9417}{\index{Data\-Model@{Data\-Model}!Log@{Log}}
+\index{Log@{Log}!DataModel@{Data\-Model}}
+\subsubsection[{Log}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Logging} $\ast$ Data\-Model\-::\-Log}}\label{classDataModel_a3cb335c70a8fe3f4852dbd96844f9417}
+
+
+Log class pointer for use in Tools, it can be used to send messages which can have multiple error levels and destination end points. 
+
+Log class pointer for use in tools, it can be used to send messages which can have multiple error levels and destination end points. \hypertarget{classDataModel_a4baac5fe364a7a23762d70d2c2216486}{\index{Data\-Model@{Data\-Model}!vars@{vars}}
+\index{vars@{vars}!DataModel@{Data\-Model}}
+\subsubsection[{vars}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Store} Data\-Model\-::vars}}\label{classDataModel_a4baac5fe364a7a23762d70d2c2216486}
+
+
+This \hyperlink{classStore}{Store} can be used for any variables. It is an inefficent ascii based storage. 
+
+This store can be used for any variables. It is an inefficent ascii based storage. 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
 Data\-Model/Data\-Model.\-h\item 
+include/Data\-Model.\-h\item 
 Data\-Model/Data\-Model.\-cpp\end{DoxyCompactItemize}

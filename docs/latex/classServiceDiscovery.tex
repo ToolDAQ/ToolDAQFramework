@@ -14,6 +14,13 @@
 \item 
 \hypertarget{classServiceDiscovery_aee64ecb3b4c07b7f2a070a66ecb7dc70}{\hyperlink{classServiceDiscovery_aee64ecb3b4c07b7f2a070a66ecb7dc70}{$\sim$\-Service\-Discovery} ()}\label{classServiceDiscovery_aee64ecb3b4c07b7f2a070a66ecb7dc70}
 
+\begin{DoxyCompactList}\small\item\em Simple destructor. \end{DoxyCompactList}\item 
+\hyperlink{classServiceDiscovery_ab69c2cacaf5a388fac88e57f3361b576}{Service\-Discovery} (bool Send, bool Receive, int remoteport, std\-::string address, int multicastport, zmq\-::context\-\_\-t $\ast$incontext, boost\-::uuids\-::uuid U\-U\-I\-D, std\-::string service, int pubsec=5, int kicksec=60)
+\item 
+\hyperlink{classServiceDiscovery_a3dbd15f19345b0c9746731308e26b034}{Service\-Discovery} (std\-::string address, int multicastport, zmq\-::context\-\_\-t $\ast$incontext, int kicksec=60)
+\item 
+\hypertarget{classServiceDiscovery_aee64ecb3b4c07b7f2a070a66ecb7dc70}{\hyperlink{classServiceDiscovery_aee64ecb3b4c07b7f2a070a66ecb7dc70}{$\sim$\-Service\-Discovery} ()}\label{classServiceDiscovery_aee64ecb3b4c07b7f2a070a66ecb7dc70}
+
 \begin{DoxyCompactList}\small\item\em Simple destructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
@@ -82,9 +89,63 @@ Constructor for S\-Ervice\-Discovery
 )}}\label{classServiceDiscovery_a3dbd15f19345b0c9746731308e26b034}
 Simpler constructor for only receiving multicast beacons and not sending. This therefor doesnt require the U\-U\-I\-D and plublish variables, so can be used for passive listener.
 
+variables are the same as above. \hypertarget{classServiceDiscovery_ab69c2cacaf5a388fac88e57f3361b576}{\index{Service\-Discovery@{Service\-Discovery}!Service\-Discovery@{Service\-Discovery}}
+\index{Service\-Discovery@{Service\-Discovery}!ServiceDiscovery@{Service\-Discovery}}
+\subsubsection[{Service\-Discovery}]{\setlength{\rightskip}{0pt plus 5cm}Service\-Discovery\-::\-Service\-Discovery (
+\begin{DoxyParamCaption}
+\item[{bool}]{Send, }
+\item[{bool}]{Receive, }
+\item[{int}]{remoteport, }
+\item[{std\-::string}]{address, }
+\item[{int}]{multicastport, }
+\item[{zmq\-::context\-\_\-t $\ast$}]{incontext, }
+\item[{boost\-::uuids\-::uuid}]{U\-U\-I\-D, }
+\item[{std\-::string}]{service, }
+\item[{int}]{pubsec = {\ttfamily 5}, }
+\item[{int}]{kicksec = {\ttfamily 60}}
+\end{DoxyParamCaption}
+)}}\label{classServiceDiscovery_ab69c2cacaf5a388fac88e57f3361b576}
+Constructor for S\-Ervice\-Discovery
+
+
+\begin{DoxyParams}{Parameters}
+{\em Send} & bool to determin if the publish thread is created to send multicast beacons \\
+\hline
+{\em Receive} & boot to determin if the listen thread is created to receive and collate incomming multicast beacons \\
+\hline
+{\em remoteport} & Port number to publish for remote connections to control the \hyperlink{classToolChain}{Tool\-Chain} \\
+\hline
+{\em address} & \\
+\hline
+{\em multicastport} & Port to use for multicast beacons \\
+\hline
+{\em incontext} & Pointer to Z\-M\-Q contect for socket creation \\
+\hline
+{\em U\-U\-I\-D} & Unique U\-U\-I\-D identifier for the \hyperlink{classToolChain}{Tool\-Chain} to be used is service beacons \\
+\hline
+{\em service} & Name to broadcast to identify the \hyperlink{classToolChain}{Tool\-Chain} type in beacon \\
+\hline
+{\em pubsec} & The number of seconds between sending multicast beacons \\
+\hline
+{\em kicksec} & The number of seconds without receiving a beacon from a remote service to remove them from the services list. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classServiceDiscovery_a3dbd15f19345b0c9746731308e26b034}{\index{Service\-Discovery@{Service\-Discovery}!Service\-Discovery@{Service\-Discovery}}
+\index{Service\-Discovery@{Service\-Discovery}!ServiceDiscovery@{Service\-Discovery}}
+\subsubsection[{Service\-Discovery}]{\setlength{\rightskip}{0pt plus 5cm}Service\-Discovery\-::\-Service\-Discovery (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{address, }
+\item[{int}]{multicastport, }
+\item[{zmq\-::context\-\_\-t $\ast$}]{incontext, }
+\item[{int}]{kicksec = {\ttfamily 60}}
+\end{DoxyParamCaption}
+)}}\label{classServiceDiscovery_a3dbd15f19345b0c9746731308e26b034}
+Simpler constructor for only receiving multicast beacons and not sending. This therefor doesnt require the U\-U\-I\-D and plublish variables, so can be used for passive listener.
+
 variables are the same as above. 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
+include/Service\-Discovery.\-h\item 
 src/\-Service\-Discovery/Service\-Discovery.\-h\item 
 src/\-Service\-Discovery/Service\-Discovery.\-cpp\end{DoxyCompactItemize}

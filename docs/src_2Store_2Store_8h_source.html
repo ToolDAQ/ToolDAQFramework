@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_5ef9b87bae312fec78574e9ff5750c02.html">src</a></li><li class="navelem"><a class="el" href="dir_a00ac82f97409caffdf0db473092e12f.html">Store</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3e8faef7d9a3726055aa1a876cabe945.html">Store</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -110,10 +110,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <a class="code" href="classStore.html">Store</a>(); </div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keywordtype">void</span> Initialise(std::string filename); <span class="comment">//&lt; Initialises Store by reading in entries from an ASCII text file, when each line is a variable and its value in key value pairs.  @param filename The filepath and name to the input file.</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordtype">void</span> JsonParser(std::string input); </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keywordtype">void</span> Print(); </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordtype">void</span> Delete(); </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classStore.html#af5e0db5a37234365c4deb5bedd76693c">Initialise</a>(std::string filename); </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classStore.html#adb84e3fb286cae07f64e8186b7ab04e1">JsonParser</a>(std::string input); </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classStore.html#a9d2f000bd849a9f5de71c3ba62dca340">Print</a>(); </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classStore.html#a7fce0f8f3ec7978c5e7cd3d7053f899b">Delete</a>(); </div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
 <div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="classStore.html#abdc0134daa34b808328070f5d6b295f3">   46</a></span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; <span class="keywordtype">bool</span> <a class="code" href="classStore.html#abdc0134daa34b808328070f5d6b295f3">Get</a>(std::string name,T &amp;out){</div>
@@ -170,10 +170,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="classStore_html_af586739813ce18da6f5e3561d134a814"><div class="ttname"><a href="classStore.html#af586739813ce18da6f5e3561d134a814">Store::Set</a></div><div class="ttdeci">void Set(std::string name, T in)</div><div class="ttdef"><b>Definition:</b> Store.h:64</div></div>
-<div class="ttc" id="classStore_html"><div class="ttname"><a href="classStore.html">Store</a></div><div class="ttdef"><b>Definition:</b> Store.h:19</div></div>
+<div class="ttc" id="classStore_html_a9d2f000bd849a9f5de71c3ba62dca340"><div class="ttname"><a href="classStore.html#a9d2f000bd849a9f5de71c3ba62dca340">Store::Print</a></div><div class="ttdeci">void Print()</div><div class="ttdoc">Prints the contents of the Store. </div><div class="ttdef"><b>Definition:</b> Store.cpp:32</div></div>
+<div class="ttc" id="classStore_html_adb84e3fb286cae07f64e8186b7ab04e1"><div class="ttname"><a href="classStore.html#adb84e3fb286cae07f64e8186b7ab04e1">Store::JsonParser</a></div><div class="ttdeci">void JsonParser(std::string input)</div><div class="ttdoc">Converts a flat JSON formatted string to Store entries in the form of key value pairs. </div><div class="ttdef"><b>Definition:</b> Store.cpp:51</div></div>
+<div class="ttc" id="classStore_html"><div class="ttname"><a href="classStore.html">Store</a></div><div class="ttdef"><b>Definition:</b> Store.h:28</div></div>
 <div class="ttc" id="classStore_html_a790ca02bc7d11648edf0c8d5df3751fe"><div class="ttname"><a href="classStore.html#a790ca02bc7d11648edf0c8d5df3751fe">Store::operator[]</a></div><div class="ttdeci">std::string * operator[](std::string key)</div><div class="ttdef"><b>Definition:</b> Store.h:75</div></div>
 <div class="ttc" id="classStore_html_abe9b65d1308c43dc4158b00d6aed7385"><div class="ttname"><a href="classStore.html#abe9b65d1308c43dc4158b00d6aed7385">Store::operator&gt;&gt;</a></div><div class="ttdeci">void operator&gt;&gt;(T &amp;obj)</div><div class="ttdef"><b>Definition:</b> Store.h:82</div></div>
+<div class="ttc" id="classStore_html_a7fce0f8f3ec7978c5e7cd3d7053f899b"><div class="ttname"><a href="classStore.html#a7fce0f8f3ec7978c5e7cd3d7053f899b">Store::Delete</a></div><div class="ttdeci">void Delete()</div><div class="ttdoc">Deletes all entries in the Store. </div><div class="ttdef"><b>Definition:</b> Store.cpp:43</div></div>
 <div class="ttc" id="classStore_html_abdc0134daa34b808328070f5d6b295f3"><div class="ttname"><a href="classStore.html#abdc0134daa34b808328070f5d6b295f3">Store::Get</a></div><div class="ttdeci">bool Get(std::string name, T &amp;out)</div><div class="ttdef"><b>Definition:</b> Store.h:46</div></div>
+<div class="ttc" id="classStore_html_af5e0db5a37234365c4deb5bedd76693c"><div class="ttname"><a href="classStore.html#af5e0db5a37234365c4deb5bedd76693c">Store::Initialise</a></div><div class="ttdeci">void Initialise(std::string filename)</div><div class="ttdoc">Initialises Store by reading in entries from an ASCII text file, when each line is a variable and its...</div><div class="ttdef"><b>Definition:</b> Store.cpp:7</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

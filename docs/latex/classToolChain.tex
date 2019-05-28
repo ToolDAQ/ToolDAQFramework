@@ -26,6 +26,25 @@ int \hyperlink{classToolChain_a303e299293fd4d3a5e91865e04898e52}{Execute} (int r
 
 \begin{DoxyCompactList}\small\item\em Start interactive thread to accept commands and run \hyperlink{classToolChain}{Tool\-Chain} in interactive mode. \end{DoxyCompactList}\item 
 void \hyperlink{classToolChain_aacc213c07f81ee202dce14856a076df3}{Remote} (int portnum, std\-::string S\-D\-\_\-address=\char`\"{}239.\-192.\-1.\-1\char`\"{}, int S\-D\-\_\-port=5000)
+\begin{DoxyCompactList}\small\item\em Run \hyperlink{classToolChain}{Tool\-Chain} in remote mode, where connands are received fomr network connections. \end{DoxyCompactList}\item 
+\hyperlink{classToolChain_a75af494cf7d613290c48fcbcdb700482}{Tool\-Chain} (std\-::string configfile)
+\begin{DoxyCompactList}\small\item\em Constructor that obtains all of the configuration varaibles from an input file. \end{DoxyCompactList}\item 
+\hyperlink{classToolChain_a82c1596d9d6e233492e29ac83e2f8952}{Tool\-Chain} (int verbose=1, int errorlevel=0, std\-::string service=\char`\"{}test\char`\"{}, std\-::string logmode=\char`\"{}Interactive\char`\"{}, std\-::string log\-\_\-local\-\_\-path=\char`\"{}./log\char`\"{}, std\-::string log\-\_\-service=\char`\"{}\char`\"{}, int log\-\_\-port=0, int pub\-\_\-sec=5, int kick\-\_\-sec=60, unsigned int I\-O\-\_\-\-Threads=1)
+\item 
+void \hyperlink{classToolChain_a4da0c02154a0597704e58836d6607e61}{Add} (std\-::string name, \hyperlink{classTool}{Tool} $\ast$tool, std\-::string configfile=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Add a \hyperlink{classTool}{Tool} to the \hyperlink{classToolChain}{Tool\-Chain}. \end{DoxyCompactList}\item 
+\hypertarget{classToolChain_a341f343926341b82a29c586a7b9683af}{int \hyperlink{classToolChain_a341f343926341b82a29c586a7b9683af}{Initialise} ()}\label{classToolChain_a341f343926341b82a29c586a7b9683af}
+
+\begin{DoxyCompactList}\small\item\em Initialise all Tools in the \hyperlink{classToolChain}{Tool\-Chain} sequentially. \end{DoxyCompactList}\item 
+int \hyperlink{classToolChain_a303e299293fd4d3a5e91865e04898e52}{Execute} (int repeates=1)
+\begin{DoxyCompactList}\small\item\em Execute all Tools in the \hyperlink{classToolChain}{Tool\-Chain} sequentially. \end{DoxyCompactList}\item 
+\hypertarget{classToolChain_a3828756135773fb9ca4b361a47296dd9}{int \hyperlink{classToolChain_a3828756135773fb9ca4b361a47296dd9}{Finalise} ()}\label{classToolChain_a3828756135773fb9ca4b361a47296dd9}
+
+\begin{DoxyCompactList}\small\item\em Finalise all Tools in the Tool\-Cahin sequentially. \end{DoxyCompactList}\item 
+\hypertarget{classToolChain_a9bb47b83b6b85c3b0fab75af0cda19bf}{void \hyperlink{classToolChain_a9bb47b83b6b85c3b0fab75af0cda19bf}{Interactive} ()}\label{classToolChain_a9bb47b83b6b85c3b0fab75af0cda19bf}
+
+\begin{DoxyCompactList}\small\item\em Start interactive thread to accept commands and run \hyperlink{classToolChain}{Tool\-Chain} in interactive mode. \end{DoxyCompactList}\item 
+void \hyperlink{classToolChain_aacc213c07f81ee202dce14856a076df3}{Remote} (int portnum, std\-::string S\-D\-\_\-address=\char`\"{}239.\-192.\-1.\-1\char`\"{}, int S\-D\-\_\-port=5000)
 \begin{DoxyCompactList}\small\item\em Run \hyperlink{classToolChain}{Tool\-Chain} in remote mode, where connands are received fomr network connections. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -47,6 +66,61 @@ B.\-Richards
 Contact\-: \href{mailto:b.richards@qmul.ac.uk}{\tt b.\-richards@qmul.\-ac.\-uk} 
 
 \subsection{Constructor \& Destructor Documentation}
+\hypertarget{classToolChain_a75af494cf7d613290c48fcbcdb700482}{\index{Tool\-Chain@{Tool\-Chain}!Tool\-Chain@{Tool\-Chain}}
+\index{Tool\-Chain@{Tool\-Chain}!ToolChain@{Tool\-Chain}}
+\subsubsection[{Tool\-Chain}]{\setlength{\rightskip}{0pt plus 5cm}Tool\-Chain\-::\-Tool\-Chain (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{configfile}
+\end{DoxyParamCaption}
+)}}\label{classToolChain_a75af494cf7d613290c48fcbcdb700482}
+
+
+Constructor that obtains all of the configuration varaibles from an input file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em configfile} & The path and name of the config file to read configuration values from. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classToolChain_a82c1596d9d6e233492e29ac83e2f8952}{\index{Tool\-Chain@{Tool\-Chain}!Tool\-Chain@{Tool\-Chain}}
+\index{Tool\-Chain@{Tool\-Chain}!ToolChain@{Tool\-Chain}}
+\subsubsection[{Tool\-Chain}]{\setlength{\rightskip}{0pt plus 5cm}Tool\-Chain\-::\-Tool\-Chain (
+\begin{DoxyParamCaption}
+\item[{int}]{verbose = {\ttfamily 1}, }
+\item[{int}]{errorlevel = {\ttfamily 0}, }
+\item[{std\-::string}]{service = {\ttfamily \char`\"{}test\char`\"{}}, }
+\item[{std\-::string}]{logmode = {\ttfamily \char`\"{}Interactive\char`\"{}}, }
+\item[{std\-::string}]{log\-\_\-local\-\_\-path = {\ttfamily \char`\"{}./log\char`\"{}}, }
+\item[{std\-::string}]{log\-\_\-service = {\ttfamily \char`\"{}\char`\"{}}, }
+\item[{int}]{log\-\_\-port = {\ttfamily 0}, }
+\item[{int}]{pub\-\_\-sec = {\ttfamily 5}, }
+\item[{int}]{kick\-\_\-sec = {\ttfamily 60}, }
+\item[{unsigned int}]{I\-O\-\_\-\-Threads = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)}}\label{classToolChain_a82c1596d9d6e233492e29ac83e2f8952}
+Constructor with explicit configuration variables passed as arguments. 
+\begin{DoxyParams}{Parameters}
+{\em verbose} & The verbosity level of the \hyperlink{classToolChain}{Tool\-Chain}. The higher the number the more explicit the print outs. 0 = silent apart from errors. \\
+\hline
+{\em errorlevel} & The behavior that occurs when the \hyperlink{classToolChain}{Tool\-Chain} encounters an error. 0 = do not exit for both handeled and unhandeled errors, 1 = exit on unhandeled errors only, 2 = exit on handeled and unhandeled errors. \\
+\hline
+{\em service} & The name of the \hyperlink{classToolChain}{Tool\-Chain} service to boradcast for service discovery \\
+\hline
+{\em logmode} & Where log printouts should be forwarded too. \char`\"{}\-Interactive\char`\"{} = cout, \char`\"{}\-Remote\char`\"{} = send to a remote logging system, \char`\"{}local\char`\"{} = ouput logs to a file. \\
+\hline
+{\em log\-\_\-local\-\_\-path} & The file path and name of where to store logs if in Local logging mode. \\
+\hline
+{\em log\-\_\-service} & Service name of remote logging system if in Remote logging mode. \\
+\hline
+{\em log\-\_\-port} & The Port number of the remote logging service \\
+\hline
+{\em pub\-\_\-sec} & The number of seconds between publishing multicast serivce beacons \\
+\hline
+{\em kick\-\_\-sec} & The number of seconds to wait before removing a servic from the remote services list if no beacon received. \\
+\hline
+{\em I\-O\-\_\-\-Threads} & The number of Z\-M\-Q I\-O threads to use ($\sim$1 per Gbps of traffic). \\
+\hline
+\end{DoxyParams}
 \hypertarget{classToolChain_a75af494cf7d613290c48fcbcdb700482}{\index{Tool\-Chain@{Tool\-Chain}!Tool\-Chain@{Tool\-Chain}}
 \index{Tool\-Chain@{Tool\-Chain}!ToolChain@{Tool\-Chain}}
 \subsubsection[{Tool\-Chain}]{\setlength{\rightskip}{0pt plus 5cm}Tool\-Chain\-::\-Tool\-Chain (
@@ -127,6 +201,44 @@ Add a \hyperlink{classTool}{Tool} to the \hyperlink{classToolChain}{Tool\-Chain}
 {\em configfile} & The configuration file path and name to be passed to the \hyperlink{classTool}{Tool}. \\
 \hline
 \end{DoxyParams}
+\hypertarget{classToolChain_a4da0c02154a0597704e58836d6607e61}{\index{Tool\-Chain@{Tool\-Chain}!Add@{Add}}
+\index{Add@{Add}!ToolChain@{Tool\-Chain}}
+\subsubsection[{Add}]{\setlength{\rightskip}{0pt plus 5cm}void Tool\-Chain\-::\-Add (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{name, }
+\item[{{\bf Tool} $\ast$}]{tool, }
+\item[{std\-::string}]{configfile = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)}}\label{classToolChain_a4da0c02154a0597704e58836d6607e61}
+
+
+Add a \hyperlink{classTool}{Tool} to the \hyperlink{classToolChain}{Tool\-Chain}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name used in logs when reffering to the \hyperlink{classTool}{Tool}. \\
+\hline
+{\em tool} & A pointer to the tool to be added to the \hyperlink{classToolChain}{Tool\-Chain}. \\
+\hline
+{\em configfile} & The configuration file path and name to be passed to the \hyperlink{classTool}{Tool}. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classToolChain_a303e299293fd4d3a5e91865e04898e52}{\index{Tool\-Chain@{Tool\-Chain}!Execute@{Execute}}
+\index{Execute@{Execute}!ToolChain@{Tool\-Chain}}
+\subsubsection[{Execute}]{\setlength{\rightskip}{0pt plus 5cm}int Tool\-Chain\-::\-Execute (
+\begin{DoxyParamCaption}
+\item[{int}]{repeates = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)}}\label{classToolChain_a303e299293fd4d3a5e91865e04898e52}
+
+
+Execute all Tools in the \hyperlink{classToolChain}{Tool\-Chain} sequentially. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em repeates} & How many times to run sequential Execute loop. \\
+\hline
+\end{DoxyParams}
 \hypertarget{classToolChain_a303e299293fd4d3a5e91865e04898e52}{\index{Tool\-Chain@{Tool\-Chain}!Execute@{Execute}}
 \index{Execute@{Execute}!ToolChain@{Tool\-Chain}}
 \subsubsection[{Execute}]{\setlength{\rightskip}{0pt plus 5cm}int Tool\-Chain\-::\-Execute (
@@ -165,9 +277,32 @@ Run \hyperlink{classToolChain}{Tool\-Chain} in remote mode, where connands are r
 {\em S\-D\-\_\-port} & the multicast port to used for service discovery beacons \\
 \hline
 \end{DoxyParams}
+\hypertarget{classToolChain_aacc213c07f81ee202dce14856a076df3}{\index{Tool\-Chain@{Tool\-Chain}!Remote@{Remote}}
+\index{Remote@{Remote}!ToolChain@{Tool\-Chain}}
+\subsubsection[{Remote}]{\setlength{\rightskip}{0pt plus 5cm}void Tool\-Chain\-::\-Remote (
+\begin{DoxyParamCaption}
+\item[{int}]{portnum, }
+\item[{std\-::string}]{S\-D\-\_\-address = {\ttfamily \char`\"{}239.192.1.1\char`\"{}}, }
+\item[{int}]{S\-D\-\_\-port = {\ttfamily 5000}}
+\end{DoxyParamCaption}
+)}}\label{classToolChain_aacc213c07f81ee202dce14856a076df3}
+
+
+Run \hyperlink{classToolChain}{Tool\-Chain} in remote mode, where connands are received fomr network connections. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em portnum} & The port number to listen for remote connections on. \\
+\hline
+{\em S\-D\-\_\-address} & The service discovery address to publish availability beacons for remote connections on. \\
+\hline
+{\em S\-D\-\_\-port} & the multicast port to used for service discovery beacons \\
+\hline
+\end{DoxyParams}
 
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
+include/Tool\-Chain.\-h\item 
 src/\-Tool\-Chain/Tool\-Chain.\-h\item 
 src/\-Tool\-Chain/Tool\-Chain.\-cpp\end{DoxyCompactItemize}
