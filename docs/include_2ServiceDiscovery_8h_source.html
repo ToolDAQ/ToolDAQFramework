@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_1c5d1e8f40d377ac6c23198b56bb2fe2.html">include</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -109,65 +109,77 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;Store.h&quot;</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="structthread__args.html">   23</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structthread__args.html">thread_args</a>{</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <a class="code" href="structthread__args.html">thread_args</a>(boost::uuids::uuid inUUID, zmq::context_t *incontext,std::string inmulticastaddress, <span class="keywordtype">int</span> inmulticastport, std::string inservice, <span class="keywordtype">int</span> inremoteport, <span class="keywordtype">int</span>  inpubsec=5, <span class="keywordtype">int</span> inkicksec=5){</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    UUID=inUUID;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    context=incontext;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    multicastaddress=inmulticastaddress;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    multicastport=inmulticastport;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    service=inservice;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    remoteport=inremoteport;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    pubsec=inpubsec;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    kicksec=inkicksec;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  }</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  boost::uuids::uuid UUID;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  zmq::context_t *context;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  std::string multicastaddress;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keywordtype">int</span> multicastport;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  std::string service;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">int</span> remoteport;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keywordtype">int</span> pubsec;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordtype">int</span> kicksec;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;};</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classServiceDiscovery.html">   48</a></span>&#160;<span class="keyword">class </span><a class="code" href="classServiceDiscovery.html">ServiceDiscovery</a>{</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <a class="code" href="classServiceDiscovery.html">ServiceDiscovery</a>(<span class="keywordtype">bool</span> Send, <span class="keywordtype">bool</span> Receive, <span class="keywordtype">int</span> remoteport, std::string address, <span class="keywordtype">int</span> multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, <span class="keywordtype">int</span> pubsec=5, <span class="keywordtype">int</span> kicksec=60);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <a class="code" href="classServiceDiscovery.html">ServiceDiscovery</a>( std::string address, <span class="keywordtype">int</span> multicastport, zmq::context_t * incontext, <span class="keywordtype">int</span> kicksec=60);  </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  ~<a class="code" href="classServiceDiscovery.html">ServiceDiscovery</a>();</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keyword">static</span>  <span class="keywordtype">void</span> *MulticastPublishThread(<span class="keywordtype">void</span>* arg);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">static</span>  <span class="keywordtype">void</span> *MulticastListenThread(<span class="keywordtype">void</span>* arg);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  boost::uuids::uuid m_UUID;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  zmq::context_t *context;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  pthread_t thread[2];</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <a class="code" href="structthread__args.html">thread_args</a> *args;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keywordtype">int</span> m_multicastport;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  std::string m_multicastaddress;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  std::string m_service;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordtype">int</span> m_remoteport;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="keywordtype">bool</span> m_send;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordtype">bool</span> m_receive;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;};</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="structthread__args_html"><div class="ttname"><a href="structthread__args.html">thread_args</a></div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:23</div></div>
-<div class="ttc" id="classServiceDiscovery_html"><div class="ttname"><a href="classServiceDiscovery.html">ServiceDiscovery</a></div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:48</div></div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structthread__args.html">   33</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structthread__args.html">thread_args</a>{</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  </div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="structthread__args.html#a6b3383444ec19a7bd2969229e1b87d2f">   35</a></span>&#160;  <a class="code" href="structthread__args.html#a6b3383444ec19a7bd2969229e1b87d2f">thread_args</a>(boost::uuids::uuid inUUID, zmq::context_t *incontext,std::string inmulticastaddress, <span class="keywordtype">int</span> inmulticastport, std::string inservice, <span class="keywordtype">int</span> inremoteport, <span class="keywordtype">int</span>  inpubsec=5, <span class="keywordtype">int</span> inkicksec=5){</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="structthread__args.html#a707586ba05cc2c8be29cf22769b67634">UUID</a>=inUUID;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="structthread__args.html#a9ff7c18d701d18b1f43f30116c448d8e">context</a>=incontext;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="structthread__args.html#a15f6bcc7a120e51d1074bb8703322ed5">multicastaddress</a>=inmulticastaddress;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <a class="code" href="structthread__args.html#aa6059ab0eeca3f487491f2542bb5120b">multicastport</a>=inmulticastport;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="structthread__args.html#a92798a7f2094db41f45ecbef0c067ca9">service</a>=inservice;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <a class="code" href="structthread__args.html#a371407c82f7f64e3d9df634e59369565">remoteport</a>=inremoteport;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="structthread__args.html#aba650f345201e8aece9071377945cf0e">pubsec</a>=inpubsec;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="structthread__args.html#a9b75103528b3a6fcc3dfc133cd1b1e8e">kicksec</a>=inkicksec;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  } </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  </div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="structthread__args.html#a707586ba05cc2c8be29cf22769b67634">   46</a></span>&#160;  boost::uuids::uuid <a class="code" href="structthread__args.html#a707586ba05cc2c8be29cf22769b67634">UUID</a>; </div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="structthread__args.html#a9ff7c18d701d18b1f43f30116c448d8e">   47</a></span>&#160;  zmq::context_t *<a class="code" href="structthread__args.html#a9ff7c18d701d18b1f43f30116c448d8e">context</a>; </div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="structthread__args.html#a15f6bcc7a120e51d1074bb8703322ed5">   48</a></span>&#160;  std::string <a class="code" href="structthread__args.html#a15f6bcc7a120e51d1074bb8703322ed5">multicastaddress</a>; </div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="structthread__args.html#aa6059ab0eeca3f487491f2542bb5120b">   49</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="structthread__args.html#aa6059ab0eeca3f487491f2542bb5120b">multicastport</a>; </div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="structthread__args.html#a92798a7f2094db41f45ecbef0c067ca9">   50</a></span>&#160;  std::string <a class="code" href="structthread__args.html#a92798a7f2094db41f45ecbef0c067ca9">service</a>; </div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="structthread__args.html#a371407c82f7f64e3d9df634e59369565">   51</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="structthread__args.html#a371407c82f7f64e3d9df634e59369565">remoteport</a>; </div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="structthread__args.html#aba650f345201e8aece9071377945cf0e">   52</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="structthread__args.html#aba650f345201e8aece9071377945cf0e">pubsec</a>; </div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="structthread__args.html#a9b75103528b3a6fcc3dfc133cd1b1e8e">   53</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="structthread__args.html#a9b75103528b3a6fcc3dfc133cd1b1e8e">kicksec</a>; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;};</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="classServiceDiscovery.html">   68</a></span>&#160;<span class="keyword">class </span><a class="code" href="classServiceDiscovery.html">ServiceDiscovery</a>{</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <a class="code" href="classServiceDiscovery.html#ab69c2cacaf5a388fac88e57f3361b576">ServiceDiscovery</a>(<span class="keywordtype">bool</span> Send, <span class="keywordtype">bool</span> Receive, <span class="keywordtype">int</span> remoteport, std::string address, <span class="keywordtype">int</span> multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, <span class="keywordtype">int</span> pubsec=5, <span class="keywordtype">int</span> kicksec=60);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <a class="code" href="classServiceDiscovery.html#ab69c2cacaf5a388fac88e57f3361b576">ServiceDiscovery</a>( std::string address, <span class="keywordtype">int</span> multicastport, zmq::context_t * incontext, <span class="keywordtype">int</span> kicksec=60);  </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <a class="code" href="classServiceDiscovery.html#aee64ecb3b4c07b7f2a070a66ecb7dc70">~ServiceDiscovery</a>(); </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keyword">static</span>  <span class="keywordtype">void</span> *MulticastPublishThread(<span class="keywordtype">void</span>* arg);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keyword">static</span>  <span class="keywordtype">void</span> *MulticastListenThread(<span class="keywordtype">void</span>* arg);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  </div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  boost::uuids::uuid m_UUID; </div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  zmq::context_t *context; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  pthread_t thread[2]; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <a class="code" href="structthread__args.html">thread_args</a> *args; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <span class="keywordtype">int</span> m_multicastport; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  std::string m_multicastaddress; </div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  std::string m_service; </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keywordtype">int</span> m_remoteport; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keywordtype">bool</span> m_send; </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <span class="keywordtype">bool</span> m_receive; </div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  </div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  </div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;};</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="structthread__args_html_aba650f345201e8aece9071377945cf0e"><div class="ttname"><a href="structthread__args.html#aba650f345201e8aece9071377945cf0e">thread_args::pubsec</a></div><div class="ttdeci">int pubsec</div><div class="ttdoc">The number of seconds between sending multicast beacons. </div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:52</div></div>
+<div class="ttc" id="classServiceDiscovery_html_ab69c2cacaf5a388fac88e57f3361b576"><div class="ttname"><a href="classServiceDiscovery.html#ab69c2cacaf5a388fac88e57f3361b576">ServiceDiscovery::ServiceDiscovery</a></div><div class="ttdeci">ServiceDiscovery(bool Send, bool Receive, int remoteport, std::string address, int multicastport, zmq::context_t *incontext, boost::uuids::uuid UUID, std::string service, int pubsec=5, int kicksec=60)</div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.cpp:3</div></div>
+<div class="ttc" id="structthread__args_html"><div class="ttname"><a href="structthread__args.html">thread_args</a></div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:33</div></div>
+<div class="ttc" id="structthread__args_html_aa6059ab0eeca3f487491f2542bb5120b"><div class="ttname"><a href="structthread__args.html#aa6059ab0eeca3f487491f2542bb5120b">thread_args::multicastport</a></div><div class="ttdeci">int multicastport</div><div class="ttdoc">Port to use for multicast beacons. </div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:49</div></div>
+<div class="ttc" id="structthread__args_html_a9ff7c18d701d18b1f43f30116c448d8e"><div class="ttname"><a href="structthread__args.html#a9ff7c18d701d18b1f43f30116c448d8e">thread_args::context</a></div><div class="ttdeci">zmq::context_t * context</div><div class="ttdoc">ZMQ context pointer requred for creating sockets. </div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:47</div></div>
+<div class="ttc" id="structthread__args_html_a15f6bcc7a120e51d1074bb8703322ed5"><div class="ttname"><a href="structthread__args.html#a15f6bcc7a120e51d1074bb8703322ed5">thread_args::multicastaddress</a></div><div class="ttdeci">std::string multicastaddress</div><div class="ttdoc">Multicast address to send beacons. </div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:48</div></div>
+<div class="ttc" id="classServiceDiscovery_html_aee64ecb3b4c07b7f2a070a66ecb7dc70"><div class="ttname"><a href="classServiceDiscovery.html#aee64ecb3b4c07b7f2a070a66ecb7dc70">ServiceDiscovery::~ServiceDiscovery</a></div><div class="ttdeci">~ServiceDiscovery()</div><div class="ttdoc">Simple destructor. </div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.cpp:669</div></div>
+<div class="ttc" id="structthread__args_html_a371407c82f7f64e3d9df634e59369565"><div class="ttname"><a href="structthread__args.html#a371407c82f7f64e3d9df634e59369565">thread_args::remoteport</a></div><div class="ttdeci">int remoteport</div><div class="ttdoc">Port for remote connections to control the ToolChain. </div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:51</div></div>
+<div class="ttc" id="structthread__args_html_a6b3383444ec19a7bd2969229e1b87d2f"><div class="ttname"><a href="structthread__args.html#a6b3383444ec19a7bd2969229e1b87d2f">thread_args::thread_args</a></div><div class="ttdeci">thread_args(boost::uuids::uuid inUUID, zmq::context_t *incontext, std::string inmulticastaddress, int inmulticastport, std::string inservice, int inremoteport, int inpubsec=5, int inkicksec=5)</div><div class="ttdoc">Simple construtor to assign thread variables. </div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:35</div></div>
+<div class="ttc" id="structthread__args_html_a707586ba05cc2c8be29cf22769b67634"><div class="ttname"><a href="structthread__args.html#a707586ba05cc2c8be29cf22769b67634">thread_args::UUID</a></div><div class="ttdeci">boost::uuids::uuid UUID</div><div class="ttdoc">Unique UUID identifier for the ToolChain to be used is service beacons. </div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:46</div></div>
+<div class="ttc" id="structthread__args_html_a92798a7f2094db41f45ecbef0c067ca9"><div class="ttname"><a href="structthread__args.html#a92798a7f2094db41f45ecbef0c067ca9">thread_args::service</a></div><div class="ttdeci">std::string service</div><div class="ttdoc">Name to broadcast to identify the ToolChain type. </div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:50</div></div>
+<div class="ttc" id="structthread__args_html_a9b75103528b3a6fcc3dfc133cd1b1e8e"><div class="ttname"><a href="structthread__args.html#a9b75103528b3a6fcc3dfc133cd1b1e8e">thread_args::kicksec</a></div><div class="ttdeci">int kicksec</div><div class="ttdoc">The number of seconds without receiving a beacon from a remote service to remove them from the servic...</div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:53</div></div>
+<div class="ttc" id="classServiceDiscovery_html"><div class="ttname"><a href="classServiceDiscovery.html">ServiceDiscovery</a></div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:68</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -57,13 +57,12 @@ struct thread_args{
 /**
  * \class ServiceDiscovery
  *
- * This class handels ass the service discovery for the ToolChain. It oth handels publishing multicast beacons for the ToolCahin and any other customs services and it collates and maintains a list of other remote services form their multicast beacons that Tools can acess via a ZMQ port and query.
+ * This class handels the service discovery for the ToolChain. It oth handels publishing multicast beacons for the ToolCahin and any other customs services and it collates and maintains a list of other remote services form their multicast beacons that Tools can acess via a ZMQ port and query.
  *
  * $Author: B.Richards $
  * $Date: 2019/05/27 18:34:00 $
  * Contact: b.richards@qmul.ac.uk
  */
-
 
 class ServiceDiscovery{
     
@@ -81,7 +80,7 @@ class ServiceDiscovery{
      @param UUID Unique UUID identifier for the ToolChain to be used is service beacons
      @param service Name to broadcast to identify the ToolChain type in beacon
      @param pubsec The number of seconds between sending multicast beacons 
-     @param kick The number of seconds without receiving a beacon from a remote service to remove them from the services list.
+     @param kicksec The number of seconds without receiving a beacon from a remote service to remove them from the services list.
      
   */
   ServiceDiscovery(bool Send, bool Receive, int remoteport, std::string address, int multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec=5, int kicksec=60);

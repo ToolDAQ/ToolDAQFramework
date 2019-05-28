@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_1c5d1e8f40d377ac6c23198b56bb2fe2.html">include</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -116,10 +116,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
 <div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="structToolChainargs.html">   28</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structToolChainargs.html">ToolChainargs</a>{</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <a class="code" href="structToolChainargs.html">ToolChainargs</a>(){};</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structToolChainargs.html#abc87ef74c936d9b171655899e9b4927b">   30</a></span>&#160;  <a class="code" href="structToolChainargs.html">ToolChainargs</a>(){};</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  zmq::context_t* context;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keywordtype">bool</span> *msgflag;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  zmq::context_t* <a class="code" href="structToolChainargs.html#abc87ef74c936d9b171655899e9b4927b">context</a>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structToolChainargs.html#a12b7600b4c7a0362703a1d75d6090ee5">   33</a></span>&#160;  <span class="keywordtype">bool</span> *<a class="code" href="structToolChainargs.html#a12b7600b4c7a0362703a1d75d6090ee5">msgflag</a>;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;};</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
@@ -139,7 +139,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keywordtype">void</span> Interactive();</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordtype">void</span> Remote(<span class="keywordtype">int</span> portnum, std::string SD_address=<span class="stringliteral">&quot;239.192.1.1&quot;</span>, <span class="keywordtype">int</span> SD_port=5000);</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <a class="code" href="classDataModel.html">DataModel</a> m_data;   </div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classToolChain.html#a92c81316d0c0b16ee9e4a084dd976f83">   53</a></span>&#160;  <a class="code" href="classDataModel.html">DataModel</a> <a class="code" href="classToolChain.html#a92c81316d0c0b16ee9e4a084dd976f83">m_data</a>;   </div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
@@ -210,11 +210,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;};</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="structToolChainargs_html_a12b7600b4c7a0362703a1d75d6090ee5"><div class="ttname"><a href="structToolChainargs.html#a12b7600b4c7a0362703a1d75d6090ee5">ToolChainargs::msgflag</a></div><div class="ttdeci">bool * msgflag</div><div class="ttdoc">Message flag used to indiacte if a new interactive command has been submitted to the interactive thre...</div><div class="ttdef"><b>Definition:</b> ToolChain.h:33</div></div>
 <div class="ttc" id="structToolChainargs_html"><div class="ttname"><a href="structToolChainargs.html">ToolChainargs</a></div><div class="ttdef"><b>Definition:</b> ToolChain.h:28</div></div>
 <div class="ttc" id="classTool_html"><div class="ttname"><a href="classTool.html">Tool</a></div><div class="ttdef"><b>Definition:</b> Tool.h:9</div></div>
-<div class="ttc" id="classDataModel_html"><div class="ttname"><a href="classDataModel.html">DataModel</a></div><div class="ttdef"><b>Definition:</b> DataModel.h:15</div></div>
+<div class="ttc" id="classDataModel_html"><div class="ttname"><a href="classDataModel.html">DataModel</a></div><div class="ttdef"><b>Definition:</b> DataModel.h:31</div></div>
+<div class="ttc" id="classToolChain_html_a92c81316d0c0b16ee9e4a084dd976f83"><div class="ttname"><a href="classToolChain.html#a92c81316d0c0b16ee9e4a084dd976f83">ToolChain::m_data</a></div><div class="ttdeci">DataModel m_data</div><div class="ttdoc">Direct access to transient data model class of the Tools in the ToolChain. This allows direct initial...</div><div class="ttdef"><b>Definition:</b> ToolChain.h:53</div></div>
 <div class="ttc" id="classToolChain_html"><div class="ttname"><a href="classToolChain.html">ToolChain</a></div><div class="ttdef"><b>Definition:</b> ToolChain.h:37</div></div>
-<div class="ttc" id="classServiceDiscovery_html"><div class="ttname"><a href="classServiceDiscovery.html">ServiceDiscovery</a></div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:48</div></div>
+<div class="ttc" id="structToolChainargs_html_abc87ef74c936d9b171655899e9b4927b"><div class="ttname"><a href="structToolChainargs.html#abc87ef74c936d9b171655899e9b4927b">ToolChainargs::context</a></div><div class="ttdeci">zmq::context_t * context</div><div class="ttdoc">ZMQ context used for creating sockets. </div><div class="ttdef"><b>Definition:</b> ToolChain.h:30</div></div>
+<div class="ttc" id="classServiceDiscovery_html"><div class="ttname"><a href="classServiceDiscovery.html">ServiceDiscovery</a></div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:68</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

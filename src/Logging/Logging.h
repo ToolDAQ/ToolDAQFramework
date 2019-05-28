@@ -131,7 +131,7 @@ Constructor for Logging class
        Function to create a log messages. 
  
        @param message templated log message text.
-       @param messagepriority level of the message being sent (e.g. if 'messagelevel>= verbose' Then message is sent). 
+       @param messagelevel message verbosity level of the message being sent (e.g. if 'messagelevel>= verbose' Then message is sent). 
        @param verbose verbosity level of the current Tool.    
        
   */

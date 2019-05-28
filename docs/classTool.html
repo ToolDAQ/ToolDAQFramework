@@ -91,6 +91,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Tool Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="Tool_8h_source.html">Tool.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Tool:</div>
 <div class="dyncontent">
@@ -106,32 +108,162 @@ Inheritance diagram for Tool:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4b04a99172dfe09dc97927d1feaff0ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b04a99172dfe09dc97927d1feaff0ce"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>Initialise</b> (std::string configfile, <a class="el" href="classDataModel.html">DataModel</a> &amp;data)=0</td></tr>
+<tr class="memitem:a4b04a99172dfe09dc97927d1feaff0ce"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTool.html#a4b04a99172dfe09dc97927d1feaff0ce">Initialise</a> (std::string configfile, <a class="el" href="classDataModel.html">DataModel</a> &amp;data)=0</td></tr>
+<tr class="memdesc:a4b04a99172dfe09dc97927d1feaff0ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">virtual Initialise function that reads in the assigned config file and optain DataMoodel reference  <a href="#a4b04a99172dfe09dc97927d1feaff0ce">More...</a><br/></td></tr>
 <tr class="separator:a4b04a99172dfe09dc97927d1feaff0ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a71469fa4efffd6fb71afbd4941e49d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6a71469fa4efffd6fb71afbd4941e49d"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>Execute</b> ()=0</td></tr>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTool.html#a6a71469fa4efffd6fb71afbd4941e49d">Execute</a> ()=0</td></tr>
+<tr class="memdesc:a6a71469fa4efffd6fb71afbd4941e49d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual Execute function. <br/></td></tr>
 <tr class="separator:a6a71469fa4efffd6fb71afbd4941e49d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f9a82fe5cc9afd63fc8eb3aaf5d80ca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1f9a82fe5cc9afd63fc8eb3aaf5d80ca"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>Finalise</b> ()=0</td></tr>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTool.html#a1f9a82fe5cc9afd63fc8eb3aaf5d80ca">Finalise</a> ()=0</td></tr>
+<tr class="memdesc:a1f9a82fe5cc9afd63fc8eb3aaf5d80ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual Finalise function. <br/></td></tr>
 <tr class="separator:a1f9a82fe5cc9afd63fc8eb3aaf5d80ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a46f7e599888302feefcf25e4f6cb4f9e"><td class="memTemplParams" colspan="2"><a class="anchor" id="a46f7e599888302feefcf25e4f6cb4f9e"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a46f7e599888302feefcf25e4f6cb4f9e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Log</b> (T message, int messagelevel=1, int verbosity=1)</td></tr>
+<tr class="memitem:a46f7e599888302feefcf25e4f6cb4f9e"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a46f7e599888302feefcf25e4f6cb4f9e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTool.html#a46f7e599888302feefcf25e4f6cb4f9e">Log</a> (T message, int messagelevel=1, int verbosity=1)</td></tr>
+<tr class="memdesc:a46f7e599888302feefcf25e4f6cb4f9e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classLogging.html">Logging</a> fuction for printouts.  <a href="#a46f7e599888302feefcf25e4f6cb4f9e">More...</a><br/></td></tr>
 <tr class="separator:a46f7e599888302feefcf25e4f6cb4f9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a208aed50c1c50212d2927b372c38763f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a208aed50c1c50212d2927b372c38763f"></a>
-<a class="el" href="classStore.html">Store</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_variables</b></td></tr>
+<tr class="memitem:a208aed50c1c50212d2927b372c38763f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classStore.html">Store</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTool.html#a208aed50c1c50212d2927b372c38763f">m_variables</a></td></tr>
+<tr class="memdesc:a208aed50c1c50212d2927b372c38763f"><td class="mdescLeft">&#160;</td><td class="mdescRight">virtual destructor.  <a href="#a208aed50c1c50212d2927b372c38763f">More...</a><br/></td></tr>
 <tr class="separator:a208aed50c1c50212d2927b372c38763f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98d3ffa12f1de908da9030c8718ce3f5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98d3ffa12f1de908da9030c8718ce3f5"></a>
-<a class="el" href="classDataModel.html">DataModel</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_data</b></td></tr>
+<a class="el" href="classDataModel.html">DataModel</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTool.html#a98d3ffa12f1de908da9030c8718ce3f5">m_data</a></td></tr>
+<tr class="memdesc:a98d3ffa12f1de908da9030c8718ce3f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to transiant <a class="el" href="classDataModel.html">DataModel</a> class. <br/></td></tr>
 <tr class="separator:a98d3ffa12f1de908da9030c8718ce3f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Abstract base class for Tools to inherit from. This allows a polymphic interface for the factor to use.</p>
+<dl class="section rcs"><dt>Author:</dt><dd>B.Richards </dd></dl>
+<dl class="section rcs"><dt>Date:</dt><dd>2019/05/28 10:44:00 </dd></dl>
+<p>Contact: <a href="#" onclick="location.href='mai'+'lto:'+'b.r'+'ic'+'har'+'ds'+'@qm'+'ul'+'.ac'+'.u'+'k'; return false;">b.ric<span style="display: none;">.nosp@m.</span>hard<span style="display: none;">.nosp@m.</span>s@qmu<span style="display: none;">.nosp@m.</span>l.ac<span style="display: none;">.nosp@m.</span>.uk</a> </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a4b04a99172dfe09dc97927d1feaff0ce"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool Tool::Initialise </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>configfile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classDataModel.html">DataModel</a> &amp;&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>virtual Initialise function that reads in the assigned config file and optain DataMoodel reference </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">configfile</td><td>Path and name of config file to read in. </td></tr>
+    <tr><td class="paramname">data</td><td>Reference to <a class="el" href="classDataModel.html">DataModel</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classServiceAdd.html#a047e44c3d209591703b0bdec1b1b51cd">ServiceAdd</a>, <a class="el" href="classMyTool.html#a3bf60061195a18542c4cfb2916b9dad9">MyTool</a>, <a class="el" href="classDummyTool.html#a0d9cd781681a06ee3cf0cd1e7bb770a8">DummyTool</a>, and <a class="el" href="classLogger.html#a1b598f35f454e24f9e9abc9f18c3e98f">Logger</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a46f7e599888302feefcf25e4f6cb4f9e"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Tool::Log </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>messagelevel</em> = <code>1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>verbosity</em> = <code>1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classLogging.html">Logging</a> fuction for printouts. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>Templated message string. </td></tr>
+    <tr><td class="paramname">messagelevel</td><td>The verbosity level at which to show the message. </td></tr>
+    <tr><td class="paramname">verbosity</td><td>The current verbosity level. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a208aed50c1c50212d2927b372c38763f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classStore.html">Store</a> Tool::m_variables</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>virtual destructor. </p>
+<p><a class="el" href="classStore.html">Store</a> used to store configuration varaibles </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/Tool/<a class="el" href="Tool_8h_source.html">Tool.h</a></li>
 </ul>
