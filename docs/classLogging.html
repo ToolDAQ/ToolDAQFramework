@@ -92,7 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="include_2Logging_8h_source.html">Logging.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="Logging_8h_source.html">Logging.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Logging:</div>
 <div class="dyncontent">
@@ -104,13 +104,6 @@ Inheritance diagram for Logging:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae7cc7299c697019f273b75cbfefff848"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#ae7cc7299c697019f273b75cbfefff848">Logging</a> (std::ostream &amp;str, zmq::context_t *context, boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath=&quot;&quot;, std::string logservice=&quot;&quot;, int logport=0)</td></tr>
-<tr class="separator:ae7cc7299c697019f273b75cbfefff848"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7839ee68729b066da269cc012b1fcc9"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:af7839ee68729b066da269cc012b1fcc9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#af7839ee68729b066da269cc012b1fcc9">Log</a> (T message, int messagelevel=1, int verbose=1)</td></tr>
-<tr class="separator:af7839ee68729b066da269cc012b1fcc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a0c89c152ad81fb41a849ed9d81e429"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a7a0c89c152ad81fb41a849ed9d81e429">ChangeOutFile</a> (std::string localpath)</td></tr>
-<tr class="separator:a7a0c89c152ad81fb41a849ed9d81e429"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7cc7299c697019f273b75cbfefff848"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#ae7cc7299c697019f273b75cbfefff848">Logging</a> (std::ostream &amp;str, zmq::context_t *context, boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath=&quot;&quot;, std::string logservice=&quot;&quot;, int logport=0)</td></tr>
 <tr class="separator:ae7cc7299c697019f273b75cbfefff848"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7839ee68729b066da269cc012b1fcc9"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
@@ -132,90 +125,6 @@ MyStreamBuf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <dl class="section rcs"><dt>Date:</dt><dd>2019/05/27 18:34:00 </dd></dl>
 <p>Contact: <a href="#" onclick="location.href='mai'+'lto:'+'b.r'+'ic'+'har'+'ds'+'@qm'+'ul'+'.ac'+'.u'+'k'; return false;">b.ric<span style="display: none;">.nosp@m.</span>hard<span style="display: none;">.nosp@m.</span>s@qmu<span style="display: none;">.nosp@m.</span>l.ac<span style="display: none;">.nosp@m.</span>.uk</a> </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ae7cc7299c697019f273b75cbfefff848"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Logging::Logging </td>
-          <td>(</td>
-          <td class="paramtype">std::ostream &amp;&#160;</td>
-          <td class="paramname"><em>str</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">zmq::context_t *&#160;</td>
-          <td class="paramname"><em>context</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">boost::uuids::uuid&#160;</td>
-          <td class="paramname"><em>UUID</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>service</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>mode</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>localpath</em> = <code>&quot;&quot;</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>logservice</em> = <code>&quot;&quot;</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>logport</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Constructor for <a class="el" href="classLogging.html">Logging</a> class</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">str</td><td></td></tr>
-    <tr><td class="paramname">context</td><td>Pointer to ZMW context used for creating sockets </td></tr>
-    <tr><td class="paramname">UUID</td><td><a class="el" href="classToolChain.html">ToolChain</a> UUID for unique labelling of log messages </td></tr>
-    <tr><td class="paramname">service</td><td></td></tr>
-    <tr><td class="paramname">mode</td><td></td></tr>
-    <tr><td class="paramname">localpath</td><td>Local path for log output file </td></tr>
-    <tr><td class="paramname">logservice</td><td>Remote service to connect to to send logs </td></tr>
-    <tr><td class="paramname">logport</td><td>remothe port to send logging information to </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="ae7cc7299c697019f273b75cbfefff848"></a>
 <div class="memitem">
 <div class="memproto">
@@ -333,38 +242,6 @@ MyStreamBuf&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 </div>
 </div>
-<a class="anchor" id="a7a0c89c152ad81fb41a849ed9d81e429"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Logging::ChangeOutFile </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>localpath</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Functionn to change the logs out file if set to a local path.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">localpath</td><td>path to new log file. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>value is bool success of opening new logfile. </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="af7839ee68729b066da269cc012b1fcc9"></a>
 <div class="memitem">
 <div class="memproto">
@@ -416,60 +293,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="af7839ee68729b066da269cc012b1fcc9"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Logging::Log </td>
-          <td>(</td>
-          <td class="paramtype">T&#160;</td>
-          <td class="paramname"><em>message</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>messagelevel</em> = <code>1</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbose</em> = <code>1</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Function to create a log messages.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">message</td><td>templated log message text. </td></tr>
-    <tr><td class="paramname">messagelevel</td><td>message verbosity level of the message being sent (e.g. if 'messagelevel&gt;= verbose' Then message is sent). </td></tr>
-    <tr><td class="paramname">verbose</td><td>verbosity level of the current <a class="el" href="classTool.html">Tool</a>. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>include/<a class="el" href="include_2Logging_8h_source.html">Logging.h</a></li>
-<li>src/Logging/<a class="el" href="src_2Logging_2Logging_8h_source.html">Logging.h</a></li>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>src/Logging/<a class="el" href="Logging_8h_source.html">Logging.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

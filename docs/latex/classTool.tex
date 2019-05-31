@@ -8,7 +8,7 @@
 Inheritance diagram for Tool\-:\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=9.000000cm]{classTool}
+\includegraphics[height=2.000000cm]{classTool}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -21,20 +21,10 @@ virtual bool \hyperlink{classTool_a4b04a99172dfe09dc97927d1feaff0ce}{Initialise}
 \begin{DoxyCompactList}\small\item\em Virtual Execute function. \end{DoxyCompactList}\item 
 \hypertarget{classTool_a1f9a82fe5cc9afd63fc8eb3aaf5d80ca}{virtual bool \hyperlink{classTool_a1f9a82fe5cc9afd63fc8eb3aaf5d80ca}{Finalise} ()=0}\label{classTool_a1f9a82fe5cc9afd63fc8eb3aaf5d80ca}
 
-\begin{DoxyCompactList}\small\item\em Virtual Finalise function. \end{DoxyCompactList}\item 
-virtual bool \hyperlink{classTool_a4b04a99172dfe09dc97927d1feaff0ce}{Initialise} (std\-::string configfile, \hyperlink{classDataModel}{Data\-Model} \&data)=0
-\begin{DoxyCompactList}\small\item\em virtual Initialise function that reads in the assigned config file and optain Data\-Moodel reference \end{DoxyCompactList}\item 
-\hypertarget{classTool_a6a71469fa4efffd6fb71afbd4941e49d}{virtual bool \hyperlink{classTool_a6a71469fa4efffd6fb71afbd4941e49d}{Execute} ()=0}\label{classTool_a6a71469fa4efffd6fb71afbd4941e49d}
-
-\begin{DoxyCompactList}\small\item\em Virtual Execute function. \end{DoxyCompactList}\item 
-\hypertarget{classTool_a1f9a82fe5cc9afd63fc8eb3aaf5d80ca}{virtual bool \hyperlink{classTool_a1f9a82fe5cc9afd63fc8eb3aaf5d80ca}{Finalise} ()=0}\label{classTool_a1f9a82fe5cc9afd63fc8eb3aaf5d80ca}
-
 \begin{DoxyCompactList}\small\item\em Virtual Finalise function. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classTool_a46f7e599888302feefcf25e4f6cb4f9e}{Log} (T message, int messagelevel=1, int verbosity=1)
-\begin{DoxyCompactList}\small\item\em \hyperlink{classLogging}{Logging} fuction for printouts. \end{DoxyCompactList}\item 
 {\footnotesize template$<$typename T $>$ }\\void \hyperlink{classTool_a46f7e599888302feefcf25e4f6cb4f9e}{Log} (T message, int messagelevel=1, int verbosity=1)
 \begin{DoxyCompactList}\small\item\em \hyperlink{classLogging}{Logging} fuction for printouts. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
@@ -42,7 +32,7 @@ virtual bool \hyperlink{classTool_a4b04a99172dfe09dc97927d1feaff0ce}{Initialise}
 \item 
 \hyperlink{classStore}{Store} \hyperlink{classTool_a208aed50c1c50212d2927b372c38763f}{m\-\_\-variables}
 \begin{DoxyCompactList}\small\item\em virtual destructor. \end{DoxyCompactList}\item 
-\hypertarget{classTool_a0c166968759706b4cd07466693cf19d0}{\hyperlink{classDataModel}{Data\-Model} $\ast$ \hyperlink{classTool_a0c166968759706b4cd07466693cf19d0}{m\-\_\-data}}\label{classTool_a0c166968759706b4cd07466693cf19d0}
+\hypertarget{classTool_a98d3ffa12f1de908da9030c8718ce3f5}{\hyperlink{classDataModel}{Data\-Model} $\ast$ \hyperlink{classTool_a98d3ffa12f1de908da9030c8718ce3f5}{m\-\_\-data}}\label{classTool_a98d3ffa12f1de908da9030c8718ce3f5}
 
 \begin{DoxyCompactList}\small\item\em Pointer to transiant \hyperlink{classDataModel}{Data\-Model} class. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
@@ -80,53 +70,8 @@ virtual Initialise function that reads in the assigned config file and optain Da
 \end{DoxyParams}
 
 
-Implemented in \hyperlink{classServiceAdd_a047e44c3d209591703b0bdec1b1b51cd}{Service\-Add}, \hyperlink{classServiceAdd_a047e44c3d209591703b0bdec1b1b51cd}{Service\-Add}, \hyperlink{classMyTool_a3bf60061195a18542c4cfb2916b9dad9}{My\-Tool}, \hyperlink{classMyTool_a3bf60061195a18542c4cfb2916b9dad9}{My\-Tool}, \hyperlink{classDummyTool_a0d9cd781681a06ee3cf0cd1e7bb770a8}{Dummy\-Tool}, \hyperlink{classLogger_a1b598f35f454e24f9e9abc9f18c3e98f}{Logger}, \hyperlink{classDummyTool_a0d9cd781681a06ee3cf0cd1e7bb770a8}{Dummy\-Tool}, and \hyperlink{classLogger_a1b598f35f454e24f9e9abc9f18c3e98f}{Logger}.
+Implemented in \hyperlink{classServiceAdd_a047e44c3d209591703b0bdec1b1b51cd}{Service\-Add}, \hyperlink{classMyTool_a3bf60061195a18542c4cfb2916b9dad9}{My\-Tool}, \hyperlink{classDummyTool_a0d9cd781681a06ee3cf0cd1e7bb770a8}{Dummy\-Tool}, and \hyperlink{classLogger_a1b598f35f454e24f9e9abc9f18c3e98f}{Logger}.
 
-\hypertarget{classTool_a4b04a99172dfe09dc97927d1feaff0ce}{\index{Tool@{Tool}!Initialise@{Initialise}}
-\index{Initialise@{Initialise}!Tool@{Tool}}
-\subsubsection[{Initialise}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Tool\-::\-Initialise (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{configfile, }
-\item[{{\bf Data\-Model} \&}]{data}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classTool_a4b04a99172dfe09dc97927d1feaff0ce}
-
-
-virtual Initialise function that reads in the assigned config file and optain Data\-Moodel reference 
-
-
-\begin{DoxyParams}{Parameters}
-{\em configfile} & Path and name of config file to read in. \\
-\hline
-{\em data} & Reference to \hyperlink{classDataModel}{Data\-Model}. \\
-\hline
-\end{DoxyParams}
-
-
-Implemented in \hyperlink{classServiceAdd_a047e44c3d209591703b0bdec1b1b51cd}{Service\-Add}, \hyperlink{classServiceAdd_a047e44c3d209591703b0bdec1b1b51cd}{Service\-Add}, \hyperlink{classMyTool_a3bf60061195a18542c4cfb2916b9dad9}{My\-Tool}, \hyperlink{classMyTool_a3bf60061195a18542c4cfb2916b9dad9}{My\-Tool}, \hyperlink{classDummyTool_a0d9cd781681a06ee3cf0cd1e7bb770a8}{Dummy\-Tool}, \hyperlink{classLogger_a1b598f35f454e24f9e9abc9f18c3e98f}{Logger}, \hyperlink{classDummyTool_a0d9cd781681a06ee3cf0cd1e7bb770a8}{Dummy\-Tool}, and \hyperlink{classLogger_a1b598f35f454e24f9e9abc9f18c3e98f}{Logger}.
-
-\hypertarget{classTool_a46f7e599888302feefcf25e4f6cb4f9e}{\index{Tool@{Tool}!Log@{Log}}
-\index{Log@{Log}!Tool@{Tool}}
-\subsubsection[{Log}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Tool\-::\-Log (
-\begin{DoxyParamCaption}
-\item[{T}]{message, }
-\item[{int}]{messagelevel = {\ttfamily 1}, }
-\item[{int}]{verbosity = {\ttfamily 1}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}}\label{classTool_a46f7e599888302feefcf25e4f6cb4f9e}
-
-
-\hyperlink{classLogging}{Logging} fuction for printouts. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em message} & Templated message string. \\
-\hline
-{\em messagelevel} & The verbosity level at which to show the message. \\
-\hline
-{\em verbosity} & The current verbosity level. \\
-\hline
-\end{DoxyParams}
 \hypertarget{classTool_a46f7e599888302feefcf25e4f6cb4f9e}{\index{Tool@{Tool}!Log@{Log}}
 \index{Log@{Log}!Tool@{Tool}}
 \subsubsection[{Log}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Tool\-::\-Log (
@@ -161,7 +106,6 @@ virtual destructor.
 
 \hyperlink{classStore}{Store} used to store configuration varaibles 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 
-include/Tool.\-h\item 
 src/\-Tool/Tool.\-h\end{DoxyCompactItemize}

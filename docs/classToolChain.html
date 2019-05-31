@@ -91,36 +91,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="include_2ToolChain_8h_source.html">ToolChain.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="ToolChain_8h_source.html">ToolChain.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a75af494cf7d613290c48fcbcdb700482"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolChain.html#a75af494cf7d613290c48fcbcdb700482">ToolChain</a> (std::string configfile)</td></tr>
-<tr class="memdesc:a75af494cf7d613290c48fcbcdb700482"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that obtains all of the configuration varaibles from an input file.  <a href="#a75af494cf7d613290c48fcbcdb700482">More...</a><br/></td></tr>
-<tr class="separator:a75af494cf7d613290c48fcbcdb700482"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82c1596d9d6e233492e29ac83e2f8952"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolChain.html#a82c1596d9d6e233492e29ac83e2f8952">ToolChain</a> (int verbose=1, int errorlevel=0, std::string service=&quot;test&quot;, std::string logmode=&quot;Interactive&quot;, std::string log_local_path=&quot;./log&quot;, std::string log_service=&quot;&quot;, int log_port=0, int pub_sec=5, int kick_sec=60, unsigned int IO_Threads=1)</td></tr>
-<tr class="separator:a82c1596d9d6e233492e29ac83e2f8952"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4da0c02154a0597704e58836d6607e61"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolChain.html#a4da0c02154a0597704e58836d6607e61">Add</a> (std::string name, <a class="el" href="classTool.html">Tool</a> *tool, std::string configfile=&quot;&quot;)</td></tr>
-<tr class="memdesc:a4da0c02154a0597704e58836d6607e61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a <a class="el" href="classTool.html">Tool</a> to the <a class="el" href="classToolChain.html">ToolChain</a>.  <a href="#a4da0c02154a0597704e58836d6607e61">More...</a><br/></td></tr>
-<tr class="separator:a4da0c02154a0597704e58836d6607e61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a341f343926341b82a29c586a7b9683af"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a341f343926341b82a29c586a7b9683af"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolChain.html#a341f343926341b82a29c586a7b9683af">Initialise</a> ()</td></tr>
-<tr class="memdesc:a341f343926341b82a29c586a7b9683af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise all Tools in the <a class="el" href="classToolChain.html">ToolChain</a> sequentially. <br/></td></tr>
-<tr class="separator:a341f343926341b82a29c586a7b9683af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a303e299293fd4d3a5e91865e04898e52"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolChain.html#a303e299293fd4d3a5e91865e04898e52">Execute</a> (int repeates=1)</td></tr>
-<tr class="memdesc:a303e299293fd4d3a5e91865e04898e52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute all Tools in the <a class="el" href="classToolChain.html">ToolChain</a> sequentially.  <a href="#a303e299293fd4d3a5e91865e04898e52">More...</a><br/></td></tr>
-<tr class="separator:a303e299293fd4d3a5e91865e04898e52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3828756135773fb9ca4b361a47296dd9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3828756135773fb9ca4b361a47296dd9"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolChain.html#a3828756135773fb9ca4b361a47296dd9">Finalise</a> ()</td></tr>
-<tr class="memdesc:a3828756135773fb9ca4b361a47296dd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalise all Tools in the ToolCahin sequentially. <br/></td></tr>
-<tr class="separator:a3828756135773fb9ca4b361a47296dd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bb47b83b6b85c3b0fab75af0cda19bf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9bb47b83b6b85c3b0fab75af0cda19bf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolChain.html#a9bb47b83b6b85c3b0fab75af0cda19bf">Interactive</a> ()</td></tr>
-<tr class="memdesc:a9bb47b83b6b85c3b0fab75af0cda19bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start interactive thread to accept commands and run <a class="el" href="classToolChain.html">ToolChain</a> in interactive mode. <br/></td></tr>
-<tr class="separator:a9bb47b83b6b85c3b0fab75af0cda19bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aacc213c07f81ee202dce14856a076df3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolChain.html#aacc213c07f81ee202dce14856a076df3">Remote</a> (int portnum, std::string SD_address=&quot;239.192.1.1&quot;, int SD_port=5000)</td></tr>
-<tr class="memdesc:aacc213c07f81ee202dce14856a076df3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run <a class="el" href="classToolChain.html">ToolChain</a> in remote mode, where connands are received fomr network connections.  <a href="#aacc213c07f81ee202dce14856a076df3">More...</a><br/></td></tr>
-<tr class="separator:aacc213c07f81ee202dce14856a076df3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75af494cf7d613290c48fcbcdb700482"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolChain.html#a75af494cf7d613290c48fcbcdb700482">ToolChain</a> (std::string configfile)</td></tr>
 <tr class="memdesc:a75af494cf7d613290c48fcbcdb700482"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that obtains all of the configuration varaibles from an input file.  <a href="#a75af494cf7d613290c48fcbcdb700482">More...</a><br/></td></tr>
 <tr class="separator:a75af494cf7d613290c48fcbcdb700482"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,120 +135,6 @@ Public Attributes</h2></td></tr>
 <dl class="section rcs"><dt>Date:</dt><dd>2019/05/28 10:44:00 </dd></dl>
 <p>Contact: <a href="#" onclick="location.href='mai'+'lto:'+'b.r'+'ic'+'har'+'ds'+'@qm'+'ul'+'.ac'+'.u'+'k'; return false;">b.ric<span style="display: none;">.nosp@m.</span>hard<span style="display: none;">.nosp@m.</span>s@qmu<span style="display: none;">.nosp@m.</span>l.ac<span style="display: none;">.nosp@m.</span>.uk</a> </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a75af494cf7d613290c48fcbcdb700482"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ToolChain::ToolChain </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>configfile</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Constructor that obtains all of the configuration varaibles from an input file. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">configfile</td><td>The path and name of the config file to read configuration values from. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a82c1596d9d6e233492e29ac83e2f8952"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ToolChain::ToolChain </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbose</em> = <code>1</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>errorlevel</em> = <code>0</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>service</em> = <code>&quot;test&quot;</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>logmode</em> = <code>&quot;Interactive&quot;</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>log_local_path</em> = <code>&quot;./log&quot;</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>log_service</em> = <code>&quot;&quot;</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>log_port</em> = <code>0</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>pub_sec</em> = <code>5</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>kick_sec</em> = <code>60</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>IO_Threads</em> = <code>1</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Constructor with explicit configuration variables passed as arguments. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">verbose</td><td>The verbosity level of the <a class="el" href="classToolChain.html">ToolChain</a>. The higher the number the more explicit the print outs. 0 = silent apart from errors. </td></tr>
-    <tr><td class="paramname">errorlevel</td><td>The behavior that occurs when the <a class="el" href="classToolChain.html">ToolChain</a> encounters an error. 0 = do not exit for both handeled and unhandeled errors, 1 = exit on unhandeled errors only, 2 = exit on handeled and unhandeled errors. </td></tr>
-    <tr><td class="paramname">service</td><td>The name of the <a class="el" href="classToolChain.html">ToolChain</a> service to boradcast for service discovery </td></tr>
-    <tr><td class="paramname">logmode</td><td>Where log printouts should be forwarded too. "Interactive" = cout, "Remote" = send to a remote logging system, "local" = ouput logs to a file. </td></tr>
-    <tr><td class="paramname">log_local_path</td><td>The file path and name of where to store logs if in Local logging mode. </td></tr>
-    <tr><td class="paramname">log_service</td><td>Service name of remote logging system if in Remote logging mode. </td></tr>
-    <tr><td class="paramname">log_port</td><td>The Port number of the remote logging service </td></tr>
-    <tr><td class="paramname">pub_sec</td><td>The number of seconds between publishing multicast serivce beacons </td></tr>
-    <tr><td class="paramname">kick_sec</td><td>The number of seconds to wait before removing a servic from the remote services list if no beacon received. </td></tr>
-    <tr><td class="paramname">IO_Threads</td><td>The number of ZMQ IO threads to use (~1 per Gbps of traffic). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="a75af494cf7d613290c48fcbcdb700482"></a>
 <div class="memitem">
 <div class="memproto">
@@ -432,48 +292,6 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a4da0c02154a0597704e58836d6607e61"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ToolChain::Add </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classTool.html">Tool</a> *&#160;</td>
-          <td class="paramname"><em>tool</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>configfile</em> = <code>&quot;&quot;</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Add a <a class="el" href="classTool.html">Tool</a> to the <a class="el" href="classToolChain.html">ToolChain</a>. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">name</td><td>The name used in logs when reffering to the <a class="el" href="classTool.html">Tool</a>. </td></tr>
-    <tr><td class="paramname">tool</td><td>A pointer to the tool to be added to the <a class="el" href="classToolChain.html">ToolChain</a>. </td></tr>
-    <tr><td class="paramname">configfile</td><td>The configuration file path and name to be passed to the <a class="el" href="classTool.html">Tool</a>. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="a303e299293fd4d3a5e91865e04898e52"></a>
 <div class="memitem">
 <div class="memproto">
@@ -492,72 +310,6 @@ Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">repeates</td><td>How many times to run sequential Execute loop. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a303e299293fd4d3a5e91865e04898e52"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int ToolChain::Execute </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>repeates</em> = <code>1</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Execute all Tools in the <a class="el" href="classToolChain.html">ToolChain</a> sequentially. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">repeates</td><td>How many times to run sequential Execute loop. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="aacc213c07f81ee202dce14856a076df3"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ToolChain::Remote </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>portnum</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>SD_address</em> = <code>&quot;239.192.1.1&quot;</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>SD_port</em> = <code>5000</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Run <a class="el" href="classToolChain.html">ToolChain</a> in remote mode, where connands are received fomr network connections. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">portnum</td><td>The port number to listen for remote connections on. </td></tr>
-    <tr><td class="paramname">SD_address</td><td>The service discovery address to publish availability beacons for remote connections on. </td></tr>
-    <tr><td class="paramname">SD_port</td><td>the multicast port to used for service discovery beacons </td></tr>
   </table>
   </dd>
 </dl>
@@ -607,8 +359,7 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>include/<a class="el" href="include_2ToolChain_8h_source.html">ToolChain.h</a></li>
-<li>src/ToolChain/<a class="el" href="src_2ToolChain_2ToolChain_8h_source.html">ToolChain.h</a></li>
+<li>src/ToolChain/<a class="el" href="ToolChain_8h_source.html">ToolChain.h</a></li>
 <li>src/ToolChain/ToolChain.cpp</li>
 </ul>
 </div><!-- contents -->

@@ -49,59 +49,17 @@ std\-::string $\ast$ \hyperlink{classBoostStore_aca2c7aed9a33e4022bb18c887d9dc42
 {\footnotesize template$<$typename T $>$ }\\void \hyperlink{classBoostStore_a198a7f41e16912b439b85523f802ad0f}{Set} (std\-::string name, T $\ast$in, bool persist=true)
 \item 
 {\footnotesize template$<$typename T $>$ }\\void \hyperlink{classBoostStore_a4f1bce161785c396eb407adf3ab4491e}{operator$>$$>$} (T \&obj)
-\item 
-\hyperlink{classBoostStore_af359015c3ca44cd24fd915ec7bb008b4}{Boost\-Store} (bool typechecking=true, int format=0)
-\item 
-\hyperlink{classBoostStore_af114bcb7df59af05e5715af756771379}{Boost\-Store} (std\-::map$<$ std\-::string, std\-::string $>$ invariables)
-\item 
-\hyperlink{classBoostStore_a57b996f894624e61e8f57bf495f00c07}{Boost\-Store} (std\-::map$<$ std\-::string, std\-::string $>$ invariables, std\-::map$<$ std\-::string, std\-::string $>$ ininfo)
-\item 
-bool \hyperlink{classBoostStore_ada96e21cf2ffd6872dd1523ac6a5316b}{Initialise} (std\-::string filename, int type=0)
-\begin{DoxyCompactList}\small\item\em Initialise the \hyperlink{classBoostStore}{Boost\-Store} from a file. \end{DoxyCompactList}\item 
-void \hyperlink{classBoostStore_a6380dcf800764516378adc5552f63114}{Json\-Parser} (std\-::string input)
-\begin{DoxyCompactList}\small\item\em Converts a flat J\-S\-O\-N formatted string to \hyperlink{classStore}{Store} entries in the form of key value pairs. \end{DoxyCompactList}\item 
-void \hyperlink{classBoostStore_ac88d4b1cd17889c85d4acfca3a2b2acc}{Print} (bool values=true)
-\begin{DoxyCompactList}\small\item\em Prints the contents of the \hyperlink{classBoostStore}{Boost\-Store}. \end{DoxyCompactList}\item 
-\hypertarget{classBoostStore_a99c755b996ad99c9d610dd48ffb78f17}{void \hyperlink{classBoostStore_a99c755b996ad99c9d610dd48ffb78f17}{Delete} ()}\label{classBoostStore_a99c755b996ad99c9d610dd48ffb78f17}
-
-\begin{DoxyCompactList}\small\item\em Deletes all entries in the \hyperlink{classBoostStore}{Boost\-Store}. \end{DoxyCompactList}\item 
-void \hyperlink{classBoostStore_a649b15bdd2710f3caa464f2ffd443101}{Remove} (std\-::string key)
-\begin{DoxyCompactList}\small\item\em Removes a single entry from the \hyperlink{classBoostStore}{Boost\-Store}. \end{DoxyCompactList}\item 
-void \hyperlink{classBoostStore_a96d434b12fa4084fa1cde1ebdf632c25}{Save} (std\-::string filename=\char`\"{}Output\char`\"{})
-\begin{DoxyCompactList}\small\item\em Saves the boost store to disk. \end{DoxyCompactList}\item 
-std\-::string \hyperlink{classBoostStore_a50fb58e713af0920daed1be64fd7e23c}{Type} (std\-::string key)
-\begin{DoxyCompactList}\small\item\em Queries the type of an entry if type checking is turned on. \end{DoxyCompactList}\item 
-bool \hyperlink{classBoostStore_ac2b2fd2169368f715d6d158140d69f0a}{Get\-Entry} (unsigned long entry)
-\begin{DoxyCompactList}\small\item\em Used to retrun an entry if a multievent \hyperlink{classBoostStore}{Boost\-Store}. \end{DoxyCompactList}\item 
-bool \hyperlink{classBoostStore_a0532c6a62cd78cbd970b46d4212ff9e9}{Close} ()
-\begin{DoxyCompactList}\small\item\em Closes the the currently open file. Multievent stores do not load all entries into memory but rather hanf on to a file stream and read entries as needed. This will close the stream. \end{DoxyCompactList}\item 
-bool \hyperlink{classBoostStore_af762995f2dbc5404ec1de24c34aea1ff}{Has} (std\-::string key)
-\begin{DoxyCompactList}\small\item\em Queries if entry exists in a \hyperlink{classBoostStore}{Boost\-Store}. \end{DoxyCompactList}\item 
-\hypertarget{classBoostStore_ad84f44892b8f1a48f1655a399c6809fd}{\hyperlink{classBoostStore_ad84f44892b8f1a48f1655a399c6809fd}{$\sim$\-Boost\-Store} ()}\label{classBoostStore_ad84f44892b8f1a48f1655a399c6809fd}
-
-\begin{DoxyCompactList}\small\item\em Destructor for \hyperlink{classBoostStore}{Boost\-Store}. \end{DoxyCompactList}\item 
-{\footnotesize template$<$typename T $>$ }\\bool \hyperlink{classBoostStore_aaf269e40778672ed68224377b5e90fa9}{Get} (std\-::string name, T \&out)
-\item 
-{\footnotesize template$<$typename T $>$ }\\bool \hyperlink{classBoostStore_a7e2496fd31eed43a84eea9563ecf7f86}{Get} (std\-::string name, T $\ast$\&out)
-\item 
-{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classBoostStore_a94e4f0b1d996488538efc09b831cd1a6}{Set} (std\-::string name, T in)
-\item 
-std\-::string $\ast$ \hyperlink{classBoostStore_aca2c7aed9a33e4022bb18c887d9dc42c}{operator\mbox{[}$\,$\mbox{]}} (std\-::string key)
-\item 
-{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classBoostStore_a198a7f41e16912b439b85523f802ad0f}{Set} (std\-::string name, T $\ast$in, bool persist=true)
-\item 
-{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classBoostStore_a4f1bce161785c396eb407adf3ab4491e}{operator$>$$>$} (T \&obj)
 \end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classBoostStore_a4f76becb874456bcdf04d6a84a48bcbb}{\hyperlink{classBoostStore}{Boost\-Store} $\ast$ \hyperlink{classBoostStore_a4f76becb874456bcdf04d6a84a48bcbb}{Header}}\label{classBoostStore_a4f76becb874456bcdf04d6a84a48bcbb}
+\hypertarget{classBoostStore_a3bfb8ffc972b7f0318b17018eaa37af2}{\hyperlink{classBoostStore}{Boost\-Store} $\ast$ \hyperlink{classBoostStore_a3bfb8ffc972b7f0318b17018eaa37af2}{Header}}\label{classBoostStore_a3bfb8ffc972b7f0318b17018eaa37af2}
 
 \begin{DoxyCompactList}\small\item\em Pointer to header \hyperlink{classBoostStore}{Boost\-Store} (only available in multi event \hyperlink{classBoostStore}{Boost\-Store}). This can be used to access and assign header varaibles jsut like a standard non multi event store. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classBoostStore_a4305f269960e8ccc92b19b2f0480b16d}{class {\bfseries boost\-::serialization\-::access}}\label{classBoostStore_a4305f269960e8ccc92b19b2f0480b16d}
+\hypertarget{classBoostStore_ac98d07dd8f7b70e16ccb9a01abf56b9c}{class {\bfseries boost\-::serialization\-::access}}\label{classBoostStore_ac98d07dd8f7b70e16ccb9a01abf56b9c}
 
 \end{DoxyCompactItemize}
 
@@ -118,48 +76,6 @@ B.\-Richards
 Contact\-: \href{mailto:b.richards@qmul.ac.uk}{\tt b.\-richards@qmul.\-ac.\-uk} 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classBoostStore_af359015c3ca44cd24fd915ec7bb008b4}{\index{Boost\-Store@{Boost\-Store}!Boost\-Store@{Boost\-Store}}
-\index{Boost\-Store@{Boost\-Store}!BoostStore@{Boost\-Store}}
-\subsubsection[{Boost\-Store}]{\setlength{\rightskip}{0pt plus 5cm}Boost\-Store\-::\-Boost\-Store (
-\begin{DoxyParamCaption}
-\item[{bool}]{typechecking = {\ttfamily true}, }
-\item[{int}]{format = {\ttfamily 0}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_af359015c3ca44cd24fd915ec7bb008b4}
-Standard constructor of \hyperlink{classBoostStore}{Boost\-Store} 
-\begin{DoxyParams}{Parameters}
-{\em typechecking} & This is a bool flag for turning on and off the type checking on stored objects. If true data of the varaible types will be stored and used to ensure the same type is requested by the getters later. If false varaibles will be attempted to be interpreted as the type requested. \\
-\hline
-{\em format} & This denotes the underlying storage type and mechanism for storage. 0 = binary backend, 1 = A\-S\-C\-I\-I backend, 2 = multievent based binary backend. \\
-\hline
-\end{DoxyParams}
-\hypertarget{classBoostStore_af114bcb7df59af05e5715af756771379}{\index{Boost\-Store@{Boost\-Store}!Boost\-Store@{Boost\-Store}}
-\index{Boost\-Store@{Boost\-Store}!BoostStore@{Boost\-Store}}
-\subsubsection[{Boost\-Store}]{\setlength{\rightskip}{0pt plus 5cm}Boost\-Store\-::\-Boost\-Store (
-\begin{DoxyParamCaption}
-\item[{std\-::map$<$ std\-::string, std\-::string $>$}]{invariables}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_af114bcb7df59af05e5715af756771379}
-Initialised constrcutor of a \hyperlink{classBoostStore}{Boost\-Store}. This allows a boost store to be made directly from a map of strings to strings. 
-\begin{DoxyParams}{Parameters}
-{\em invariables} & The map of strings to strings used for initialising the \hyperlink{classBoostStore}{Boost\-Store}. \\
-\hline
-\end{DoxyParams}
-\hypertarget{classBoostStore_a57b996f894624e61e8f57bf495f00c07}{\index{Boost\-Store@{Boost\-Store}!Boost\-Store@{Boost\-Store}}
-\index{Boost\-Store@{Boost\-Store}!BoostStore@{Boost\-Store}}
-\subsubsection[{Boost\-Store}]{\setlength{\rightskip}{0pt plus 5cm}Boost\-Store\-::\-Boost\-Store (
-\begin{DoxyParamCaption}
-\item[{std\-::map$<$ std\-::string, std\-::string $>$}]{invariables, }
-\item[{std\-::map$<$ std\-::string, std\-::string $>$}]{ininfo}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_a57b996f894624e61e8f57bf495f00c07}
-Initialised constrcutor of a \hyperlink{classBoostStore}{Boost\-Store}. This allows a boost store to be made directly from a map of strings to strings, with a secondary map of strings to strings as the type info. 
-\begin{DoxyParams}{Parameters}
-{\em invariables} & The map of strings to strings used for initialising the \hyperlink{classBoostStore}{Boost\-Store}. \\
-\hline
-{\em ininfo} & The map of strings to strings used for initialising the type checking of the \hyperlink{classBoostStore}{Boost\-Store}. \\
-\hline
-\end{DoxyParams}
 \hypertarget{classBoostStore_af359015c3ca44cd24fd915ec7bb008b4}{\index{Boost\-Store@{Boost\-Store}!Boost\-Store@{Boost\-Store}}
 \index{Boost\-Store@{Boost\-Store}!BoostStore@{Boost\-Store}}
 \subsubsection[{Boost\-Store}]{\setlength{\rightskip}{0pt plus 5cm}Boost\-Store\-::\-Boost\-Store (
@@ -219,20 +135,6 @@ Closes the the currently open file. Multievent stores do not load all entries in
 \begin{DoxyReturn}{Returns}
 true if sucsessfull, false if not. 
 \end{DoxyReturn}
-\hypertarget{classBoostStore_a0532c6a62cd78cbd970b46d4212ff9e9}{\index{Boost\-Store@{Boost\-Store}!Close@{Close}}
-\index{Close@{Close}!BoostStore@{Boost\-Store}}
-\subsubsection[{Close}]{\setlength{\rightskip}{0pt plus 5cm}bool Boost\-Store\-::\-Close (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}\label{classBoostStore_a0532c6a62cd78cbd970b46d4212ff9e9}
-
-
-Closes the the currently open file. Multievent stores do not load all entries into memory but rather hanf on to a file stream and read entries as needed. This will close the stream. 
-
-\begin{DoxyReturn}{Returns}
-true if sucsessfull, false if not. 
-\end{DoxyReturn}
 \hypertarget{classBoostStore_aaf269e40778672ed68224377b5e90fa9}{\index{Boost\-Store@{Boost\-Store}!Get@{Get}}
 \index{Get@{Get}!BoostStore@{Boost\-Store}}
 \subsubsection[{Get}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ bool Boost\-Store\-::\-Get (
@@ -246,42 +148,6 @@ Templated getter function for \hyperlink{classBoostStore}{Boost\-Store} content.
 {\em name} & The A\-S\-C\-I\-I key that the variable in the \hyperlink{classBoostStore}{Boost\-Store} is stored with. \\
 \hline
 {\em out} & The variable to fill with the value. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-Return value is true if varaible exists in the \hyperlink{classStore}{Store} and false if not or wrong type. 
-\end{DoxyReturn}
-\hypertarget{classBoostStore_aaf269e40778672ed68224377b5e90fa9}{\index{Boost\-Store@{Boost\-Store}!Get@{Get}}
-\index{Get@{Get}!BoostStore@{Boost\-Store}}
-\subsubsection[{Get}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ bool Boost\-Store\-::\-Get (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{name, }
-\item[{T \&}]{out}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_aaf269e40778672ed68224377b5e90fa9}
-Templated getter function for \hyperlink{classBoostStore}{Boost\-Store} content. Assignment is templated and via reference. 
-\begin{DoxyParams}{Parameters}
-{\em name} & The A\-S\-C\-I\-I key that the variable in the \hyperlink{classBoostStore}{Boost\-Store} is stored with. \\
-\hline
-{\em out} & The variable to fill with the value. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-Return value is true if varaible exists in the \hyperlink{classStore}{Store} and false if not or wrong type. 
-\end{DoxyReturn}
-\hypertarget{classBoostStore_a7e2496fd31eed43a84eea9563ecf7f86}{\index{Boost\-Store@{Boost\-Store}!Get@{Get}}
-\index{Get@{Get}!BoostStore@{Boost\-Store}}
-\subsubsection[{Get}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ bool Boost\-Store\-::\-Get (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{name, }
-\item[{T $\ast$\&}]{out}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_a7e2496fd31eed43a84eea9563ecf7f86}
-Templated getter function for pointer to \hyperlink{classBoostStore}{Boost\-Store} content. Assignment is templated and the object is created on first the heap and a pointer to it assigned. Latter requests will return a pointer to the first object. Bote the pointer is to an indipendant instance of the stored object and so changing its value without using a Setter will not effect the stored value. 
-\begin{DoxyParams}{Parameters}
-{\em name} & The A\-S\-C\-I\-I key that the variable in the \hyperlink{classBoostStore}{Boost\-Store} is stored with. \\
-\hline
-{\em out} & The pointer to assign. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -324,44 +190,6 @@ Used to retrun an entry if a multievent \hyperlink{classBoostStore}{Boost\-Store
 \begin{DoxyReturn}{Returns}
 True if sucsessfull, flase if not. 
 \end{DoxyReturn}
-\hypertarget{classBoostStore_ac2b2fd2169368f715d6d158140d69f0a}{\index{Boost\-Store@{Boost\-Store}!Get\-Entry@{Get\-Entry}}
-\index{Get\-Entry@{Get\-Entry}!BoostStore@{Boost\-Store}}
-\subsubsection[{Get\-Entry}]{\setlength{\rightskip}{0pt plus 5cm}bool Boost\-Store\-::\-Get\-Entry (
-\begin{DoxyParamCaption}
-\item[{unsigned long}]{entry}
-\end{DoxyParamCaption}
-)}}\label{classBoostStore_ac2b2fd2169368f715d6d158140d69f0a}
-
-
-Used to retrun an entry if a multievent \hyperlink{classBoostStore}{Boost\-Store}. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em entry} & The entry to return \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-True if sucsessfull, flase if not. 
-\end{DoxyReturn}
-\hypertarget{classBoostStore_af762995f2dbc5404ec1de24c34aea1ff}{\index{Boost\-Store@{Boost\-Store}!Has@{Has}}
-\index{Has@{Has}!BoostStore@{Boost\-Store}}
-\subsubsection[{Has}]{\setlength{\rightskip}{0pt plus 5cm}bool Boost\-Store\-::\-Has (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{key}
-\end{DoxyParamCaption}
-)}}\label{classBoostStore_af762995f2dbc5404ec1de24c34aea1ff}
-
-
-Queries if entry exists in a \hyperlink{classBoostStore}{Boost\-Store}. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em key} & is the key of the varaible to look up. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-true if varaible is present in the store, false if not. 
-\end{DoxyReturn}
 \hypertarget{classBoostStore_af762995f2dbc5404ec1de24c34aea1ff}{\index{Boost\-Store@{Boost\-Store}!Has@{Has}}
 \index{Has@{Has}!BoostStore@{Boost\-Store}}
 \subsubsection[{Has}]{\setlength{\rightskip}{0pt plus 5cm}bool Boost\-Store\-::\-Has (
@@ -398,41 +226,6 @@ Initialise the \hyperlink{classBoostStore}{Boost\-Store} from a file.
 {\em filename} & the path and name of the input file. \\
 \hline
 {\em type} & the input file type, 0=boost archive, 1 = A\-S\-C\-I\-I config file \\
-\hline
-\end{DoxyParams}
-\hypertarget{classBoostStore_ada96e21cf2ffd6872dd1523ac6a5316b}{\index{Boost\-Store@{Boost\-Store}!Initialise@{Initialise}}
-\index{Initialise@{Initialise}!BoostStore@{Boost\-Store}}
-\subsubsection[{Initialise}]{\setlength{\rightskip}{0pt plus 5cm}bool Boost\-Store\-::\-Initialise (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{filename, }
-\item[{int}]{type = {\ttfamily 0}}
-\end{DoxyParamCaption}
-)}}\label{classBoostStore_ada96e21cf2ffd6872dd1523ac6a5316b}
-
-
-Initialise the \hyperlink{classBoostStore}{Boost\-Store} from a file. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em filename} & the path and name of the input file. \\
-\hline
-{\em type} & the input file type, 0=boost archive, 1 = A\-S\-C\-I\-I config file \\
-\hline
-\end{DoxyParams}
-\hypertarget{classBoostStore_a6380dcf800764516378adc5552f63114}{\index{Boost\-Store@{Boost\-Store}!Json\-Parser@{Json\-Parser}}
-\index{Json\-Parser@{Json\-Parser}!BoostStore@{Boost\-Store}}
-\subsubsection[{Json\-Parser}]{\setlength{\rightskip}{0pt plus 5cm}void Boost\-Store\-::\-Json\-Parser (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{input}
-\end{DoxyParamCaption}
-)}}\label{classBoostStore_a6380dcf800764516378adc5552f63114}
-
-
-Converts a flat J\-S\-O\-N formatted string to \hyperlink{classStore}{Store} entries in the form of key value pairs. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em input} & The input flat J\-S\-O\-N string. \\
 \hline
 \end{DoxyParams}
 \hypertarget{classBoostStore_a6380dcf800764516378adc5552f63114}{\index{Boost\-Store@{Boost\-Store}!Json\-Parser@{Json\-Parser}}
@@ -458,13 +251,6 @@ Converts a flat J\-S\-O\-N formatted string to \hyperlink{classStore}{Store} ent
 \item[{T \&}]{obj}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_a4f1bce161785c396eb407adf3ab4491e}
-Allows streaming of a flat J\-A\-S\-O\-N formatted string of \hyperlink{classBoostStore}{Boost\-Store} contents. \hypertarget{classBoostStore_a4f1bce161785c396eb407adf3ab4491e}{\index{Boost\-Store@{Boost\-Store}!operator$>$$>$@{operator$>$$>$}}
-\index{operator$>$$>$@{operator$>$$>$}!BoostStore@{Boost\-Store}}
-\subsubsection[{operator$>$$>$}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Boost\-Store\-::operator$>$$>$ (
-\begin{DoxyParamCaption}
-\item[{T \&}]{obj}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_a4f1bce161785c396eb407adf3ab4491e}
 Allows streaming of a flat J\-A\-S\-O\-N formatted string of \hyperlink{classBoostStore}{Boost\-Store} contents. \hypertarget{classBoostStore_aca2c7aed9a33e4022bb18c887d9dc42c}{\index{Boost\-Store@{Boost\-Store}!operator\mbox{[}$\,$\mbox{]}@{operator[]}}
 \index{operator\mbox{[}$\,$\mbox{]}@{operator[]}!BoostStore@{Boost\-Store}}
 \subsubsection[{operator[]}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string$\ast$ Boost\-Store\-::operator\mbox{[}$\,$\mbox{]} (
@@ -480,37 +266,6 @@ Returns string pointer to \hyperlink{classStore}{Store} element.
 \begin{DoxyReturn}{Returns}
 a pointer to the string version of the value within the \hyperlink{classStore}{Store}. 
 \end{DoxyReturn}
-\hypertarget{classBoostStore_aca2c7aed9a33e4022bb18c887d9dc42c}{\index{Boost\-Store@{Boost\-Store}!operator\mbox{[}$\,$\mbox{]}@{operator[]}}
-\index{operator\mbox{[}$\,$\mbox{]}@{operator[]}!BoostStore@{Boost\-Store}}
-\subsubsection[{operator[]}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string$\ast$ Boost\-Store\-::operator\mbox{[}$\,$\mbox{]} (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{key}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_aca2c7aed9a33e4022bb18c887d9dc42c}
-Returns string pointer to \hyperlink{classStore}{Store} element. 
-\begin{DoxyParams}{Parameters}
-{\em key} & The key of the string pointer to return. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-a pointer to the string version of the value within the \hyperlink{classStore}{Store}. 
-\end{DoxyReturn}
-\hypertarget{classBoostStore_ac88d4b1cd17889c85d4acfca3a2b2acc}{\index{Boost\-Store@{Boost\-Store}!Print@{Print}}
-\index{Print@{Print}!BoostStore@{Boost\-Store}}
-\subsubsection[{Print}]{\setlength{\rightskip}{0pt plus 5cm}void Boost\-Store\-::\-Print (
-\begin{DoxyParamCaption}
-\item[{bool}]{values = {\ttfamily true}}
-\end{DoxyParamCaption}
-)}}\label{classBoostStore_ac88d4b1cd17889c85d4acfca3a2b2acc}
-
-
-Prints the contents of the \hyperlink{classBoostStore}{Boost\-Store}. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em values} & If true values and keys are printed. If false just keys are printed \\
-\hline
-\end{DoxyParams}
 \hypertarget{classBoostStore_ac88d4b1cd17889c85d4acfca3a2b2acc}{\index{Boost\-Store@{Boost\-Store}!Print@{Print}}
 \index{Print@{Print}!BoostStore@{Boost\-Store}}
 \subsubsection[{Print}]{\setlength{\rightskip}{0pt plus 5cm}void Boost\-Store\-::\-Print (
@@ -543,22 +298,6 @@ Removes a single entry from the \hyperlink{classBoostStore}{Boost\-Store}.
 {\em key} & The key of the entry to remove. \\
 \hline
 \end{DoxyParams}
-\hypertarget{classBoostStore_a649b15bdd2710f3caa464f2ffd443101}{\index{Boost\-Store@{Boost\-Store}!Remove@{Remove}}
-\index{Remove@{Remove}!BoostStore@{Boost\-Store}}
-\subsubsection[{Remove}]{\setlength{\rightskip}{0pt plus 5cm}void Boost\-Store\-::\-Remove (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{key}
-\end{DoxyParamCaption}
-)}}\label{classBoostStore_a649b15bdd2710f3caa464f2ffd443101}
-
-
-Removes a single entry from the \hyperlink{classBoostStore}{Boost\-Store}. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em key} & The key of the entry to remove. \\
-\hline
-\end{DoxyParams}
 \hypertarget{classBoostStore_a96d434b12fa4084fa1cde1ebdf632c25}{\index{Boost\-Store@{Boost\-Store}!Save@{Save}}
 \index{Save@{Save}!BoostStore@{Boost\-Store}}
 \subsubsection[{Save}]{\setlength{\rightskip}{0pt plus 5cm}void Boost\-Store\-::\-Save (
@@ -573,37 +312,6 @@ Saves the boost store to disk.
 
 \begin{DoxyParams}{Parameters}
 {\em filename} & The output name and path of where to save the \hyperlink{classBoostStore}{Boost\-Store} contents. \\
-\hline
-\end{DoxyParams}
-\hypertarget{classBoostStore_a96d434b12fa4084fa1cde1ebdf632c25}{\index{Boost\-Store@{Boost\-Store}!Save@{Save}}
-\index{Save@{Save}!BoostStore@{Boost\-Store}}
-\subsubsection[{Save}]{\setlength{\rightskip}{0pt plus 5cm}void Boost\-Store\-::\-Save (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{filename = {\ttfamily \char`\"{}Output\char`\"{}}}
-\end{DoxyParamCaption}
-)}}\label{classBoostStore_a96d434b12fa4084fa1cde1ebdf632c25}
-
-
-Saves the boost store to disk. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em filename} & The output name and path of where to save the \hyperlink{classBoostStore}{Boost\-Store} contents. \\
-\hline
-\end{DoxyParams}
-\hypertarget{classBoostStore_a94e4f0b1d996488538efc09b831cd1a6}{\index{Boost\-Store@{Boost\-Store}!Set@{Set}}
-\index{Set@{Set}!BoostStore@{Boost\-Store}}
-\subsubsection[{Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Boost\-Store\-::\-Set (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{name, }
-\item[{T}]{in}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_a94e4f0b1d996488538efc09b831cd1a6}
-Templated setter function to assign vairables in the \hyperlink{classBoostStore}{Boost\-Store}. 
-\begin{DoxyParams}{Parameters}
-{\em name} & The key to be used to store and reference the variable in the \hyperlink{classBoostStore}{Boost\-Store}. \\
-\hline
-{\em in} & the varaible to be stored. \\
 \hline
 \end{DoxyParams}
 \hypertarget{classBoostStore_a94e4f0b1d996488538efc09b831cd1a6}{\index{Boost\-Store@{Boost\-Store}!Set@{Set}}
@@ -639,43 +347,6 @@ Templated setter function to assign vairables in the \hyperlink{classBoostStore}
 {\em persist} & Indicates if the object that is being pointed to is stored or not. If not only the pointer is retained for later use but not in the archive and so will not be saved with the \hyperlink{classBoostStore}{Boost\-Store} on save calls. \\
 \hline
 \end{DoxyParams}
-\hypertarget{classBoostStore_a198a7f41e16912b439b85523f802ad0f}{\index{Boost\-Store@{Boost\-Store}!Set@{Set}}
-\index{Set@{Set}!BoostStore@{Boost\-Store}}
-\subsubsection[{Set}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Boost\-Store\-::\-Set (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{name, }
-\item[{T $\ast$}]{in, }
-\item[{bool}]{persist = {\ttfamily true}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classBoostStore_a198a7f41e16912b439b85523f802ad0f}
-Templated setter function to assign vairables in the \hyperlink{classBoostStore}{Boost\-Store} from pointers. 
-\begin{DoxyParams}{Parameters}
-{\em name} & The key to be used to store and reference the variable in the \hyperlink{classBoostStore}{Boost\-Store}. \\
-\hline
-{\em in} & A pointer to the object to be stored. The function will store the value the pointer poitns to in the archive and keep hold of the pointer to return to Get calls later. \\
-\hline
-{\em persist} & Indicates if the object that is being pointed to is stored or not. If not only the pointer is retained for later use but not in the archive and so will not be saved with the \hyperlink{classBoostStore}{Boost\-Store} on save calls. \\
-\hline
-\end{DoxyParams}
-\hypertarget{classBoostStore_a50fb58e713af0920daed1be64fd7e23c}{\index{Boost\-Store@{Boost\-Store}!Type@{Type}}
-\index{Type@{Type}!BoostStore@{Boost\-Store}}
-\subsubsection[{Type}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string Boost\-Store\-::\-Type (
-\begin{DoxyParamCaption}
-\item[{std\-::string}]{key}
-\end{DoxyParamCaption}
-)}}\label{classBoostStore_a50fb58e713af0920daed1be64fd7e23c}
-
-
-Queries the type of an entry if type checking is turned on. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em key} & The key of the entry to check. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-A string encoding the type info. 
-\end{DoxyReturn}
 \hypertarget{classBoostStore_a50fb58e713af0920daed1be64fd7e23c}{\index{Boost\-Store@{Boost\-Store}!Type@{Type}}
 \index{Type@{Type}!BoostStore@{Boost\-Store}}
 \subsubsection[{Type}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string Boost\-Store\-::\-Type (
@@ -699,6 +370,5 @@ A string encoding the type info.
 
 The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-include/Boost\-Store.\-h\item 
 src/\-Store/Boost\-Store.\-h\item 
 src/\-Store/Boost\-Store.\-cpp\end{DoxyCompactItemize}
