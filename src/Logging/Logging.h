@@ -136,14 +136,16 @@ Constructor for Logging class
        
   */
   template <typename T>  void Log(T message, int messagelevel=1, int verbose=1){
-    std::stringstream tmp;
-    tmp<<message;
-    buffer.m_messagelevel=messagelevel;
-    buffer.m_verbose=verbose;
-    std::cout<<tmp.str()<<std::endl;
-    buffer.m_messagelevel=1;
-    buffer.m_verbose=1;
-  } 
+    if(messagelevel<=verbose){    
+      std::stringstream tmp;
+      tmp<<message;
+      buffer.m_messagelevel=messagelevel;
+      buffer.m_verbose=verbose;
+      std::cout<<tmp.str()<<std::endl;
+      buffer.m_messagelevel=1;
+      buffer.m_verbose=1;
+    } 
+  }
 
 
   /**
