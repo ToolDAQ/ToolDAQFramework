@@ -281,7 +281,7 @@ bool BoostStore::GetEntry(unsigned long entry){
     if(entry==currententry)  return true;
     
     else if(entry>currententry){
-
+      Delete();	
       for(unsigned long i=currententry; i<entry; i++){
 	
 	m_variables.clear();
@@ -296,6 +296,7 @@ bool BoostStore::GetEntry(unsigned long entry){
     }
     else if(entry<currententry){
 
+      Delete()
       delete arch;
       arch=0;
       file->close();
