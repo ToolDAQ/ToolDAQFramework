@@ -52,7 +52,7 @@ class BoostStore{
     if(m_format==2){
       Header = new BoostStore(typechecking,0);
     }
-    
+    srand (time(NULL)); 
   } // format 0=binary, 1=text, 2=multievent.
 
   /**

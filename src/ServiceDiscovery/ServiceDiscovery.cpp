@@ -64,9 +64,10 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 
   long msg_id=0;
 
-  zmq::socket_t Ireceive (*context, ZMQ_PULL);
-  Ireceive.bind("inproc://ServicePublish");      
-  
+  zmq::socket_t Ireceive (*context, ZMQ_PULL);      
+  int linger = 0;
+  Ireceive.setsockopt (ZMQ_LINGER, &linger, sizeof (linger));
+  Ireceive.bind("inproc://ServicePublish");  
   /// multi cast /////
   
   
@@ -77,6 +78,11 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   
   // set up socket //
   sock = socket(AF_INET, SOCK_DGRAM, 0);
+  struct linger l;
+  l.l_onoff  = 0;
+  l.l_linger = 0;
+  setsockopt(sock, SOL_SOCKET, SO_LINGER,(char *) &l, sizeof(l));
+	
   //fcntl(sock, F_SETFL, O_NONBLOCK); 
   if (sock < 0) {
     perror("socket");
@@ -127,11 +133,11 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
       int port;
       bool statusquery;
       
-           tmp>>command>>service>>uuid>>port>>statusquery;
+      tmp>>command>>service>>uuid>>port>>statusquery;
      
      
       if(command=="Quit"){
-	
+	//printf("publish quitting \n");	
 	running=false;
       }
       else if(command=="Add"){
@@ -241,7 +247,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  snprintf ((char *) Esend.data(), command.length()+1 , "%s" ,command.c_str()) ;
 	 
 	  zmq::poll(out,1,1000);
-	  
+	 
 	  if(out[0].revents & ZMQ_POLLOUT){
 	    StatusCheck.send(Esend);
 	    
@@ -359,7 +365,10 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
     
     
   }
-  
+  close(sock);
+  Ireceive.close();
+  //  printf("publish out of runnin \n");
+
   pthread_exit(NULL);
   //return (NULL);
   
@@ -376,7 +385,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   int m_multicastport=args->multicastport;
   std::string m_service=args->service;
   
-  zmq::socket_t Ireceive (*context, ZMQ_DEALER);
+  zmq::socket_t Ireceive (*context, ZMQ_ROUTER);
   Ireceive.bind("inproc://ServiceDiscovery");  
   
 
@@ -527,10 +536,14 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
    
     if ((items [1].revents & ZMQ_POLLIN) && running) {
       
+      zmq::message_t Identity;
+      Ireceive.recv(&Identity);
+      
+      Ireceive.send(Identity,ZMQ_SNDMORE);
+
       zmq::message_t comm;
  
       if(Ireceive.recv(&comm)){
-
 
 	std::istringstream iss(static_cast<char*>(comm.data()));
 	std::string arg1="";
@@ -547,33 +560,44 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 
 	   snprintf ((char *) sizem.data(), sizeof size , "%d" ,size) ;
 	  
-	   zmq::poll(out,1,1000);
+	   //	   zmq::poll(out,1,1000);
 	   
-	   if (out[0].revents & ZMQ_POLLOUT){ 
-	    
-	     Ireceive.send(sizem);	    
+	   // if (out[0].revents & ZMQ_POLLOUT){ 
+	     //std::cout<<"SD sent size="<<size<<std::endl;
+	     //std::cout<<"SD sent message size="<<sizeof(sizem.data())<<std::endl;
+
+	     if(size==0) Ireceive.send(sizem);
+	     else Ireceive.send(sizem,ZMQ_SNDMORE);	    
 	    
 	     
-	     for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
+	     for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ){
 	    
 	       std::string service;
 	       *(it->second)>>service;
 	       zmq::message_t send(service.length()+1);
 	       snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
 	    
-	       zmq::poll(out,1,1000);
+	       //	       zmq::poll(out,1,1000);
 	    
-	       if (out[0].revents & ZMQ_POLLOUT){
-		 
-		 Ireceive.send(send);
-		 	     
+	       //	       if (out[0].revents & ZMQ_POLLOUT){
+	       it++;
+	       if(it!=RemoteServices.end()){
+		 Ireceive.send(send,ZMQ_SNDMORE);
+		 //std::cout<<"SD sent a message"<<std::endl;
+
 	       }
 	       else {
-		 break;
+		 Ireceive.send(send);
+		 //std::cout<<"SD sent final message"<<std::endl;
 	       }
+
+		 // }
+	       // else {
+	       // break;
+	       // }
 	       
 	     }
-	   }
+	     // }
 	   
 	}
 	
@@ -632,7 +656,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	if(arg1=="Quit"){
 	  
 	  running=false;
-	  //printf("quitting \n");	
+	  //printf("quitting listening \n");	
 	}
 	
 	
@@ -668,7 +692,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 
 ServiceDiscovery::~ServiceDiscovery(){
   
-  //printf("in sd destructor \n");
+  // printf("in sd destructor \n");
     sleep(1);  
   //printf("finnish sleep \n");
   
@@ -689,8 +713,9 @@ ServiceDiscovery::~ServiceDiscovery(){
     snprintf ((char *) command.data(), 5 , "%s" ,"Quit") ;
     ServicePublish.send(command);
     
+    //printf("send waiting fir join \n");
     pthread_join(thread[1], NULL);
-    
+    //printf("send joint \n");
   }
   
     //  zmq::socket_t ServiceDiscovery (*context, ZMQ_REQ);
@@ -712,8 +737,8 @@ ServiceDiscovery::~ServiceDiscovery(){
     ServiceDiscovery.connect("inproc://ServiceDiscovery");
   
 
-    zmq::message_t command(7);
-    snprintf ((char *) command.data(), 7 , "%s" ,"Quit") ;
+    zmq::message_t command(5);
+    snprintf ((char *) command.data(), 5 , "%s" ,"Quit") ;
     ServiceDiscovery.send(command);
   
     //printf("sent waiting for receive \n");
@@ -723,7 +748,8 @@ ServiceDiscovery::~ServiceDiscovery(){
 
     //printf("received waiting fir join \n");
     pthread_join(thread[0], NULL);
-    
+    //printf("received joint \n");
+
   }
 
   if(args!=0){

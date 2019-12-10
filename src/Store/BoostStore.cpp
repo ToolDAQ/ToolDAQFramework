@@ -296,7 +296,7 @@ bool BoostStore::GetEntry(unsigned long entry){
     }
     else if(entry<currententry){
 
-      Delete()
+      Delete();
       delete arch;
       arch=0;
       file->close();

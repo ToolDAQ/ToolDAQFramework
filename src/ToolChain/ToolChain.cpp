@@ -803,7 +803,7 @@ ToolChain::~ToolChain(){
   //printf("%s \n","tdebug 6");
   //  context->close();
   //printf("%s \n","tdebug 6.5");
-  delete context;
+  //delete context;
   // printf("%s \n","tdebug 7");
   context=0;
   //printf("%s \n","tdebug 8");
