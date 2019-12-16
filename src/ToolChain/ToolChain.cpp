@@ -602,7 +602,7 @@ std::string ToolChain::ExecuteCommand(std::string command){
       returnmsg<<"command not recognised please try again";
     }
   }
-  if(Finalised) usleep(100);
+  if(Finalised || (!Finalised && !exeloop)) usleep(100);
   if(exeloop) Execute();
   return returnmsg.str();
 }

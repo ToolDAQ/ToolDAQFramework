@@ -25,28 +25,28 @@ class SerialisableObject{
  public:
   
   virtual bool Print()=0; ///< Simple virtual Pritn function to ensure inhereted classes have one
-  virtual ~SerialisableObject(){}; ///< Destructor
+  // virtual ~SerialisableObject(){}; ///< Destructor
   bool serialise; ///< Denotes if the calss should be serialised or not when added to a BoostStore. 
   
- protected:
+  //protected:
   
-  std::string type; ///< String to store type of Tool
-  std::string version; ///< String to store version of Tool
+  //std::string type; ///< String to store type of Tool
+  //std::string version; ///< String to store version of Tool
   
   /**
      Simple Boost serialise method to serialise the membervariables of a custom class. This shuld be expanded to include the custom classes variables
      @param ar Boost archive.
      @param version of the archive.
    */
-  template<class Archive> void serialize(Archive & ar, const unsigned int version){  
+  /*    template<class Archive> void serialize(Archive & ar, const unsigned int version){  
     if(serialise){
       ar & type;
       ar & version;
     }
   }
+  */
   
-  
- private:
+
 
 };
 
