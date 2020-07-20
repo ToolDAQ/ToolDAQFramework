@@ -383,8 +383,9 @@ bool BoostStore::Close(){
        out.close();
        data.close();
        tmp.str("");
-       tmp<< "rm "<<outfile<<".data";
+       tmp<<outfile<<".data";
        remove(tmp.str().c_str());
+       //tmp<< "rm "<<outfile<<".data";
        //system(tmp.str().c_str());
        
      }
