@@ -35,7 +35,7 @@ class Store{
   void JsonParser(std::string input); ///<  Converts a flat JSON formatted string to Store entries in the form of key value pairs.  @param input The input flat JSON string.
   void Print(); ///< Prints the contents of the Store.
   void Delete(); ///< Deletes all entries in the Store.
-  bool Has(std::string key);; ///<Returns bool based on if store contains entry given by sting @param string key to comapre.
+  bool Has(std::string key); ///<Returns bool based on if store contains entry given by sting @param string key to comapre.
 
   /**
      Templated getter function for tore content. Assignment is templated and via reference.
