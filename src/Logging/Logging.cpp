@@ -99,7 +99,25 @@ int Logging::MyStreamBuf::sync ( )
       
     }
     else if(m_mode=="Interactive"){
-      output<< "["<<m_messagelevel<<"]: " << str();
+      std::string code="";
+      /*      if(m_messagelevel ==0) code="231";
+      else if (m_messagelevel ==1) code="174";
+      else if (m_messagelevel ==2) code="129";
+      else if (m_messagelevel ==3) code="154";
+      else if (m_messagelevel ==4) code="159";
+      else if (m_messagelevel ==5) code="125";
+      else if (m_messagelevel ==6) code="21";
+      else if (m_messagelevel ==7) code="46";
+      else if (m_messagelevel ==8) code="51";
+      else if (m_messagelevel ==9) code="93";
+      else if (m_messagelevel ==10) code="208";
+      else if (m_messagelevel ==10) code="226";
+      else if (m_messagelevel >=12) code="201";
+      
+
+      output<<"\033[38;5;"<<code<<"m["<<m_messagelevel<<"]: " << str()<<"\033[0m";
+     */ 
+      output<<"["<<m_messagelevel<<"]: " << str();
       str("");
       output.flush(); 
     }
