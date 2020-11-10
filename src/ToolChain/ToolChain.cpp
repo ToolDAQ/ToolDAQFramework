@@ -42,7 +42,7 @@ ToolChain::ToolChain(std::string configfile){
   SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
 
   if(m_log_mode=="Remote") sleep(10); //needed to allow service discovery find time                                                                                       
-  logmessage<<"UUID = "<<m_UUID<<std::endl<<"********************************************************"<<std::endl<<"**** Tool chain created ****"<<std::endl<<"********************************************************"<<std::endl;
+  logmessage<<cyan<<"UUID = "<<m_UUID<<std::endl<<yellow<<"********************************************************"<<std::endl<<"**** Tool chain created ****"<<std::endl<<"********************************************************"<<reset<<std::endl;
   m_data.Log->Log(logmessage.str(),1,m_verbose);
   logmessage.str("");
 
@@ -158,7 +158,7 @@ void ToolChain::Init(unsigned int IO_Threads){
 void ToolChain::Add(std::string name,Tool *tool,std::string configfile){
   if(tool!=0){
     // if(m_verbose)*(m_data.Log)<<"Adding Tool=\""<<name<<"\" tool chain"<<std::endl;
-    logmessage<<"Adding Tool='"<<name<<"' to ToolChain";
+    logmessage<<cyan<<"Adding Tool='"<<name<<"' to ToolChain"<<reset;
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
     
@@ -167,13 +167,13 @@ void ToolChain::Add(std::string name,Tool *tool,std::string configfile){
     m_configfiles.push_back(configfile);
     
     //    if(m_verbose)*(m_data.Log)<<"Tool=\""<<name<<"\" added successfully"<<std::endl<<std::endl; 
-    logmessage<<"Tool='"<<name<<"' added successfully"<<std::endl;
+    logmessage<<green<<"Tool='"<<name<<"' added successfully"<<reset<<std::endl;
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
     
   }
   else{
-    logmessage<<"WARNING!!! Tool='"<<name<<"' Does Not Exist in factory!!! "<<std::endl;
+    logmessage<<red<<"WARNING!!! Tool='"<<name<<"' Does Not Exist in factory!!! "<<reset<<std::endl;
     m_data.Log->Log(logmessage.str(),0,m_verbose);
     logmessage.str("");
   }
@@ -187,7 +187,7 @@ int ToolChain::Initialise(){
   bool result=0;
 
   if (Finalised){
-    logmessage<<"********************************************************"<<std::endl<<"**** Initialising tools in toolchain ****"<<std::endl<<"********************************************************"<<std::endl;
+    logmessage<<yellow<<"********************************************************"<<std::endl<<"**** Initialising tools in toolchain ****"<<std::endl<<"********************************************************"<<reset<<std::endl;
     m_data.Log->Log(logmessage.str(),1,m_verbose);
     logmessage.str("");
 
@@ -199,7 +199,7 @@ int ToolChain::Initialise(){
     
     for(int i=0 ; i<m_tools.size();i++){  
       
-      logmessage<<"Initialising "<<m_toolnames.at(i);
+      logmessage<<cyan<<"Initialising "<<m_toolnames.at(i)<<reset;
       m_data.Log->Log(logmessage.str(),2,m_verbose);
       logmessage.str("");
 
@@ -208,13 +208,13 @@ int ToolChain::Initialise(){
       try{    
 	if(m_tools.at(i)->Initialise(m_configfiles.at(i), m_data)){
 	  //  if(m_verbose)*(m_data.Log)<<m_toolnames.at(i)<<" initialised successfully"<<std::endl<<std::endl;
-	  logmessage<<m_toolnames.at(i)<<" initialised successfully"<<std::endl;
+	  logmessage<<green<<m_toolnames.at(i)<<" initialised successfully"<<reset<<std::endl;
 	  m_data.Log->Log( logmessage.str(),2,m_verbose);
 	  logmessage.str("");
 	}
 	else{
 	  //*(m_data.Log)<<"WARNING !!!!! "<<m_toolnames.at(i)<<" Failed to initialise (exit error code)"<<std::endl<<std::endl;
-	  logmessage<<"WARNING !!!!! "<<m_toolnames.at(i)<<" Failed to initialise (exit error code)"<<std::endl;
+	  logmessage<<red<<"WARNING !!!!! "<<m_toolnames.at(i)<<" Failed to initialise (exit error code)"<<reset<<std::endl;
           m_data.Log->Log( logmessage.str(),0,m_verbose);
           logmessage.str("");
 	  result=1;
@@ -225,7 +225,7 @@ int ToolChain::Initialise(){
       
       catch(...){
 	//*(m_data.Log)<<"WARNING !!!!! "<<m_toolnames.at(i)<<" Failed to initialise (uncaught error)"<<std::endl<<std::endl;
-	logmessage<<"WARNING !!!!! "<<m_toolnames.at(i)<<" Failed to initialise (uncaught error)"<<std::endl;
+	logmessage<<red<<"WARNING !!!!! "<<m_toolnames.at(i)<<" Failed to initialise (uncaught error)"<<reset<<std::endl;
 	m_data.Log->Log( logmessage.str(),0,m_verbose);
 	logmessage.str("");
 	result=2;
@@ -238,7 +238,7 @@ int ToolChain::Initialise(){
     // *(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
     //  }
     
-    logmessage<<std::endl<<"**** Tool chain initialised ****"<<std::endl<<"********************************************************"<<std::endl;
+    logmessage<<std::endl<<yellow<<"**** Tool chain initialised ****"<<std::endl<<"********************************************************"<<reset<<std::endl;
     m_data.Log->Log( logmessage.str(),1,m_verbose);
     logmessage.str("");
 
@@ -250,7 +250,7 @@ int ToolChain::Initialise(){
     //*(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
     // *(m_data.Log)<<" ERROR: ToolChain Cannot Be Initialised as already running. Finalise old chain first";
     //*(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
-    logmessage<<"********************************************************"<<std::endl<<std::endl<<" ERROR: ToolChain Cannot Be Initialised as already running. Finalise old chain first"<<"********************************************************"<<std::endl;
+    logmessage<<purple<<"********************************************************"<<std::endl<<std::endl<<" ERROR: ToolChain Cannot Be Initialised as already running. Finalise old chain first"<<"********************************************************"<<reset<<std::endl;
     m_data.Log->Log( logmessage.str(),0,m_verbose);
     logmessage.str("");
 
@@ -270,7 +270,7 @@ int ToolChain::Execute(int repeates){
   if(Initialised){
 
     if(Inline){
-    logmessage<<"********************************************************"<<std::endl<<"**** Executing toolchain "<<repeates<<" times ****"<<std::endl<<"********************************************************"<<std::endl;
+      logmessage<<yellow<<"********************************************************"<<std::endl<<"**** Executing toolchain "<<repeates<<" times ****"<<std::endl<<"********************************************************"<<reset<<std::endl;
     m_data.Log->Log( logmessage.str(),2,m_verbose);
     logmessage.str("");
     }
@@ -283,28 +283,28 @@ int ToolChain::Execute(int repeates){
 	*(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
 	}
       */
-      logmessage<<"********************************************************"<<std::endl<<"**** Executing tools in toolchain ****"<<std::endl<<"********************************************************"<<std::endl;
+      logmessage<<yellow<<"********************************************************"<<std::endl<<"**** Executing tools in toolchain ****"<<std::endl<<"********************************************************"<<reset<<std::endl;
       m_data.Log->Log( logmessage.str(),3,m_verbose);
       logmessage.str("");
       
       for(int i=0 ; i<m_tools.size();i++){
 	
 	//if(m_verbose)    *(m_data.Log)<<"Executing "<<m_toolnames.at(i)<<std::endl;
-	logmessage<<"Executing "<<m_toolnames.at(i);
+	logmessage<<cyan<<"Executing "<<m_toolnames.at(i)<<reset;
 	m_data.Log->Log( logmessage.str(),4,m_verbose);
 	logmessage.str("");	
 	
 	try{
 	  if(m_tools.at(i)->Execute()){
 	    //    if(m_verbose)*(m_data.Log)<<m_toolnames.at(i)<<" executed  successfully"<<std::endl<<std::endl;
-	    logmessage<<m_toolnames.at(i)<<" executed  successfully"<<std::endl;
+	    logmessage<<green<<m_toolnames.at(i)<<" executed  successfully"<<reset<<std::endl;
 	    m_data.Log->Log( logmessage.str(),4,m_verbose);
 	    logmessage.str("");
 	    
 	  }
 	  else{
 	    //*(m_data.Log)<<"WARNING !!!!!! "<<m_toolnames.at(i)<<" Failed to execute (error code)"<<std::endl<<std::endl;
-	    logmessage<<"WARNING !!!!!! "<<m_toolnames.at(i)<<" Failed to execute (error code)"<<std::endl;
+	    logmessage<<red<<"WARNING !!!!!! "<<m_toolnames.at(i)<<" Failed to execute (error code)"<<reset<<std::endl;
             m_data.Log->Log( logmessage.str(),0,m_verbose);
             logmessage.str("");
 	    
@@ -322,8 +322,7 @@ int ToolChain::Execute(int repeates){
 	
 	catch(...){
 	  // *(m_data.Log)<<"WARNING !!!!!! "<<m_toolnames.at(i)<<" Failed to execute (uncaught error)"<<std::endl<<std::endl;
-	  logmessage<<"WARNING !!!!!! "<<m_toolnames.at(i)<<" Failed t\
-o execute (uncaught error)"<<std::endl;
+	  logmessage<<red<<"WARNING !!!!!! "<<m_toolnames.at(i)<<" Failed to execute (uncaught error)"<<reset<<std::endl;
 	  m_data.Log->Log( logmessage.str(),0,m_verbose);
 	  logmessage.str("");
 	  
@@ -343,14 +342,14 @@ o execute (uncaught error)"<<std::endl;
        *(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
        }
       */
-      logmessage<<"**** Tool chain executed ****"<<std::endl<<"********************************************************"<<std::endl;
+      logmessage<<yellow<<"**** Tool chain executed ****"<<std::endl<<"********************************************************"<<reset<<std::endl;
       m_data.Log->Log( logmessage.str(),3,m_verbose);
       logmessage.str("");
     }
     
     execounter++;
     if(Inline){
-      logmessage<<"********************************************************"<<std::endl<<"**** Executed toolchain "<<repeates<<" times ****"<<std::endl<<"********************************************************"<<std::endl;
+      logmessage<<yellow<<"********************************************************"<<std::endl<<"**** Executed toolchain "<<repeates<<" times ****"<<std::endl<<"********************************************************"<<reset<<std::endl;
       m_data.Log->Log( logmessage.str(),2,m_verbose);
       logmessage.str("");
     }
@@ -363,7 +362,7 @@ o execute (uncaught error)"<<std::endl;
     *(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
     */
 
-    logmessage<<"********************************************************"<<std::endl<<std::endl<<" ERROR: ToolChain Cannot Be Executed As Has Not Been Initialised yet."<<std::endl<<"********************************************************"<<std::endl;
+    logmessage<<purple<<"********************************************************"<<std::endl<<std::endl<<" ERROR: ToolChain Cannot Be Executed As Has Not Been Initialised yet."<<std::endl<<"********************************************************"<<reset<<std::endl;
     m_data.Log->Log( logmessage.str(),0,m_verbose);
     logmessage.str("");
     result=-1;
@@ -386,28 +385,28 @@ int ToolChain::Finalise(){
       *(m_data.Log)<<"***`<*****************************************************"<<std::endl<<std::endl;
     }  
     */
-    logmessage<<"********************************************************"<<std::endl<<"**** Finalising tools in toolchain ****"<<std::endl<<"********************************************************"<<std::endl;
+    logmessage<<yellow<<"********************************************************"<<std::endl<<"**** Finalising tools in toolchain ****"<<std::endl<<"********************************************************"<<reset<<std::endl;
     m_data.Log->Log( logmessage.str(),1,m_verbose);
     logmessage.str("");
 
     for(int i=0 ; i<m_tools.size();i++){
       
       //if(m_verbose)*(m_data.Log)<<"Finalising "<<m_toolnames.at(i)<<std::endl;
-      logmessage<<"Finalising "<<m_toolnames.at(i);
+      logmessage<<cyan<<"Finalising "<<m_toolnames.at(i)<<reset;
       m_data.Log->Log( logmessage.str(),2,m_verbose);
       logmessage.str("");
       
       try{
 	if(m_tools.at(i)->Finalise()){
 	  //  if(m_verbose)*(m_data.Log)<<m_toolnames.at(i)<<" Finalised successfully"<<std::endl<<std::endl;
-	  logmessage<<m_toolnames.at(i)<<" Finalised successfully"<<std::endl;
+	  logmessage<<green<<m_toolnames.at(i)<<" Finalised successfully"<<reset<<std::endl;
 	  m_data.Log->Log( logmessage.str(),2,m_verbose);
 	  logmessage.str("");
 
 	}
 	else{
 	  //  *(m_data.Log)<<"WARNING !!!!!!! "<<m_toolnames.at(i)<<" Finalised successfully (error code)"<<std::endl<<std::endl;;
-	  logmessage<<"WARNING !!!!!!! "<<m_toolnames.at(i)<<" Finalised successfully (error code)"<<std::endl;
+	  logmessage<<red<<"WARNING !!!!!!! "<<m_toolnames.at(i)<<" Finalised successfully (error code)"<<reset<<std::endl;
 	  m_data.Log->Log( logmessage.str(),0,m_verbose);
 	  logmessage.str("");
 	  
@@ -418,7 +417,7 @@ int ToolChain::Finalise(){
       
       catch(...){
 	//*(m_data.Log)<<"WARNING !!!!!!! "<<m_toolnames.at(i)<<" Finalised successfully (uncaught error)"<<std::endl<<std::endl;
-	logmessage<<"WARNING !!!!!!! "<<m_toolnames.at(i)<<" Finalised successfully (uncaught error)"<<std::endl;
+	logmessage<<red<<"WARNING !!!!!!! "<<m_toolnames.at(i)<<" Finalised successfully (uncaught error)"<<reset<<std::endl;
 	m_data.Log->Log( logmessage.str(),0,m_verbose);
 	logmessage.str("");
 	
@@ -433,7 +432,7 @@ int ToolChain::Finalise(){
       *(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
       }
     */
-    logmessage<<"**** Toolchain Finalised ****"<<std::endl<<"********************************************************"<<std::endl;
+    logmessage<<yellow<<"**** Toolchain Finalised ****"<<std::endl<<"********************************************************"<<reset<<std::endl;
     m_data.Log->Log( logmessage.str(),1,m_verbose);
     logmessage.str("");
     
@@ -450,7 +449,7 @@ int ToolChain::Finalise(){
     *(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
     */    
 
-    logmessage<<"********************************************************"<<std::endl<<std::endl<<" ERROR: ToolChain Cannot Be Finalised As Has Not Been Initialised yet."<<std::endl<<"********************************************************"<<std::endl;
+    logmessage<<purple<<"********************************************************"<<std::endl<<std::endl<<" ERROR: ToolChain Cannot Be Finalised As Has Not Been Initialised yet."<<std::endl<<"********************************************************"<<reset<<std::endl;
     m_data.Log->Log( logmessage.str(),0,m_verbose);
     logmessage.str("");
 
@@ -510,7 +509,7 @@ void ToolChain::Interactive(){
 	//std::cout<<"Please type command : Start, Pause, Unpause, Stop, Quit (Initialise, Execute, Finalise)"<<std::endl;
 	//std::cout<<">";
 	
-	logmessage<<"Please type command : Start, Pause, Unpause, Stop, Status, Quit, ?, (Initialise, Execute, Finalise)";
+	logmessage<<"Please type command : "<<cyan<<"Start, Pause, Unpause, Stop, Status, Quit, ?, (Initialise, Execute, Finalise)"<<reset;
 	//   m_data.Log->Log( logmessage.str(),0,m_verbose);
 	printf("%s \n %s",logmessage.str().c_str(),">");
 	logmessage.str("");
@@ -538,18 +537,18 @@ std::string ToolChain::ExecuteCommand(std::string command){
     if(command=="Initialise"){
       int ret=Initialise();
       if (ret==0)returnmsg<<"Initialising ToolChain";
-      else returnmsg<<"Error Code "<<ret;
+      else returnmsg<<red<<"Error Code "<<ret<<reset;
     }
     else if (command=="Execute"){
       int ret=Execute();
       if (ret==0)returnmsg<<"Executing ToolChain";
-      else returnmsg<<"Error Code "<<ret;
+      else returnmsg<<red<<"Error Code "<<ret<<reset;
     }
     else if (command=="Finalise"){
       exeloop=false;
       int ret=Finalise();
       if (ret==0)returnmsg<<"Finalising  ToolChain";
-      else returnmsg<<"Error Code "<<ret;
+      else returnmsg<<red<<"Error Code "<<ret<<reset;
     }
     else if (command=="Quit"){
       returnmsg<<"Quitting";
@@ -560,7 +559,7 @@ std::string ToolChain::ExecuteCommand(std::string command){
       exeloop=true;
       execounter=0;
       if (ret==0)returnmsg<<"Starting ToolChain";
-      else returnmsg<<"Error Code "<<ret;
+      else returnmsg<<red<<"Error Code "<<ret<<reset;
     }
     else if(command=="Pause"){
       exeloop=false;
@@ -576,13 +575,13 @@ std::string ToolChain::ExecuteCommand(std::string command){
       exeloop=false;
       int ret=Finalise();
       if (ret==0)returnmsg<<"Stopping ToolChain";
-      else returnmsg<<"Error Code "<<ret;
+      else returnmsg<<red<<"Error Code "<<ret<<reset;
     }
     
     else if(command=="Restart") {
       int ret=Finalise()+Initialise();
       if (ret==0)returnmsg<<"Restarting ToolChain";
-      else returnmsg<<"Error Code "<<ret;
+      else returnmsg<<red<<"Error Code "<<ret<<reset;
     }
     
     else if(command=="Status"){
@@ -599,7 +598,7 @@ std::string ToolChain::ExecuteCommand(std::string command){
     }
     else if(command=="?")returnmsg<<" Available commands: Initialise, Execute, Finalise, Start, Stop, Restart, Pause, Unpause, Quit, Status, ?";
     else if(command!=""){
-      returnmsg<<"command not recognised please try again";
+      returnmsg<<purple<<"command not recognised please try again"<<reset;
     }
   }
   if(Finalised || (!Finalised && !exeloop)) usleep(100);
@@ -734,7 +733,7 @@ void* ToolChain::InteractiveThread(void* arg){
   //  std::cout<<"Please type command : Start, Pause, Unpause, Stop, Quit (Initialise, Execute, Finalise)"<<std::endl;
   // std::cout<<">";
 
-  printf("%s \n %s","Please type command : Start, Pause, Unpause, Stop, Restart, Status, Quit, ?, (Initialise, Execute, Finalise)",">");
+  printf("%s %s %s %s\n %s %s %s","Please type command :",cyan," Start, Pause, Unpause, Stop, Restart, Status, Quit, ?, (Initialise, Execute, Finalise)",reset,green,">",reset);
   /* logmessage<<"Please type command : Start, Pause, Unpause, Stop, Quit (Initialise, Execute, Finalise)"<<std::endl<<">";
   m_data.Log->Log( logmessage.str(),0,m_verbose);
   logmessage.str("");

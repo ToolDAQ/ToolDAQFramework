@@ -20,6 +20,27 @@
 
 #include "Store.h"
 
+#define red "\033[38;5;196m"
+#define darkred "\033[38;5;88m"
+#define green "\033[38;5;46m"
+#define darkgreen "\033[38;5;22m"
+#define blue "\033[38;5;21m"
+#define darkblue "\033[38;5;18m"
+#define yellow "\033[38;5;226m"
+#define darkyellow "\033[38;5;142m"
+#define orange "\033[38;5;208m"
+#define darkorange "\033[38;5;130m"
+#define pink "\033[38;5;201m"
+#define darkpink "\033[38;5;129m"
+#define purple "\033[38;5;57m"
+#define darkpurple "\033[38;5;54m"
+#define cyan  "\033[38;5;51m"
+#define darkcyan  "\033[38;5;39m" 
+#define white "\033[38;5;255m"
+#define gray "\033[38;5;243m"
+#define reset "\033[0m"
+
+
 /**
  * \struct Logging_thread_args
  *
