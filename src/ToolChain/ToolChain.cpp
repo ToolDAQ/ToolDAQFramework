@@ -733,7 +733,7 @@ void* ToolChain::InteractiveThread(void* arg){
   //  std::cout<<"Please type command : Start, Pause, Unpause, Stop, Quit (Initialise, Execute, Finalise)"<<std::endl;
   // std::cout<<">";
 
-  printf("%s %s %s %s\n %s %s %s","Please type command :",cyan," Start, Pause, Unpause, Stop, Restart, Status, Quit, ?, (Initialise, Execute, Finalise)",reset,green,">",reset);
+  printf("%s %s %s %s\n %s %s %s","Please type command :",cyan," Start, Pause, Unpause, Stop, Restart, Status, Quit, ?, (Initialise, Execute, Finalise)",plain,green,">",plain);
   /* logmessage<<"Please type command : Start, Pause, Unpause, Stop, Quit (Initialise, Execute, Finalise)"<<std::endl<<">";
   m_data.Log->Log( logmessage.str(),0,m_verbose);
   logmessage.str("");
