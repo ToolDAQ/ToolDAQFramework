@@ -38,7 +38,7 @@
 #define darkcyan  "\033[38;5;39m" 
 #define white "\033[38;5;255m"
 #define gray "\033[38;5;243m"
-#define plane "\033[0m"
+#define plain "\033[0m"
 
 
 /**
