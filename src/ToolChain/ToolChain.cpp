@@ -1,6 +1,6 @@
 #include "ToolChain.h"
 
-ToolChain::ToolChain(std::string configfile){
+ToolChain::ToolChain(std::string configfile,  int argc, char* argv[]){
   
   m_data.vars.Initialise(configfile);
 
@@ -23,6 +23,15 @@ ToolChain::ToolChain(std::string configfile){
   unsigned int IO_Threads=1;
   config.Get("IO_Threads",IO_Threads);
  
+  m_data.vars.Set("argc",argc);
+  for(int i=0; i<argc ; i++){
+
+    std::stringstream tmp;
+    tmp<<"$"<<i;
+    m_data.vars.Set(tmp.str(),argv[i]);
+
+  }
+
   
   Init(IO_Threads);
 
