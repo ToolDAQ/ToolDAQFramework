@@ -213,8 +213,11 @@ int ToolChain::Initialise(){
       logmessage.str("");
 
       //if(m_verbose) *(m_data.Log)<<"Initialising "<<m_toolnames.at(i)<<std::endl;
-      
-      try{    
+
+#ifndef DEBUG      
+      try{ 
+#endif   
+
 	if(m_tools.at(i)->Initialise(m_configfiles.at(i), m_data)){
 	  //  if(m_verbose)*(m_data.Log)<<m_toolnames.at(i)<<" initialised successfully"<<std::endl<<std::endl;
 	  logmessage<<green<<m_toolnames.at(i)<<" initialised successfully"<<plain<<std::endl;
@@ -228,10 +231,10 @@ int ToolChain::Initialise(){
           logmessage.str("");
 	  result=1;
 	  if(m_errorlevel>1) exit(1);
-	}
-	
-      }
-      
+         }
+
+#ifndef DEBUG	
+    }      
       catch(...){
 	//*(m_data.Log)<<"WARNING !!!!! "<<m_toolnames.at(i)<<" Failed to initialise (uncaught error)"<<std::endl<<std::endl;
 	logmessage<<red<<"WARNING !!!!! "<<m_toolnames.at(i)<<" Failed to initialise (uncaught error)"<<plain<<std::endl;
@@ -239,8 +242,9 @@ int ToolChain::Initialise(){
 	logmessage.str("");
 	result=2;
 	if(m_errorlevel>0) exit(1);
-      }
-      
+       }
+#endif
+     
     }
     
     //   if(m_verbose){*(m_data.Log)<<"**** Tool chain initilised ****"<<std::endl;;
@@ -254,7 +258,7 @@ int ToolChain::Initialise(){
     execounter=0;
     Initialised=true;
     Finalised=false;
-  }
+    }
   else {
     //*(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
     // *(m_data.Log)<<" ERROR: ToolChain Cannot Be Initialised as already running. Finalise old chain first";
@@ -303,7 +307,10 @@ int ToolChain::Execute(int repeates){
 	m_data.Log->Log( logmessage.str(),4,m_verbose);
 	logmessage.str("");	
 	
+#ifndef DEBUG
 	try{
+#endif
+
 	  if(m_tools.at(i)->Execute()){
 	    //    if(m_verbose)*(m_data.Log)<<m_toolnames.at(i)<<" executed  successfully"<<std::endl<<std::endl;
 	    logmessage<<green<<m_toolnames.at(i)<<" executed  successfully"<<plain<<std::endl;
@@ -327,6 +334,8 @@ int ToolChain::Execute(int repeates){
 	      exit(1);
 	    }
 	  }  
+
+#ifndef DEBUG
 	}
 	
 	catch(...){
@@ -344,8 +353,9 @@ int ToolChain::Execute(int repeates){
 	    exit(1);
 	  }
 	}
-	
-      } 
+#endif	
+
+      }
       /*      if(m_verbose){
        *(m_data.Log)<<"**** Tool chain executed ****"<<std::endl;
        *(m_data.Log)<<"********************************************************"<<std::endl<<std::endl;
@@ -404,8 +414,11 @@ int ToolChain::Finalise(){
       logmessage<<cyan<<"Finalising "<<m_toolnames.at(i)<<plain;
       m_data.Log->Log( logmessage.str(),2,m_verbose);
       logmessage.str("");
-      
+
+#ifndef DEBUG
       try{
+#endif
+
 	if(m_tools.at(i)->Finalise()){
 	  //  if(m_verbose)*(m_data.Log)<<m_toolnames.at(i)<<" Finalised successfully"<<std::endl<<std::endl;
 	  logmessage<<green<<m_toolnames.at(i)<<" Finalised successfully"<<plain<<std::endl;
@@ -422,6 +435,8 @@ int ToolChain::Finalise(){
 	  result=1;
 	  if(m_errorlevel>1)exit(1);
 	}  
+
+#ifndef DEBUG      
       }
       
       catch(...){
@@ -433,7 +448,8 @@ int ToolChain::Finalise(){
 	result=2;
 	if(m_errorlevel>0)exit(1);
       }
-      
+#endif
+
     }
     /*
       if(m_verbose){

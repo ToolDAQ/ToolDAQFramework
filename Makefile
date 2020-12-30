@@ -1,4 +1,4 @@
-CXXFLAGS = -g -fPIC -O2 -Wpedantic
+CXXFLAGS=  -fPIC -O3 -Wpedantic # -g -DDEBUG
 
 ZMQLib= -L ../zeromq-4.0.7/lib -lzmq 
 ZMQInclude= -I ../zeromq-4.0.7/include/ 

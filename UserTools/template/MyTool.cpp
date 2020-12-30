@@ -9,6 +9,9 @@ bool MyTool::Initialise(std::string configfile, DataModel &data){
   //m_variables.Print();
 
   m_data= &data;
+  m_log= m_data->Log;
+
+  if(!m_variables.Get("verbose",m_verbose)) m_verbose=1;
 
   return true;
 }

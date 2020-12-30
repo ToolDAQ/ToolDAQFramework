@@ -9,6 +9,9 @@ bool Logger::Initialise(std::string configfile, DataModel &data){
   //m_variables.Print();
 
   m_data= &data;
+  m_log= m_data->Log;
+
+  if(!m_variables.Get("verbose",m_verbose)) m_verbose=1;
 
   m_variables.Get("log_port",m_log_port);
   

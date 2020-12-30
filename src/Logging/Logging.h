@@ -40,6 +40,32 @@
 #define gray "\033[38;5;243m"
 #define plain "\033[0m"
 
+/**
+ * \struct MsgL
+ *
+ *This struct variables for setting the message level of streamed messages to the logging class
+ *
+ *
+ * $Author: B.Richards $
+ * $Date: 2020/12/30 12:50:00 $
+ * Contact: b.richards@qmul.ac.uk
+ */
+
+struct MsgL{
+
+  MsgL(int in_messagelevel, int in_verbose){
+    messagelevel=in_messagelevel;
+    verbose=in_verbose;
+  }
+  MsgL ML(int in_messagelevel) {
+    messagelevel=in_messagelevel;
+    return *this;
+  }
+  
+  int messagelevel; ///< Message level paramiter
+  int verbose; ///< Verbosity level pramiter
+  
+};
 
 /**
  * \struct Logging_thread_args
@@ -162,7 +188,7 @@ Constructor for Logging class
       tmp<<message;
       buffer.m_messagelevel=messagelevel;
       buffer.m_verbose=verbose;
-      std::cout<<tmp.str()<<std::endl;
+      std::cout<<tmp.str()<<plain<<std::endl;
       buffer.m_messagelevel=1;
       buffer.m_verbose=1;
     } 
@@ -200,6 +226,36 @@ Constructor for Logging class
   } 
 
 */
+
+  Logging& operator<<(MsgL a){
+
+    buffer.m_messagelevel=a.messagelevel;
+    buffer.m_verbose=a.verbose;
+
+    return *this;
+  }
+  
+  Logging& operator<<(std::ostream& (*foo)(std::ostream&)) { 
+    
+    //std::stringstream tmp;
+    //tmp<<std::endl;
+    //    Log(tmp.str());
+    std::cout<<plain<<std::endl;
+    //    std::cout << std::endl;
+    
+  }
+
+  template<typename T>  Logging& operator<<(T &a){
+    
+    std::stringstream tmp; 
+    tmp<<a;
+    //Log(tmp.str());
+
+    std::cout<<tmp.str();
+    //    std::cout<<a; 
+    return *this;
+    
+  }
   
  private:
   
