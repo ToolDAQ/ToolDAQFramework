@@ -55,6 +55,18 @@ class Store{
     else return false;
 
   }
+  
+  template<typename T> bool Get(std::string name, T* &out){
+    if(m_variables.count(name)>0){
+      std::stringstream stream(m_variables[name]);
+      intptr_t tmp;
+      stream>>tmp;
+      out = reinterpret_cast<T*>(tmp);
+      return true;
+    }
+    
+    else return false;
+  }
 
   /**
      Templated setter function to assign vairables in the Store.
@@ -64,6 +76,13 @@ class Store{
   template<typename T> void Set(std::string name,T in){
     std::stringstream stream;
     stream<<in;
+    m_variables[name]=stream.str();
+  }
+  
+  template<typename T> void Set(std::string name,T* in){
+    intptr_t ptr_cast = reinterpret_cast<intptr_t>(in);
+    std::stringstream stream;
+    stream<<ptr_cast;
     m_variables[name]=stream.str();
   }
 
