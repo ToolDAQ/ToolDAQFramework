@@ -59,8 +59,14 @@ int main(int argc, char** argv){
 
     //std::stringstream finput(input);
 
-    if (input.str()=="List"){
-
+    std::string Command="";
+    input>>Command;
+    
+    if (Command=="List"){
+      
+      std::string filter="";
+      input>>filter;
+      
       zmq::message_t send(4);
       snprintf ((char *) send.data(), 4 , "%s" ,"All") ;
 
@@ -73,33 +79,36 @@ int main(int argc, char** argv){
       std::istringstream iss(static_cast<char*>(receive.data()));
       
       int size;
-     iss>>size;
-
-     for(int i=0;i<RemoteServices.size();i++){
-       delete RemoteServices.at(i);
-       RemoteServices.at(i)=0;
-     }
-     RemoteServices.clear();
-
-
-     for(int i=0;i<size;i++){
-
-       Store *service = new Store;
-
-       zmq::message_t servicem;
-       Ireceive.recv(&servicem);
-
-       std::istringstream ss(static_cast<char*>(servicem.data()));
-       service->JsonParser(ss.str());
-
-       RemoteServices.push_back(service);
-
-     }
-
-
-     //      zmq::message_t tmp;
-     // Ireceive.recv(&tmp);
- 
+      iss>>size;
+      
+      for(int i=0;i<RemoteServices.size();i++){
+	delete RemoteServices.at(i);
+	RemoteServices.at(i)=0;
+      }
+      RemoteServices.clear();
+      
+      
+      for(int i=0;i<size;i++){
+	
+	Store *service = new Store;
+	
+	zmq::message_t servicem;
+	Ireceive.recv(&servicem);
+	
+	std::istringstream ss(static_cast<char*>(servicem.data()));
+	service->JsonParser(ss.str());
+	std::string name;
+	name=*((*(service))["msg_value"]);
+	
+	if(filter=="" || filter==name) RemoteServices.push_back(service);
+	else delete service;
+	
+      }
+      
+      
+      //      zmq::message_t tmp;
+      // Ireceive.recv(&tmp);
+      
       std::cout<<std::endl<<"-----------------------------------------------------------------------------------------------"<<std::endl;
       std::cout<<" [Service number]    IP  ,   Service name  ,  Service status , Time"<<std::endl;
       std::cout<<"-----------------------------------------------------------------------------------------------"<<std::endl<<std::endl;;
@@ -118,7 +127,7 @@ int main(int argc, char** argv){
 	time=*((*(RemoteServices.at(i)))["msg_time"]);
 
 	std::cout<<"["<<i<<"]  "<<ip<<" , "<<service<<" , "<<status<<" , "<<time<<std::endl;
-    
+	
       }
 
       std::cout<<"-----------------------------------------------------------------------------------------------"<<std::endl<<std::endl;;
@@ -129,13 +138,9 @@ int main(int argc, char** argv){
 
 
 
-    else if(input.str()=="Quit")running=false;
+    else if(Command=="Quit")running=false;
 
-    else{
-      std::string Command;
-      input>>Command;  
-
-      if(Command=="Command"){
+    else if(Command=="Command"){
 	
 	int ServiceNum;
 	
@@ -377,9 +382,9 @@ int main(int argc, char** argv){
       
       else std::cout<<"Error not a valid command"<<std::endl<<std::endl;
       
-    }
-    
   }
+    
+  
   
   return 0;
   
