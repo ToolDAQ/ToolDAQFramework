@@ -97,8 +97,8 @@ int main(int argc, char* argv[]){
   //int port=5000;
 
   std::stringstream service;
-  if(argc ==2) service<<argv[1]<<" ";
-  service<<"Node Daemon";
+  if(argc ==2) service<<argv[1];
+  else{service<<"Node Daemon";}
 
   ServiceDiscovery SD(true, false, REMOTE_PORT, MULTICAST_ADDRESS, MULTICAST_PORT, &context, m_UUID, service.str());
 
