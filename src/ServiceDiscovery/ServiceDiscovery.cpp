@@ -491,6 +491,8 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
     }
     //	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
 
+    std::vector<std::string> erase_list;
+    
     for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){ 
       //  if(*(it->second)[msg_time]==) delete;
       
@@ -525,14 +527,22 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
       // std::cout<<"seconds = "<<td_tm.tm_sec<<std::endl; 
       // std::cout<<"mins = "<<td_tm.tm_min<<std::endl; 
        if(((td_tm.tm_min*60)+td_tm.tm_sec)>args->kicksec){
-	delete it->second;
-	it->second=0;
-	RemoteServices.erase(it->first);
+	 erase_list.push_back(it->first);
+	 //	delete it->second;
+	 //it->second=0;
+	 //RemoteServices.erase(it->first);
 	
       }
       //std::cout<< "uuid = "<<it->first<<std::endl;
     }
     
+    for(int i=0;i<erase_list.size();i++){
+      delete RemoteServices[erase_list.at(i)];
+      RemoteServices[erase_list.at(i)]=0;
+      RemoteServices.erase(erase_list.at(i));
+    }
+    erase_list.clear();
+
    
     if ((items [1].revents & ZMQ_POLLIN) && running) {
       
