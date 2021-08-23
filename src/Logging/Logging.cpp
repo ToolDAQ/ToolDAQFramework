@@ -50,6 +50,20 @@ Logging::MyStreamBuf::MyStreamBuf (std::ostream& str ,zmq::context_t *context,  
 
 }
 
+Logging::MyStreamBuf::MyStreamBuf (std::ostream& str, std::string mode, std::string localpath):output(str){
+  m_mode=mode;
+  m_messagelevel=1;
+  m_verbose=1;
+  if(m_mode=="Local"){
+
+    file.open(localpath.c_str());
+    psbuf = file.rdbuf();
+    output.rdbuf(psbuf);
+
+  }
+
+}
+
 
 int Logging::MyStreamBuf::sync ( )
 {

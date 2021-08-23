@@ -116,6 +116,8 @@ class Logging: public std::ostream {
       std::ostream&   output;
 
     public:
+      MyStreamBuf(std::ostream& str ,std::string mode, std::string localpath="");
+
       MyStreamBuf(std::ostream& str ,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath="", std::string logservice="", int logport=0);
 
       virtual int sync ( );
@@ -170,6 +172,8 @@ Constructor for Logging class
    */
  Logging(std::ostream& str,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath="", std::string logservice="", int logport=0):std::ostream(&buffer),buffer(str, context, UUID, service, mode, localpath, logservice, logport){};
 
+
+ Logging(std::ostream& str, std::string mode, std::string localpath=""):std::ostream(&buffer), buffer(str, mode, localpath){};
   
   //  void Log(std::string message, int messagelevel=1, int verbose=1);
   //  void Log(std::ostringstream& ost, int messagelevel=1, int verbose=1);

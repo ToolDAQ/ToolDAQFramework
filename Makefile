@@ -1,4 +1,6 @@
-CXXFLAGS=  -fPIC -O3 -Wpedantic # -g -DDEBUG
+ToolFrameworkPath= ./Dependancies/ToolFrameworkCore/
+
+CXXFLAGS=  -fPIC -O1 -Wpedantic  -O1 -g -DDEBUG
 
 ZMQLib= -L ../zeromq-4.0.7/lib -lzmq 
 ZMQInclude= -I ../zeromq-4.0.7/include/ 
@@ -12,35 +14,41 @@ DataModelLib =
 MyToolsInclude =
 MyToolsLib =
 
-all: lib/libMyTools.so lib/libToolChain.so lib/libStore.so include/Tool.h lib/libServiceDiscovery.so lib/libDataModel.so lib/libLogging.so RemoteControl NodeDaemon main
+all: lib/libMyTools.so lib/libToolDAQChain.so lib/libToolChain.so lib/libStore.so include/Tool.h lib/libServiceDiscovery.so lib/libDataModel.so lib/libLogging.so RemoteControl NodeDaemon main
 
-main: src/main.cpp lib/libStore.so lib/libLogging.so lib/libToolChain.so lib/libServiceDiscovery.so | lib/libMyTools.so  lib/libDataModel.so 
+main: src/main.cpp lib/libStore.so lib/libLogging.so lib/libToolDAQChain.so lib/libToolChain.so lib/libServiceDiscovery.so | lib/libMyTools.so  lib/libDataModel.so 
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
-	g++ $(CXXFLAGS) src/main.cpp -o main -I include -L lib -lStore -lMyTools -lToolChain -lDataModel -lLogging -lServiceDiscovery -lpthread $(DataModelInclude) $(MyToolsInclude) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
+	g++ $(CXXFLAGS) src/main.cpp -o main -I include -L lib -lStore -lMyTools -lToolChain -lToolDAQChain -lDataModel -lLogging -lServiceDiscovery -lpthread $(DataModelInclude) $(MyToolsInclude) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
 
 
-lib/libStore.so: src/Store/*
+lib/libStore.so: src/Store/*  $(ToolFrameworkPath)/src/Store/*
 
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
 	cp src/Store/*.h include/
-	g++ $(CXXFLAGS) -shared -I include src/Store/*.cpp -o lib/libStore.so $(BoostLib) $(BoostInclude)
+	cp $(ToolFrameworkPath)/src/Store/*.h include/
+	g++ $(CXXFLAGS) -shared -I include src/Store/*.cpp  $(ToolFrameworkPath)/src/Store/*.cpp -o lib/libStore.so $(BoostLib) $(BoostInclude)
 
 
-include/Tool.h: src/Tool/Tool.h
+include/Tool.h: $(ToolFrameworkPath)/src/Tool/Tool.h
 
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
-	cp src/Tool/Tool.h include/
+	cp $(ToolFrameworkPath)/src/Tool/Tool.h include/
 	cp UserTools/*.h include/
 	cp UserTools/*/*.h include/
 	cp DataModel/*.h include/	
 
-lib/libToolChain.so: src/ToolChain/* lib/libStore.so include/Tool.h lib/libServiceDiscovery.so lib/libLogging.so |  lib/libDataModel.so lib/libMyTools.so 
+lib/libToolChain.so: $(ToolFrameworkPath)/src/ToolChain/* lib/libStore.so include/Tool.h lib/libServiceDiscovery.so lib/libLogging.so |  lib/libDataModel.so lib/libMyTools.so 
 
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
-	cp src/ToolChain/ToolChain.h include/
-	g++ $(CXXFLAGS) -shared src/ToolChain/ToolChain.cpp -I include -lpthread -L lib -lStore -lDataModel -lMyTools -lServiceDiscovery -lLogging -o lib/libToolChain.so $(DataModelInclude) $(MyToolsInclude) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
+	cp $(ToolFrameworkPath)/src/ToolChain/ToolChain.h include/
+	cp  $(ToolFrameworkPath)/lib/libToolChain.so lib/
+	#g++ $(CXXFLAGS) -shared $(ToolFrameworkPath)/src/ToolChain/ToolChain.cpp -I include -lpthread -L lib -lStore -lDataModel -lMyTools -lServiceDiscovery -lLogging -o lib/libToolChain.so $(DataModelInclude) $(MyToolsInclude) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
 
+lib/libToolDAQChain.so: src/ToolDAQChain/* lib/libStore.so include/Tool.h lib/libServiceDiscovery.so lib/libLogging.so lib/libToolChain.so|  lib/libDataModel.so lib/libMyTools.so
 
+	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
+	cp src/ToolDAQChain/ToolDAQChain.h include/
+	g++ $(CXXFLAGS) -shared src/ToolDAQChain/ToolDAQChain.cpp -I include -lpthread -L lib -lStore -lDataModel -lMyTools -lServiceDiscovery -lLogging -lToolChain -o lib/libToolDAQChain.so $(DataModelInclude) $(MyToolsInclude) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
 
 clean: 
 
