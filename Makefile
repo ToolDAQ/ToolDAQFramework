@@ -70,7 +70,6 @@ lib/libDataModel.so: DataModel/* lib/libLogging.so  lib/libDAQLogging.so lib/lib
 lib/libMyTools.so: UserTools/*/* UserTools/* lib/libStore.so include/Tool.h lib/libLogging.so lib/libDAQLogging.so UserTools/Factory/Factory.o | lib/libDataModel.so 
 
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
-ostLib) $(BoostInclude)
 	g++ $(CXXFLAGS) -shared UserTools/*/*.o -I include -L lib -lStore -lDataModel -lLogging -lDAQLogging -o lib/libMyTools.so $(MyToolsInclude) $(DataModelInclude) $(MyToolsLib) $(DataModelib) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
 
 RemoteControl: src/RemoteControl/* lib/libStore.so lib/libServiceDiscovery.so
