@@ -1,5 +1,5 @@
-#ifndef LOGGING_H
-#define LOGGING_H
+#ifndef DAQLOGGING_H
+#define DAQLOGGING_H
 
 #include <string>
 #include <sstream>
@@ -19,7 +19,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "Store.h"
-
+#include "Logging.h"
+/*
 #define red "\033[38;5;196m"
 #define darkred "\033[38;5;88m"
 #define green "\033[38;5;46m"
@@ -50,7 +51,7 @@
  * $Date: 2020/12/30 12:50:00 $
  * Contact: b.richards@qmul.ac.uk
  */
-
+ /*
 struct MsgL{
 
   MsgL(int in_messagelevel, int in_verbose){
@@ -66,9 +67,9 @@ struct MsgL{
   int verbose; ///< Verbosity level pramiter
   
 };
-
+*/
 /**
- * \struct Logging_thread_args
+ * \struct DAQLogging_thread_args
  *
  *This struct holds the initalisation variables to be passed to the logging thread.
  *
@@ -79,9 +80,9 @@ struct MsgL{
  */
  
 
-struct Logging_thread_args{
+struct DAQLogging_thread_args{
 
-  Logging_thread_args( zmq::context_t *incontext,  boost::uuids::uuid inUUID, std::string inlogservice, int inlogport){
+  DAQLogging_thread_args( zmq::context_t *incontext,  boost::uuids::uuid inUUID, std::string inlogservice, int inlogport){
     context=incontext;
     logservice=inlogservice;
     UUID=inUUID;
@@ -97,7 +98,7 @@ struct Logging_thread_args{
 
 
 /**
- * \class Logging
+ * \class DAQLogging
  *
  *This class handels the logging, which can be directed to screen or file or over the via the ToolChain Config file
  *
@@ -108,24 +109,19 @@ struct Logging_thread_args{
  */
 
 
-class Logging: public std::ostream {
+class DAQLogging: virtual public std::ostream, public Logging {
 
-  class MyStreamBuf: public std::stringbuf
+  class MyDAQStreamBuf: virtual public std::stringbuf, public MyStreamBuf
     {
 
       std::ostream&   output;
 
     public:
-      MyStreamBuf(std::ostream& str ,std::string mode, std::string localpath="");
+      MyDAQStreamBuf(std::ostream& str ,std::string mode, std::string localpath="");
 
-      MyStreamBuf(std::ostream& str ,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath="", std::string logservice="", int logport=0);
+      MyDAQStreamBuf(std::ostream& str ,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath="", std::string logservice="", int logport=0);
 
       virtual int sync ( );
-
-      bool ChangeOutFile(std::string localpath);
-
-      int m_messagelevel;
-      int m_verbose;
 
       /*
       {
@@ -135,20 +131,16 @@ class Logging: public std::ostream {
 	return 0;
       }
       */
-      ~MyStreamBuf();
+     virtual ~MyDAQStreamBuf();
 
     private:
 
       zmq::context_t *m_context;
       zmq::socket_t *LogSender;
       pthread_t thread;
-      Logging_thread_args *args;
+      DAQLogging_thread_args *args;
 
       std::string m_service;
-      std::string m_mode;
-
-      std::ofstream file;
-      std::streambuf *psbuf, *backup;
 
       static  void *RemoteThread(void* arg);
      
@@ -156,10 +148,10 @@ class Logging: public std::ostream {
 
  public:
   
-  MyStreamBuf buffer; ///< Stream buffer used to replace std::cout for redirection to coustom output.
+  //  MyDAQStreamBuf DAQbuffer; ///< Stream buffer used to replace std::cout for redirection to coustom output.
  
   /**
-Constructor for Logging class
+Constructor for DAQLogging class
 
 @param str
 @param context Pointer to ZMW context used for creating sockets
@@ -170,10 +162,19 @@ Constructor for Logging class
 @param logservice Remote service to connect to to send logs
 @param logport remothe port to send logging information to
    */
- Logging(std::ostream& str,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath="", std::string logservice="", int logport=0):std::ostream(&buffer),buffer(str, context, UUID, service, mode, localpath, logservice, logport){};
+
+  // DAQLogging(std::ostream& str,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath="", std::string logservice="", int logport=0): std::ostream(buffer), buffer(new MyDAQDtreamBuf(str, context, UUID, service, mode, localpath, logservice, logport)){};
+ 
+
+  DAQLogging(std::ostream& str,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath="", std::string logservice="", int logport=0);
+  
 
 
- Logging(std::ostream& str, std::string mode, std::string localpath=""):std::ostream(&buffer), buffer(str, mode, localpath){};
+  // DAQLogging(std::ostream& str, std::string mode, std::string localpath=""): std::ostream(buffer), buffer(new MyDAQStreamBuf(str, mode, localpath)){};
+  
+  DAQLogging(std::ostream& str, std::string mode, std::string localpath="");
+
+  virtual ~DAQLogging(){};
   
   //  void Log(std::string message, int messagelevel=1, int verbose=1);
   //  void Log(std::ostringstream& ost, int messagelevel=1, int verbose=1);
@@ -186,17 +187,7 @@ Constructor for Logging class
        @param verbose verbosity level of the current Tool.    
        
   */
-  template <typename T>  void Log(T message, int messagelevel=1, int verbose=1){
-    if(messagelevel<=verbose){    
-      std::stringstream tmp;
-      tmp<<message;
-      buffer.m_messagelevel=messagelevel;
-      buffer.m_verbose=verbose;
-      std::cout<<tmp.str()<<plain<<std::endl;
-      buffer.m_messagelevel=1;
-      buffer.m_verbose=1;
-    } 
-  }
+
 
 
   /**
@@ -206,13 +197,10 @@ Constructor for Logging class
      @return value is bool success of opening new logfile.
  
  */
-  bool ChangeOutFile(std::string localpath){return buffer.ChangeOutFile(localpath);} 
-
   
 
-
   /* 
-  template<typename T>Logging& operator<<(T obj){ 
+  template<typename T>DAQLogging& operator<<(T obj){ 
     std::stringstream tmp;
     tmp<<obj;
     Log(tmp.str());
@@ -231,35 +219,6 @@ Constructor for Logging class
 
 */
 
-  Logging& operator<<(MsgL a){
-
-    buffer.m_messagelevel=a.messagelevel;
-    buffer.m_verbose=a.verbose;
-
-    return *this;
-  }
-  
-  Logging& operator<<(std::ostream& (*foo)(std::ostream&)) { 
-    
-    //std::stringstream tmp;
-    //tmp<<std::endl;
-    //    Log(tmp.str());
-    std::cout<<plain<<std::endl;
-    //    std::cout << std::endl;
-    
-  }
-
-  template<typename T>  Logging& operator<<(T &a){
-    
-    std::stringstream tmp; 
-    tmp<<a;
-    //Log(tmp.str());
-
-    std::cout<<tmp.str();
-    //    std::cout<<a; 
-    return *this;
-    
-  }
   
  private:
   
@@ -278,7 +237,7 @@ Constructor for Logging class
 };
 
 /*
-Logging& endl(Logging& L){
+DAQLogging& endl(DAQLogging& L){
   L << "\n";
   return L;
 }

@@ -8,7 +8,7 @@
 //#include "TTree.h"
 
 #include "Store.h"
-#include "Logging.h"
+#include "DAQLogging.h"
 
 #include <zmq.hpp>
 

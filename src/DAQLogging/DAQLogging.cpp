@@ -1,8 +1,8 @@
-#include "Logging.h"
+#include "DAQLogging.h"
 
-Logging::MyStreamBuf::~MyStreamBuf(){
+DAQLogging::MyDAQStreamBuf::~MyDAQStreamBuf(){
   //printf("%s \n","destructor running");
-  if(m_mode=="Local")file.close();
+  //  if(m_mode=="Local")file.close();
 
   if(m_mode=="Remote"){
     //printf("%s \n","in remote destructor");
@@ -20,7 +20,7 @@ Logging::MyStreamBuf::~MyStreamBuf(){
 
 }
 
-Logging::MyStreamBuf::MyStreamBuf (std::ostream& str ,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath, std::string logservice, int logport):output(str){
+DAQLogging::MyDAQStreamBuf::MyDAQStreamBuf (std::ostream& str ,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath, std::string logservice, int logport):output(str){
 
   m_context =context;
   m_mode=mode;
@@ -38,9 +38,9 @@ Logging::MyStreamBuf::MyStreamBuf (std::ostream& str ,zmq::context_t *context,  
 
   if(m_mode=="Remote"){
  
-    args=new Logging_thread_args(m_context, UUID , logservice, logport);
+    args=new DAQLogging_thread_args(m_context, UUID , logservice, logport);
 
-    pthread_create (&thread, NULL, Logging::MyStreamBuf::RemoteThread, args); // make pushthread with two socets one going out one comming in and buffer socket
+    pthread_create (&thread, NULL, DAQLogging::MyDAQStreamBuf::RemoteThread, args); // make pushthread with two socets one going out one comming in and buffer socket
 
     LogSender = new zmq::socket_t(*context, ZMQ_PUSH);
     LogSender->connect("inproc://LogSender");
@@ -50,7 +50,8 @@ Logging::MyStreamBuf::MyStreamBuf (std::ostream& str ,zmq::context_t *context,  
 
 }
 
-Logging::MyStreamBuf::MyStreamBuf (std::ostream& str, std::string mode, std::string localpath):output(str){
+DAQLogging::MyDAQStreamBuf::MyDAQStreamBuf (std::ostream& str, std::string mode, std::string localpath):output(str){
+
   m_mode=mode;
   m_messagelevel=1;
   m_verbose=1;
@@ -65,7 +66,7 @@ Logging::MyStreamBuf::MyStreamBuf (std::ostream& str, std::string mode, std::str
 }
 
 
-int Logging::MyStreamBuf::sync ( )
+int DAQLogging::MyDAQStreamBuf::sync ( )
 {
   if(m_messagelevel <= m_verbose){
 
@@ -143,26 +144,16 @@ int Logging::MyStreamBuf::sync ( )
   return 0;
 }
 
-bool Logging::MyStreamBuf::ChangeOutFile(std::string localpath){
 
-  if(m_mode=="Local"){
-  file.close();
-  file.open(localpath.c_str());
-  psbuf = file.rdbuf();
-  output.rdbuf(psbuf);
-  }
-  
-}
-
-//Logging(std::ostream& str,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath, std::string logservice, int logport):std::ostream(&buffer),buffer(str, context,  UUID, service, mode, localpath, logservice, logport){
+//DAQLogging(std::ostream& str,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath, std::string logservice, int logport):std::ostream(&buffer),buffer(str, context,  UUID, service, mode, localpath, logservice, logport){
 //}
 //  m_context =context;
   // m_mode=mode;
   
-  //Logging_thread_args args(m_context, localpath);
+  //DAQLogging_thread_args args(m_context, localpath);
   
-  //  if(m_mode=="Local") pthread_create (&thread, NULL, Logging::LocalThread, &args);; //openfile in thread
-  //if(m_mode=="Remote") pthread_create (&thread, NULL, Logging::RemoteThread, &args);; // make pushthread with two socets one going out one comming in and buffer socket
+  //  if(m_mode=="Local") pthread_create (&thread, NULL, DAQLogging::LocalThread, &args);; //openfile in thread
+  //if(m_mode=="Remote") pthread_create (&thread, NULL, DAQLogging::RemoteThread, &args);; // make pushthread with two socets one going out one comming in and buffer socket
   
   /*
     if(m_mode!="Interactive"){
@@ -172,7 +163,7 @@ bool Logging::MyStreamBuf::ChangeOutFile(std::string localpath){
   */
 //}
 
-/* Logging::Log(std::string message, int messagelevel, int verbose){
+/* DAQLogging::Log(std::string message, int messagelevel, int verbose){
    
    if(verbose&& messagelevel <= verbose){
    
@@ -195,7 +186,7 @@ bool Logging::MyStreamBuf::ChangeOutFile(std::string localpath){
    }
    }
 
-void Logging::Log(std::ostringstream& message, int messagelevel, int verbose){
+void DAQLogging::Log(std::ostringstream& message, int messagelevel, int verbose){
 
   if(verbose&& messagelevel <= verbose){
 
@@ -216,7 +207,7 @@ void Logging::Log(std::ostringstream& message, int messagelevel, int verbose){
       std::cout<<"tmp = "<<tmp.str()<<std::endl;
       std::cout<<"lines size = "<<lines.size()<<std::endl;
       for(int i=0;i<lines.size();i++){ 
-src/Logging/Logging.{h,cpp} -nw
+src/DAQLogging/DAQLogging.{h,cpp} -nw
 
 	std::cout<<"i = "<<i<<" "<<lines.at(i)<<std::endl;
 	if(i!=lines.size()-1)	std::cout<<"["<<messagelevel<<"] "<<lines.at(i)<<std::endl;
@@ -246,9 +237,9 @@ src/Logging/Logging.{h,cpp} -nw
   }
 }
 
- void* Logging::LocalThread(void* arg){
+ void* DAQLogging::LocalThread(void* arg){
 
-   Logging_thread_args* args= static_cast<Logging_thread_args*>(arg);
+   DAQLogging_thread_args* args= static_cast<DAQLogging_thread_args*>(arg);
    zmq::context_t * context = args->context;
    std::string localpath=args->localpath;
 
@@ -283,9 +274,9 @@ src/Logging/Logging.{h,cpp} -nw
 
 	*/
 
- void* Logging::MyStreamBuf::RemoteThread(void* arg){
+ void* DAQLogging::MyDAQStreamBuf::RemoteThread(void* arg){
 
-   Logging_thread_args* args= static_cast<Logging_thread_args*>(arg);
+   DAQLogging_thread_args* args= static_cast<DAQLogging_thread_args*>(arg);
    zmq::context_t * context = args->context;
    std::string logservice=args->logservice;
    boost::uuids::uuid UUID=args->UUID;
@@ -503,8 +494,19 @@ src/Logging/Logging.{h,cpp} -nw
 
    RemoteConnections.clear();
 
-
    pthread_exit(NULL);
  }
 
 
+DAQLogging::DAQLogging(std::ostream& str,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath, std::string logservice, int logport){
+
+  buffer= new MyDAQStreamBuf(str, context, UUID, service, mode, localpath, logservice, logport); 
+
+}
+
+
+DAQLogging::DAQLogging(std::ostream& str, std::string mode, std::string localpath){
+
+  buffer= new MyDAQStreamBuf(str, mode, localpath);
+
+}

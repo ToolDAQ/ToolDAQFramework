@@ -1,55 +1,31 @@
 #include "ToolDAQChain.h"
 
 ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]){
-  std::cout<<"starting derived constructor"<<std::endl;
   m_log_mode="";
-  std::cout<<"m_log_mode="<<m_log_mode<<std::endl;
-  delete m_data.Log;
-  m_data.Log=0;
 
   if(!m_data.vars.Initialise(configfile)){
     std::cout<<"\033[38;5;196m ERROR!!!: No valid config file quitting \033[0m"<<std::endl;
     exit(1);
   }
-  std::cout<<"after store initialise"<<std::endl;  
 
   if(!m_data.vars.Get("verbose",m_verbose)) m_verbose=9;
-  std::cout<<"d1"<<std::endl;
   if(!m_data.vars.Get("error_level",m_errorlevel)) m_errorlevel=2;
-  std::cout<<"d2"<<std::endl;  
-  sleep(10);
   if(!m_data.vars.Get("remote_port",m_remoteport)) m_remoteport=24004; 
-  std::cout<<"d3"<<std::endl;
   if(!m_data.vars.Get("attempt_recover",m_recover)) m_recover=false;
-  std::cout<<"d4"<<std::endl;
-  printf("d4\n");  
-  //  if(!m_data.vars.Get("log_mode",m_log_mode)) m_log_mode="Interactive";
-  printf("d5\n");
-  std::cout<<"d5"<<std::endl;
-  //  if(!m_data.vars.Get("log_local_path",m_log_local_path))  m_log_local_path="./log";
-  std::cout<<"d6"<<std::endl;
+  if(!m_data.vars.Get("log_mode",m_log_mode)) m_log_mode="Interactive";
+  if(!m_data.vars.Get("log_local_path",m_log_local_path))  m_log_local_path="./log";
   if(!m_data.vars.Get("service_discovery_address",m_multicastaddress)) m_multicastaddress="239.192.1.1";
-  std::cout<<"d7"<<std::endl;
   if(!m_data.vars.Get("service_discovery_port",m_multicastport)) m_multicastport=5000;
-  std::cout<<"d8"<<std::endl;
   if(!m_data.vars.Get("service_name",m_service)) m_service="ToolDAQ_Service";
-  std::cout<<"d9"<<std::endl;
   if(!m_data.vars.Get("log_service",m_log_service)) m_log_service="LogStore";
-  std::cout<<"d10"<<std::endl;
   if(!m_data.vars.Get("log_port",m_log_port)) m_log_port=24010;
-  std::cout<<"d11"<<std::endl;
   if(!m_data.vars.Get("service_publish_sec",m_pub_sec)) m_pub_sec=5;
-  std::cout<<"d12"<<std::endl;
   if(!m_data.vars.Get("service_kick_sec",m_kick_sec)) m_kick_sec=60;
   
-  std::cout<<"d13"<<std::endl;
   if(!m_data.vars.Get("Inline", m_inline))  m_inline=0;
-  std::cout<<"d14"<<std::endl;
   if(!m_data.vars.Get("Interactive", m_interactive)) m_interactive=false;
-  std::cout<<"d15"<<std::endl;
   if(!m_data.vars.Get("Remote", m_remote)) m_remote=false;
 
-  std::cout<<"after first vars get"<<std::endl;
   
   unsigned int IO_Threads=1;
   m_data.vars.Get("IO_Threads",IO_Threads);
@@ -63,10 +39,7 @@ ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]){
     
   }
  
-  std::cout<<"finished getting args"<<std::endl; 
-  
   Init(IO_Threads);
-  
   
   std::string toolsfile="";
   m_data.vars.Get("Tools_File",toolsfile);
@@ -98,31 +71,22 @@ ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, std
 }
 
 void ToolDAQChain::Init(unsigned int IO_Threads){
-
-  std::cout<<"in derived init"<<std::endl;
-  
+ 
   context=new zmq::context_t(IO_Threads);
   m_data.context=context;
   
   m_UUID = boost::uuids::random_generator()();
   
-  std::cout<<"before screwing with logging "<<std::endl;
   if(m_log_mode!="Off"){
     std::cout<<"in off if"<<std::endl;    
     bcout=std::cout.rdbuf();
     out=new  std::ostream(bcout);
   }
 
-  std::cout<<"beofre creating new log"<<std::endl;
-
-  m_data.Log= new Logging(*out, context, m_UUID, m_service, m_log_mode, m_log_local_path, m_log_service, m_log_port);
+  m_data.Log= new DAQLogging(*out, context, m_UUID, m_service, m_log_mode, m_log_local_path, m_log_service, m_log_port);
   
-  std::cout<<"after creating new log"<<std::endl;
-
-  if(m_log_mode!="Off") std::cout.rdbuf(&(m_data.Log->buffer));
+  if(m_log_mode!="Off") std::cout.rdbuf((m_data.Log->buffer));
   
-  std::cout<<"after playing with logging"<<std::endl;
-
   execounter=0;
   Initialised=false;
   Finalised=true;
@@ -140,11 +104,7 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
   
   if(m_log_mode=="Remote") sleep(10); //needed to allow service discovery find time
   
-  std::cout<<"beofre printout"<<std::endl;
-  
   *m_log<<MsgL(1,m_verbose)<<cyan<<"UUID = "<<m_UUID<<std::endl<<yellow<<"********************************************************\n"<<"**** Tool chain created ****\n"<<"********************************************************"<<std::endl;
-  
-  std::cout<<"finished derived init"<<std::endl;
 
 }
 

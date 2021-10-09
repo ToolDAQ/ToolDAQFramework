@@ -1,6 +1,6 @@
 #include <string>
 #include "ToolDAQChain.h"
-#include "DummyTool.h"
+//#include "DummyTool.h"
 
 int main(int argc, char* argv[]){
 

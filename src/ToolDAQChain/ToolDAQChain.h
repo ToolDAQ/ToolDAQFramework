@@ -20,6 +20,7 @@
 #include "Tool.h"
 #include "ToolChain.h"
 #include "DataModel.h"
+#include "DAQLogging.h"
 #include "Logging.h"
 #include "zmq.hpp"
 #include "Factory.h"
