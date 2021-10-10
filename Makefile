@@ -88,7 +88,7 @@ lib/libServiceDiscovery.so: src/ServiceDiscovery/* lib/libStore.so
 
 lib/libLogging.so:  $(ToolFrameworkPath)/src/Logging/* lib/libStore.so 
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
-	cp $(ToolFrameworkPath)/include/Logging.h include/
+	cp $(ToolFrameworkPath)/src/Logging/Logging.h include/
 	g++ $(CXXFLAGS) -shared -I include $(ToolFrameworkPath)/src/Logging/Logging.cpp -o lib/libLogging.so -L lib/ -lStore $(ZMQInclude) $(ZMQLib) $(BoostLib) $(BoostInclude)
 
 lib/libDAQLogging.so: src/DAQLogging/*  lib/libStore.so 
