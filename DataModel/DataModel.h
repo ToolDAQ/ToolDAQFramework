@@ -10,7 +10,8 @@
 #include "Store.h"
 #include "BoostStore.h"
 #include "DAQLogging.h"
-#include "Utilities.h"
+#include "DAQUtilities.h"
+
 
 #include <zmq.hpp>
 

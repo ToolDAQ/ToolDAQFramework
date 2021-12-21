@@ -1,5 +1,5 @@
-#ifndef UTILITIES_H
-#define UTILITIES_H
+#ifndef DAQUTILITIES_H
+#define DAQUTILITIES_H
 
 #include <iostream>
 #include <zmq.hpp>
@@ -10,9 +10,10 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
+#include <Utilities.h>
 
 /**
- * \struct DataModelThread_args
+ * \struct DAQThread_args
  *
  * This is both an base class for any thread argument struct used in the tool threaded Tool templates.
 Effectivly this acts as a place to put variable that are specfic to that thread and can be used as a place to transfer variables from the main thread to sub threads.
@@ -24,13 +25,13 @@ Effectivly this acts as a place to put variable that are specfic to that thread 
  *
  */
 
-struct Thread_args{
+struct DAQThread_args : public Thread_args{
 
-  Thread_args(){ ///< Simple constructor 
+  DAQThread_args(){ ///< Simple constructor 
     kill=false;
   }
 
-  Thread_args(zmq::context_t* contextin, std::string threadname,  void (*funcin)(std::string)){ ///< Construtor for thread with string
+  DAQThread_args(zmq::context_t* contextin, std::string threadname,  void (*funcin)(std::string)){ ///< Construtor for thread with string
    
     context=contextin;
     ThreadName=threadname;
@@ -38,7 +39,7 @@ struct Thread_args{
     kill=false; 
   }
 
-  Thread_args(zmq::context_t* contextin, std::string threadname,  void (*funcin)(Thread_args*)){ ///< Constrcutor for thread with args
+  DAQThread_args(zmq::context_t* contextin, std::string threadname,  void (*funcin)(Thread_args*)){ ///< Constrcutor for thread with args
     
     context=contextin;
     ThreadName=threadname;
@@ -46,7 +47,7 @@ struct Thread_args{
     kill=false;
   }      
 
-  virtual ~Thread_args(){ ///< virtual constructor 
+  virtual ~DAQThread_args(){ ///< virtual constructor 
     running =false;
     kill=true;
     delete sock;
@@ -54,19 +55,14 @@ struct Thread_args{
   }
 
   zmq::context_t *context; ///< ZMQ context used for ZMQ socket creation
-  std::string ThreadName; ///< name of thread (deffined at creation)
   void (*func_with_string)(std::string); ///< function pointer to string thread
-  void (*func)(Thread_args*); ///< function pointer to thread with args
-  pthread_t thread; ///< Simple constructor underlying thread that interface is built ontop of
   zmq::socket_t* sock; ///< ZMQ socket pointer is assigned in string thread,but can be sued otherwise
-  bool running; ///< Bool flag to tell the thread to run (if not set thread goes into wait cycle
-  bool kill; ///< Bool flay used to kill the thread
   
 };
 
 
 /**
- * \class Utilities
+ * \class DAQUtilities
  *
  * This class can be instansiated in a Tool and provides some helpful threading, dynamic socket descovery and promotion functionality
  *
@@ -77,27 +73,19 @@ struct Thread_args{
  *
  */
 
-class Utilities{
+class DAQUtilities: public Utilities{
   
  public:
-  
-  Utilities(zmq::context_t* zmqcontext); ///< Simple constructor
+
+  using Utilities::CreateThread;  
+  DAQUtilities(zmq::context_t* zmqcontext); ///< Simple constructor
   bool AddService(std::string ServiceName, unsigned int port, bool StatusQuery=false); ///< Broadcasts an available service (only in remote mode)
   bool RemoveService(std::string ServiceName); ///< Removes service broadcasts for a service
-  int UpdateConnections(std::string ServiceName, zmq::socket_t* sock, std::map<std::string,Store*> &connections, std::string port=""); ///< Dynamically connects a socket tp services broadcast with a specific name 
-  Thread_args* CreateThread(std::string ThreadName,  void (*func)(std::string));  //func = &my_int_func; ///< Create a simple thread that has string exchange with main thread
-  Thread_args* CreateThread(std::string ThreadName,  void (*func)(Thread_args*), Thread_args* args); ///< Create a thread with more complicated data exchange definned by arguments
-  bool MessageThread(Thread_args* args, std::string Message, bool block=true); ///< Send simple string to String thread
+  int UpdateConnections(std::string ServiceName, zmq::socket_t* sock, std::map<std::string,Store*> &connections, std::string port=""); ///< Dynamically connects a socket tp services broadcast with a specific name
+  DAQThread_args* CreateThread(std::string ThreadName,  void (*func)(std::string));  //func = &my_int_func; ///< Create a simple thread that has string exchange with main thread
+  bool MessageThread(DAQThread_args* args, std::string Message, bool block=true); ///< Send simple string to String thread
   bool MessageThread(std::string ThreadName, std::string Message, bool block=true); ///< Send simple string to String thread
-  bool KillThread(Thread_args* &args); ///< Kill a thread assosiated to args
-  bool KillThread(std::string ThreadName); ///< Kill a thread by name
 
-  template <typename T>  bool KillThread(T* pointer){ 
-    
-    Thread_args* tmp=pointer;
-    return KillThread(tmp);
-
-  } ///< Kill a thread with args that inheirt form base Thread_args
 
   template <typename T>  bool SendPointer(zmq::socket_t* sock, T* pointer){
     
@@ -142,8 +130,6 @@ class Utilities{
   
   zmq::context_t *context; ///< ZMQ context pointer
   static void* String_Thread(void *arg); ///< Simpe string thread
-  static void* Thread(void *arg); ///< Thread with args
-  std::map<std::string, Thread_args*> Threads; ///< Map of threads managed by the utilities class.
   
   
 };
