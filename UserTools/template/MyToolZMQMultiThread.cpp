@@ -1,6 +1,6 @@
 #include "MyToolZMQMultiThread.h"
 
-MyToolZMQMultiThread_args::MyToolZMQMultiThread_args():Thread_args(){}
+MyToolZMQMultiThread_args::MyToolZMQMultiThread_args():DAQThread_args(){}
 
 MyToolZMQMultiThread_args::~MyToolZMQMultiThread_args(){}
 
@@ -21,7 +21,7 @@ bool MyToolZMQMultiThread::Initialise(std::string configfile, DataModel &data){
   int threadcount=0;
   if(!m_variables.Get("Threads",threadcount)) threadcount=4;
 
-  m_util=new Utilities(m_data->context);
+  m_util=new DAQUtilities(m_data->context);
 
   ManagerSend=new zmq::socket_t(*m_data->context,ZMQ_PUSH);
   ManagerSend->bind("inproc://MyToolZMQMultiThreadSend");

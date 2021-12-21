@@ -18,7 +18,7 @@ d and so will be thread safe
 */
 
 
-struct MyToolZMQMultiThread_args:Thread_args{
+struct MyToolZMQMultiThread_args:DAQThread_args{
 
   MyToolZMQMultiThread_args();
   ~MyToolZMQMultiThread_args();
@@ -54,7 +54,7 @@ class MyToolZMQMultiThread: public Tool {
  private:
 
   static void Thread(Thread_args* arg);  ///< Function to be run by the thread in a loop. Make sure not to block in it
-  Utilities* m_util; ///< Pointer to utilities class to help with threading
+  DAQUtilities* m_util; ///< Pointer to utilities class to help with threading
   std::vector<MyToolZMQMultiThread_args*> args; ///< Vector of thread args (also holds pointers to the threads)
 
   zmq::pollitem_t items[2]; ///< This is used to both inform the poll and store its output. Allows for multitasking sockets 
