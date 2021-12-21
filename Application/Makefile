@@ -4,7 +4,7 @@ CXXFLAGS=  -fPIC -Wpedantic -O3 # -g -lSegFault -rdynamic -DDEBUG
 # -Wl,--no-as-needed
 
 ifeq ($(MAKECMDGOALS),debug)
-CXXFLAGS+= -O1 -g -lSegFault -rdynamic -DDEBUG
+CXXFLAGS+= -O0 -g -lSegFault -rdynamic -DDEBUG
 endif
 
 ZMQLib= -L $(Dependancies)/zeromq-4.0.7/lib -lzmq 
