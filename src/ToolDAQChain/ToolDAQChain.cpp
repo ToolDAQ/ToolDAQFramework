@@ -1,67 +1,73 @@
 #include "ToolDAQChain.h"
 
-ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]){
-  m_log_mode="";
+ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]): ToolChain((void*) NULL){
 
-  if(!m_data.vars.Initialise(configfile)){
+  m_data=new DataModel();
+
+  if(!m_data->vars.Initialise(configfile)){
     std::cout<<"\033[38;5;196m ERROR!!!: No valid config file quitting \033[0m"<<std::endl;
     exit(1);
   }
-
-  if(!m_data.vars.Get("verbose",m_verbose)) m_verbose=9;
-  if(!m_data.vars.Get("error_level",m_errorlevel)) m_errorlevel=2;
-  if(!m_data.vars.Get("remote_port",m_remoteport)) m_remoteport=24004; 
-  if(!m_data.vars.Get("attempt_recover",m_recover)) m_recover=false;
-  if(!m_data.vars.Get("log_mode",m_log_mode)) m_log_mode="Interactive";
-  if(!m_data.vars.Get("log_local_path",m_log_local_path))  m_log_local_path="./log";
-  if(!m_data.vars.Get("service_discovery_address",m_multicastaddress)) m_multicastaddress="239.192.1.1";
-  if(!m_data.vars.Get("service_discovery_port",m_multicastport)) m_multicastport=5000;
-  if(!m_data.vars.Get("service_name",m_service)) m_service="ToolDAQ_Service";
-  if(!m_data.vars.Get("log_service",m_log_service)) m_log_service="LogStore";
-  if(!m_data.vars.Get("log_port",m_log_port)) m_log_port=24010;
-  if(!m_data.vars.Get("service_publish_sec",m_pub_sec)) m_pub_sec=5;
-  if(!m_data.vars.Get("service_kick_sec",m_kick_sec)) m_kick_sec=60;
   
-  if(!m_data.vars.Get("Inline", m_inline))  m_inline=0;
-  if(!m_data.vars.Get("Interactive", m_interactive)) m_interactive=false;
-  if(!m_data.vars.Get("Remote", m_remote)) m_remote=false;
+  if(!m_data->vars.Get("verbose",m_verbose)) m_verbose=9;
+  if(!m_data->vars.Get("error_level",m_errorlevel)) m_errorlevel=2;
+  if(!m_data->vars.Get("remote_port",m_remoteport)) m_remoteport=24004; 
+  if(!m_data->vars.Get("attempt_recover",m_recover)) m_recover=false;
 
+  if(!m_data->vars.Get("log_interactive",m_log_interactive)) m_log_interactive=true;
+  if(!m_data->vars.Get("log_local",m_log_local)) m_log_local=false;
+  if(!m_data->vars.Get("log_split_files",m_log_split_files)) m_log_split_files=false;
+  if(!m_data->vars.Get("log_local_path",m_log_local_path)) m_log_local_path="./log";
+  if(!m_data->vars.Get("log_remote",m_log_remote)) m_log_remote=false; 
+  if(!m_data->vars.Get("log_service",m_log_service)) m_log_service="LogStore";
+  if(!m_data->vars.Get("log_port",m_log_port)) m_log_port=24010;
+
+  if(!m_data->vars.Get("service_discovery_address",m_multicastaddress)) m_multicastaddress="239.192.1.1";
+  if(!m_data->vars.Get("service_discovery_port",m_multicastport)) m_multicastport=5000;
+  if(!m_data->vars.Get("service_name",m_service)) m_service="ToolDAQ_Service";
+  if(!m_data->vars.Get("service_publish_sec",m_pub_sec)) m_pub_sec=5;
+  if(!m_data->vars.Get("service_kick_sec",m_kick_sec)) m_kick_sec=60;
+  
+  if(!m_data->vars.Get("Inline", m_inline))  m_inline=0;
+  if(!m_data->vars.Get("Interactive", m_interactive)) m_interactive=false;
+  if(!m_data->vars.Get("Remote", m_remote)) m_remote=false;
   
   unsigned int IO_Threads=1;
-  m_data.vars.Get("IO_Threads",IO_Threads);
+  m_data->vars.Get("IO_Threads",IO_Threads);
+  m_data->vars.Set("argc",argc);
   
-  m_data.vars.Set("argc",argc);
   for(int i=0; i<argc ; i++){
-    
     std::stringstream tmp;
     tmp<<"$"<<i;
-    m_data.vars.Set(tmp.str(),argv[i]);
+    m_data->vars.Set(tmp.str(),argv[i]);
     
   }
  
   Init(IO_Threads);
   
   std::string toolsfile="";
-  m_data.vars.Get("Tools_File",toolsfile);
+  m_data->vars.Get("Tools_File",toolsfile);
   
   if(!LoadTools(toolsfile)) exit(1);
-  
+ 
   if(m_inline!=0) Inline();  
   else if(m_interactive) Interactive(); 
   else if(m_remote) Remote();
   
-  
 }
 
-ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, std::string logmode,std::string log_local_path, std::string log_service, int log_port, int pub_sec, int kick_sec,unsigned int IO_Threads){
+ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, bool interactive, bool local, std::string log_local_path, bool remote, std::string log_service, int log_port,  bool split_output_files, int pub_sec, int kick_sec,unsigned int IO_Threads){
   
   m_verbose=verbose;
   m_errorlevel=errorlevel;
-  m_log_mode = logmode;
+  m_service=service;  
+  m_log_interactive=interactive;
+  m_log_local=local;
   m_log_local_path=log_local_path;
-  m_service=service;
+  m_log_remote=remote;
   m_log_service=log_service;
   m_log_port=log_port;
+  m_log_split_files=split_output_files;  
   m_pub_sec=pub_sec;
   m_kick_sec=kick_sec;
   
@@ -73,19 +79,27 @@ ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, std
 void ToolDAQChain::Init(unsigned int IO_Threads){
  
   context=new zmq::context_t(IO_Threads);
-  m_data.context=context;
+  m_data->context=context;
   
   m_UUID = boost::uuids::random_generator()();
-  
+
+  m_log=0;
+
+  m_log= new DAQLogging(context, m_UUID, m_service, m_log_interactive, m_log_local, m_log_local_path, m_log_remote, m_log_service, m_log_port, m_log_split_files);
+
+
+  if(!m_data->Log) m_data->Log=m_log;
+
+  /*  
   if(m_log_mode!="Off"){
     std::cout<<"in off if"<<std::endl;    
     bcout=std::cout.rdbuf();
     out=new  std::ostream(bcout);
   }
-
-  m_data.Log= new DAQLogging(*out, context, m_UUID, m_service, m_log_mode, m_log_local_path, m_log_service, m_log_port);
+  */
+  //  m_data->Log= new DAQLogging(*out, context, m_UUID, m_service, m_log_mode, m_log_local_path, m_log_service, m_log_port);
   
-  if(m_log_mode!="Off") std::cout.rdbuf((m_data.Log->buffer));
+  //if(m_log_mode!="Off") std::cout.rdbuf((m_data->Log->buffer));
   
   execounter=0;
   Initialised=false;
@@ -101,10 +115,11 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
   if(m_kick_sec<0) receiveflag=false;
 
   SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
+ 
+  if(m_remote) sleep(10); //needed to allow service discovery find time
   
-  if(m_log_mode=="Remote") sleep(10); //needed to allow service discovery find time
-  
-  *m_log<<MsgL(1,m_verbose)<<cyan<<"UUID = "<<m_UUID<<std::endl<<yellow<<"********************************************************\n"<<"**** Tool chain created ****\n"<<"********************************************************"<<std::endl;
+  //  *m_log<<MsgL(1,m_verbose)<<cyan<<"UUID = "<<m_UUID<<std::endl<<yellow<<"\n********************************************************\n"<<"**** Tool chain created ****\n"<<"********************************************************"<<std::endl;
+  *m_log<<MsgL(1,m_verbose)<<cyan<<"UUID = "<<m_UUID<<yellow<<"\n********************************************************\n"<<"**** Tool chain created ****\n"<<"********************************************************"<<std::endl;
 
 }
 
@@ -224,18 +239,31 @@ void ToolDAQChain::Remote(){
 
 ToolDAQChain::~ToolDAQChain(){
   
-  for (int i=0;i<m_tools.size();i++){
-    delete m_tools.at(i);
-    m_tools.at(i)=0;
-  }
+  /*  for (int i=0;i<m_tools.size();i++){
+      delete m_tools.at(i);
+      m_tools.at(i)=0;
+      }
+      
+      printf("yakka2\n");  
+      m_tools.clear();
+      printf("yakka3\n");
+  */ 
   
-  m_tools.clear();
+  if(m_data!=0 && m_data->Log==m_log){    
+    m_data->Log=0;  
+    delete m_data;      
+    m_data=0;     
+  }   
+  
+  delete m_log;
+  m_log=0;
   
   //  printf("%s \n","tdebug 1");
-  delete m_data.Log;  
+  //  delete m_data->Log;   // change this to m_log
   //printf("%s \n","tdebug 2");
-  m_data.Log=0;
+  //m_data->Log=0;
   //printf("%s \n","tdebug 3");  
+    
   delete SD;
   //printf("%s \n","tdebug 4");
   SD=0;  
@@ -244,18 +272,20 @@ ToolDAQChain::~ToolDAQChain(){
   //printf("%s \n","tdebug 6");
   //  context->close();
   //printf("%s \n","tdebug 6.5");
-  //delete context;
+  
+  delete context;
   // printf("%s \n","tdebug 7");
   context=0;
+  
   //printf("%s \n","tdebug 8");
-  if(m_log_mode!="Off"){
-    std::cout.rdbuf(bcout);
-    //printf("%s \n","tdebug 9");
-    delete out;
-    //printf("%s \n","tdebug 10");
-    out=0;
-    //printf("%s \n","tdebug 11");
-  }  
+  // if(m_log_mode!="Off"){
+  //std::cout.rdbuf(bcout);
+  //printf("%s \n","tdebug 9");
+  //delete out;
+  //printf("%s \n","tdebug 10");
+  //out=0;
+  //printf("%s \n","tdebug 11");
+  //  }  
   
   
   

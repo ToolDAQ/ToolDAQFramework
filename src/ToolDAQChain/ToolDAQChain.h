@@ -72,7 +72,7 @@ class ToolDAQChain : public ToolChain {
      @param kick_sec The number of seconds to wait before removing a servic from the remote services list if no beacon received.
      @param IO_Threads The number of ZMQ IO threads to use (~1 per Gbps of traffic).
    */
-  ToolDAQChain(int verbose=1, int errorlevel=0, std::string service="test", std::string logmode="Interactive", std::string log_local_path="./log",  std::string log_service="", int log_port=0, int pub_sec=5, int kick_sec=60, unsigned int IO_Threads=1); 
+  ToolDAQChain(int verbose=1, int errorlevel=0, std::string service="test",  bool interactive=true, bool local=false, std::string log_local_path="./log", bool remote=false,  std::string log_service="", int log_port=0, bool split_output_files=false, int pub_sec=5, int kick_sec=60, unsigned int IO_Threads=1); 
   //verbosity: true= print out status messages , false= print only error messages;
   //errorlevels: 0= do not exit; error 1= exit if unhandeled error ; exit 2= exit on handeled and unhandeled errors; 
   ~ToolDAQChain(); 
@@ -88,11 +88,12 @@ private:
 
   //conf variables
   boost::uuids::uuid m_UUID;
+  bool m_log_remote; 
   std::string m_log_service;
   int m_log_port;
   std::string m_service;
   bool m_remote;
-  
+
   //socket coms and threading variables
   pthread_t DAQthread[2];
   zmq::context_t *context;
