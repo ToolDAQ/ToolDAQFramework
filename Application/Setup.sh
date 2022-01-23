@@ -2,7 +2,7 @@
 
 #Application path location of applicaiton
 
-Dependencies=`pwd`
+Dependencies=`pwd`/Dependencies
 
 #source ${ToolDAQapp}/ToolDAQ/root/bin/thisroot.sh
 
