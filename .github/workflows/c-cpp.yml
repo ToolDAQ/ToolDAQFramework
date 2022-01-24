@@ -35,7 +35,7 @@ jobs:
 
   build_centos-7:
     runs-on: ubuntu-latest
-    container: 'tooldaq:base'
+    container: 'tooldaq/base'
     steps:
     - uses: actions/checkout@v2
     - name: setup
