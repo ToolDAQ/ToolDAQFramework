@@ -15,7 +15,8 @@ RUN cd /opt \
     && make install \ 
     && rm -rf ./* \
     && mv ../tmp/* ./ \
-    && rm -rf ../tmp \				  
+    && rm -rf ../tmp \
+    && cd ../ \				  
     && git clone https://github.com/ToolDAQ/boost_1_66_0.git \
     && cd boost_1_66_0 \
     && rm -rf INSTALL \
