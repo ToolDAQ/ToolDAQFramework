@@ -1,0 +1,44 @@
+\hypertarget{classLogger}{}\doxysection{Logger Class Reference}
+\label{classLogger}\index{Logger@{Logger}}
+
+
+{\ttfamily \#include $<$Logger.\+h$>$}
+
+Inheritance diagram for Logger\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classLogger}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classLogger_abc41bfb031d896170c7675fa96a6b30c}\label{classLogger_abc41bfb031d896170c7675fa96a6b30c}} 
+\mbox{\hyperlink{classLogger_abc41bfb031d896170c7675fa96a6b30c}{Logger}} ()
+\begin{DoxyCompactList}\small\item\em Construtor. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classLogger_a1b598f35f454e24f9e9abc9f18c3e98f}\label{classLogger_a1b598f35f454e24f9e9abc9f18c3e98f}} 
+bool \mbox{\hyperlink{classLogger_a1b598f35f454e24f9e9abc9f18c3e98f}{Initialise}} (std\+::string configfile, \mbox{\hyperlink{classDataModel}{Data\+Model}} \&data)
+\begin{DoxyCompactList}\small\item\em Sets up a ZMQ\+\_\+\+PULL socket which on the log part form the config file. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classLogger_a140ebede2975159a5abe7c59e56ec0ec}\label{classLogger_a140ebede2975159a5abe7c59e56ec0ec}} 
+bool \mbox{\hyperlink{classLogger_a140ebede2975159a5abe7c59e56ec0ec}{Execute}} ()
+\begin{DoxyCompactList}\small\item\em Listens on socket for logging message printing them to screen when received. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classLogger_a2c70367a86d5999db21324ccb58f44ed}\label{classLogger_a2c70367a86d5999db21324ccb58f44ed}} 
+bool \mbox{\hyperlink{classLogger_a2c70367a86d5999db21324ccb58f44ed}{Finalise}} ()
+\begin{DoxyCompactList}\small\item\em Closes socket and cleans up. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This is a demonstration tool that can receive Logging messages from Tool\+Chains
+
+\begin{DoxyParagraph}{Author}
+B.\+Richards 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Date}
+2019/05/28 10\+:44\+:00 
+\end{DoxyParagraph}
+Contact\+: \href{mailto:b.richards@qmul.ac.uk}{\texttt{ b.\+richards@qmul.\+ac.\+uk}} 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+User\+Tools/\+Logger/Logger.\+h\item 
+User\+Tools/\+Logger/Logger.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,56 @@
+\hypertarget{structthread__args}{}\doxysection{thread\+\_\+args Struct Reference}
+\label{structthread__args}\index{thread\_args@{thread\_args}}
+
+
+{\ttfamily \#include $<$Service\+Discovery.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structthread__args_a6b3383444ec19a7bd2969229e1b87d2f}\label{structthread__args_a6b3383444ec19a7bd2969229e1b87d2f}} 
+\mbox{\hyperlink{structthread__args_a6b3383444ec19a7bd2969229e1b87d2f}{thread\+\_\+args}} (boost\+::uuids\+::uuid in\+UUID, zmq\+::context\+\_\+t $\ast$incontext, std\+::string inmulticastaddress, int inmulticastport, std\+::string inservice, int inremoteport, int inpubsec=5, int inkicksec=5)
+\begin{DoxyCompactList}\small\item\em Simple construtor to assign thread variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structthread__args_a707586ba05cc2c8be29cf22769b67634}\label{structthread__args_a707586ba05cc2c8be29cf22769b67634}} 
+boost\+::uuids\+::uuid \mbox{\hyperlink{structthread__args_a707586ba05cc2c8be29cf22769b67634}{UUID}}
+\begin{DoxyCompactList}\small\item\em Unique UUID identifier for the Tool\+Chain to be used is service beacons. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structthread__args_a217d01ac4eb4fd9c9ed1ebe4d02ca330}\label{structthread__args_a217d01ac4eb4fd9c9ed1ebe4d02ca330}} 
+zmq\+::context\+\_\+t $\ast$ \mbox{\hyperlink{structthread__args_a217d01ac4eb4fd9c9ed1ebe4d02ca330}{context}}
+\begin{DoxyCompactList}\small\item\em ZMQ context pointer requred for creating sockets. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structthread__args_a15f6bcc7a120e51d1074bb8703322ed5}\label{structthread__args_a15f6bcc7a120e51d1074bb8703322ed5}} 
+std\+::string \mbox{\hyperlink{structthread__args_a15f6bcc7a120e51d1074bb8703322ed5}{multicastaddress}}
+\begin{DoxyCompactList}\small\item\em Multicast address to send beacons. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structthread__args_aa6059ab0eeca3f487491f2542bb5120b}\label{structthread__args_aa6059ab0eeca3f487491f2542bb5120b}} 
+int \mbox{\hyperlink{structthread__args_aa6059ab0eeca3f487491f2542bb5120b}{multicastport}}
+\begin{DoxyCompactList}\small\item\em Port to use for multicast beacons. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structthread__args_a92798a7f2094db41f45ecbef0c067ca9}\label{structthread__args_a92798a7f2094db41f45ecbef0c067ca9}} 
+std\+::string \mbox{\hyperlink{structthread__args_a92798a7f2094db41f45ecbef0c067ca9}{service}}
+\begin{DoxyCompactList}\small\item\em Name to broadcast to identify the Tool\+Chain type. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structthread__args_a371407c82f7f64e3d9df634e59369565}\label{structthread__args_a371407c82f7f64e3d9df634e59369565}} 
+int \mbox{\hyperlink{structthread__args_a371407c82f7f64e3d9df634e59369565}{remoteport}}
+\begin{DoxyCompactList}\small\item\em Port for remote connections to control the Tool\+Chain. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structthread__args_aba650f345201e8aece9071377945cf0e}\label{structthread__args_aba650f345201e8aece9071377945cf0e}} 
+int \mbox{\hyperlink{structthread__args_aba650f345201e8aece9071377945cf0e}{pubsec}}
+\begin{DoxyCompactList}\small\item\em The number of seconds between sending multicast beacons. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structthread__args_a9b75103528b3a6fcc3dfc133cd1b1e8e}\label{structthread__args_a9b75103528b3a6fcc3dfc133cd1b1e8e}} 
+int \mbox{\hyperlink{structthread__args_a9b75103528b3a6fcc3dfc133cd1b1e8e}{kicksec}}
+\begin{DoxyCompactList}\small\item\em The number of seconds without receiving a beacon from a remote service to remove them from the services list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This struct holds the initalisation variables to be passed to the \mbox{\hyperlink{classServiceDiscovery}{Service\+Discovery}} thread.
+
+\begin{DoxyParagraph}{Author}
+B.\+Richards 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Date}
+2019/05/27 18\+:34\+:00 
+\end{DoxyParagraph}
+Contact\+: \href{mailto:b.richards@qmul.ac.uk}{\texttt{ b.\+richards@qmul.\+ac.\+uk}} ~\newline
+ 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/Service\+Discovery.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,19 @@
+\DoxyHorRuler{0}
+ \#\+Description \DoxyHorRuler{0}
+
+
+Configure files are simple text files for passing variables to the Tools.
+
+Text files are read by the Store class (src/\+Store) and automatically asigned to an internal map for the relavent Tool to use.
+
+\DoxyHorRuler{0}
+ \#\+Useage \DoxyHorRuler{0}
+
+
+Any line starting with a \char`\"{}\#\char`\"{} will be ignored by the Store, as will blank lines.
+
+Variables should be stored one per line as follows\+:
+
+Name Value \#\+Comments
+
+Note\+: Only one value is permitted per name and they are stored in a string stream and templated cast back to the type given. 
