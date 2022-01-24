@@ -1,0 +1,54 @@
+name:C/C++ CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+#  build_ubuntu-latest:
+
+#    runs-on: ubuntu-latest
+
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Get ToolDAQ
+#      run: ./GetToolDAQ.sh
+#    - name: test
+#      run : source ./Setup.sh && ./main
+    
+#  build_centos-latest:
+#    runs-on: ubuntu-latest
+#    container: 'centos:latest'
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: prerequisits
+#      run: yum install -y git make gcc-c++ zlib-devel dialog
+#    - name: Get ToolDAQ
+#      run: ./GetToolDAQ.sh
+#    - name: test
+#      run : source ./Setup.sh && ./main
+
+  build_centos-7:
+    runs-on: ubuntu-latest
+    container: 'tooldaq:base'
+    steps:
+    - uses: actions/checkout@v2
+    - name: setup
+      run: cp -R `pwd` /opt 
+      	   && cd /opt
+      	   && ls
+	   && cd ToolDAQFramework
+    - name: make
+      run: cd /opt/ToolDAQFramework
+      	   && source ./Setup.sh
+      	   && make clean
+      	   && make
+    - name: test
+      run: cd /opt/ToolDAQFramework
+      	   && source ./Setup.sh 
+	   && ./main

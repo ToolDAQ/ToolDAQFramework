@@ -13,6 +13,7 @@ RUN cd /opt \
     && ./configure --prefix=`pwd`/../tmp \ 			  
     && make -j `nproc --all` \
     && make install \ 
+    && cp include/zmq.hpp ../tmp/include/ \
     && rm -rf ./* \
     && mv ../tmp/* ./ \
     && rm -rf ../tmp \
