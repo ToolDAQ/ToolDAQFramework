@@ -45,10 +45,9 @@ jobs:
        && cd ToolDAQFramework
     - name: make
       run: cd /opt/ToolDAQFramework
-       && source ./Setup.sh
        && make clean
        && make
     - name: test
       run: cd /opt/ToolDAQFramework
-       && source ./Setup.sh 
+       && export LD_LIBRARY_PATH=`pwd`/lib:/opt/zeromq-4.0.7/lib:/opt/boost_1_66_0/install/lib:$LD_LIBRARY_PATH
        && ./main
