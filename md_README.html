@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ToolDAQFramework: ToolDAQ Framework</title>
+<title>ToolDAQFramework: README</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,18 +62,24 @@ $(function() {
 </div><!-- top -->
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">ToolDAQ Framework </div>  </div>
+<div class="title">README </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>ToolDAQ is an open source general modular DAQ FrameWork, with built in service discovery.</p>
+<div class="textblock"><p><img src="https://user-images.githubusercontent.com/14093889/150870532-8f276868-0cf9-43ad-8dfc-2c9b6a821c32.png" alt="ToolDAQ" class="inline"/></p>
+<p>ToolDAQ is an open source general modular DAQ FrameWork, with built in service discovery and serialisation. It is based on the ToolFramework <a href="https://github.com/ToolFramework/ToolFramework">https://github.com/ToolFramework/ToolFramework</a></p>
+<h1><a class="anchor" id="autotoc_md4"></a>
+*PLEASE NOTE: This is the core framework only!!! do not clone this repo for building your own application.</h1>
+<p>To create your own ToolDAQ appliciaion please clone/fork the ToolApplication repository <a href="https://github.com/ToolFramework/ToolApplication">https://github.com/ToolFramework/ToolApplication</a> which has a script <code>GetToolDAQ.sh</code> to pull this repository down as a dependancy and set up everything for you.</p>
 <hr  />
 <p> #Concept </p><hr  />
 <p>The main executable creates a ToolChain which is an object that holds Tools. Tools are added to the ToolChain and then the ToolChain can be told to Initialise Execute and Finalise each tool in the chain.</p>
 <p>The ToolChain also holds a uesr defined <a class="el" href="classDataModel.html">DataModel</a> which each tool has access too and can read ,update and modify. This is the method by which data is passed between Tools.</p>
 <p>User Tools can be generated for use in the tool chain by incuding a Tool header. This can be done manually or by use of the newTool.sh script.</p>
-<p>For more information consult the ToolDAQ doc.pdf</p>
-<p><a href="https://github.com/ToolDAQ/ToolDAQFramework/blob/master/ToolDAQ%20doc.pdf">https://github.com/ToolDAQ/ToolDAQFramework/blob/master/ToolDAQ%20doc.pdf</a></p>
-<p>Copyright (c) 2016 Benjamin Richards </p>
+<p>For more information consult the ToolDAQ manual:</p>
+<p><a href="https://drive.google.com/file/d/19F-nJpeq3cHJbjV4qiSk5qzpOa7p8keQ">https://drive.google.com/file/d/19F-nJpeq3cHJbjV4qiSk5qzpOa7p8keQ</a></p>
+<p>or the Doxygen docs</p>
+<p>docs <a href="http://tooldaq.github.io/ToolDAQFramework">http://tooldaq.github.io/ToolDAQFramework</a></p>
+<p>Copyright (c) 2016 Benjamin Richards (<a href="#" onclick="location.href='mai'+'lto:'+'ben'+'ja'+'min'+'.r'+'ich'+'ar'+'ds@'+'wa'+'rwi'+'ck'+'.ac'+'.u'+'k'; return false;">benja<span style="display: none;">.nosp@m.</span>min.<span style="display: none;">.nosp@m.</span>richa<span style="display: none;">.nosp@m.</span>rds@<span style="display: none;">.nosp@m.</span>warwi<span style="display: none;">.nosp@m.</span>ck.a<span style="display: none;">.nosp@m.</span>c.uk</a>) </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->

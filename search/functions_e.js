@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['receivepointer_119',['ReceivePointer',['../classDAQUtilities.html#a9e07c0eadd80e40daa8c11fb7c009317',1,'DAQUtilities']]],
-  ['remote_120',['Remote',['../classToolDAQChain.html#a4402df6eea4ccfb10c6849c662bff50c',1,'ToolDAQChain']]],
-  ['remove_121',['Remove',['../classBoostStore.html#a649b15bdd2710f3caa464f2ffd443101',1,'BoostStore']]],
-  ['removeservice_122',['RemoveService',['../classDAQUtilities.html#a7db1d1362f3e55a49f5c92e12f3db01c',1,'DAQUtilities']]]
+  ['receivepointer_118',['ReceivePointer',['../classDAQUtilities.html#a9e07c0eadd80e40daa8c11fb7c009317',1,'DAQUtilities']]],
+  ['remote_119',['Remote',['../classToolDAQChain.html#a4402df6eea4ccfb10c6849c662bff50c',1,'ToolDAQChain']]],
+  ['remove_120',['Remove',['../classBoostStore.html#a649b15bdd2710f3caa464f2ffd443101',1,'BoostStore']]],
+  ['removeservice_121',['RemoveService',['../classDAQUtilities.html#a7db1d1362f3e55a49f5c92e12f3db01c',1,'DAQUtilities']]]
 ];

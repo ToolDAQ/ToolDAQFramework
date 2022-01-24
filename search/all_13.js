@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vars_66',['vars',['../classDataModel.html#a4baac5fe364a7a23762d70d2c2216486',1,'DataModel']]]
+  ['vars_65',['vars',['../classDataModel.html#a4baac5fe364a7a23762d70d2c2216486',1,'DataModel']]]
 ];

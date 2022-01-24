@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['log_141',['Log',['../classDataModel.html#aa777da4c632e4659ee5b1447ad513458',1,'DataModel']]],
-  ['logport_142',['logport',['../structDAQLogging__thread__args.html#a539dac8cd05198eb772a17a71e6948b4',1,'DAQLogging_thread_args']]],
-  ['logservice_143',['logservice',['../structDAQLogging__thread__args.html#a4f00d94b3dc51d388a548ee964e93e3b',1,'DAQLogging_thread_args']]]
+  ['log_140',['Log',['../classDataModel.html#aa777da4c632e4659ee5b1447ad513458',1,'DataModel']]],
+  ['logport_141',['logport',['../structDAQLogging__thread__args.html#a539dac8cd05198eb772a17a71e6948b4',1,'DAQLogging_thread_args']]],
+  ['logservice_142',['logservice',['../structDAQLogging__thread__args.html#a4f00d94b3dc51d388a548ee964e93e3b',1,'DAQLogging_thread_args']]]
 ];
