@@ -40,15 +40,15 @@ jobs:
     - uses: actions/checkout@v2
     - name: setup
       run: cp -R `pwd` /opt 
-      	   && cd /opt
-      	   && ls
-	   && cd ToolDAQFramework
+       && cd /opt 
+       && ls 
+       && cd ToolDAQFramework
     - name: make
       run: cd /opt/ToolDAQFramework
-      	   && source ./Setup.sh
-      	   && make clean
-      	   && make
+       && source ./Setup.sh
+       && make clean
+       && make
     - name: test
       run: cd /opt/ToolDAQFramework
-      	   && source ./Setup.sh 
-	   && ./main
+       && source ./Setup.sh 
+       && ./main
