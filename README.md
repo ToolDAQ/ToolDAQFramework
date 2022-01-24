@@ -1,6 +1,9 @@
-# ToolDAQ Framework
+![ToolDAQ](https://user-images.githubusercontent.com/14093889/150870532-8f276868-0cf9-43ad-8dfc-2c9b6a821c32.png)
 
-ToolDAQ is an open source general modular DAQ FrameWork, with built in service discovery.
+ToolDAQ is an open source general modular DAQ FrameWork, with built in service discovery and serialisation. It is based on the ToolFramework https://github.com/ToolFramework/ToolFramework
+
+# *PLEASE NOTE: This is the core framework only!!! do not clone this repo for building your own application.
+To create your own ToolDAQ appliciaion please clone/fork the ToolApplication repository https://github.com/ToolFramework/ToolApplication which has a script ```GetToolDAQ.sh``` to pull this repository down as a dependancy and set up everything for you.
 
 ****************************
 #Concept
@@ -12,9 +15,13 @@ The ToolChain also holds a uesr defined DataModel which each tool has access too
 
 User Tools can be generated for use in the tool chain by incuding a Tool header. This can be done manually or by use of the newTool.sh script.
 
-For more information consult the ToolDAQ doc.pdf
+For more information consult the ToolDAQ manual:
 
-https://github.com/ToolDAQ/ToolDAQFramework/blob/master/ToolDAQ%20doc.pdf
+https://drive.google.com/file/d/19F-nJpeq3cHJbjV4qiSk5qzpOa7p8keQ
+
+or the Doxygen docs
+
+docs http://tooldaq.github.io/ToolDAQFramework
 
 
-Copyright (c) 2016 Benjamin Richards
+Copyright (c) 2016 Benjamin Richards (benjamin.richards@warwick.ac.uk)
