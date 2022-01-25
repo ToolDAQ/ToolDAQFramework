@@ -61,10 +61,11 @@ clean:
 	rm -f UserTools/*/*.o
 	rm -f DataModel/*.o
 
-lib/libDataModel.so: DataModel/* lib/libLogging.so  lib/libDAQLogging.so lib/libStore.so  $(patsubst DataModel/%.cpp, DataModel/%.o, $(wildcard DataModel/*.cpp))
+lib/libDataModel.so: DataModel/* lib/libLogging.so  lib/libDAQLogging.so lib/libStore.so  $(ToolFrameworkPath)/DataModel/Utilities.cpp $(patsubst DataModel/%.cpp, DataModel/%.o, $(wildcard DataModel/*.cpp))
 
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
-	g++ $(CXXFLAGS) -shared DataModel/*.o -I include -L lib -lStore -lLogging -lDAQLogging -o lib/libDataModel.so $(DataModelInclude) $(DataModelLib) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
+	cp $(ToolFrameworkPath)/DataModel/Utilities.h ./include/
+	g++ $(CXXFLAGS) -shared DataModel/*.o $(ToolFrameworkPath)/DataModel/Utilities.cpp -I include -L lib -lStore -lLogging -lDAQLogging -o lib/libDataModel.so $(DataModelInclude) $(DataModelLib) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
 
 
 lib/libMyTools.so: UserTools/*/* UserTools/* lib/libStore.so include/Tool.h lib/libLogging.so lib/libDAQLogging.so UserTools/Factory/Factory.o | lib/libDataModel.so 
