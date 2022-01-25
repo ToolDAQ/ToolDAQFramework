@@ -1,4 +1,4 @@
-name:C/C++ CI
+name: C/C++ CI
 
 on:
   push:
@@ -35,20 +35,19 @@ jobs:
 
   build_centos-7:
     runs-on: ubuntu-latest
-    container: 'tooldaq:base'
+    container: 'tooldaq/base'
     steps:
     - uses: actions/checkout@v2
     - name: setup
       run: cp -R `pwd` /opt 
-      	   && cd /opt
-      	   && ls
-	   && cd ToolDAQFramework
+       && cd /opt 
+       && ls 
+       && cd ToolDAQFramework
     - name: make
       run: cd /opt/ToolDAQFramework
-      	   && source ./Setup.sh
-      	   && make clean
-      	   && make
+       && make clean
+       && make
     - name: test
       run: cd /opt/ToolDAQFramework
-      	   && source ./Setup.sh 
-	   && ./main
+       && export LD_LIBRARY_PATH=`pwd`/lib:/opt/zeromq-4.0.7/lib:/opt/boost_1_66_0/install/lib:$LD_LIBRARY_PATH
+       && ./main
