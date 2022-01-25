@@ -61,6 +61,10 @@ clean:
 	rm -f UserTools/*/*.o
 	rm -f DataModel/*.o
 
+include/Utilities.h: $(ToolFrameworkPath)/DataModel/Utilities.h
+	@echo -e "\e[38;5;214m\n*************** Copying " $@ "****************\e[0m"
+	cp $(ToolFrameworkPath)/DataModel/Utilities.h ./include/
+
 lib/libDataModel.so: DataModel/* lib/libLogging.so  lib/libDAQLogging.so lib/libStore.so  $(ToolFrameworkPath)/DataModel/Utilities.cpp $(patsubst DataModel/%.cpp, DataModel/%.o, $(wildcard DataModel/*.cpp))
 
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
@@ -114,7 +118,7 @@ remove:
 	echo "removing"
 	-rm UserTools/$(TOOL)/*.o
 
-DataModel/%.o: DataModel/%.cpp lib/libLogging.so lib/libDAQLogging.so lib/libStore.so  
+DataModel/%.o: DataModel/%.cpp lib/libLogging.so lib/libDAQLogging.so lib/libStore.so include/Utilities.h
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
 	cp $(shell dirname $<)/*.h include
 	-g++ $(CXXFLAGS) -c -o $@ $< -I include -L lib -lStore -lLogging -lDAQLogging  $(DataModelInclude) $(DataModelLib) $(ZMQLib) $(ZMQInclude) $(BoostLib) $(BoostInclude)
