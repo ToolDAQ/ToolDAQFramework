@@ -66,7 +66,8 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 
   zmq::socket_t Ireceive (*context, ZMQ_PULL);      
   int linger = 0;
-  Ireceive.setsockopt (ZMQ_LINGER, &linger, sizeof (linger));
+  //Ireceive.setsockopt(ZMQ_IMMEDIATE, 1);
+  Ireceive.setsockopt (ZMQ_LINGER, &linger, sizeof (linger)); 
   Ireceive.bind("inproc://ServicePublish");  
   /// multi cast /////
   
@@ -228,6 +229,9 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  //StatusCheck.setsockopt(ZMQ_SNDTIMEO, a);
 	  std::stringstream connection;
 	  connection<<"tcp://localhost:"<<*(PubServices.at(i)["remote_port"]);
+	  // StatusCheck.setsockopt(ZMQ_IMMEDIATE, 1);
+	   StatusCheck.setsockopt (ZMQ_LINGER, &linger, sizeof (linger)); 
+	  
 	  StatusCheck.connect(connection.str().c_str());
 	
 	  zmq::pollitem_t out[]={{StatusCheck,0,ZMQ_POLLOUT,0}};  
@@ -702,11 +706,11 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 
 ServiceDiscovery::~ServiceDiscovery(){
   
-  // printf("in sd destructor \n");
+   //printf("in sd destructor \n");
     sleep(1);  
   //printf("finnish sleep \n");
   
-  //kill publish thread
+  // kill publish thread
   
   //printf("checking send \n");
   if (m_send){
@@ -739,7 +743,7 @@ ServiceDiscovery::~ServiceDiscovery(){
     //Ireceive.bind("inproc://ServiceDiscovery");
   //printf("checking receive \n");
   if(m_receive){
-    //printf("in sd receive kill \n");
+  //printf("in sd receive kill \n");
     zmq::socket_t ServiceDiscovery (*context, ZMQ_DEALER);
     //  int a=60000;
     //ServiceDiscovery.setsockopt(ZMQ_RCVTIMEO, a);
