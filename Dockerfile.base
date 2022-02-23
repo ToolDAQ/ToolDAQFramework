@@ -26,7 +26,8 @@ RUN cd /opt \
     && ./b2 install iostreams -j `nproc --all` \
     && mv install ../ \
     && rm -rf ./* \
-    && mv ../install ./
+    && mv ../install ./ \
+    && chmod -R a+rw /opt
 
 ### Open terminal
 CMD ["/bin/bash"]

@@ -11,7 +11,8 @@ RUN cd /opt \
     && git clone https://github.com/ToolDAQ/ToolDAQFramework.git \
     && cd ToolDAQFramework \
     && make clean \
-    && make -j `nproc --all` 
+    && make -j `nproc --all` \
+    && chmod -R a+rw /opt/ToolDAQFramework
 
 
 ### Open terminal
