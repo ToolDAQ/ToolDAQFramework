@@ -82,7 +82,7 @@ $(function() {
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;BoostStore.h&quot;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;DAQLogging.h&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;DAQUtilities.h&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;SlowControlCollection.h&quot;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;zmq.hpp&gt;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
@@ -105,28 +105,29 @@ $(function() {
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  </div>
 <div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classDataModel.html#a2c6dfd692e50f90e55338970ea7f8d61">   47</a></span>&#160;  zmq::context_t* <a class="code" href="classDataModel.html#a2c6dfd692e50f90e55338970ea7f8d61">context</a>; </div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="comment">//  bool (*Log)(std::string, int);</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="comment">/*  </span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">  template&lt;Type T&gt;</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">    struct Log {</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">      typedef bool (*type)(T message,int verboselevel);</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">    };</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">  */</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classDataModel.html#aed9a721150cb4ccc9c1047721d84f393">   49</a></span>&#160;  <a class="code" href="classSlowControlCollection.html">SlowControlCollection</a> <a class="code" href="classDataModel.html#aed9a721150cb4ccc9c1047721d84f393">SC_vars</a>; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="comment">//  bool (*Log)(std::string, int);</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="comment">/*  </span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">  template&lt;Type T&gt;</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">    struct Log {</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">      typedef bool (*type)(T message,int verboselevel);</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">    };</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">  */</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="comment">//std::map&lt;std::string,TTree*&gt; m_trees; </span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="comment">//std::map&lt;std::string,TTree*&gt; m_trees; </span></div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  </div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;};</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;};</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassBoostStore_html"><div class="ttname"><a href="classBoostStore.html">BoostStore</a></div><div class="ttdef"><b>Definition:</b> BoostStore.h:42</div></div>
 <div class="ttc" id="aclassDataModel_html"><div class="ttname"><a href="classDataModel.html">DataModel</a></div><div class="ttdef"><b>Definition:</b> DataModel.h:30</div></div>
 <div class="ttc" id="aclassDataModel_html_a2c6dfd692e50f90e55338970ea7f8d61"><div class="ttname"><a href="classDataModel.html#a2c6dfd692e50f90e55338970ea7f8d61">DataModel::context</a></div><div class="ttdeci">zmq::context_t * context</div><div class="ttdoc">ZMQ contex used for producing zmq sockets for inter thread, process, or computer communication.</div><div class="ttdef"><b>Definition:</b> DataModel.h:47</div></div>
@@ -135,6 +136,8 @@ $(function() {
 <div class="ttc" id="aclassDataModel_html_aa777da4c632e4659ee5b1447ad513458"><div class="ttname"><a href="classDataModel.html#aa777da4c632e4659ee5b1447ad513458">DataModel::Log</a></div><div class="ttdeci">Logging * Log</div><div class="ttdoc">Log class pointer for use in Tools, it can be used to send messages which can have multiple error lev...</div><div class="ttdef"><b>Definition:</b> DataModel.h:45</div></div>
 <div class="ttc" id="aclassDataModel_html_abff03aef2cb531142a35781bb87c3365"><div class="ttname"><a href="classDataModel.html#abff03aef2cb531142a35781bb87c3365">DataModel::DataModel</a></div><div class="ttdeci">DataModel()</div><div class="ttdoc">Simple constructor.</div><div class="ttdef"><b>Definition:</b> DataModel.cpp:3</div></div>
 <div class="ttc" id="aclassDataModel_html_ad1ffc080c3b263bf3ee382a531321ad4"><div class="ttname"><a href="classDataModel.html#ad1ffc080c3b263bf3ee382a531321ad4">DataModel::Stores</a></div><div class="ttdeci">std::map&lt; std::string, BoostStore * &gt; Stores</div><div class="ttdoc">This is a map of named BooStore pointers which can be deffined to hold a nammed collection of any tip...</div><div class="ttdef"><b>Definition:</b> DataModel.h:43</div></div>
+<div class="ttc" id="aclassDataModel_html_aed9a721150cb4ccc9c1047721d84f393"><div class="ttname"><a href="classDataModel.html#aed9a721150cb4ccc9c1047721d84f393">DataModel::SC_vars</a></div><div class="ttdeci">SlowControlCollection SC_vars</div><div class="ttdoc">calss for defining and handelling slow control variables</div><div class="ttdef"><b>Definition:</b> DataModel.h:49</div></div>
+<div class="ttc" id="aclassSlowControlCollection_html"><div class="ttname"><a href="classSlowControlCollection.html">SlowControlCollection</a></div><div class="ttdef"><b>Definition:</b> SlowControlCollection.h:23</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

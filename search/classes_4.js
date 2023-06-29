@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['pointerwrapper_82',['PointerWrapper',['../classPointerWrapper.html',1,'']]],
-  ['pointerwrapperbase_83',['PointerWrapperBase',['../classPointerWrapperBase.html',1,'']]]
+  ['pointerwrapper_86',['PointerWrapper',['../classPointerWrapper.html',1,'']]],
+  ['pointerwrapperbase_87',['PointerWrapperBase',['../classPointerWrapperBase.html',1,'']]]
 ];

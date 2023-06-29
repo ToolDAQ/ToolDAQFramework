@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['booststore_71',['BoostStore',['../classBoostStore.html',1,'']]]
+  ['booststore_75',['BoostStore',['../classBoostStore.html',1,'']]]
 ];
