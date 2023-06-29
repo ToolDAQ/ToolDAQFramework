@@ -11,7 +11,7 @@
 #include "BoostStore.h"
 #include "DAQLogging.h"
 #include "DAQUtilities.h"
-
+#include "SlowControlCollection.h"
 
 #include <zmq.hpp>
 
@@ -46,6 +46,7 @@ class DataModel {
   
   zmq::context_t* context; ///< ZMQ contex used for producing zmq sockets for inter thread,  process, or computer communication
 
+  SlowControlCollection SC_vars; ///< calss for defining and handelling slow control variables
 
   //  bool (*Log)(std::string, int);
 
