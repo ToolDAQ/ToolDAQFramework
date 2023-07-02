@@ -148,9 +148,9 @@ $(function() {
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; <span class="keywordtype">bool</span> SetValue(T value){</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    mtx.lock();</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">bool</span> ret=options.Set(<span class="stringliteral">&quot;value&quot;</span>, value);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    options.Set(<span class="stringliteral">&quot;value&quot;</span>, value);</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    mtx.unlock();</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  }</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
@@ -164,9 +164,9 @@ $(function() {
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; T GetValue(){</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    T tmp;</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    mtx.lock();</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">bool</span> ret=options.Get(<span class="stringliteral">&quot;value&quot;</span>, tmp);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    options.Get(<span class="stringliteral">&quot;value&quot;</span>, tmp);</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    mtx.unlock();</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">return</span> tmp;</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    </div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  }</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  </div>
