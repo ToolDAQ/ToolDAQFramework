@@ -77,9 +77,9 @@ class SlowControlElement{
 
   template<typename T> bool SetValue(T value){
     mtx.lock();
-    bool ret=options.Set("value", value);
+    options.Set("value", value);
     mtx.unlock();
-    return ret;
+    return true;
   }
 
 
@@ -93,9 +93,9 @@ class SlowControlElement{
   template<typename T> T GetValue(){
     T tmp;
     mtx.lock();
-    bool ret=options.Get("value", tmp);
+    options.Get("value", tmp);
     mtx.unlock();
-    return ret;
+    return tmp;
     
   }
   
