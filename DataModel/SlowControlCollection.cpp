@@ -75,6 +75,9 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   
   args->SCC=this;
   
+  Add("Status",SlowControlElementType(BUTTON));
+  SC_vars["Status"]->SetValue("N/A");
+  
   return true;
 }
 
