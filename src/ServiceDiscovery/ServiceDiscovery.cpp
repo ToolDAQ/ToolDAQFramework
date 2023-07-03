@@ -347,14 +347,18 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  //std::stringstream pubmessage;
 	  
 	  //pubmessage<<"{\"uuid\":\""<<m_UUID<<"\",\"msg_id\":"<<msg_id<<",\"msg_time\":\""<<isot.str()<<"\",\"msg_type\":\"Service Discovery\",\"msg_value\":\""<<m_service<<"\",\"params\":{\"port\":"<<m_remoteport<<",\"status\":\""<<ss.str()<<"\"}}";
-	  char* message = new char[pubmessage.length()+1];
-	  //	  char message[pubmessage.length()+1];
-
+	  //char* message = new char[pubmessage.length()+1];
+	  //char message2[pubmessage.length()+1];
+	  
 	  //    snprintf (message, 512 , "%s" , buffer.GetString()) ;
-	  snprintf (message, pubmessage.length()+1 , "%s" , pubmessage.c_str() ) ;
-	  //	  printf("sending: %s\n", message);
-	   cnt = sendto(sock, message, sizeof(message), 0,(struct sockaddr *) &addr, addrlen);
-	   delete[] message;
+	  //snprintf (message, pubmessage.length()+1 , "%s" , pubmessage.c_str() ) ;
+	  
+	  //printf("sending: %s\n", message);
+	  //std::cout<<sizeof(*message)<<":"<<sizeof(message2)<<":"<<pubmessage.length()+1<<std::endl;
+	  //  cnt = sendto(sock, message, sizeof(message), 0,(struct sockaddr *) &addr, addrlen);
+	  //cnt = sendto(sock, message, sizeof(char)*pubmessage.length()+1, 0,(struct sockaddr *) &addr, addrlen);
+	  cnt = sendto(sock, pubmessage.c_str(), pubmessage.length()+1, 0,(struct sockaddr *) &addr, addrlen);
+	 
 	  /*
 	    if (cnt < 0) {
 	    perror("sendto");
