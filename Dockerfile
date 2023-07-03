@@ -8,6 +8,11 @@ USER root
 
 
 RUN cd /opt \
+    && cd ToolFrameworkCore \
+    && git pull \
+    && make clean \
+    && make -j `nproc --all` \
+    && cd ../ \
     && git clone https://github.com/ToolDAQ/ToolDAQFramework.git \
     && cd ToolDAQFramework \
     && make clean \
