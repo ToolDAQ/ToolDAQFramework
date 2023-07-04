@@ -1,6 +1,6 @@
 Dependencies=Dependencies
 
-CXXFLAGS=  -fPIC -Wpedantic -O3 # -g -lSegFault -rdynamic -DDEBUG
+CXXFLAGS=  -fPIC -Wpedantic -O3 -std=c++11 # -g -lSegFault -rdynamic -DDEBUG
 # -Wl,--no-as-needed
 
 ifeq ($(MAKECMDGOALS),debug)
