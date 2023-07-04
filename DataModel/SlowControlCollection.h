@@ -14,11 +14,14 @@ struct SlowControlCollectionThread_args:Thread_args{
   ~SlowControlCollectionThread_args();
 
   zmq::socket_t* sock;
-  zmq::pollitem_t items[1];
+  zmq::socket_t* sub;
+  zmq::pollitem_t items[2];
   int poll_length;
 
   SlowControlCollection* SCC;
-  
+  std::map<std::string, std::function<void()> >* trigger_functions;  
+  std::mutex* trigger_functions_mutex;
+
 };
 
 class SlowControlCollection{
@@ -35,19 +38,25 @@ class SlowControlCollection{
   bool Add(std::string name, SlowControlElementType type, std::function<std::string()> function=nullptr);
   bool Remove(std::string name);
   void Clear();
+  bool TriggerSubscribe(std::string trigger, std::function<void()> function);
+  bool TriggerSend(std::string trigger);
   std::string Print();
   template<typename T> T GetValue(std::string name){
 
     return SC_vars[name]->GetValue<T>();    
 
   }
+  
 
  private:
 
   std::map<std::string, SlowControlElement*> SC_vars;
+  std::map<std::string, std::function<void()> > m_trigger_functions;
+  std::mutex m_trigger_functions_mutex;
   
   DAQUtilities* m_util;
   zmq::context_t* m_context;
+  zmq::socket_t* m_pub;
   SlowControlCollectionThread_args* args;
 
   static void Thread(Thread_args* arg);

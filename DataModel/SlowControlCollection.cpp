@@ -5,7 +5,9 @@ SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
   sock=0;
   SCC=0;
   poll_length=100;
-
+  sub=0;
+  trigger_functions=0;
+  trigger_functions_mutex=0;
 }
 
 SlowControlCollectionThread_args::~SlowControlCollectionThread_args(){
@@ -13,7 +15,12 @@ SlowControlCollectionThread_args::~SlowControlCollectionThread_args(){
   delete sock;
   sock=0;
 
+  delete sub;
+  sub=0;
+
   SCC=0;
+  trigger_functions=0;
+  trigger_functions_mutex=0;
 
 }
 
@@ -22,6 +29,7 @@ SlowControlCollection::SlowControlCollection(){
   args=0;
   m_util=0;
   m_context=0;
+  m_pub=0;
 
 }
 
@@ -31,6 +39,9 @@ SlowControlCollection::~SlowControlCollection(){
 
   delete args;
   args=0;
+
+  delete m_pub;
+  m_pub=0;
 
   delete m_util;
   m_util=0;
@@ -47,7 +58,13 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   
   m_util=new DAQUtilities(m_context);
   
+  m_pub= new zmq::socket_t(*(m_context), ZMQ_PUB);
+  m_pub->bind("tcp://*:78787");
+
   args=new SlowControlCollectionThread_args();
+  
+  args->trigger_functions=&m_trigger_functions;
+  args->trigger_functions_mutex=&m_trigger_functions_mutex;
   
   args->sock = new zmq::socket_t(*(m_context), ZMQ_ROUTER);
   
@@ -55,6 +72,11 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   tmp<<"tcp://*:"<<port;
   
   args->sock->bind(tmp.str().c_str());
+
+  args->sub = new zmq::socket_t(*(m_context), ZMQ_SUB);
+  args->sub->setsockopt(ZMQ_SUBSCRIBE, "", 0);
+  args->sub->bind("tcp://*:78788");
+  
   
   //  std::cout<<"new_service="<<new_service<<std::endl;
   if(new_service && !m_util->AddService("SlowControlReceiver",port,false)){
@@ -72,6 +94,10 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   args->items[0].fd=0;
   args->items[0].events=ZMQ_POLLIN;
   args->items[0].revents=0;
+  args->items[1].socket=*(args->sub);
+  args->items[1].fd=0;
+  args->items[1].events=ZMQ_POLLIN;
+  args->items[1].revents=0;
   
   args->SCC=this;
   
@@ -96,7 +122,7 @@ bool SlowControlCollection::InitThreadedReceiver(zmq::context_t* context, int po
  
   //std::cout<<"new_service="<<new_service<<std::endl;
   Init(context, port, new_service);
-  args->poll_length= poll_length;   
+  args->poll_length=poll_length;   
   m_util->CreateThread("receiver", &Thread, args);
   
   return true;
@@ -106,9 +132,9 @@ void SlowControlCollection::Thread(Thread_args* arg){
 
   SlowControlCollectionThread_args* args=reinterpret_cast<SlowControlCollectionThread_args*>(arg);
 
-  zmq::poll(&(args->items[0]), 1, args->poll_length);
+  zmq::poll(&(args->items[0]), 2, args->poll_length);
 
-  if (args->items[0].revents & ZMQ_POLLIN){
+  if (args->items[0].revents & ZMQ_POLLIN){ //received slow control value
 
     zmq::message_t identity;
     args->sock->recv(&identity);
@@ -167,6 +193,16 @@ void SlowControlCollection::Thread(Thread_args* arg){
     args->sock->send(send);
   }
 
+  if (args->items[1].revents & ZMQ_POLLIN){ //received trigger value;
+
+    zmq::message_t message;
+
+    args->sub->recv(&message);
+    std::istringstream iss(static_cast<char*>(message.data()));
+    args->trigger_functions_mutex->lock();
+    if(args->trigger_functions->count(iss.str())) (*(args->trigger_functions))[iss.str()]();
+    args->trigger_functions_mutex->unlock();
+  } 
 
 }
 
@@ -222,5 +258,26 @@ std::string SlowControlCollection::Print(){
   } 
   
   return reply;
+  
+}
+
+bool SlowControlCollection::TriggerSubscribe(std::string trigger, std::function<void()> function){
+
+  if(function==nullptr) return false;
+  m_trigger_functions_mutex.lock(); 
+  m_trigger_functions[trigger]=function;
+  m_trigger_functions_mutex.unlock();
+
+  return true;
+}
+
+
+bool SlowControlCollection::TriggerSend(std::string trigger){
+
+  zmq::message_t message(trigger.length()+1);
+  snprintf((char*) message.data(), trigger.length()+1, "%s", trigger.c_str());
+  m_pub->send(message);
+  
+  return true;
   
 }
