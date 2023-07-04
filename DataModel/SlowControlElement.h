@@ -5,6 +5,7 @@
 #include <Store.h>
 #include <sstream>
 #include <mutex>
+#include <functional>
 
 enum SlowControlElementType { BUTTON, VARIABLE, OPTIONS, COMMAND, INFO };
 
@@ -14,10 +15,12 @@ class SlowControlElement{
 
  public:
  
-  SlowControlElement(std::string name, SlowControlElementType type);
+  SlowControlElement(std::string name, SlowControlElementType type,  std::function<std::string()> function=nullptr);
   std::string GetName();
   bool IsName(std::string name);
   std::string Print();
+  std::function<std::string()> GetFunction();
+ 
   
   template<typename T> bool SetMin(T value){ 
     if(m_type == SlowControlElementType(VARIABLE)){
@@ -120,6 +123,7 @@ class SlowControlElement{
   SlowControlElementType m_type;
   Store options;
   unsigned int num_options;
+  std::function<std::string()> m_function;
 
   std::mutex mtx;
  

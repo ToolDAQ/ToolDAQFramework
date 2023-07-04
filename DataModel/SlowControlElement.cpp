@@ -1,10 +1,11 @@
 #include <SlowControlElement.h>
 
-SlowControlElement::SlowControlElement(std::string name, SlowControlElementType type){
+SlowControlElement::SlowControlElement(std::string name, SlowControlElementType type, std::function<std::string()> function){
 
   m_name=name;
   m_type=type;
   num_options=0;
+  m_function=function;
   
 }
 
@@ -69,4 +70,11 @@ std::string SlowControlElement::Print(){
   }
   mtx.unlock();
   return out;
+}
+
+
+std::function<std::string()> SlowControlElement::GetFunction(){
+
+  return m_function;
+
 }

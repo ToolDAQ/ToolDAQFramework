@@ -4,6 +4,7 @@
 #include <SlowControlElement.h>
 #include <zmq.hpp>
 #include "DAQUtilities.h"
+#include <functional>
 
 class SlowControlCollection;
 
@@ -31,7 +32,7 @@ class SlowControlCollection{
   bool ListenForData(int poll_length=0);
   bool InitThreadedReceiver(zmq::context_t* context, int port=555, int poll_length=100, bool new_service=true);
   SlowControlElement* operator[](std::string key);
-  bool Add(std::string name, SlowControlElementType type);
+  bool Add(std::string name, SlowControlElementType type, std::function<std::string()> function=nullptr);
   bool Remove(std::string name);
   void Clear();
   std::string Print();

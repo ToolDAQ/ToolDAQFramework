@@ -146,6 +146,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
       input>>key>>value;
       if(value=="") value="1";
       (*args->SCC)[key]->SetValue(value);
+      std::function<std::string()> tmp_func= (*args->SCC)[key]->GetFunction();
+      if (tmp_func!=nullptr) reply=tmp_func();
       //std::cout<<"value="<<value<<std::endl;
     }
     
@@ -181,10 +183,10 @@ void SlowControlCollection::Clear(){
 }
 
 
-bool SlowControlCollection::Add(std::string name, SlowControlElementType type){
+bool SlowControlCollection::Add(std::string name, SlowControlElementType type, std::function<std::string()> function){
 
   if(SC_vars.count(name)) return false;
-  SC_vars[name] = new SlowControlElement(name, type);
+  SC_vars[name] = new SlowControlElement(name, type, function);
   
   return true;
   
