@@ -80,15 +80,24 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aa1d247bce01bcb283d7f8be8d529ff10"><td class="memItemLeft" align="right" valign="top"><a id="aa1d247bce01bcb283d7f8be8d529ff10"></a>
 zmq::socket_t *&#160;</td><td class="memItemRight" valign="bottom"><b>sock</b></td></tr>
 <tr class="separator:aa1d247bce01bcb283d7f8be8d529ff10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6111ac296e692532291da24d88e34c49"><td class="memItemLeft" align="right" valign="top"><a id="a6111ac296e692532291da24d88e34c49"></a>
-zmq::pollitem_t&#160;</td><td class="memItemRight" valign="bottom"><b>items</b> [1]</td></tr>
-<tr class="separator:a6111ac296e692532291da24d88e34c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36cebefdb83899ea8f4092a209f7a616"><td class="memItemLeft" align="right" valign="top"><a id="a36cebefdb83899ea8f4092a209f7a616"></a>
+zmq::socket_t *&#160;</td><td class="memItemRight" valign="bottom"><b>sub</b></td></tr>
+<tr class="separator:a36cebefdb83899ea8f4092a209f7a616"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac9706f234494560b94ea48cf9ecbd8f"><td class="memItemLeft" align="right" valign="top"><a id="aac9706f234494560b94ea48cf9ecbd8f"></a>
+zmq::pollitem_t&#160;</td><td class="memItemRight" valign="bottom"><b>items</b> [2]</td></tr>
+<tr class="separator:aac9706f234494560b94ea48cf9ecbd8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7c6b37e8d617ebeaab940f436d828ee"><td class="memItemLeft" align="right" valign="top"><a id="af7c6b37e8d617ebeaab940f436d828ee"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>poll_length</b></td></tr>
 <tr class="separator:af7c6b37e8d617ebeaab940f436d828ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87130357117a1d4f8bf8399015b1a49e"><td class="memItemLeft" align="right" valign="top"><a id="a87130357117a1d4f8bf8399015b1a49e"></a>
 <a class="el" href="classSlowControlCollection.html">SlowControlCollection</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>SCC</b></td></tr>
 <tr class="separator:a87130357117a1d4f8bf8399015b1a49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7bd60cd708788a604622ac714247ce1"><td class="memItemLeft" align="right" valign="top"><a id="ab7bd60cd708788a604622ac714247ce1"></a>
+std::map&lt; std::string, std::function&lt; void()&gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>trigger_functions</b></td></tr>
+<tr class="separator:ab7bd60cd708788a604622ac714247ce1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31bb132f86dc160d51b31cd4b6a2963e"><td class="memItemLeft" align="right" valign="top"><a id="a31bb132f86dc160d51b31cd4b6a2963e"></a>
+std::mutex *&#160;</td><td class="memItemRight" valign="bottom"><b>trigger_functions_mutex</b></td></tr>
+<tr class="separator:a31bb132f86dc160d51b31cd4b6a2963e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following files:<ul>
 <li>DataModel/<a class="el" href="SlowControlCollection_8h_source.html">SlowControlCollection.h</a></li>
