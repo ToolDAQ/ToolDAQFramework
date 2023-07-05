@@ -82,8 +82,8 @@ int DAQUtilities::UpdateConnections(std::string ServiceName, zmq::socket_t* sock
       else remote_port=port;      
       std::string tmp=ip + ":" + remote_port;
 
-      //if(type == ServiceName && connections.count(uuid)==0){
-      if(type == ServiceName && connections.count(tmp)==0){
+
+      if((type == ServiceName || ServiceName=="") && connections.count(tmp)==0){
 	connections[tmp]=service;
 	//std::string ip;
 	//std::string port;
@@ -196,3 +196,72 @@ bool DAQUtilities::MessageThread(std::string ThreadName, std::string Message, bo
 }
 
 
+Thread_args* DAQUtilities::ZMQProxy(std::string name, zmq::socket_t* from_sock, zmq::socket_t* to_sock){
+
+  if(!from_sock || !to_sock) return 0;
+
+  Proxy_Thread_args* args= new Proxy_Thread_args();
+
+  args->from_sock = from_sock;
+  args->to_sock = to_sock;
+  //args->control = new zmq::socket_t(*(context), ZMQ_SUB); //////////for some reason proxy gives bad address
+  //args->control->setsockopt(ZMQ_SUBSCRIBE, "", 0);
+  //args->started=false;
+
+  args->items[0].socket=*(args->from_sock);
+  args->items[0].fd=0;
+  args->items[0].events=ZMQ_POLLIN;
+  args->items[0].revents=0;
+
+  return CreateThread(name, &Proxy_Thread, args);
+ 
+}
+
+bool DAQUtilities::KillZMQProxy(Thread_args* arg){
+  
+  if(!arg) return false;
+  
+  Proxy_Thread_args* args =  static_cast<Proxy_Thread_args*>(arg);
+
+  //  zmq::message_t message(9); //////////for some reason proxy gives bad address
+  //snprintf((char*) message.data(), 9 , "%s" ,"TERMINATE") ;
+
+  // args->control->send(message);
+
+  if(!KillThread(args)) return false;
+  
+  
+  args->from_sock=0;
+  args->to_sock=0;
+  delete args->control;
+  args->control=0;
+
+  delete args;
+  args=0;
+  
+  return true;
+  
+}
+
+void DAQUtilities::Proxy_Thread(Thread_args *arg){
+
+ Proxy_Thread_args* args =  reinterpret_cast<Proxy_Thread_args*>(arg);
+
+ // if(!args->started){      //////////for some reason proxy gives bad address
+ // args->started=true;
+   //   zmq::proxy(*(args->from_sock), *(args->to_sock), NULL);
+   //zmq::proxy_steerable(args->from_sock, args->to_sock, NULL , args->control);
+ //}
+
+ zmq::poll(&(args->items[0]), 1, 100);
+
+ if (args->items[0].revents & ZMQ_POLLIN){
+
+   zmq::message_t msg;
+   args->from_sock->recv(&msg);
+   if(msg.more()) args->to_sock->send(msg, ZMQ_SNDMORE);
+   else args->to_sock->send(msg);
+ }
+
+
+}

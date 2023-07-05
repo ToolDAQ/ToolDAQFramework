@@ -199,6 +199,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
 
     args->sub->recv(&message);
     std::istringstream iss(static_cast<char*>(message.data()));
+    //std::cout<<iss.str()<<std::endl;
     args->trigger_functions_mutex->lock();
     if(args->trigger_functions->count(iss.str())) (*(args->trigger_functions))[iss.str()]();
     args->trigger_functions_mutex->unlock();
