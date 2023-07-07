@@ -101,7 +101,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   
   args->SCC=this;
   
-  Add("Status",SlowControlElementType(BUTTON));
+  Add("Status",SlowControlElementType(INFO));
   SC_vars["Status"]->SetValue("N/A");
   
   return true;
@@ -157,24 +157,25 @@ void SlowControlCollection::Thread(Thread_args* arg){
     std::string reply="error: " + *tmp["msg_value"];
 
     if(str == "?") reply=args->SCC->Print();
-    else if( str == "Status" && (*args->SCC)[str]){
-      std::string status="";
-      (*args->SCC)[str]->GetValue(status);     
-      reply=status;
-    }
     else if((*args->SCC)[str]){
-      
-      reply=*tmp["msg_value"];
-      std::stringstream input;
-      input<<*tmp["msg_value"];
-      std::string key="";
-      std::string value="";   
-      input>>key>>value;
-      if(value=="") value="1";
-      (*args->SCC)[key]->SetValue(value);
-      std::function<std::string()> tmp_func= (*args->SCC)[key]->GetFunction();
-      if (tmp_func!=nullptr) reply=tmp_func();
-      //std::cout<<"value="<<value<<std::endl;
+      if((*args->SCC)[str]->GetType() == SlowControlElementType(INFO)){
+	std::string value="";
+	(*args->SCC)[str]->GetValue(value);     
+	reply=value;
+      }
+      else{
+	reply=*tmp["msg_value"];
+	std::stringstream input;
+	input<<*tmp["msg_value"];
+	std::string key="";
+	std::string value="";   
+	input>>key>>value;
+	if(value=="") value="1";
+	(*args->SCC)[key]->SetValue(value);
+	std::function<std::string()> tmp_func= (*args->SCC)[key]->GetFunction();
+	if (tmp_func!=nullptr) reply=tmp_func();
+	//std::cout<<"value="<<value<<std::endl;
+      }
     }
     
     Store rr;

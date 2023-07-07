@@ -66,8 +66,13 @@ std::string SlowControlElement::Print(){
    
     }
 
-
   }
+
+  else if(m_type==SlowControlElementType(INFO)){
+    std::string value=*options["value"];    
+    out+="{" + value + "}";
+  }
+
   mtx.unlock();
   return out;
 }
@@ -76,5 +81,11 @@ std::string SlowControlElement::Print(){
 std::function<std::string()> SlowControlElement::GetFunction(){
 
   return m_function;
+
+}
+
+SlowControlElementType SlowControlElement::GetType(){
+
+  return m_type;
 
 }

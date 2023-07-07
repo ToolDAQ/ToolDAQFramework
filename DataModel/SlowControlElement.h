@@ -20,7 +20,7 @@ class SlowControlElement{
   bool IsName(std::string name);
   std::string Print();
   std::function<std::string()> GetFunction();
- 
+  SlowControlElementType GetType();
   
   template<typename T> bool SetMin(T value){ 
     if(m_type == SlowControlElementType(VARIABLE)){
@@ -85,9 +85,21 @@ class SlowControlElement{
     return true;
   }
 
+  bool SetValue(const char value[]){
+    std::string tmp_value=value;
+    return SetValue(tmp_value);
+  }
 
   bool SetValue(std::string value){
     mtx.lock();
+    if(m_type == SlowControlElementType(INFO)){ //sanitising for web printout
+	for(unsigned int i=0; i<value.length(); i++){
+	  if(value.at(i)==',') value.at(i)='.';
+	  else if (value.at(i)=='{') value.at(i)='[';
+	  else if (value.at(i)=='}') value.at(i)=']';
+	  else if (value.at(i)=='"') value.at(i)='\'';
+	}
+      }
     *(options["value"])= value;
     mtx.unlock();
     return true;
