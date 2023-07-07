@@ -80,6 +80,16 @@ class SlowControlElement{
 
   template<typename T> bool SetValue(T value){
     mtx.lock();
+    if(m_type == SlowControlElementType(VARIABLE)){
+      T min;
+      T max;  
+      if(options.Get("min",min)){
+	if(value<min); value=min;
+      }
+      if(options.Get("max",max)){
+        if(value>max); value=max;
+      }
+    }
     options.Set("value", value);
     mtx.unlock();
     return true;
@@ -92,14 +102,20 @@ class SlowControlElement{
 
   bool SetValue(std::string value){
     mtx.lock();
-    if(m_type == SlowControlElementType(INFO)){ //sanitising for web printout
-	for(unsigned int i=0; i<value.length(); i++){
-	  if(value.at(i)==',') value.at(i)='.';
-	  else if (value.at(i)=='{') value.at(i)='[';
-	  else if (value.at(i)=='}') value.at(i)=']';
-	  else if (value.at(i)=='"') value.at(i)='\'';
-	}
+    if(m_type == SlowControlElementType(VARIABLE)){
+      std::stringstream tmp(value);
+      double val=0;
+      tmp>>val;
+      return SetValue(val);
+    }
+    else if(m_type == SlowControlElementType(INFO)){ //sanitising for web printout
+      for(unsigned int i=0; i<value.length(); i++){
+	if(value.at(i)==',') value.at(i)='.';
+	else if (value.at(i)=='{') value.at(i)='[';
+	else if (value.at(i)=='}') value.at(i)=']';
+	else if (value.at(i)=='"') value.at(i)='\'';
       }
+    }
     *(options["value"])= value;
     mtx.unlock();
     return true;
