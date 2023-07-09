@@ -84,10 +84,10 @@ class SlowControlElement{
       T min;
       T max;  
       if(options.Get("min",min)){
-	if(value<min); value=min;
+	if(value<min) value=min;
       }
       if(options.Get("max",max)){
-        if(value>max); value=max;
+	if(value>max) value=max;
       }
     }
     options.Set("value", value);
@@ -106,6 +106,7 @@ class SlowControlElement{
       std::stringstream tmp(value);
       double val=0;
       tmp>>val;
+      mtx.unlock();
       return SetValue(val);
     }
     else if(m_type == SlowControlElementType(INFO)){ //sanitising for web printout
@@ -139,7 +140,10 @@ class SlowControlElement{
 
   bool GetValue(std::string &value){
     mtx.lock();
-    if(!options.Has("value")) return false;
+    if(!options.Has("value")){
+      mtx.unlock();
+      return false;
+    }
     value=*(options["value"]);
     mtx.unlock();
     return true;
