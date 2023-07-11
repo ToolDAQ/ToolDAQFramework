@@ -15,8 +15,8 @@ bool {\bfseries Init\+Threaded\+Receiver} (zmq\+::context\+\_\+t $\ast$context, 
 \mbox{\Hypertarget{classSlowControlCollection_a8a335148054d1f139c3de8f93b625e1c}\label{classSlowControlCollection_a8a335148054d1f139c3de8f93b625e1c}} 
 \mbox{\hyperlink{classSlowControlElement}{Slow\+Control\+Element}} $\ast$ {\bfseries operator\mbox{[}$\,$\mbox{]}} (std\+::string key)
 \item 
-\mbox{\Hypertarget{classSlowControlCollection_add762f794c597ad91279354f4fe7d97b}\label{classSlowControlCollection_add762f794c597ad91279354f4fe7d97b}} 
-bool {\bfseries Add} (std\+::string name, Slow\+Control\+Element\+Type type, std\+::function$<$ std\+::string()$>$ function=nullptr)
+\mbox{\Hypertarget{classSlowControlCollection_a3342e6d949c8718e6fe44e684bdb1527}\label{classSlowControlCollection_a3342e6d949c8718e6fe44e684bdb1527}} 
+bool {\bfseries Add} (std\+::string name, Slow\+Control\+Element\+Type type, std\+::function$<$ std\+::string(std\+::string)$>$ function=nullptr)
 \item 
 \mbox{\Hypertarget{classSlowControlCollection_a25f82ef2bb236bdac8c8986d8e41b188}\label{classSlowControlCollection_a25f82ef2bb236bdac8c8986d8e41b188}} 
 bool {\bfseries Remove} (std\+::string name)
@@ -24,8 +24,8 @@ bool {\bfseries Remove} (std\+::string name)
 \mbox{\Hypertarget{classSlowControlCollection_a3e99cc7ef9d6bf71a5c282ad4f657913}\label{classSlowControlCollection_a3e99cc7ef9d6bf71a5c282ad4f657913}} 
 void {\bfseries Clear} ()
 \item 
-\mbox{\Hypertarget{classSlowControlCollection_a252912e92e347895f596c756a76dbcfa}\label{classSlowControlCollection_a252912e92e347895f596c756a76dbcfa}} 
-bool {\bfseries Trigger\+Subscribe} (std\+::string trigger, std\+::function$<$ void()$>$ function)
+\mbox{\Hypertarget{classSlowControlCollection_ae7dcf56518362f8b16767d08ccc6e01a}\label{classSlowControlCollection_ae7dcf56518362f8b16767d08ccc6e01a}} 
+bool {\bfseries Trigger\+Subscribe} (std\+::string trigger, std\+::function$<$ void(std\+::string)$>$ function)
 \item 
 \mbox{\Hypertarget{classSlowControlCollection_ad65887b6a9fce5a80e067f4e808c2310}\label{classSlowControlCollection_ad65887b6a9fce5a80e067f4e808c2310}} 
 bool {\bfseries Trigger\+Send} (std\+::string trigger)
