@@ -19,6 +19,8 @@ DataModelLib =
 MyToolsInclude =
 MyToolsLib =
 
+debug: all
+
 all: lib/libMyTools.so lib/libToolDAQChain.so lib/libToolChain.so lib/libStore.so include/Tool.h lib/libServiceDiscovery.so lib/libDataModel.so lib/libLogging.so lib/libDAQLogging.so RemoteControl NodeDaemon main
 
 main: src/main.cpp lib/libStore.so lib/libLogging.so lib/libDAQLogging.so lib/libToolDAQChain.so lib/libToolChain.so lib/libServiceDiscovery.so | lib/libMyTools.so  lib/libDataModel.so 
