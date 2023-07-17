@@ -15,11 +15,11 @@ class SlowControlElement{
 
  public:
  
-  SlowControlElement(std::string name, SlowControlElementType type,  std::function<std::string(std::string)> function=nullptr);
+  SlowControlElement(std::string name, SlowControlElementType type,  std::function<std::string(const char*)> function=nullptr);
   std::string GetName();
   bool IsName(std::string name);
   std::string Print();
-  std::function<std::string(std::string)> GetFunction();
+  std::function<std::string(const char*)> GetFunction();
   SlowControlElementType GetType();
   
   template<typename T> bool SetMin(T value){ 
@@ -155,7 +155,7 @@ class SlowControlElement{
   SlowControlElementType m_type;
   Store options;
   unsigned int num_options;
-  std::function<std::string(std::string)> m_function;
+  std::function<std::string(const char*)> m_function;
 
   std::mutex mtx;
  

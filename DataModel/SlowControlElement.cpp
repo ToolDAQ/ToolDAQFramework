@@ -1,6 +1,6 @@
 #include <SlowControlElement.h>
 
-SlowControlElement::SlowControlElement(std::string name, SlowControlElementType type, std::function<std::string(std::string)> function){
+SlowControlElement::SlowControlElement(std::string name, SlowControlElementType type, std::function<std::string(const char*)> function){
 
   m_name=name;
   m_type=type;
@@ -78,7 +78,7 @@ std::string SlowControlElement::Print(){
 }
 
 
-std::function<std::string(std::string)> SlowControlElement::GetFunction(){
+std::function<std::string(const char*)> SlowControlElement::GetFunction(){
 
   return m_function;
 

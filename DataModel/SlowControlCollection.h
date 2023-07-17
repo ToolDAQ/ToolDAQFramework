@@ -19,7 +19,7 @@ struct SlowControlCollectionThread_args:Thread_args{
   int poll_length;
 
   SlowControlCollection* SCC;
-  std::map<std::string, std::function<void(std::string)> >* trigger_functions;  
+  std::map<std::string, std::function<void(const char*)> >* trigger_functions;
   std::mutex* trigger_functions_mutex;
 
 };
@@ -35,10 +35,10 @@ class SlowControlCollection{
   bool ListenForData(int poll_length=0);
   bool InitThreadedReceiver(zmq::context_t* context, int port=555, int poll_length=100, bool new_service=true);
   SlowControlElement* operator[](std::string key);
-  bool Add(std::string name, SlowControlElementType type, std::function<std::string(std::string)> function=nullptr);
+  bool Add(std::string name, SlowControlElementType type, std::function<std::string(const char*)> function=nullptr);
   bool Remove(std::string name);
   void Clear();
-  bool TriggerSubscribe(std::string trigger, std::function<void(std::string)> function);
+  bool TriggerSubscribe(std::string trigger, std::function<void(const char*)> function);
   bool TriggerSend(std::string trigger);
   std::string Print();
   template<typename T> T GetValue(std::string name){
@@ -51,7 +51,7 @@ class SlowControlCollection{
  private:
 
   std::map<std::string, SlowControlElement*> SC_vars;
-  std::map<std::string, std::function<void(std::string)> > m_trigger_functions;
+  std::map<std::string, std::function<void(const char*)> > m_trigger_functions;
   std::mutex m_trigger_functions_mutex;
   
   DAQUtilities* m_util;
