@@ -86,11 +86,11 @@ $(function() {
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <a class="code" href="classSlowControlElement.html">SlowControlElement</a>(std::string name, SlowControlElementType type,  std::function&lt;std::string(std::string)&gt; <span class="keyword">function</span>=<span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <a class="code" href="classSlowControlElement.html">SlowControlElement</a>(std::string name, SlowControlElementType type,  std::function&lt;std::string(<span class="keyword">const</span> <span class="keywordtype">char</span>*)&gt; <span class="keyword">function</span>=<span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  std::string GetName();</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="keywordtype">bool</span> IsName(std::string name);</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  std::string Print();</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  std::function&lt;std::string(std::string)&gt; GetFunction();</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  std::function&lt;std::string(<span class="keyword">const</span> <span class="keywordtype">char</span>*)&gt; GetFunction();</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  SlowControlElementType GetType();</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  </div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; <span class="keywordtype">bool</span> SetMin(T value){ </div>
@@ -226,7 +226,7 @@ $(function() {
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  SlowControlElementType m_type;</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  Store options;</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> num_options;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;  std::function&lt;std::string(std::string)&gt; m_function;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;  std::function&lt;std::string(<span class="keyword">const</span> <span class="keywordtype">char</span>*)&gt; m_function;</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  std::mutex mtx;</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
