@@ -173,8 +173,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
 	if(value=="") value="1";
 	if((*args->SCC)[key]){
 	  (*args->SCC)[key]->SetValue(value);
-	  std::function<std::string(std::string)> tmp_func= (*args->SCC)[key]->GetFunction();
-	  if (tmp_func!=nullptr) reply=tmp_func(key);
+	  std::function<std::string(const char*)> tmp_func= (*args->SCC)[key]->GetFunction();
+	  if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
 	  //std::cout<<"value="<<value<<std::endl;
 	}
       }
@@ -204,7 +204,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     std::istringstream iss(static_cast<char*>(message.data()));
     //std::cout<<iss.str()<<std::endl;
     args->trigger_functions_mutex->lock();
-    if(args->trigger_functions->count(iss.str())) (*(args->trigger_functions))[iss.str()](iss.str());
+    if(args->trigger_functions->count(iss.str())) (*(args->trigger_functions))[iss.str()](iss.str().c_str());
     args->trigger_functions_mutex->unlock();
   } 
 
@@ -223,7 +223,7 @@ void SlowControlCollection::Clear(){
 }
 
 
-bool SlowControlCollection::Add(std::string name, SlowControlElementType type, std::function<std::string(std::string)> function){
+bool SlowControlCollection::Add(std::string name, SlowControlElementType type, std::function<std::string(const char*)> function){
 
   if(SC_vars.count(name)) return false;
   SC_vars[name] = new SlowControlElement(name, type, function);
@@ -265,7 +265,7 @@ std::string SlowControlCollection::Print(){
   
 }
 
-bool SlowControlCollection::TriggerSubscribe(std::string trigger, std::function<void(std::string)> function){
+bool SlowControlCollection::TriggerSubscribe(std::string trigger, std::function<void(const char*)> function){
 
   if(function==nullptr) return false;
   m_trigger_functions_mutex.lock(); 
