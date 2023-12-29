@@ -105,7 +105,8 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   *bb["msg_type"]="Service Discovery";
   bb.Set("msg_value",m_service);
   bb.Set("remote_port",m_remoteport);
-  bb.Set("status_query",true);
+  if(m_remoteport) bb.Set("status_query",true);
+  else bb.Set("status_query",false);
   bb.Set("uuid",m_UUID);
   PubServices.push_back(bb);
 

@@ -118,7 +118,8 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
   bool sendflag=true;
   bool receiveflag=true;
   
-  if(m_pub_sec<0 || m_inline>0 || m_interactive) sendflag=false;
+//  if(m_pub_sec<0 || m_inline>0 || m_interactive) sendflag=false;
+  if(m_pub_sec<0) sendflag=false;
   if(m_kick_sec<0) receiveflag=false;
 
   SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress.c_str(),m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
