@@ -119,6 +119,7 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
   bool receiveflag=true;
   
 //  if(m_pub_sec<0 || m_inline>0 || m_interactive) sendflag=false;
+  if(m_inline>0 || m_interactive) m_remoteport=0;
   if(m_pub_sec<0) sendflag=false;
   if(m_kick_sec<0) receiveflag=false;
 
