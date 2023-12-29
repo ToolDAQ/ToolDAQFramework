@@ -43,7 +43,7 @@ std::string SlowControlElement::Print(){
   }
   else if(m_type==SlowControlElementType(OPTIONS)){
 
-    for(int i=1; i<num_options+1; i++){
+    for(unsigned int i=1; i<num_options+1; i++){
       std::string tmp="";
       std::stringstream key;
       key<<i;
@@ -57,7 +57,7 @@ std::string SlowControlElement::Print(){
   }
   
   else if(m_type==SlowControlElementType(COMMAND)){
-    for(int i=1; i<num_options+1; i++){
+    for(unsigned int i=1; i<num_options+1; i++){
       std::string tmp="";
       std::stringstream key;
       key<<i;

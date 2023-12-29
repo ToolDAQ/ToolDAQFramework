@@ -24,7 +24,7 @@
 
 void FStop(std::vector< pid_t > *pids){
     
-  for(int i=0;i<pids->size();i++){
+  for(unsigned int i=0;i<pids->size();i++){
     //int kill(pid_t pid, int sig);
   
     if(0==kill(pids->at(i),0)){

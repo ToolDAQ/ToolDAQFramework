@@ -81,7 +81,7 @@ int main(int argc, char** argv){
       int size;
       iss>>size;
       
-      for(int i=0;i<RemoteServices.size();i++){
+      for(unsigned int i=0;i<RemoteServices.size();i++){
 	delete RemoteServices.at(i);
 	RemoteServices.at(i)=0;
       }
@@ -113,7 +113,7 @@ int main(int argc, char** argv){
       std::cout<<" [Service number]    IP  ,   Service name  ,  Service status , Time"<<std::endl;
       std::cout<<"-----------------------------------------------------------------------------------------------"<<std::endl<<std::endl;;
 
-      for(int i=0;i<RemoteServices.size();i++){
+      for(unsigned int i=0;i<RemoteServices.size();i++){
 
 	std::string ip;
 	std::string service;
@@ -142,7 +142,7 @@ int main(int argc, char** argv){
 
     else if(Command=="Command"){
 	
-	int ServiceNum;
+	unsigned int ServiceNum;
 	
 	std::string Send;
 	std::string var1;
@@ -272,7 +272,7 @@ int main(int argc, char** argv){
 	
 	input>>ServiceName>>Send>>var1;
 	
-	for(int i=0; i<RemoteServices.size(); i++){
+	for(unsigned int i=0; i<RemoteServices.size(); i++){
 	  
 	  std::string service;
 	  service=*((*(RemoteServices.at(i)))["msg_value"]);

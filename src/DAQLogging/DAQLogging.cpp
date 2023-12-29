@@ -482,7 +482,7 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 
 	   }
 
-	   for(int i=0;i< dels.size();i++){
+	   for(unsigned int i=0;i< dels.size();i++){
 	     RemoteConnections.erase(dels.at(i));
 	   }
 	 

@@ -172,7 +172,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
     if ((items [1].revents & ZMQ_POLLOUT) && running){
       
 
-      for(int i=0;i<PubServices.size();i++){
+      for(unsigned int i=0;i<PubServices.size();i++){
 
 	//	char message[512];
 	
@@ -546,7 +546,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
       //std::cout<< "uuid = "<<it->first<<std::endl;
     }
     
-    for(int i=0;i<erase_list.size();i++){
+    for(unsigned int i=0;i<erase_list.size();i++){
       delete RemoteServices[erase_list.at(i)];
       RemoteServices[erase_list.at(i)]=0;
       RemoteServices.erase(erase_list.at(i));

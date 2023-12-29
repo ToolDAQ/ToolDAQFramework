@@ -105,7 +105,7 @@ bool MyToolZMQMultiThread::Execute(){
 
 bool MyToolZMQMultiThread::Finalise(){
 
-  for(int i=0;i<args.size();i++) {
+  for(unsigned int i=0;i<args.size();i++) {
 
     m_util->KillThread(args.at(i));
     delete args.at(i)->ThreadSend;
