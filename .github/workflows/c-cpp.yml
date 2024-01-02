@@ -42,7 +42,11 @@ jobs:
       run: cp -R `pwd` /opt 
        && cd /opt 
        && ls 
-       && cd ToolDAQFramework
+       && cd ToolFrameworkCore
+       && make clean
+       && git pull
+       && make
+       && cd ../ToolDAQFramework
     - name: make
       run: cd /opt/ToolDAQFramework
        && make clean
