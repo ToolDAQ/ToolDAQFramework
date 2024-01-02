@@ -77,7 +77,7 @@ bool MyToolZMQMultiThread::Execute(){
     zmq::message_t message;
     ManagerReceive->recv(&message);
     std::istringstream iss(static_cast<char*>(message.data()));
-    std::cout<<"reply = "<<iss.str()<<std::endl;
+    *m_log<<"reply = "<<iss.str()<<std::endl;
     m_freethreads++;
 
   }
@@ -97,9 +97,10 @@ bool MyToolZMQMultiThread::Execute(){
 
   }
 
-  std::cout<<"free threads="<<m_freethreads<<":"<<args.size()<<std::endl;
-  sleep(1);
-  return true;
+  *m_log<<ML(1)<<"free threads="<<m_freethreads<<":"<<args.size()<<std::endl;
+  MLC();
+
+  // sleep(1);  for single tool testing  return true;
 }
 
 

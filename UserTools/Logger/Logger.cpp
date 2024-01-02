@@ -20,7 +20,7 @@ bool Logger::Initialise(std::string configfile, DataModel &data){
  
   std::stringstream tmp;
   tmp<<"tcp://*:"<<m_log_port;
-  std::cout<<"connection address = "<<tmp.str()<<std::endl;
+  *m_log<<"connection address = "<<tmp.str()<<std::endl;
   //LogReceiver->bind(tmp.str().c_str());
   //  LogReceiver->setsockopt(ZMQ_SUBSCRIBE,"");
   LogReceiver->bind(tmp.str().c_str());
@@ -48,13 +48,13 @@ bool Logger::Execute(){
       // printf("got a message \n");
       std::istringstream ss(static_cast<char*>(Rmessage.data()));
       
-      std::cout<<ss.str()<<std::flush;
+      *m_log<<ss.str()<<std::flush;
       
       Store bb;
       
       bb.JsonParser(ss.str());
       
-      std::cout<<*(bb["msg_value"])<<std::flush;
+      *m_log<<*(bb["msg_value"])<<std::flush;
     }
   }
   
