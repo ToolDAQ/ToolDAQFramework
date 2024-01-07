@@ -1,6 +1,6 @@
 #include "ToolDAQChain.h"
 
-ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]): ToolChain((void*) NULL){
+ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]): ToolChain(){
 
   m_data=new DataModel();
 

@@ -20,7 +20,7 @@ DAQLogging::TDAQStreamBuf::~TDAQStreamBuf(){
 
 //DAQLogging::TDAQStreamBuf::TDAQStreamBuf (std::ostream& str ,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath, std::string logservice, int logport):output(str){
 
-DAQLogging::TDAQStreamBuf::TDAQStreamBuf(zmq::context_t *context, boost::uuids::uuid UUID, std::string service, bool interactive, bool local,  std::string localpath, bool remote, std::string logservice, int logport, bool error, std::ostream* filestream):Logging::TFStreamBuf((void*) NULL){
+DAQLogging::TDAQStreamBuf::TDAQStreamBuf(zmq::context_t *context, boost::uuids::uuid UUID, std::string service, bool interactive, bool local,  std::string localpath, bool remote, std::string logservice, int logport, bool error, std::ostream* filestream):Logging::TFStreamBuf(){
   
   output=0;
   fileoutput=0;
@@ -521,7 +521,7 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
  }
 
 
-DAQLogging::DAQLogging(zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, bool interactive, bool local, std::string localpath,  bool remote, std::string logservice, int logport, bool split_output_files):Logging((void*) NULL){
+DAQLogging::DAQLogging(zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, bool interactive, bool local, std::string localpath,  bool remote, std::string logservice, int logport, bool split_output_files):Logging(){
 
 
   if(split_output_files){

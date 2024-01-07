@@ -9,13 +9,13 @@ IO_Threads 1 		 # Number of threads for network traffic (~ 1/Gbps)
 
 ###### Logging #####
 log_interactive 1	# Interactive=cout; 0=false, 1= true
-log_local 0 		# Local = local file log; 0=false, 1= true
+log_local 1 		# Local = local file log; 0=false, 1= true
 log_local_path ./log 	# file to store logs to if local is active
-log_remote 0   		# Remote= remote logging system "serservice_name Remote_Logging";  0=false, 1= true
+log_remote 1   		# Remote= remote logging system "serservice_name Remote_Logging";  0=false, 1= true
 log_service LogStore 	# Remote service name to connect to to send logs
 log_port 24010 		# port on remote machine to connect to
 log_append_time 0       # append seconds since epoch to filename; 0=false, 1= true
-log_split_files 0	# seperate output and error log files (named x.o and x.e)
+log_split_files 1	# seperate output and error log files (named x.o and x.e)
 
 ###### Service discovery #####
 service_discovery_address 239.192.1.1 # multicast address to use for service discovery
