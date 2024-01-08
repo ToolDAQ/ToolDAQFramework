@@ -56,25 +56,3 @@ jobs:
        && export LD_LIBRARY_PATH=`pwd`/lib:/opt/zeromq-4.0.7/lib:/opt/boost_1_66_0/install/lib:$LD_LIBRARY_PATH
        && ./main
 
-  build_rocky-9:
-    runs-on: ubuntu-latest
-    container: 'rockylinux:9'
-    steps:
-    - uses: actions/checkout@v2
-    - name: setup
-      run: cp -R `pwd` /opt 
-       && cd /opt 
-       && ls 
-       && cd ToolFrameworkCore
-       && make clean
-       && git pull
-       && make
-       && cd ../ToolDAQFramework
-    - name: make
-      run: cd /opt/ToolDAQFramework
-       && make clean
-       && make
-    - name: test
-      run: cd /opt/ToolDAQFramework
-       && export LD_LIBRARY_PATH=`pwd`/lib:/opt/zeromq-4.0.7/lib:/opt/boost_1_66_0/install/lib:$LD_LIBRARY_PATH
-       && ./main
