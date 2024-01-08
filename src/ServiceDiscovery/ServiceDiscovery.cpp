@@ -74,7 +74,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   
   struct sockaddr_in addr;
   int addrlen, sock, cnt;
-  struct ip_mreq mreq;
+ // struct ip_mreq mreq;
   
   
   // set up socket //
@@ -360,11 +360,11 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  //cnt = sendto(sock, message, sizeof(char)*pubmessage.length()+1, 0,(struct sockaddr *) &addr, addrlen);
 	  cnt = sendto(sock, pubmessage.c_str(), pubmessage.length()+1, 0,(struct sockaddr *) &addr, addrlen);
 	 
-	  /*
+	  
 	    if (cnt < 0) {
 	    perror("sendto");
 	    }
-	  */
+	  
 	  
  
       }
@@ -390,7 +390,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 
   thread_args* args= static_cast<thread_args*>(arg);
   zmq::context_t * context = args->context;
-  boost::uuids::uuid m_UUID=args->UUID;
+ // boost::uuids::uuid m_UUID=args->UUID;
   std::string m_multicastaddress=args->multicastaddress;
   int m_multicastport=args->multicastport;
   std::string m_service=args->service;
