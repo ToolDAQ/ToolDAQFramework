@@ -41,8 +41,8 @@ bool DAQUtilities::RemoveService(std::string ServiceName){
 
 int DAQUtilities::UpdateConnections(std::string ServiceName, zmq::socket_t* sock, std::map<std::string,Store*> &connections, std::string port){
 
-    boost::uuids::uuid m_UUID=boost::uuids::random_generator()();
-    long msg_id=0;
+   // boost::uuids::uuid m_UUID=boost::uuids::random_generator()();
+   // long msg_id=0;
 
     zmq::socket_t Ireceive (*context, ZMQ_DEALER);
     Ireceive.connect("inproc://ServiceDiscovery");

@@ -121,7 +121,7 @@ int main(int argc, char* argv[]){
     ftp.bind(tmp.str().c_str());
   
   zmq::pollitem_t ftpin[]={{ ftp, 0 , ZMQ_POLLIN, 0}};
-  zmq::pollitem_t ftpout[]={{ ftp, 0 , ZMQ_POLLOUT, 0}};
+  // zmq::pollitem_t ftpout[]={{ ftp, 0 , ZMQ_POLLOUT, 0}};
 
   bool run=true;
   std::vector< pid_t > pids;
