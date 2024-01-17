@@ -1,5 +1,7 @@
 #include <SlowControlElement.h>
 
+using namespace ToolFramework;
+
 SlowControlElement::SlowControlElement(std::string name, SlowControlElementType type, std::function<std::string(const char*)> function){
 
   m_name=name;

@@ -1,5 +1,7 @@
 #include "DAQLogging.h"
 
+using namespace ToolFramework;
+
 DAQLogging::TDAQStreamBuf::~TDAQStreamBuf(){
  
   if(m_remote && (!m_error)){

@@ -1,6 +1,6 @@
 #include "DataModel.h"
 
-DataModel::DataModel(){Log=0;}
+DataModel::DataModel():DAQDataModelBase(){}
 
 /*
 TTree* DataModel::GetTTree(std::string name){

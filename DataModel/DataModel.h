@@ -9,11 +9,14 @@
 
 #include "Store.h"
 #include "BoostStore.h"
-#include "DAQLogging.h"
+//#include "DAQLogging.h"
 #include "DAQUtilities.h"
 #include "SlowControlCollection.h"
+#include "DAQDataModelBase.h"
 
 #include <zmq.hpp>
+
+using namespace ToolFramework;
 
 /**
  * \class DataModel
@@ -27,7 +30,7 @@
  *
  */
 
-class DataModel {
+class DataModel : public DAQDataModelBase {
 
 
  public:
@@ -38,27 +41,7 @@ class DataModel {
   //void AddTTree(std::string name,TTree *tree);
   //void DeleteTTree(std::string name,TTree *tree);
   
-  Store vars; ///< This Store can be used for any variables. It is an inefficent ascii based storage
-  BoostStore CStore; ///< This is a more efficent binary BoostStore that can be used to store a dynamic set of inter Tool variables.
-  std::map<std::string,BoostStore*> Stores; ///< This is a map of named BooStore pointers which can be deffined to hold a nammed collection of any tipe of BoostStore. It is usefull to store data that needs subdividing into differnt stores.
-  
-  Logging *Log; ///< Log class pointer for use in Tools, it can be used to send messages which can have multiple error levels and destination end points
-  
-  zmq::context_t* context; ///< ZMQ contex used for producing zmq sockets for inter thread,  process, or computer communication
-
-  SlowControlCollection SC_vars; ///< calss for defining and handelling slow control variables
-
-  //  bool (*Log)(std::string, int);
-
-  /*  
-  template<Type T>
-    struct Log {
-      typedef bool (*type)(T message,int verboselevel);
-    };
-  */
  private:
-
-
   
   //std::map<std::string,TTree*> m_trees; 
   

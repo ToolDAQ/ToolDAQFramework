@@ -1,6 +1,9 @@
 #include <string>
 #include "ToolDAQChain.h"
+#include "DataModel.h"
 //#include "DummyTool.h"
+
+using namespace ToolFramework;
 
 int main(int argc, char* argv[]){
 
@@ -8,7 +11,8 @@ int main(int argc, char* argv[]){
   if (argc==1)conffile="configfiles/Dummy/ToolChainConfig";
   else conffile=argv[1];
 
-  ToolDAQChain tools(conffile, argc, argv);
+  DataModel* data_model = new DataModel();
+  ToolDAQChain tools(conffile, data_model, argc, argv);
 
 
   //DummyTool dummytool;    

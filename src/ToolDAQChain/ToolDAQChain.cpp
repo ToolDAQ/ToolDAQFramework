@@ -1,8 +1,11 @@
 #include "ToolDAQChain.h"
 
-ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]): ToolChain(){
+using namespace ToolFramework;
 
-  m_data=new DataModel();
+ToolDAQChain::ToolDAQChain(std::string configfile, DataModel* data_model, int argc, char* argv[]): ToolChain(){
+
+  m_data=reinterpret_cast<DataModelBase*>(data_model);
+  m_DAQdata=reinterpret_cast<DAQDataModelBase*>(data_model);
 
   if(!m_data->vars.Initialise(configfile)){
     std::cout<<"\033[38;5;196m ERROR!!!: No valid config file quitting \033[0m"<<std::endl;
@@ -63,7 +66,7 @@ ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]): Too
   
 }
 
-ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, bool interactive, bool local, std::string log_local_path, bool remote, std::string log_service, int log_port,  bool split_output_files, int pub_sec, int kick_sec,unsigned int IO_Threads){
+ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, bool interactive, bool local, std::string log_local_path, bool remote, std::string log_service, int log_port,  bool split_output_files, int pub_sec, int kick_sec,unsigned int IO_Threads, DataModel* in_data_model){
   
   m_verbose=verbose;
   m_errorlevel=errorlevel;
@@ -77,6 +80,12 @@ ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, boo
   m_log_split_files=split_output_files;  
   m_pub_sec=pub_sec;
   m_kick_sec=kick_sec;
+  if(in_data_model==0) m_data=new DataModelBase;
+  else{
+    m_data=reinterpret_cast<DataModelBase*>(in_data_model);
+    m_DAQdata=reinterpret_cast<DAQDataModelBase*>(in_data_model);
+  }
+
   
   Init(IO_Threads);
   
@@ -86,7 +95,7 @@ ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, boo
 void ToolDAQChain::Init(unsigned int IO_Threads){
  
   context=new zmq::context_t(IO_Threads);
-  m_data->context=context;
+  m_DAQdata->context=context;
   
   m_UUID = boost::uuids::random_generator()();
 
@@ -262,8 +271,10 @@ ToolDAQChain::~ToolDAQChain(){
     m_data->Log=0;  
     delete m_data;      
     m_data=0;     
-  }   
-  
+  }
+
+  m_DAQdata=0;
+
   delete m_log;
   m_log=0;
   

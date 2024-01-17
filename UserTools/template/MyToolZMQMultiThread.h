@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Tool.h"
+#include "DataModel.h"
 
 /**
  * \struct ZMQMyToolMultiThread_args

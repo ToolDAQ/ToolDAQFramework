@@ -1,5 +1,7 @@
 #include <SlowControlCollection.h>
 
+using namespace ToolFramework;
+
 SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
 
   sock=0;

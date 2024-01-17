@@ -1,5 +1,7 @@
 #include "ServiceDiscovery.h"
 
+using namespace ToolFramework;
+
 ServiceDiscovery::ServiceDiscovery(bool Send, bool Receive, int remoteport, std::string address, int multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec, int kicksec){
  
     

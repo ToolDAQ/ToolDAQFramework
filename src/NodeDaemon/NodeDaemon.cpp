@@ -22,6 +22,8 @@
 #define FILE_SEND_PORT 24001
 #define DAQ_PATH "./main"
 
+using namespace ToolFramework;
+
 void FStop(std::vector< pid_t > *pids){
     
   for(unsigned int i=0;i<pids->size();i++){
