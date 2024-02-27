@@ -201,15 +201,24 @@ void SlowControlCollection::Thread(Thread_args* arg){
   if (args->items[1].revents & ZMQ_POLLIN){ //received trigger value;
 
     zmq::message_t message;
-
+    zmq::message_t data;
     args->sub->recv(&message);
+    bool has_data=false;
+    if(message.more()){
+      args->sub->recv(&data);
+      has_data=true;
+    }
+    
     std::istringstream iss(static_cast<char*>(message.data()));
     //std::cout<<iss.str()<<std::endl;
     args->trigger_functions_mutex->lock();
-    if(args->trigger_functions->count(iss.str())) (*(args->trigger_functions))[iss.str()](iss.str().c_str());
+    if(args->trigger_functions->count(iss.str())){
+      if(has_data) (*(args->trigger_functions))[iss.str()](iss.str().c_str(), data.data());
+      else (*(args->trigger_functions))[iss.str()](iss.str().c_str(), 0);
+    }
     args->trigger_functions_mutex->unlock();
   } 
-
+  
 }
 
 
@@ -267,7 +276,7 @@ std::string SlowControlCollection::Print(){
   
 }
 
-bool SlowControlCollection::TriggerSubscribe(std::string trigger, std::function<void(const char*)> function){
+bool SlowControlCollection::TriggerSubscribe(std::string trigger, std::function<void(const char*, void*)> function){
 
   if(function==nullptr) return false;
   m_trigger_functions_mutex.lock(); 
@@ -278,7 +287,7 @@ bool SlowControlCollection::TriggerSubscribe(std::string trigger, std::function<
 }
 
 
-bool SlowControlCollection::TriggerSend(std::string trigger){
+bool SlowControlCollection::TriggerSend(std::string trigger, void* paylod, unsigned int size){
 
   zmq::message_t message(trigger.length()+1);
   snprintf((char*) message.data(), trigger.length()+1, "%s", trigger.c_str());
