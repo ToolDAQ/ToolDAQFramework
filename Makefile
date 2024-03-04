@@ -87,11 +87,11 @@ lib/libToolDAQChain.so: $(patsubst %.cpp, %.o , $(wildcard src/ToolDAQChain/*.cp
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes)
 
-lib/libTempDAQDataModel.so: $(patsubst %.cpp, %.o , $(wildcard DataModel/*.cpp)) | $(HEADERS) $(TempDataModelInclude)
+lib/libTempDAQDataModel.so: $(patsubst %.cpp, %.o , $(wildcard DataModel/*.cpp)) | $(HEADERS) $(TempDataModelHEADERS)
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes) $(TempDataModelInclude)
 
-lib/libTempDAQTools.so: $(patsubst %.cpp, %.o , $(wildcard UserTools/*/*.cpp)) | $(HEADERS) $(TempDataModelInclude) $(TempToolsInclude)
+lib/libTempDAQTools.so: $(patsubst %.cpp, %.o , $(wildcard UserTools/*/*.cpp)) | $(HEADERS) $(TempDataModelHEADERS) $(TempToolHEADERS)
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes) $(TempDataModelInclude) $(TempToolsInclude)
 

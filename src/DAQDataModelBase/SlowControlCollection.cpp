@@ -218,6 +218,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     // receive alert payload
     std::string payload;
+    bool has_data=false;
     if(message.more()){
       ok = args->sub->recv(&message);
       if(!ok){
@@ -226,11 +227,15 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
       payload.resize(message.size(),'\0');
       memcpy((void*)payload.data(),message.data(),message.size());
+      has_data=true;
     }
     
     //std::cout<<iss.str()<<std::endl;
     args->alert_functions_mutex->lock();
-    if(args->alert_functions->count(iss.str())) (*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str());
+    if(args->alert_functions->count(iss.str())){
+      if(has_data) (*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str());
+      else         (*(args->alert_functions))[iss.str()](iss.str().c_str(), 0);
+    }
     args->alert_functions_mutex->unlock();
     
     //if(payload!=nullptr) free(payload);
