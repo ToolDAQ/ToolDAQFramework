@@ -22,7 +22,7 @@ TempToolsLib =
 
 Includes=  -I $(ToolFrameworkDIR)/include/ -I $(SOURCEDIR)/include/  -I $(SOURCEDIR)/tempinclude/ $(ZMQInclude) $(BoostInclude) 
 Libs=-L $(ToolFrameworkDIR)/lib/ -lStore -lLogging -lToolChain -lDataModelBase  -lpthread -L $(SOURCEDIR)/lib/ -lDAQStore -lServiceDiscovery -lDAQLogging -lToolDAQChain -lDAQDataModelBase -lTempDAQDataModel -lTempDAQTools  $(BoostLib) $(ZMQLib)
-LIBRARIES=lib/libDAQStore.so lib/libDAQLogging.so lib/libToolDAQChain.so lib/libDAQDataModelbase.so lib/libTempDAQDataModel.so lib/libTempDAQTools.so lib/libServiceDiscovery.so
+LIBRARIES=lib/libDAQStore.so lib/libDAQLogging.so lib/libToolDAQChain.so lib/libDAQDataModelBase.so lib/libTempDAQDataModel.so lib/libTempDAQTools.so lib/libServiceDiscovery.so
 HEADERS:=$(patsubst %.h, include/%.h, $(filter %.h, $(subst /, ,$(wildcard src/*/*.h) )))
 TempDataModelHEADERS:=$(patsubst %.h, tempinclude/%.h, $(filter %.h, $(subst /, , $(wildcard DataModel/*.h))))
 TempToolHEADERS:=$(patsubst %.h, tempinclude/%.h, $(filter %.h, $(subst /, , $(wildcard UserTools/*/*.h) $(wildcard UserTools/*.h))))
@@ -79,7 +79,7 @@ lib/libServiceDiscovery.so: $(patsubst %.cpp, %.o , $(wildcard src/ServiceDiscov
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes)
 
-lib/libDAQDataModelbase.so: $(patsubst %.cpp, %.o , $(wildcard src/DAQDataModelBase/*.cpp)) | $(HEADERS)
+lib/libDAQDataModelBase.so: $(patsubst %.cpp, %.o , $(wildcard src/DAQDataModelBase/*.cpp)) | $(HEADERS)
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes) 
 
