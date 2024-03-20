@@ -11,7 +11,8 @@ ToolDAQChain::ToolDAQChain(std::string configfile, DataModel* data_model, int ar
     std::cout<<"\033[38;5;196m ERROR!!!: No valid config file quitting \033[0m"<<std::endl;
     exit(1);
   }
-  
+
+  if(!m_data->vars.Get("UUID_path",m_UUID_path)) m_UUID_path="/dev/random";
   if(!m_data->vars.Get("verbose",m_verbose)) m_verbose=9;
   if(!m_data->vars.Get("error_level",m_errorlevel)) m_errorlevel=2;
   if(!m_data->vars.Get("remote_port",m_remoteport)) m_remoteport=24004; 
@@ -96,9 +97,29 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
  
   context=new zmq::context_t(IO_Threads);
   m_DAQdata->context=context;
-  
-  m_UUID = boost::uuids::random_generator()();
 
+  struct stat fbuffer;
+  if(stat (m_UUID_path.c_str(), &fbuffer) == 0){ //if file exists
+
+    BinaryStream tmp;
+    tmp.Bopen(m_UUID_path.c_str(),READ, UNCOMPRESSED);
+    tmp.Bread(&m_UUID, sizeof(m_UUID));
+    tmp.Bclose();
+  }
+
+  else{
+
+    m_UUID = boost::uuids::random_generator()();
+
+    BinaryStream tmp;
+    tmp.Bopen(m_UUID_path.c_str(), NEW, UNCOMPRESSED);
+    tmp.Bwrite(&m_UUID, sizeof(m_UUID));
+    tmp.Bclose();
+    
+    }
+
+  
+  
   m_log=0;
 
   m_log= new DAQLogging(context, m_UUID, m_service, m_log_interactive, m_log_local, m_log_local_path, m_log_remote, m_log_service, m_log_port, m_log_split_files);

@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h> 
-
+#include <sys/stat.h>
 
 #include <boost/uuid/uuid.hpp>            // uuid class
 #include <boost/uuid/uuid_generators.hpp> // generators
@@ -94,6 +94,8 @@ namespace ToolFramework{
     
     //conf variables
     boost::uuids::uuid m_UUID;
+    std::string m_UUID_path;
+    
     bool m_log_remote; 
     std::string m_log_service;
     int m_log_port;
