@@ -1,7 +1,7 @@
 ToolFrameworkDIR=../ToolFrameworkCore
 SOURCEDIR=`pwd`
 
-CXXFLAGS=  -fPIC -O3 -Wpedantic -Wall -std=c++11 #-Wno-comment -Wno-unused -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept  -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef #-Werror -Wold-style-cast 
+CXXFLAGS=  -fPIC -O3 -Wpedantic -Wall -std=c++11 -Wno-comment #-Wno-unused -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept  -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef #-Werror -Wold-style-cast 
 
 ifeq ($(MAKECMDGOALS),debug)
 CXXFLAGS+= -O0 -g -lSegFault -rdynamic -DDEBUG
@@ -21,7 +21,7 @@ TempToolsLib =
 
 
 Includes=  -I $(ToolFrameworkDIR)/include/ -I $(SOURCEDIR)/include/  -I $(SOURCEDIR)/tempinclude/ $(ZMQInclude) $(BoostInclude) 
-Libs=-L $(ToolFrameworkDIR)/lib/ -lStore -lLogging -lToolChain -lDataModelBase  -lpthread -L $(SOURCEDIR)/lib/ -lDAQStore -lServiceDiscovery -lDAQLogging -lToolDAQChain -lDAQDataModelBase -lTempDAQDataModel -lTempDAQTools  $(BoostLib) $(ZMQLib)
+Libs=-L $(SOURCEDIR)/lib/ -lDAQStore -lServiceDiscovery -lDAQLogging -lToolDAQChain -lDAQDataModelBase -lTempDAQDataModel -lTempDAQTools  $(BoostLib) $(ZMQLib) -L $(ToolFrameworkDIR)/lib/  -lToolChain -lDataModelBase  -lpthread -lLogging -lStore 
 LIBRARIES=lib/libDAQStore.so lib/libDAQLogging.so lib/libToolDAQChain.so lib/libDAQDataModelBase.so lib/libTempDAQDataModel.so lib/libTempDAQTools.so lib/libServiceDiscovery.so
 HEADERS:=$(patsubst %.h, include/%.h, $(filter %.h, $(subst /, ,$(wildcard src/*/*.h) )))
 TempDataModelHEADERS:=$(patsubst %.h, tempinclude/%.h, $(filter %.h, $(subst /, , $(wildcard DataModel/*.h))))
@@ -41,11 +41,11 @@ main: src/main.o $(LIBRARIES) $(HEADERS) $(TempDataModelHEADERS) $(TempToolHEADE
 
 include/%.h:
 	@echo -e "\e[38;5;87m\n*************** sym linking headers ****************\e[0m"
-	ln -s  `pwd`/$(filter %$(strip $(patsubst include/%.h, /%.h, $@)), $(wildcard src/*/*.h) ) $@
+	ln -s  $(SOURCEDIR)/$(filter %$(strip $(patsubst include/%.h, /%.h, $@)), $(wildcard src/*/*.h) ) $@
 
 tempinclude/%.h:
 	@echo -e "\e[38;5;87m\n*************** sym linking headers ****************\e[0m"
-	ln -s  `pwd`/$(filter %$(strip $(patsubst tempinclude/%.h, /%.h, $@)), $(wildcard DataModel/*.h) $(wildcard UserTools/*/*.h) $(wildcard UserTools/*.h)) $@
+	ln -s  $(SOURCEDIR)/$(filter %$(strip $(patsubst tempinclude/%.h, /%.h, $@)), $(wildcard DataModel/*.h) $(wildcard UserTools/*/*.h) $(wildcard UserTools/*.h)) $@
 
 src/%.o :  src/%.cpp $(HEADERS)  
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
