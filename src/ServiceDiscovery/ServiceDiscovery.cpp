@@ -123,7 +123,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   
   while(running){
   
-    zmq::poll(&items [0], 2, -1);
+    zmq::poll(&items [0], 2, 1000);
 
     if ((items [0].revents & ZMQ_POLLIN) && running) {
       
@@ -468,7 +468,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   
   while(running){
     
-    zmq::poll (&items [0], 2, -1);
+    zmq::poll (&items [0], 2, 1000);
     
     if ((items [0].revents & ZMQ_POLLIN) && running) {
       

@@ -30,8 +30,8 @@ ToolDAQChain::ToolDAQChain(std::string configfile, DataModel* data_model, int ar
     m_log_local_path= tmp.str();
   }
   if(!m_data->vars.Get("log_remote",m_log_remote)) m_log_remote=false; 
-  if(!m_data->vars.Get("log_service",m_log_service)) m_log_service="LogStore";
-  if(!m_data->vars.Get("log_port",m_log_port)) m_log_port=24010;
+  if(!m_data->vars.Get("log_address",m_log_address)) m_log_address="239.192.1.1";
+  if(!m_data->vars.Get("log_port",m_log_port)) m_log_port=5001;
 
   if(!m_data->vars.Get("service_discovery_address",m_multicastaddress)) m_multicastaddress="239.192.1.1";
   if(!m_data->vars.Get("service_discovery_port",m_multicastport)) m_multicastport=5000;
@@ -67,7 +67,7 @@ ToolDAQChain::ToolDAQChain(std::string configfile, DataModel* data_model, int ar
   
 }
 
-ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, bool interactive, bool local, std::string log_local_path, bool remote, std::string log_service, int log_port,  bool split_output_files, int pub_sec, int kick_sec,unsigned int IO_Threads, DataModel* in_data_model){
+ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, bool interactive, bool local, std::string log_local_path, bool remote, std::string log_address, int log_port,  bool split_output_files, int pub_sec, int kick_sec,unsigned int IO_Threads, DataModel* in_data_model){
   
   m_verbose=verbose;
   m_errorlevel=errorlevel;
@@ -76,7 +76,7 @@ ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, boo
   m_log_local=local;
   m_log_local_path=log_local_path;
   m_log_remote=remote;
-  m_log_service=log_service;
+  m_log_address=log_address;
   m_log_port=log_port;
   m_log_split_files=split_output_files;  
   m_pub_sec=pub_sec;
@@ -122,7 +122,7 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
   
   m_log=0;
 
-  m_log= new DAQLogging(context, m_UUID, m_service, m_log_interactive, m_log_local, m_log_local_path, m_log_remote, m_log_service, m_log_port, m_log_split_files);
+  m_log= new DAQLogging(context, m_UUID, m_service, m_log_interactive, m_log_local, m_log_local_path, m_log_remote, m_log_address, m_log_port, m_log_split_files);
 
 
   if(!m_data->Log) m_data->Log=m_log;

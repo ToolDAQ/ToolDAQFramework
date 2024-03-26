@@ -22,7 +22,7 @@ DAQLogging::TDAQStreamBuf::~TDAQStreamBuf(){
 
 //DAQLogging::TDAQStreamBuf::TDAQStreamBuf (std::ostream& str ,zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, std::string mode, std::string localpath, std::string logservice, int logport):output(str){
 
-DAQLogging::TDAQStreamBuf::TDAQStreamBuf(zmq::context_t *context, boost::uuids::uuid UUID, std::string service, bool interactive, bool local,  std::string localpath, bool remote, std::string logservice, int logport, bool error, std::ostream* filestream):Logging::TFStreamBuf(){
+DAQLogging::TDAQStreamBuf::TDAQStreamBuf(zmq::context_t *context, boost::uuids::uuid UUID, std::string service, bool interactive, bool local,  std::string localpath, bool remote, std::string log_address, int log_port, bool error, std::ostream* filestream):Logging::TFStreamBuf(){
   
   output=0;
   fileoutput=0;
@@ -68,7 +68,7 @@ DAQLogging::TDAQStreamBuf::TDAQStreamBuf(zmq::context_t *context, boost::uuids::
     
     if(m_remote && !m_error){
       
-      args=new DAQLogging_thread_args(m_context, UUID , logservice, logport);
+      args=new DAQLogging_thread_args(m_context, UUID , log_address, log_port);
       
       pthread_create (&thread, NULL, DAQLogging::TDAQStreamBuf::RemoteThread, args); // make pushthread with two socets one going out one comming in and buffer socket
       
@@ -303,6 +303,119 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 
    DAQLogging_thread_args* args= static_cast<DAQLogging_thread_args*>(arg);
    zmq::context_t * context = args->context;
+   std::string log_address=args->log_address;
+   boost::uuids::uuid UUID=args->UUID;
+   int log_port=args->log_port;
+   
+   zmq::socket_t LogReceiver(*context, ZMQ_PULL);
+   LogReceiver.bind("inproc://LogSender");
+   
+   
+   long msg_id=0;   
+   bool running =true;
+   
+
+  struct sockaddr_in addr;
+  int addrlen, sock, cnt;
+ // struct ip_mreq mreq;
+  
+  
+  // set up socket //
+  sock = socket(AF_INET, SOCK_DGRAM, 0);
+  struct linger l;
+  l.l_onoff  = 0;
+  l.l_linger = 0;
+  setsockopt(sock, SOL_SOCKET, SO_LINGER,(char *) &l, sizeof(l));
+	
+  //fcntl(sock, F_SETFL, O_NONBLOCK); 
+  if (sock < 0) {
+    perror("socket");
+    printf("Failed to connect to log publish socket");
+    exit(1);
+  }
+  
+  bzero((char *)&addr, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  addr.sin_port = htons(log_port);
+  addrlen = sizeof(addr);
+  
+  // send //
+  addr.sin_addr.s_addr = inet_addr(log_address.c_str());
+
+  //  printf("%s %d n",log_address.c_str(), log_port);
+  
+  zmq::pollitem_t items [] = {
+    { LogReceiver, 0, ZMQ_POLLIN, 0 },
+    {NULL, sock, ZMQ_POLLOUT, 0 },
+  };
+
+
+   while(running){
+     //printf("%s \n","in log loop");
+  
+     //  if (RemoteConnections.size()==0) sleep(1);
+     zmq::poll(&items[0],2,1000);
+     
+     if ((items[0].revents & ZMQ_POLLIN ) && running){ //log a 1message so send it
+       // printf("received message to send \n");
+        
+       zmq::message_t Receive;
+       if(LogReceiver.recv (&Receive)){
+	 std::istringstream ss(static_cast<char*>(Receive.data()));
+	 
+	 if(ss.str()=="Quit"){
+	   //printf("%s \n","received quit");
+	   running=false;
+	 }
+	 
+	 else{
+	     
+	   boost::posix_time::ptime t = boost::posix_time::microsec_clock::universal_time();
+	   std::stringstream isot;
+	   isot<<boost::posix_time::to_iso_extended_string(t) << "Z";
+	   
+	   msg_id++;
+	   
+	   Store outmessage;
+	   
+	   outmessage.Set("uuid",UUID);
+	   outmessage.Set("msg_id",msg_id);
+	   *outmessage["msg_time"]=isot.str();
+	   *outmessage["msg_type"]="Log";
+	   outmessage.Set("msg_value",ss.str());
+	     
+	     
+	   std::string rmessage;
+	   outmessage>>rmessage;
+	   //  printf("...%s...\n",rmessage.c_str());
+	   
+	   //	   if ((items [1].revents & ZMQ_POLLOUT) && running){
+	     
+	     cnt = sendto(sock, rmessage.c_str(), rmessage.length()+1, 0,(struct sockaddr *) &addr, addrlen);
+	     
+	     
+	     if (cnt < 0) {
+	       perror("send log error");
+	     }
+	     //}
+	   
+	   
+	   
+	   
+	 }
+       }
+     }
+   }
+   
+   close(sock);
+   pthread_exit(NULL);
+   
+   
+   /* old version with zmq
+
+   DAQLogging_thread_args* args= static_cast<DAQLogging_thread_args*>(arg);
+   zmq::context_t * context = args->context;
    std::string logservice=args->logservice;
    boost::uuids::uuid UUID=args->UUID;
    int logport=args->logport;
@@ -520,6 +633,7 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
    RemoteConnections.clear();
 
    pthread_exit(NULL);
+   */
  }
 
 
@@ -534,7 +648,7 @@ DAQLogging::DAQLogging(zmq::context_t *context,  boost::uuids::uuid UUID, std::s
     buffer=new TDAQStreamBuf(context, UUID, service, interactive, local, localpath, remote, logservice, logport, false);
     errbuffer=new TDAQStreamBuf(context, UUID, service, interactive, local, localpath, remote, logservice, logport, true, buffer->fileoutput);
   }
-
+   
 
 }
 

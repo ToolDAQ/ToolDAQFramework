@@ -70,13 +70,13 @@ namespace ToolFramework{
        @param service The name of the ToolDAQChain service to boradcast for service discovery
        @param logmode Where log printouts should be forwarded too. "Interactive" = cout, "Remote" = send to a remote logging system, "local" = ouput logs to a file. 
        @param log_local_path The file path and name of where to store logs if in Local logging mode.
-       @param log_service Service name of remote logging system if in Remote logging mode.
+       @param log_address Service name of remote logging system if in Remote logging modemulticast address for remote logging.
        @param log_port The Port number of the remote logging service
        @param pub_sec The number of seconds between publishing multicast serivce beacons
        @param kick_sec The number of seconds to wait before removing a servic from the remote services list if no beacon received.
        @param IO_Threads The number of ZMQ IO threads to use (~1 per Gbps of traffic).
     */
-    ToolDAQChain(int verbose, int errorlevel=0, std::string service="test",  bool interactive=true, bool local=false, std::string log_local_path="./log", bool remote=false,  std::string log_service="", int log_port=0, bool split_output_files=false, int pub_sec=5, int kick_sec=60, unsigned int IO_Threads=1, DataModel* in_data_model=0); 
+    ToolDAQChain(int verbose, int errorlevel=0, std::string service="test",  bool interactive=true, bool local=false, std::string log_local_path="./log", bool remote=false,  std::string log_address="239.192.1.1", int log_port=5001, bool split_output_files=false, int pub_sec=5, int kick_sec=60, unsigned int IO_Threads=1, DataModel* in_data_model=0); 
     //verbosity: true= print out status messages , false= print only error messages;
     //errorlevels: 0= do not exit; error 1= exit if unhandeled error ; exit 2= exit on handeled and unhandeled errors; 
     ~ToolDAQChain(); 
@@ -97,7 +97,7 @@ namespace ToolFramework{
     std::string m_UUID_path;
     
     bool m_log_remote; 
-    std::string m_log_service;
+    std::string m_log_address;
     int m_log_port;
     std::string m_service;
     bool m_remote;
