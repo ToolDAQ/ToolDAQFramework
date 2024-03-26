@@ -21,14 +21,14 @@ namespace ToolFramework{
     int poll_length;
     
     SlowControlCollection* SCC;
-    std::map<std::string, std::function<void(const char*, void*)> >* trigger_functions;
-    std::mutex* trigger_functions_mutex;
+    std::map<std::string, std::function<void(const char*, const char*)> >* alert_functions;
+    std::mutex* alert_functions_mutex;
     
   };
   
   class SlowControlCollection{
     
-  public:
+   public:
     
     SlowControlCollection();
     ~SlowControlCollection();
@@ -40,21 +40,20 @@ namespace ToolFramework{
     bool Add(std::string name, SlowControlElementType type, std::function<std::string(const char*)> function=nullptr);
     bool Remove(std::string name);
     void Clear();
-    bool TriggerSubscribe(std::string trigger, std::function<void(const char*, void*)> function);
-    bool TriggerSend(std::string trigger, void* paylod=0, unsigned int size=0);
+    bool AlertSubscribe(std::string alert, std::function<void(const char*, const char*)> function);
+    bool AlertSend(std::string alert, std::string="");
     std::string Print();
+    
     template<typename T> T GetValue(std::string name){
-  
-      return SC_vars[name]->GetValue<T>();    
-      
+      return SC_vars[name]->GetValue<T>();
     }
     
     
-  private:
+   private:
     
     std::map<std::string, SlowControlElement*> SC_vars;
-    std::map<std::string, std::function<void(const char*, void*)> > m_trigger_functions;
-    std::mutex m_trigger_functions_mutex;
+    std::map<std::string, std::function<void(const char*, const char*)> > m_alert_functions;
+    std::mutex m_alert_functions_mutex;
     
     DAQUtilities* m_util;
     zmq::context_t* m_context;
