@@ -1,12 +1,15 @@
 cmake_minimum_required (VERSION 2.6)
+
 project (ToolDAQFramework)
 
-set(ZMQ_INC "${PROJECT_SOURCE_DIR}/../zeromq-4.0.7/include/")
-set(ZMQ_LIB_PATH "${PROJECT_SOURCE_DIR}/../zeromq-4.0.7/lib")
+set(DEPENDENCIES_PATH "${PROJECT_SOURCE_DIR}/..")
+
+set(ZMQ_INC "${DEPENDENCIES_PATH}/zeromq-4.0.7/include/")
+set(ZMQ_LIB_PATH "${DEPENDENCIES_PATH}/zeromq-4.0.7/lib")
 set(ZMQ_LIBS zmq)
 
-set(BOOST_INC "${PROJECT_SOURCE_DIR}/../boost_1_66_0/install/include/")
-set(BOOST_LIB_PATH "${PROJECT_SOURCE_DIR}/../boost_1_66_0/install/lib")
+set(BOOST_INC "${DEPENDENCIES_PATH}/boost_1_66_0/install/include/")
+set(BOOST_LIB_PATH "${DEPENDENCIES_PATH}/boost_1_66_0/install/lib")
 set(BOOST_LIBS boost_date_time boost_serialization boost_iostreams)
 
 set(DATAMODEL_INC "")
@@ -17,8 +20,8 @@ set(MYTOOLS_INC "")
 set(MYTOOLS_LIB_PATH "")
 set(MYTOOLS_LIBS "")
 
-set(TOOLFRAMEWORK_INC "${PROJECT_SOURCE_DIR}/../ToolFrameworkCore/include")
-set(TOOLFRAMEWORK_LIBS_PATH "${PROJECT_SOURCE_DIR}/../ToolFrameworkCore/lib")
+set(TOOLFRAMEWORK_INC "${DEPENDENCIES_PATH}/ToolFrameworkCore/include")
+set(TOOLFRAMEWORK_LIBS_PATH "${DEPENDENCIES_PATH}/ToolFrameworkCore/lib")
 set(TOOLFRAMEWORK_LIBS DataModelBase Logging Store ToolChain)
 
 include_directories (${BOOST_INC} ${ZMQ_INC} ${DATAMODEL_INC} ${MYTOOLS_INC} ${TOOLFRAMEWORK_INC})
