@@ -72,33 +72,36 @@ $(function() {
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef POINTERWRAPPER_H</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define POINTERWRAPPER_H</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classPointerWrapperBase.html">   14</a></span>&#160;<span class="keyword">class </span><a class="code" href="classPointerWrapperBase.html">PointerWrapperBase</a>{</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  </div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="classPointerWrapperBase.html#ac9e248557a8aa248bcbbadc469c77f52">   18</a></span>&#160;  <a class="code" href="classPointerWrapperBase.html#ac9e248557a8aa248bcbbadc469c77f52">PointerWrapperBase</a>(){} </div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="classPointerWrapperBase.html#a842fb0af38187d71678971452c1e1094">   19</a></span>&#160;  <span class="keyword">virtual</span> <a class="code" href="classPointerWrapperBase.html#a842fb0af38187d71678971452c1e1094">~PointerWrapperBase</a>(){} </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;};</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classPointerWrapper.html">   32</a></span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt; <span class="keyword">class </span><a class="code" href="classPointerWrapper.html">PointerWrapper</a> : <span class="keyword">public</span> <a class="code" href="classPointerWrapperBase.html">PointerWrapperBase</a> {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  </div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classPointerWrapper.html#a4866798d33eed0a9aeaa3bcda53c4a0d">   36</a></span>&#160;  T* <a class="code" href="classPointerWrapper.html#a4866798d33eed0a9aeaa3bcda53c4a0d">pointer</a>; </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classPointerWrapper.html#aa645eb1963f91c9bddf5fd6ff578751b">   37</a></span>&#160; <a class="code" href="classPointerWrapper.html#aa645eb1963f91c9bddf5fd6ff578751b">PointerWrapper</a>(T* inpointer): <a class="code" href="classPointerWrapper.html#a4866798d33eed0a9aeaa3bcda53c4a0d">pointer</a>(inpointer){} </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  ~<a class="code" href="classPointerWrapper.html">PointerWrapper</a>(){<span class="keyword">delete</span> <a class="code" href="classPointerWrapper.html#a4866798d33eed0a9aeaa3bcda53c4a0d">pointer</a>; <a class="code" href="classPointerWrapper.html#a4866798d33eed0a9aeaa3bcda53c4a0d">pointer</a>=0;}; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassPointerWrapperBase_html"><div class="ttname"><a href="classPointerWrapperBase.html">PointerWrapperBase</a></div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:14</div></div>
-<div class="ttc" id="aclassPointerWrapperBase_html_a842fb0af38187d71678971452c1e1094"><div class="ttname"><a href="classPointerWrapperBase.html#a842fb0af38187d71678971452c1e1094">PointerWrapperBase::~PointerWrapperBase</a></div><div class="ttdeci">virtual ~PointerWrapperBase()</div><div class="ttdoc">virtual destructor</div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:19</div></div>
-<div class="ttc" id="aclassPointerWrapperBase_html_ac9e248557a8aa248bcbbadc469c77f52"><div class="ttname"><a href="classPointerWrapperBase.html#ac9e248557a8aa248bcbbadc469c77f52">PointerWrapperBase::PointerWrapperBase</a></div><div class="ttdeci">PointerWrapperBase()</div><div class="ttdoc">Simple constructor.</div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:18</div></div>
-<div class="ttc" id="aclassPointerWrapper_html"><div class="ttname"><a href="classPointerWrapper.html">PointerWrapper</a></div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:32</div></div>
-<div class="ttc" id="aclassPointerWrapper_html_a4866798d33eed0a9aeaa3bcda53c4a0d"><div class="ttname"><a href="classPointerWrapper.html#a4866798d33eed0a9aeaa3bcda53c4a0d">PointerWrapper::pointer</a></div><div class="ttdeci">T * pointer</div><div class="ttdoc">Pointer to the orignial obkect.</div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:36</div></div>
-<div class="ttc" id="aclassPointerWrapper_html_aa645eb1963f91c9bddf5fd6ff578751b"><div class="ttname"><a href="classPointerWrapper.html#aa645eb1963f91c9bddf5fd6ff578751b">PointerWrapper::PointerWrapper</a></div><div class="ttdeci">PointerWrapper(T *inpointer)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:37</div></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span>ToolFramework{</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;  </div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="classToolFramework_1_1PointerWrapperBase.html">   15</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classToolFramework_1_1PointerWrapperBase.html">PointerWrapperBase</a>{</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    </div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="classToolFramework_1_1PointerWrapperBase.html#a0f58e995b163dbaf52f1c37d5ccbb51a">   19</a></span>&#160;    <a class="code" href="classToolFramework_1_1PointerWrapperBase.html#a0f58e995b163dbaf52f1c37d5ccbb51a">PointerWrapperBase</a>(){} </div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classToolFramework_1_1PointerWrapperBase.html#acab0e30163d939c8e95a66f3fe49369d">   20</a></span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classToolFramework_1_1PointerWrapperBase.html#acab0e30163d939c8e95a66f3fe49369d">~PointerWrapperBase</a>(){} </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  };</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  </div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classToolFramework_1_1PointerWrapper.html">   33</a></span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt; <span class="keyword">class </span><a class="code" href="classToolFramework_1_1PointerWrapper.html">PointerWrapper</a> : <span class="keyword">public</span> <a class="code" href="classToolFramework_1_1PointerWrapperBase.html">PointerWrapperBase</a> {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    </div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classToolFramework_1_1PointerWrapper.html#a826c4e2046d82a292899363303132a79">   37</a></span>&#160;    T* <a class="code" href="classToolFramework_1_1PointerWrapper.html#a826c4e2046d82a292899363303132a79">pointer</a>; </div>
+<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="classToolFramework_1_1PointerWrapper.html#ad9355c9700d1b4958ec680b572da6c6d">   38</a></span>&#160;  <a class="code" href="classToolFramework_1_1PointerWrapper.html#ad9355c9700d1b4958ec680b572da6c6d">PointerWrapper</a>(T* inpointer): <a class="code" href="classToolFramework_1_1PointerWrapper.html#a826c4e2046d82a292899363303132a79">pointer</a>(inpointer){} </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    ~<a class="code" href="classToolFramework_1_1PointerWrapper.html">PointerWrapper</a>(){<span class="keyword">delete</span> <a class="code" href="classToolFramework_1_1PointerWrapper.html#a826c4e2046d82a292899363303132a79">pointer</a>; <a class="code" href="classToolFramework_1_1PointerWrapper.html#a826c4e2046d82a292899363303132a79">pointer</a>=0;}; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  };</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassToolFramework_1_1PointerWrapperBase_html"><div class="ttname"><a href="classToolFramework_1_1PointerWrapperBase.html">ToolFramework::PointerWrapperBase</a></div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:15</div></div>
+<div class="ttc" id="aclassToolFramework_1_1PointerWrapperBase_html_a0f58e995b163dbaf52f1c37d5ccbb51a"><div class="ttname"><a href="classToolFramework_1_1PointerWrapperBase.html#a0f58e995b163dbaf52f1c37d5ccbb51a">ToolFramework::PointerWrapperBase::PointerWrapperBase</a></div><div class="ttdeci">PointerWrapperBase()</div><div class="ttdoc">Simple constructor.</div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:19</div></div>
+<div class="ttc" id="aclassToolFramework_1_1PointerWrapperBase_html_acab0e30163d939c8e95a66f3fe49369d"><div class="ttname"><a href="classToolFramework_1_1PointerWrapperBase.html#acab0e30163d939c8e95a66f3fe49369d">ToolFramework::PointerWrapperBase::~PointerWrapperBase</a></div><div class="ttdeci">virtual ~PointerWrapperBase()</div><div class="ttdoc">virtual destructor</div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:20</div></div>
+<div class="ttc" id="aclassToolFramework_1_1PointerWrapper_html"><div class="ttname"><a href="classToolFramework_1_1PointerWrapper.html">ToolFramework::PointerWrapper</a></div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:33</div></div>
+<div class="ttc" id="aclassToolFramework_1_1PointerWrapper_html_a826c4e2046d82a292899363303132a79"><div class="ttname"><a href="classToolFramework_1_1PointerWrapper.html#a826c4e2046d82a292899363303132a79">ToolFramework::PointerWrapper::pointer</a></div><div class="ttdeci">T * pointer</div><div class="ttdoc">Pointer to the orignial obkect.</div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:37</div></div>
+<div class="ttc" id="aclassToolFramework_1_1PointerWrapper_html_ad9355c9700d1b4958ec680b572da6c6d"><div class="ttname"><a href="classToolFramework_1_1PointerWrapper.html#ad9355c9700d1b4958ec680b572da6c6d">ToolFramework::PointerWrapper::PointerWrapper</a></div><div class="ttdeci">PointerWrapper(T *inpointer)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> PointerWrapper.h:38</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

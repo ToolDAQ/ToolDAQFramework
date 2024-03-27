@@ -1,0 +1,107 @@
+\hypertarget{classToolFramework_1_1ToolDAQChain}{}\doxysection{Tool\+Framework\+::Tool\+DAQChain Class Reference}
+\label{classToolFramework_1_1ToolDAQChain}\index{ToolFramework::ToolDAQChain@{ToolFramework::ToolDAQChain}}
+
+
+{\ttfamily \#include $<$Tool\+DAQChain.\+h$>$}
+
+Inheritance diagram for Tool\+Framework\+::Tool\+DAQChain\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classToolFramework_1_1ToolDAQChain}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classToolFramework_1_1ToolDAQChain_ab69ccc4c933ebbb8125589f0c2386f5c}{Tool\+DAQChain}} (std\+::string configfile, \mbox{\hyperlink{classDataModel}{Data\+Model}} $\ast$data\+\_\+model, int argc=0, char $\ast$argv\mbox{[}$\,$\mbox{]}=0)
+\begin{DoxyCompactList}\small\item\em Constructor that obtains all of the configuration varaibles from an input file. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classToolFramework_1_1ToolDAQChain_a92adff6025f16976da59dfe8568985a2}{Tool\+DAQChain}} (int verbose, int errorlevel=0, std\+::string service=\char`\"{}test\char`\"{}, bool interactive=true, bool local=false, std\+::string log\+\_\+local\+\_\+path=\char`\"{}./log\char`\"{}, bool remote=false, std\+::string log\+\_\+address=\char`\"{}239.\+192.\+1.\+1\char`\"{}, int log\+\_\+port=5001, bool split\+\_\+output\+\_\+files=false, int pub\+\_\+sec=5, int kick\+\_\+sec=60, unsigned int IO\+\_\+\+Threads=1, \mbox{\hyperlink{classDataModel}{Data\+Model}} $\ast$in\+\_\+data\+\_\+model=0)
+\item 
+void \mbox{\hyperlink{classToolFramework_1_1ToolDAQChain_a4402df6eea4ccfb10c6849c662bff50c}{Remote}} (int portnum, std\+::string SD\+\_\+address=\char`\"{}239.\+192.\+1.\+1\char`\"{}, int SD\+\_\+port=5000)
+\begin{DoxyCompactList}\small\item\em Run Tool\+Chain in remote mode, where connands are received fomr network connections. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class holds a dynamic list of Tools which can be Initialised, Executed and Finalised to perform program operation. Large number of options in terms of run modes and setting can be assigned.
+
+\begin{DoxyParagraph}{Author}
+B.\+Richards 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Date}
+2019/05/28 10\+:44\+:00 
+\end{DoxyParagraph}
+Contact\+: \href{mailto:b.richards@qmul.ac.uk}{\texttt{ b.\+richards@qmul.\+ac.\+uk}} 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classToolFramework_1_1ToolDAQChain_ab69ccc4c933ebbb8125589f0c2386f5c}\label{classToolFramework_1_1ToolDAQChain_ab69ccc4c933ebbb8125589f0c2386f5c}} 
+\index{ToolFramework::ToolDAQChain@{ToolFramework::ToolDAQChain}!ToolDAQChain@{ToolDAQChain}}
+\index{ToolDAQChain@{ToolDAQChain}!ToolFramework::ToolDAQChain@{ToolFramework::ToolDAQChain}}
+\doxysubsubsection{\texorpdfstring{ToolDAQChain()}{ToolDAQChain()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Tool\+DAQChain\+::\+Tool\+DAQChain (\begin{DoxyParamCaption}\item[{std\+::string}]{configfile,  }\item[{\mbox{\hyperlink{classDataModel}{Data\+Model}} $\ast$}]{data\+\_\+model,  }\item[{int}]{argc = {\ttfamily 0},  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Constructor that obtains all of the configuration varaibles from an input file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em configfile} & The path and name of the config file to read configuration values from. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classToolFramework_1_1ToolDAQChain_a92adff6025f16976da59dfe8568985a2}\label{classToolFramework_1_1ToolDAQChain_a92adff6025f16976da59dfe8568985a2}} 
+\index{ToolFramework::ToolDAQChain@{ToolFramework::ToolDAQChain}!ToolDAQChain@{ToolDAQChain}}
+\index{ToolDAQChain@{ToolDAQChain}!ToolFramework::ToolDAQChain@{ToolFramework::ToolDAQChain}}
+\doxysubsubsection{\texorpdfstring{ToolDAQChain()}{ToolDAQChain()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Tool\+DAQChain\+::\+Tool\+DAQChain (\begin{DoxyParamCaption}\item[{int}]{verbose,  }\item[{int}]{errorlevel = {\ttfamily 0},  }\item[{std\+::string}]{service = {\ttfamily \char`\"{}test\char`\"{}},  }\item[{bool}]{interactive = {\ttfamily true},  }\item[{bool}]{local = {\ttfamily false},  }\item[{std\+::string}]{log\+\_\+local\+\_\+path = {\ttfamily \char`\"{}./log\char`\"{}},  }\item[{bool}]{remote = {\ttfamily false},  }\item[{std\+::string}]{log\+\_\+address = {\ttfamily \char`\"{}239.192.1.1\char`\"{}},  }\item[{int}]{log\+\_\+port = {\ttfamily 5001},  }\item[{bool}]{split\+\_\+output\+\_\+files = {\ttfamily false},  }\item[{int}]{pub\+\_\+sec = {\ttfamily 5},  }\item[{int}]{kick\+\_\+sec = {\ttfamily 60},  }\item[{unsigned int}]{IO\+\_\+\+Threads = {\ttfamily 1},  }\item[{\mbox{\hyperlink{classDataModel}{Data\+Model}} $\ast$}]{in\+\_\+data\+\_\+model = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+Constructor with explicit configuration variables passed as arguments. 
+\begin{DoxyParams}{Parameters}
+{\em verbose} & The verbosity level of the \mbox{\hyperlink{classToolFramework_1_1ToolDAQChain}{Tool\+DAQChain}}. The higher the number the more explicit the print outs. 0 = silent apart from errors. \\
+\hline
+{\em errorlevel} & The behavior that occurs when the \mbox{\hyperlink{classToolFramework_1_1ToolDAQChain}{Tool\+DAQChain}} encounters an error. 0 = do not exit for both handeled and unhandeled errors, 1 = exit on unhandeled errors only, 2 = exit on handeled and unhandeled errors. \\
+\hline
+{\em service} & The name of the \mbox{\hyperlink{classToolFramework_1_1ToolDAQChain}{Tool\+DAQChain}} service to boradcast for service discovery \\
+\hline
+{\em logmode} & Where log printouts should be forwarded too. \char`\"{}\+Interactive\char`\"{} = cout, \char`\"{}\+Remote\char`\"{} = send to a remote logging system, \char`\"{}local\char`\"{} = ouput logs to a file. \\
+\hline
+{\em log\+\_\+local\+\_\+path} & The file path and name of where to store logs if in Local logging mode. \\
+\hline
+{\em log\+\_\+address} & Service name of remote logging system if in Remote logging modemulticast address for remote logging. \\
+\hline
+{\em log\+\_\+port} & The Port number of the remote logging service \\
+\hline
+{\em pub\+\_\+sec} & The number of seconds between publishing multicast serivce beacons \\
+\hline
+{\em kick\+\_\+sec} & The number of seconds to wait before removing a servic from the remote services list if no beacon received. \\
+\hline
+{\em IO\+\_\+\+Threads} & The number of ZMQ IO threads to use ($\sim$1 per Gbps of traffic). \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classToolFramework_1_1ToolDAQChain_a4402df6eea4ccfb10c6849c662bff50c}\label{classToolFramework_1_1ToolDAQChain_a4402df6eea4ccfb10c6849c662bff50c}} 
+\index{ToolFramework::ToolDAQChain@{ToolFramework::ToolDAQChain}!Remote@{Remote}}
+\index{Remote@{Remote}!ToolFramework::ToolDAQChain@{ToolFramework::ToolDAQChain}}
+\doxysubsubsection{\texorpdfstring{Remote()}{Remote()}}
+{\footnotesize\ttfamily void Tool\+DAQChain\+::\+Remote (\begin{DoxyParamCaption}\item[{int}]{portnum,  }\item[{std\+::string}]{SD\+\_\+address = {\ttfamily \char`\"{}239.192.1.1\char`\"{}},  }\item[{int}]{SD\+\_\+port = {\ttfamily 5000} }\end{DoxyParamCaption})}
+
+
+
+Run Tool\+Chain in remote mode, where connands are received fomr network connections. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em portnum} & The port number to listen for remote connections on.\\
+\hline
+{\em SD\+\_\+address} & The service discovery address to publish availability beacons for remote connections on.\\
+\hline
+{\em SD\+\_\+port} & the multicast port to used for service discovery beacons \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Tool\+DAQChain/Tool\+DAQChain.\+h\item 
+src/\+Tool\+DAQChain/Tool\+DAQChain.\+cpp\end{DoxyCompactItemize}

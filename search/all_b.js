@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['log_24',['Log',['../classDataModel.html#aa777da4c632e4659ee5b1447ad513458',1,'DataModel']]],
-  ['logger_25',['Logger',['../classLogger.html',1,'Logger'],['../classLogger.html#abc41bfb031d896170c7675fa96a6b30c',1,'Logger::Logger()']]],
-  ['logport_26',['logport',['../structDAQLogging__thread__args.html#a539dac8cd05198eb772a17a71e6948b4',1,'DAQLogging_thread_args']]],
-  ['logservice_27',['logservice',['../structDAQLogging__thread__args.html#a4f00d94b3dc51d388a548ee964e93e3b',1,'DAQLogging_thread_args']]]
+  ['log_5faddress_25',['log_address',['../structToolFramework_1_1DAQLogging__thread__args.html#ade5f66691c6d92c980215461319a9148',1,'ToolFramework::DAQLogging_thread_args']]],
+  ['log_5fport_26',['log_port',['../structToolFramework_1_1DAQLogging__thread__args.html#ab1f548a3a40c17c06088cae5bbe799d4',1,'ToolFramework::DAQLogging_thread_args']]],
+  ['logger_27',['Logger',['../classLogger.html',1,'Logger'],['../classLogger.html#abc41bfb031d896170c7675fa96a6b30c',1,'Logger::Logger()']]]
 ];

@@ -63,7 +63,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classDataModel-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">DataModel Class Reference</div>  </div>
@@ -71,6 +70,15 @@ $(function() {
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="DataModel_8h_source.html">DataModel.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for DataModel:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classDataModel.png" usemap="#DataModel_map" alt=""/>
+  <map id="DataModel_map" name="DataModel_map">
+<area href="classToolFramework_1_1DAQDataModelBase.html" alt="ToolFramework::DAQDataModelBase" shape="rect" coords="0,56,222,80"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -78,33 +86,31 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#abff03aef2cb531142a35781bb87c3365">DataModel</a> ()</td></tr>
 <tr class="memdesc:abff03aef2cb531142a35781bb87c3365"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple constructor. <br /></td></tr>
 <tr class="separator:abff03aef2cb531142a35781bb87c3365"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classToolFramework_1_1DAQDataModelBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classToolFramework_1_1DAQDataModelBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classToolFramework_1_1DAQDataModelBase.html">ToolFramework::DAQDataModelBase</a></td></tr>
+<tr class="memitem:a5b8043224280cf51959a2197dcf3d509 inherit pub_methods_classToolFramework_1_1DAQDataModelBase"><td class="memItemLeft" align="right" valign="top"><a id="a5b8043224280cf51959a2197dcf3d509"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQDataModelBase.html#a5b8043224280cf51959a2197dcf3d509">DAQDataModelBase</a> ()</td></tr>
+<tr class="memdesc:a5b8043224280cf51959a2197dcf3d509 inherit pub_methods_classToolFramework_1_1DAQDataModelBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple constructor. <br /></td></tr>
+<tr class="separator:a5b8043224280cf51959a2197dcf3d509 inherit pub_methods_classToolFramework_1_1DAQDataModelBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a4baac5fe364a7a23762d70d2c2216486"><td class="memItemLeft" align="right" valign="top"><a id="a4baac5fe364a7a23762d70d2c2216486"></a>
-Store&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#a4baac5fe364a7a23762d70d2c2216486">vars</a></td></tr>
-<tr class="memdesc:a4baac5fe364a7a23762d70d2c2216486"><td class="mdescLeft">&#160;</td><td class="mdescRight">This Store can be used for any variables. It is an inefficent ascii based storage. <br /></td></tr>
-<tr class="separator:a4baac5fe364a7a23762d70d2c2216486"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a878e0d87285f0b3541a3e7116a5f00b6"><td class="memItemLeft" align="right" valign="top"><a id="a878e0d87285f0b3541a3e7116a5f00b6"></a>
-<a class="el" href="classBoostStore.html">BoostStore</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#a878e0d87285f0b3541a3e7116a5f00b6">CStore</a></td></tr>
-<tr class="memdesc:a878e0d87285f0b3541a3e7116a5f00b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a more efficent binary <a class="el" href="classBoostStore.html">BoostStore</a> that can be used to store a dynamic set of inter Tool variables. <br /></td></tr>
-<tr class="separator:a878e0d87285f0b3541a3e7116a5f00b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1ffc080c3b263bf3ee382a531321ad4"><td class="memItemLeft" align="right" valign="top"><a id="ad1ffc080c3b263bf3ee382a531321ad4"></a>
-std::map&lt; std::string, <a class="el" href="classBoostStore.html">BoostStore</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#ad1ffc080c3b263bf3ee382a531321ad4">Stores</a></td></tr>
-<tr class="memdesc:ad1ffc080c3b263bf3ee382a531321ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a map of named BooStore pointers which can be deffined to hold a nammed collection of any tipe of <a class="el" href="classBoostStore.html">BoostStore</a>. It is usefull to store data that needs subdividing into differnt stores. <br /></td></tr>
-<tr class="separator:ad1ffc080c3b263bf3ee382a531321ad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa777da4c632e4659ee5b1447ad513458"><td class="memItemLeft" align="right" valign="top"><a id="aa777da4c632e4659ee5b1447ad513458"></a>
-Logging *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#aa777da4c632e4659ee5b1447ad513458">Log</a></td></tr>
-<tr class="memdesc:aa777da4c632e4659ee5b1447ad513458"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log class pointer for use in Tools, it can be used to send messages which can have multiple error levels and destination end points. <br /></td></tr>
-<tr class="separator:aa777da4c632e4659ee5b1447ad513458"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c6dfd692e50f90e55338970ea7f8d61"><td class="memItemLeft" align="right" valign="top"><a id="a2c6dfd692e50f90e55338970ea7f8d61"></a>
-zmq::context_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#a2c6dfd692e50f90e55338970ea7f8d61">context</a></td></tr>
-<tr class="memdesc:a2c6dfd692e50f90e55338970ea7f8d61"><td class="mdescLeft">&#160;</td><td class="mdescRight">ZMQ contex used for producing zmq sockets for inter thread, process, or computer communication. <br /></td></tr>
-<tr class="separator:a2c6dfd692e50f90e55338970ea7f8d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed9a721150cb4ccc9c1047721d84f393"><td class="memItemLeft" align="right" valign="top"><a id="aed9a721150cb4ccc9c1047721d84f393"></a>
-<a class="el" href="classSlowControlCollection.html">SlowControlCollection</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataModel.html#aed9a721150cb4ccc9c1047721d84f393">SC_vars</a></td></tr>
-<tr class="memdesc:aed9a721150cb4ccc9c1047721d84f393"><td class="mdescLeft">&#160;</td><td class="mdescRight">calss for defining and handelling slow control variables <br /></td></tr>
-<tr class="separator:aed9a721150cb4ccc9c1047721d84f393"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_attribs_classToolFramework_1_1DAQDataModelBase"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classToolFramework_1_1DAQDataModelBase')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classToolFramework_1_1DAQDataModelBase.html">ToolFramework::DAQDataModelBase</a></td></tr>
+<tr class="memitem:a905747ea24333beb1687b1e6a76a1760 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="memItemLeft" align="right" valign="top"><a id="a905747ea24333beb1687b1e6a76a1760"></a>
+<a class="el" href="classToolFramework_1_1BoostStore.html">BoostStore</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQDataModelBase.html#a905747ea24333beb1687b1e6a76a1760">CStore</a></td></tr>
+<tr class="memdesc:a905747ea24333beb1687b1e6a76a1760 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a more efficent binary <a class="el" href="classToolFramework_1_1BoostStore.html">BoostStore</a> that can be used to store a dynamic set of inter Tool variables. <br /></td></tr>
+<tr class="separator:a905747ea24333beb1687b1e6a76a1760 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87baa1107d43d4dd5a213c5529f6e3d5 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="memItemLeft" align="right" valign="top"><a id="a87baa1107d43d4dd5a213c5529f6e3d5"></a>
+std::map&lt; std::string, <a class="el" href="classToolFramework_1_1BoostStore.html">BoostStore</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQDataModelBase.html#a87baa1107d43d4dd5a213c5529f6e3d5">Stores</a></td></tr>
+<tr class="memdesc:a87baa1107d43d4dd5a213c5529f6e3d5 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is a map of named BooStore pointers which can be deffined to hold a nammed collection of any tipe of <a class="el" href="classToolFramework_1_1BoostStore.html">BoostStore</a>. It is usefull to store data that needs subdividing into differnt stores. <br /></td></tr>
+<tr class="separator:a87baa1107d43d4dd5a213c5529f6e3d5 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92ebb08bf6f1ca366ad5e1b6ee3b7613 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="memItemLeft" align="right" valign="top"><a id="a92ebb08bf6f1ca366ad5e1b6ee3b7613"></a>
+zmq::context_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQDataModelBase.html#a92ebb08bf6f1ca366ad5e1b6ee3b7613">context</a></td></tr>
+<tr class="memdesc:a92ebb08bf6f1ca366ad5e1b6ee3b7613 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">ZMQ contex used for producing zmq sockets for inter thread, process, or computer communication. <br /></td></tr>
+<tr class="separator:a92ebb08bf6f1ca366ad5e1b6ee3b7613 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2007238b492bbe27e6744318fffccb9 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="memItemLeft" align="right" valign="top"><a id="ab2007238b492bbe27e6744318fffccb9"></a>
+<a class="el" href="classToolFramework_1_1SlowControlCollection.html">SlowControlCollection</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQDataModelBase.html#ab2007238b492bbe27e6744318fffccb9">SC_vars</a></td></tr>
+<tr class="memdesc:ab2007238b492bbe27e6744318fffccb9 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">calss for defining and handelling slow control variables <br /></td></tr>
+<tr class="separator:ab2007238b492bbe27e6744318fffccb9 inherit pub_attribs_classToolFramework_1_1DAQDataModelBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class Is a transient data model class for your Tools within the ToolChain. If Tools need to comunicate they pass all data objects through the data model. There fore inter tool data objects should be deffined in this class.</p>
@@ -113,6 +119,7 @@ zmq::context_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <p>Contact: <a href="#" onclick="location.href='mai'+'lto:'+'b.r'+'ic'+'har'+'ds'+'@qm'+'ul'+'.ac'+'.u'+'k'; return false;">b.ric<span style="display: none;">.nosp@m.</span>hard<span style="display: none;">.nosp@m.</span>s@qmu<span style="display: none;">.nosp@m.</span>l.ac<span style="display: none;">.nosp@m.</span>.uk</a> </p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>DataModel/<a class="el" href="DataModel_8h_source.html">DataModel.h</a></li>
+<li>src/DAQDataModelBase/<a class="el" href="DAQDataModelBase_8h_source.html">DAQDataModelBase.h</a></li>
 <li>DataModel/DataModel.cpp</li>
 </ul>
 </div><!-- contents -->

@@ -1,0 +1,43 @@
+\hypertarget{structToolFramework_1_1DAQLogging__thread__args}{}\doxysection{Tool\+Framework\+::DAQLogging\+\_\+thread\+\_\+args Struct Reference}
+\label{structToolFramework_1_1DAQLogging__thread__args}\index{ToolFramework::DAQLogging\_thread\_args@{ToolFramework::DAQLogging\_thread\_args}}
+
+
+{\ttfamily \#include $<$DAQLogging.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1DAQLogging__thread__args_abd631d2e19b703020a4c47ab1d2f8cfc}\label{structToolFramework_1_1DAQLogging__thread__args_abd631d2e19b703020a4c47ab1d2f8cfc}} 
+\mbox{\hyperlink{structToolFramework_1_1DAQLogging__thread__args_abd631d2e19b703020a4c47ab1d2f8cfc}{DAQLogging\+\_\+thread\+\_\+args}} (zmq\+::context\+\_\+t $\ast$incontext, boost\+::uuids\+::uuid in\+UUID, std\+::string inlogaddress, int inlogport)
+\begin{DoxyCompactList}\small\item\em Simple constructor to assign thread variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1DAQLogging__thread__args_a41e38ce1700f9ae17d434a31cb6bb82f}\label{structToolFramework_1_1DAQLogging__thread__args_a41e38ce1700f9ae17d434a31cb6bb82f}} 
+zmq\+::context\+\_\+t $\ast$ \mbox{\hyperlink{structToolFramework_1_1DAQLogging__thread__args_a41e38ce1700f9ae17d434a31cb6bb82f}{context}}
+\begin{DoxyCompactList}\small\item\em pointer to ZMQ context for socket creation \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1DAQLogging__thread__args_a756e2e590a0801909386237292c47c40}\label{structToolFramework_1_1DAQLogging__thread__args_a756e2e590a0801909386237292c47c40}} 
+boost\+::uuids\+::uuid \mbox{\hyperlink{structToolFramework_1_1DAQLogging__thread__args_a756e2e590a0801909386237292c47c40}{UUID}}
+\begin{DoxyCompactList}\small\item\em Tool\+Chain UUID for unique labelling of log messages. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1DAQLogging__thread__args_ade5f66691c6d92c980215461319a9148}\label{structToolFramework_1_1DAQLogging__thread__args_ade5f66691c6d92c980215461319a9148}} 
+std\+::string \mbox{\hyperlink{structToolFramework_1_1DAQLogging__thread__args_ade5f66691c6d92c980215461319a9148}{log\+\_\+address}}
+\begin{DoxyCompactList}\small\item\em Remote multicast address. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1DAQLogging__thread__args_ab1f548a3a40c17c06088cae5bbe799d4}\label{structToolFramework_1_1DAQLogging__thread__args_ab1f548a3a40c17c06088cae5bbe799d4}} 
+int \mbox{\hyperlink{structToolFramework_1_1DAQLogging__thread__args_ab1f548a3a40c17c06088cae5bbe799d4}{log\+\_\+port}}
+\begin{DoxyCompactList}\small\item\em Port to connect to to send remote logging information. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This struct holds the initalisation variables to be passed to the logging thread.
+
+\begin{DoxyParagraph}{Author}
+B.\+Richards 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Date}
+2019/05/27 18\+:34\+:00 
+\end{DoxyParagraph}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+DAQLogging/DAQLogging.\+h\end{DoxyCompactItemize}

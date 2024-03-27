@@ -1,0 +1,35 @@
+\hypertarget{classToolFramework_1_1DAQDataModelBase}{}\doxysection{Tool\+Framework\+::DAQData\+Model\+Base Class Reference}
+\label{classToolFramework_1_1DAQDataModelBase}\index{ToolFramework::DAQDataModelBase@{ToolFramework::DAQDataModelBase}}
+Inheritance diagram for Tool\+Framework\+::DAQData\+Model\+Base\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classToolFramework_1_1DAQDataModelBase}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1DAQDataModelBase_a5b8043224280cf51959a2197dcf3d509}\label{classToolFramework_1_1DAQDataModelBase_a5b8043224280cf51959a2197dcf3d509}} 
+\mbox{\hyperlink{classToolFramework_1_1DAQDataModelBase_a5b8043224280cf51959a2197dcf3d509}{DAQData\+Model\+Base}} ()
+\begin{DoxyCompactList}\small\item\em Simple constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1DAQDataModelBase_a905747ea24333beb1687b1e6a76a1760}\label{classToolFramework_1_1DAQDataModelBase_a905747ea24333beb1687b1e6a76a1760}} 
+\mbox{\hyperlink{classToolFramework_1_1BoostStore}{Boost\+Store}} \mbox{\hyperlink{classToolFramework_1_1DAQDataModelBase_a905747ea24333beb1687b1e6a76a1760}{CStore}}
+\begin{DoxyCompactList}\small\item\em This is a more efficent binary \mbox{\hyperlink{classToolFramework_1_1BoostStore}{Boost\+Store}} that can be used to store a dynamic set of inter Tool variables. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classToolFramework_1_1DAQDataModelBase_a87baa1107d43d4dd5a213c5529f6e3d5}\label{classToolFramework_1_1DAQDataModelBase_a87baa1107d43d4dd5a213c5529f6e3d5}} 
+std\+::map$<$ std\+::string, \mbox{\hyperlink{classToolFramework_1_1BoostStore}{Boost\+Store}} $\ast$ $>$ \mbox{\hyperlink{classToolFramework_1_1DAQDataModelBase_a87baa1107d43d4dd5a213c5529f6e3d5}{Stores}}
+\begin{DoxyCompactList}\small\item\em This is a map of named Boo\+Store pointers which can be deffined to hold a nammed collection of any tipe of \mbox{\hyperlink{classToolFramework_1_1BoostStore}{Boost\+Store}}. It is usefull to store data that needs subdividing into differnt stores. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classToolFramework_1_1DAQDataModelBase_a92ebb08bf6f1ca366ad5e1b6ee3b7613}\label{classToolFramework_1_1DAQDataModelBase_a92ebb08bf6f1ca366ad5e1b6ee3b7613}} 
+zmq\+::context\+\_\+t $\ast$ \mbox{\hyperlink{classToolFramework_1_1DAQDataModelBase_a92ebb08bf6f1ca366ad5e1b6ee3b7613}{context}}
+\begin{DoxyCompactList}\small\item\em ZMQ contex used for producing zmq sockets for inter thread, process, or computer communication. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classToolFramework_1_1DAQDataModelBase_ab2007238b492bbe27e6744318fffccb9}\label{classToolFramework_1_1DAQDataModelBase_ab2007238b492bbe27e6744318fffccb9}} 
+\mbox{\hyperlink{classToolFramework_1_1SlowControlCollection}{Slow\+Control\+Collection}} \mbox{\hyperlink{classToolFramework_1_1DAQDataModelBase_ab2007238b492bbe27e6744318fffccb9}{SC\+\_\+vars}}
+\begin{DoxyCompactList}\small\item\em calss for defining and handelling slow control variables \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\+DAQData\+Model\+Base/DAQData\+Model\+Base.\+h\item 
+src/\+DAQData\+Model\+Base/DAQData\+Model\+Base.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,78 @@
+\hypertarget{structToolFramework_1_1DAQThread__args}{}\doxysection{Tool\+Framework\+::DAQThread\+\_\+args Struct Reference}
+\label{structToolFramework_1_1DAQThread__args}\index{ToolFramework::DAQThread\_args@{ToolFramework::DAQThread\_args}}
+
+
+{\ttfamily \#include $<$DAQUtilities.\+h$>$}
+
+Inheritance diagram for Tool\+Framework\+::DAQThread\+\_\+args\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{structToolFramework_1_1DAQThread__args}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structToolFramework_1_1DAQThread__args_add02a0edf083b2698514c31841bf1558}{DAQThread\+\_\+args}} ()
+\item 
+\mbox{\hyperlink{structToolFramework_1_1DAQThread__args_afa6a51c92a8f2e2d7c663ec09eca7718}{DAQThread\+\_\+args}} (zmq\+::context\+\_\+t $\ast$contextin, std\+::string threadname, void($\ast$funcin)(std\+::string))
+\item 
+\mbox{\hyperlink{structToolFramework_1_1DAQThread__args_a502e8dfd4ff023a5e114ac1ab33e0a85}{DAQThread\+\_\+args}} (zmq\+::context\+\_\+t $\ast$contextin, std\+::string threadname, void($\ast$funcin)(Thread\+\_\+args $\ast$))
+\item 
+virtual \mbox{\hyperlink{structToolFramework_1_1DAQThread__args_ab3c6cde242b461d38c65f8cbf61e359d}{$\sim$\+DAQThread\+\_\+args}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1DAQThread__args_a7732f2880ff226959039d949b09c267e}\label{structToolFramework_1_1DAQThread__args_a7732f2880ff226959039d949b09c267e}} 
+zmq\+::context\+\_\+t $\ast$ \mbox{\hyperlink{structToolFramework_1_1DAQThread__args_a7732f2880ff226959039d949b09c267e}{context}}
+\begin{DoxyCompactList}\small\item\em ZMQ context used for ZMQ socket creation. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1DAQThread__args_ae7292f6e1b2c536688263b10d10a32da}\label{structToolFramework_1_1DAQThread__args_ae7292f6e1b2c536688263b10d10a32da}} 
+void($\ast$ \mbox{\hyperlink{structToolFramework_1_1DAQThread__args_ae7292f6e1b2c536688263b10d10a32da}{func\+\_\+with\+\_\+string}} )(std\+::string)
+\begin{DoxyCompactList}\small\item\em function pointer to string thread \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1DAQThread__args_a6cfcd74cc8c903cb1af54bfa7691fb35}\label{structToolFramework_1_1DAQThread__args_a6cfcd74cc8c903cb1af54bfa7691fb35}} 
+zmq\+::socket\+\_\+t $\ast$ \mbox{\hyperlink{structToolFramework_1_1DAQThread__args_a6cfcd74cc8c903cb1af54bfa7691fb35}{sock}}
+\begin{DoxyCompactList}\small\item\em ZMQ socket pointer is assigned in string thread,but can be sued otherwise. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This is both an base class for any thread argument struct used in the tool threaded Tool templates. Effectivly this acts as a place to put variable that are specfic to that thread and can be used as a place to transfer variables from the main thread to sub threads.
+
+\begin{DoxyParagraph}{Author}
+B.\+Richards 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Date}
+2019/05/26 18\+:34\+:00 
+\end{DoxyParagraph}
+Contact\+: \href{mailto:b.richards@qmul.ac.uk}{\texttt{ b.\+richards@qmul.\+ac.\+uk}} 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structToolFramework_1_1DAQThread__args_add02a0edf083b2698514c31841bf1558}\label{structToolFramework_1_1DAQThread__args_add02a0edf083b2698514c31841bf1558}} 
+\index{ToolFramework::DAQThread\_args@{ToolFramework::DAQThread\_args}!DAQThread\_args@{DAQThread\_args}}
+\index{DAQThread\_args@{DAQThread\_args}!ToolFramework::DAQThread\_args@{ToolFramework::DAQThread\_args}}
+\doxysubsubsection{\texorpdfstring{DAQThread\_args()}{DAQThread\_args()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Tool\+Framework\+::\+DAQThread\+\_\+args\+::\+DAQThread\+\_\+args (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+$<$ Simple constructor\mbox{\Hypertarget{structToolFramework_1_1DAQThread__args_afa6a51c92a8f2e2d7c663ec09eca7718}\label{structToolFramework_1_1DAQThread__args_afa6a51c92a8f2e2d7c663ec09eca7718}} 
+\index{ToolFramework::DAQThread\_args@{ToolFramework::DAQThread\_args}!DAQThread\_args@{DAQThread\_args}}
+\index{DAQThread\_args@{DAQThread\_args}!ToolFramework::DAQThread\_args@{ToolFramework::DAQThread\_args}}
+\doxysubsubsection{\texorpdfstring{DAQThread\_args()}{DAQThread\_args()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Tool\+Framework\+::\+DAQThread\+\_\+args\+::\+DAQThread\+\_\+args (\begin{DoxyParamCaption}\item[{zmq\+::context\+\_\+t $\ast$}]{contextin,  }\item[{std\+::string}]{threadname,  }\item[{void($\ast$)(std\+::string)}]{funcin }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+$<$ Construtor for thread with string\mbox{\Hypertarget{structToolFramework_1_1DAQThread__args_a502e8dfd4ff023a5e114ac1ab33e0a85}\label{structToolFramework_1_1DAQThread__args_a502e8dfd4ff023a5e114ac1ab33e0a85}} 
+\index{ToolFramework::DAQThread\_args@{ToolFramework::DAQThread\_args}!DAQThread\_args@{DAQThread\_args}}
+\index{DAQThread\_args@{DAQThread\_args}!ToolFramework::DAQThread\_args@{ToolFramework::DAQThread\_args}}
+\doxysubsubsection{\texorpdfstring{DAQThread\_args()}{DAQThread\_args()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily Tool\+Framework\+::\+DAQThread\+\_\+args\+::\+DAQThread\+\_\+args (\begin{DoxyParamCaption}\item[{zmq\+::context\+\_\+t $\ast$}]{contextin,  }\item[{std\+::string}]{threadname,  }\item[{void($\ast$)(Thread\+\_\+args $\ast$)}]{funcin }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+$<$ Constrcutor for thread with args\mbox{\Hypertarget{structToolFramework_1_1DAQThread__args_ab3c6cde242b461d38c65f8cbf61e359d}\label{structToolFramework_1_1DAQThread__args_ab3c6cde242b461d38c65f8cbf61e359d}} 
+\index{ToolFramework::DAQThread\_args@{ToolFramework::DAQThread\_args}!````~DAQThread\_args@{$\sim$DAQThread\_args}}
+\index{````~DAQThread\_args@{$\sim$DAQThread\_args}!ToolFramework::DAQThread\_args@{ToolFramework::DAQThread\_args}}
+\doxysubsubsection{\texorpdfstring{$\sim$DAQThread\_args()}{~DAQThread\_args()}}
+{\footnotesize\ttfamily virtual Tool\+Framework\+::\+DAQThread\+\_\+args\+::$\sim$\+DAQThread\+\_\+args (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+$<$ virtual constructor
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+DAQData\+Model\+Base/DAQUtilities.\+h\end{DoxyCompactItemize}

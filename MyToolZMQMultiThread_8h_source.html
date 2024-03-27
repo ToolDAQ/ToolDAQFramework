@@ -76,56 +76,57 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;Tool.h&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="structMyToolZMQMultiThread__args.html">   21</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structMyToolZMQMultiThread__args.html">MyToolZMQMultiThread_args</a>:<a class="code" href="structDAQThread__args.html">DAQThread_args</a>{</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <a class="code" href="structMyToolZMQMultiThread__args.html">MyToolZMQMultiThread_args</a>();</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  ~<a class="code" href="structMyToolZMQMultiThread__args.html">MyToolZMQMultiThread_args</a>();</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  zmq::socket_t* ThreadReceive;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  zmq::socket_t* ThreadSend;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  zmq::pollitem_t initems[1];</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  zmq::pollitem_t outitems[1];</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;};</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="classMyToolZMQMultiThread.html">   43</a></span>&#160;<span class="keyword">class </span><a class="code" href="classMyToolZMQMultiThread.html">MyToolZMQMultiThread</a>: <span class="keyword">public</span> Tool {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;DataModel.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="structMyToolZMQMultiThread__args.html">   22</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structMyToolZMQMultiThread__args.html">MyToolZMQMultiThread_args</a>:<a class="code" href="structToolFramework_1_1DAQThread__args.html">DAQThread_args</a>{</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <a class="code" href="structMyToolZMQMultiThread__args.html">MyToolZMQMultiThread_args</a>();</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  ~<a class="code" href="structMyToolZMQMultiThread__args.html">MyToolZMQMultiThread_args</a>();</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  zmq::socket_t* ThreadReceive;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  zmq::socket_t* ThreadSend;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  zmq::pollitem_t initems[1];</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  zmq::pollitem_t outitems[1];</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;};</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classMyToolZMQMultiThread.html">   44</a></span>&#160;<span class="keyword">class </span><a class="code" href="classMyToolZMQMultiThread.html">MyToolZMQMultiThread</a>: <span class="keyword">public</span> Tool {</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <a class="code" href="classMyToolZMQMultiThread.html#a4036001006932887c7ed36eda1d1af50">MyToolZMQMultiThread</a>(); </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classMyToolZMQMultiThread.html#a99c3814d25f3868c5287f314bb63281d">Initialise</a>(std::string configfile,<a class="code" href="classDataModel.html">DataModel</a> &amp;data); </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classMyToolZMQMultiThread.html#a15dea77298aa4c4b0e8a5cbbd244df28">Execute</a>(); </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classMyToolZMQMultiThread.html#a4a7d1462aa1f6ea790be76161267547d">Finalise</a>(); </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <a class="code" href="classMyToolZMQMultiThread.html#a4036001006932887c7ed36eda1d1af50">MyToolZMQMultiThread</a>(); </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classMyToolZMQMultiThread.html#a99c3814d25f3868c5287f314bb63281d">Initialise</a>(std::string configfile,<a class="code" href="classDataModel.html">DataModel</a> &amp;data); </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classMyToolZMQMultiThread.html#a15dea77298aa4c4b0e8a5cbbd244df28">Execute</a>(); </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classMyToolZMQMultiThread.html#a4a7d1462aa1f6ea790be76161267547d">Finalise</a>(); </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> Thread(Thread_args* arg);  </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <a class="code" href="classDAQUtilities.html">DAQUtilities</a>* m_util; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  std::vector&lt;MyToolZMQMultiThread_args*&gt; args; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  zmq::pollitem_t items[2]; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  zmq::socket_t* ManagerSend; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  zmq::socket_t* ManagerReceive; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keywordtype">int</span> m_freethreads; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;};</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> Thread(Thread_args* arg);  </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <a class="code" href="classToolFramework_1_1DAQUtilities.html">DAQUtilities</a>* m_util; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  std::vector&lt;MyToolZMQMultiThread_args*&gt; args; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  zmq::pollitem_t items[2]; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  zmq::socket_t* ManagerSend; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  zmq::socket_t* ManagerReceive; </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keywordtype">int</span> m_freethreads; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;};</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassDAQUtilities_html"><div class="ttname"><a href="classDAQUtilities.html">DAQUtilities</a></div><div class="ttdef"><b>Definition:</b> DAQUtilities.h:86</div></div>
-<div class="ttc" id="aclassDataModel_html"><div class="ttname"><a href="classDataModel.html">DataModel</a></div><div class="ttdef"><b>Definition:</b> DataModel.h:30</div></div>
-<div class="ttc" id="aclassMyToolZMQMultiThread_html"><div class="ttname"><a href="classMyToolZMQMultiThread.html">MyToolZMQMultiThread</a></div><div class="ttdef"><b>Definition:</b> MyToolZMQMultiThread.h:43</div></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassDataModel_html"><div class="ttname"><a href="classDataModel.html">DataModel</a></div></div>
+<div class="ttc" id="aclassMyToolZMQMultiThread_html"><div class="ttname"><a href="classMyToolZMQMultiThread.html">MyToolZMQMultiThread</a></div><div class="ttdef"><b>Definition:</b> MyToolZMQMultiThread.h:44</div></div>
 <div class="ttc" id="aclassMyToolZMQMultiThread_html_a15dea77298aa4c4b0e8a5cbbd244df28"><div class="ttname"><a href="classMyToolZMQMultiThread.html#a15dea77298aa4c4b0e8a5cbbd244df28">MyToolZMQMultiThread::Execute</a></div><div class="ttdeci">bool Execute()</div><div class="ttdoc">Executre function used to perform Tool perpose.</div><div class="ttdef"><b>Definition:</b> MyToolZMQMultiThread.cpp:71</div></div>
 <div class="ttc" id="aclassMyToolZMQMultiThread_html_a4036001006932887c7ed36eda1d1af50"><div class="ttname"><a href="classMyToolZMQMultiThread.html#a4036001006932887c7ed36eda1d1af50">MyToolZMQMultiThread::MyToolZMQMultiThread</a></div><div class="ttdeci">MyToolZMQMultiThread()</div><div class="ttdoc">Simple constructor.</div><div class="ttdef"><b>Definition:</b> MyToolZMQMultiThread.cpp:8</div></div>
 <div class="ttc" id="aclassMyToolZMQMultiThread_html_a4a7d1462aa1f6ea790be76161267547d"><div class="ttname"><a href="classMyToolZMQMultiThread.html#a4a7d1462aa1f6ea790be76161267547d">MyToolZMQMultiThread::Finalise</a></div><div class="ttdeci">bool Finalise()</div><div class="ttdoc">Finalise funciton used to clean up resorces.</div><div class="ttdef"><b>Definition:</b> MyToolZMQMultiThread.cpp:109</div></div>
 <div class="ttc" id="aclassMyToolZMQMultiThread_html_a99c3814d25f3868c5287f314bb63281d"><div class="ttname"><a href="classMyToolZMQMultiThread.html#a99c3814d25f3868c5287f314bb63281d">MyToolZMQMultiThread::Initialise</a></div><div class="ttdeci">bool Initialise(std::string configfile, DataModel &amp;data)</div><div class="ttdoc">Initialise Function for setting up Tool resorces.</div><div class="ttdef"><b>Definition:</b> MyToolZMQMultiThread.cpp:11</div></div>
-<div class="ttc" id="astructDAQThread__args_html"><div class="ttname"><a href="structDAQThread__args.html">DAQThread_args</a></div><div class="ttdef"><b>Definition:</b> DAQUtilities.h:28</div></div>
-<div class="ttc" id="astructMyToolZMQMultiThread__args_html"><div class="ttname"><a href="structMyToolZMQMultiThread__args.html">MyToolZMQMultiThread_args</a></div><div class="ttdef"><b>Definition:</b> MyToolZMQMultiThread.h:21</div></div>
+<div class="ttc" id="aclassToolFramework_1_1DAQUtilities_html"><div class="ttname"><a href="classToolFramework_1_1DAQUtilities.html">ToolFramework::DAQUtilities</a></div><div class="ttdef"><b>Definition:</b> DAQUtilities.h:88</div></div>
+<div class="ttc" id="astructMyToolZMQMultiThread__args_html"><div class="ttname"><a href="structMyToolZMQMultiThread__args.html">MyToolZMQMultiThread_args</a></div><div class="ttdef"><b>Definition:</b> MyToolZMQMultiThread.h:22</div></div>
+<div class="ttc" id="astructToolFramework_1_1DAQThread__args_html"><div class="ttname"><a href="structToolFramework_1_1DAQThread__args.html">ToolFramework::DAQThread_args</a></div><div class="ttdef"><b>Definition:</b> DAQUtilities.h:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

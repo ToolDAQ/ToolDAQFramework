@@ -79,39 +79,42 @@ $(function() {
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;boost/serialization/vector.hpp&gt;</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;boost/serialization/map.hpp&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="classSerialisableObject.html">   21</a></span>&#160;<span class="keyword">class </span><a class="code" href="classSerialisableObject.html">SerialisableObject</a>{</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keyword">friend</span> <span class="keyword">class </span>boost::serialization::access;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  </div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classSerialisableObject.html#a9055c98969917d4c652eefdc924b6b75">   27</a></span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classSerialisableObject.html#a9055c98969917d4c652eefdc924b6b75">Print</a>()=0; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="comment">// virtual ~SerialisableObject(){}; ///&lt; Destructor</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classSerialisableObject.html#a4635f9e80623df463bcca2c88b10fc67">   29</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classSerialisableObject.html#a4635f9e80623df463bcca2c88b10fc67">serialise</a>; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="comment">//protected:</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="comment">//std::string type; ///&lt; String to store type of Tool</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="comment">//std::string version; ///&lt; String to store version of Tool</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="comment">/*    template&lt;class Archive&gt; void serialize(Archive &amp; ar, const unsigned int version){  </span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">    if(serialise){</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">      ar &amp; type;</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">      ar &amp; version;</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">    }</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">  }</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">  */</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;};</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassSerialisableObject_html"><div class="ttname"><a href="classSerialisableObject.html">SerialisableObject</a></div><div class="ttdef"><b>Definition:</b> SerialisableObject.h:21</div></div>
-<div class="ttc" id="aclassSerialisableObject_html_a4635f9e80623df463bcca2c88b10fc67"><div class="ttname"><a href="classSerialisableObject.html#a4635f9e80623df463bcca2c88b10fc67">SerialisableObject::serialise</a></div><div class="ttdeci">bool serialise</div><div class="ttdoc">Denotes if the calss should be serialised or not when added to a BoostStore.</div><div class="ttdef"><b>Definition:</b> SerialisableObject.h:29</div></div>
-<div class="ttc" id="aclassSerialisableObject_html_a9055c98969917d4c652eefdc924b6b75"><div class="ttname"><a href="classSerialisableObject.html#a9055c98969917d4c652eefdc924b6b75">SerialisableObject::Print</a></div><div class="ttdeci">virtual bool Print()=0</div><div class="ttdoc">Simple virtual Pritn function to ensure inhereted classes have one.</div></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span>ToolFramework{</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  </div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classToolFramework_1_1SerialisableObject.html">   23</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classToolFramework_1_1SerialisableObject.html">SerialisableObject</a>{</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span>boost::serialization::access;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    </div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classToolFramework_1_1SerialisableObject.html#a1737da811092053db6f7136f6e161138">   29</a></span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classToolFramework_1_1SerialisableObject.html#a1737da811092053db6f7136f6e161138">Print</a>()=0; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="comment">// virtual ~SerialisableObject(){}; ///&lt; Destructor</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classToolFramework_1_1SerialisableObject.html#a7505a6e0931ecd5c13e7176e4962f8a3">   31</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classToolFramework_1_1SerialisableObject.html#a7505a6e0931ecd5c13e7176e4962f8a3">serialise</a>; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="comment">//protected:</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="comment">//std::string type; ///&lt; String to store type of Tool</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">//std::string version; ///&lt; String to store version of Tool</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="comment">/*    template&lt;class Archive&gt; void serialize(Archive &amp; ar, const unsigned int version){  </span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">      if(serialise){</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">      ar &amp; type;</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">      ar &amp; version;</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">      }</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">      }</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">    */</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  };</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;}</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassToolFramework_1_1SerialisableObject_html"><div class="ttname"><a href="classToolFramework_1_1SerialisableObject.html">ToolFramework::SerialisableObject</a></div><div class="ttdef"><b>Definition:</b> SerialisableObject.h:23</div></div>
+<div class="ttc" id="aclassToolFramework_1_1SerialisableObject_html_a1737da811092053db6f7136f6e161138"><div class="ttname"><a href="classToolFramework_1_1SerialisableObject.html#a1737da811092053db6f7136f6e161138">ToolFramework::SerialisableObject::Print</a></div><div class="ttdeci">virtual bool Print()=0</div><div class="ttdoc">Simple virtual Pritn function to ensure inhereted classes have one.</div></div>
+<div class="ttc" id="aclassToolFramework_1_1SerialisableObject_html_a7505a6e0931ecd5c13e7176e4962f8a3"><div class="ttname"><a href="classToolFramework_1_1SerialisableObject.html#a7505a6e0931ecd5c13e7176e4962f8a3">ToolFramework::SerialisableObject::serialise</a></div><div class="ttdeci">bool serialise</div><div class="ttdoc">Denotes if the calss should be serialised or not when added to a BoostStore.</div><div class="ttdef"><b>Definition:</b> SerialisableObject.h:31</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

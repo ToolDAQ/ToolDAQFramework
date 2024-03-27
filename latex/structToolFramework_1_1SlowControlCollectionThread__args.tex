@@ -1,0 +1,38 @@
+\hypertarget{structToolFramework_1_1SlowControlCollectionThread__args}{}\doxysection{Tool\+Framework\+::Slow\+Control\+Collection\+Thread\+\_\+args Struct Reference}
+\label{structToolFramework_1_1SlowControlCollectionThread__args}\index{ToolFramework::SlowControlCollectionThread\_args@{ToolFramework::SlowControlCollectionThread\_args}}
+Inheritance diagram for Tool\+Framework\+::Slow\+Control\+Collection\+Thread\+\_\+args\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{structToolFramework_1_1SlowControlCollectionThread__args}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SlowControlCollectionThread__args_a1273e55fb9a692f6cc5c1abcc9d30366}\label{structToolFramework_1_1SlowControlCollectionThread__args_a1273e55fb9a692f6cc5c1abcc9d30366}} 
+zmq\+::socket\+\_\+t $\ast$ {\bfseries sock}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SlowControlCollectionThread__args_a1364a8123f985247e39c9d74953eb948}\label{structToolFramework_1_1SlowControlCollectionThread__args_a1364a8123f985247e39c9d74953eb948}} 
+zmq\+::socket\+\_\+t $\ast$ {\bfseries sub}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SlowControlCollectionThread__args_ac9efb91699bea49ce7a7be4001dcb64f}\label{structToolFramework_1_1SlowControlCollectionThread__args_ac9efb91699bea49ce7a7be4001dcb64f}} 
+zmq\+::pollitem\+\_\+t {\bfseries items} \mbox{[}2\mbox{]}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SlowControlCollectionThread__args_a75dd213efa0fea6e628796ba4387754f}\label{structToolFramework_1_1SlowControlCollectionThread__args_a75dd213efa0fea6e628796ba4387754f}} 
+int {\bfseries poll\+\_\+length}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SlowControlCollectionThread__args_a8bae14e0e89d10e5b1ee17aa20766241}\label{structToolFramework_1_1SlowControlCollectionThread__args_a8bae14e0e89d10e5b1ee17aa20766241}} 
+\mbox{\hyperlink{classToolFramework_1_1SlowControlCollection}{Slow\+Control\+Collection}} $\ast$ {\bfseries SCC}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SlowControlCollectionThread__args_aee98bc22df9e658d3f70c5cb613a067d}\label{structToolFramework_1_1SlowControlCollectionThread__args_aee98bc22df9e658d3f70c5cb613a067d}} 
+std\+::map$<$ std\+::string, std\+::function$<$ void(const char $\ast$, const char $\ast$)$>$ $>$ $\ast$ {\bfseries alert\+\_\+functions}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SlowControlCollectionThread__args_adebc730696498576bd0ef34171a323eb}\label{structToolFramework_1_1SlowControlCollectionThread__args_adebc730696498576bd0ef34171a323eb}} 
+std\+::mutex $\ast$ {\bfseries alert\+\_\+functions\+\_\+mutex}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\+DAQData\+Model\+Base/Slow\+Control\+Collection.\+h\item 
+src/\+DAQData\+Model\+Base/Slow\+Control\+Collection.\+cpp\end{DoxyCompactItemize}

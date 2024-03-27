@@ -80,17 +80,17 @@ $(function() {
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;pthread.h&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;time.h&gt;</span> </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;sys/stat.h&gt;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;boost/uuid/uuid.hpp&gt;</span>            <span class="comment">// uuid class</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;boost/uuid/uuid_generators.hpp&gt;</span> <span class="comment">// generators</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;boost/uuid/uuid_io.hpp&gt;</span>         <span class="comment">// streaming operators etc.</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;boost/date_time/posix_time/posix_time.hpp&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;boost/progress.hpp&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">//#include &lt;boost/progress.hpp&gt;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;Tool.h&quot;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;ToolChain.h&quot;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;DataModel.h&quot;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;DAQDataModelBase.h&quot;</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;DAQLogging.h&quot;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;Logging.h&quot;</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;zmq.hpp&quot;</span></div>
@@ -98,62 +98,75 @@ $(function() {
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &quot;Store.h&quot;</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &quot;ServiceDiscovery.h&quot;</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structToolDAQChainargs.html">   39</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structToolDAQChainargs.html">ToolDAQChainargs</a>{</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <a class="code" href="structToolDAQChainargs.html">ToolDAQChainargs</a>(){};</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structToolDAQChainargs.html#add600f877a3368b09492e39c7e4efa50">   43</a></span>&#160;  zmq::context_t* <a class="code" href="structToolDAQChainargs.html#add600f877a3368b09492e39c7e4efa50">context</a>; </div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="structToolDAQChainargs.html#a7a1a530427154eceee7def04bab4c423">   44</a></span>&#160;  <span class="keywordtype">bool</span> *<a class="code" href="structToolDAQChainargs.html#a7a1a530427154eceee7def04bab4c423">msgflag</a>; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;};</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classToolDAQChain.html">   57</a></span>&#160;<span class="keyword">class </span><a class="code" href="classToolDAQChain.html">ToolDAQChain</a> : <span class="keyword">public</span> ToolChain {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <a class="code" href="classToolDAQChain.html#af0198ad52bf3e4a8d67bd206ab11248d">ToolDAQChain</a>(std::string configfile, <span class="keywordtype">int</span> argc=0, <span class="keywordtype">char</span>* argv[]=0); </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <a class="code" href="classToolDAQChain.html#af0198ad52bf3e4a8d67bd206ab11248d">ToolDAQChain</a>(<span class="keywordtype">int</span> verbose=1, <span class="keywordtype">int</span> errorlevel=0, std::string service=<span class="stringliteral">&quot;test&quot;</span>,  <span class="keywordtype">bool</span> interactive=<span class="keyword">true</span>, <span class="keywordtype">bool</span> local=<span class="keyword">false</span>, std::string log_local_path=<span class="stringliteral">&quot;./log&quot;</span>, <span class="keywordtype">bool</span> remote=<span class="keyword">false</span>,  std::string log_service=<span class="stringliteral">&quot;&quot;</span>, <span class="keywordtype">int</span> log_port=0, <span class="keywordtype">bool</span> split_output_files=<span class="keyword">false</span>, <span class="keywordtype">int</span> pub_sec=5, <span class="keywordtype">int</span> kick_sec=60, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> IO_Threads=1); </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="comment">//verbosity: true= print out status messages , false= print only error messages;</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="comment">//errorlevels: 0= do not exit; error 1= exit if unhandeled error ; exit 2= exit on handeled and unhandeled errors; </span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  ~<a class="code" href="classToolDAQChain.html">ToolDAQChain</a>(); </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classToolDAQChain.html#a4402df6eea4ccfb10c6849c662bff50c">Remote</a>(<span class="keywordtype">int</span> portnum, std::string SD_address=<span class="stringliteral">&quot;239.192.1.1&quot;</span>, <span class="keywordtype">int</span> SD_port=5000); </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordtype">void</span> Init(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> IO_Threads);</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keywordtype">void</span> Init(){};</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keywordtype">void</span> Remote();</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <a class="code" href="classServiceDiscovery.html">ServiceDiscovery</a> *SD;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="comment">//conf variables</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  boost::uuids::uuid m_UUID;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keywordtype">bool</span> m_log_remote; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  std::string m_log_service;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordtype">int</span> m_log_port;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  std::string m_service;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keywordtype">bool</span> m_remote;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="comment">//socket coms and threading variables</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  pthread_t DAQthread[2];</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  zmq::context_t *context;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keywordtype">int</span> m_remoteport;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keywordtype">int</span> m_multicastport;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  std::string m_multicastaddress;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keywordtype">long</span> msg_id;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keywordtype">int</span> m_pub_sec;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="keywordtype">int</span> m_kick_sec;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;};</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassServiceDiscovery_html"><div class="ttname"><a href="classServiceDiscovery.html">ServiceDiscovery</a></div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:67</div></div>
-<div class="ttc" id="aclassToolDAQChain_html"><div class="ttname"><a href="classToolDAQChain.html">ToolDAQChain</a></div><div class="ttdef"><b>Definition:</b> ToolDAQChain.h:57</div></div>
-<div class="ttc" id="aclassToolDAQChain_html_a4402df6eea4ccfb10c6849c662bff50c"><div class="ttname"><a href="classToolDAQChain.html#a4402df6eea4ccfb10c6849c662bff50c">ToolDAQChain::Remote</a></div><div class="ttdeci">void Remote(int portnum, std::string SD_address=&quot;239.192.1.1&quot;, int SD_port=5000)</div><div class="ttdoc">Run ToolChain in remote mode, where connands are received fomr network connections.</div><div class="ttdef"><b>Definition:</b> ToolDAQChain.cpp:139</div></div>
-<div class="ttc" id="aclassToolDAQChain_html_af0198ad52bf3e4a8d67bd206ab11248d"><div class="ttname"><a href="classToolDAQChain.html#af0198ad52bf3e4a8d67bd206ab11248d">ToolDAQChain::ToolDAQChain</a></div><div class="ttdeci">ToolDAQChain(std::string configfile, int argc=0, char *argv[]=0)</div><div class="ttdoc">Constructor that obtains all of the configuration varaibles from an input file.</div><div class="ttdef"><b>Definition:</b> ToolDAQChain.cpp:3</div></div>
-<div class="ttc" id="astructToolDAQChainargs_html"><div class="ttname"><a href="structToolDAQChainargs.html">ToolDAQChainargs</a></div><div class="ttdef"><b>Definition:</b> ToolDAQChain.h:39</div></div>
-<div class="ttc" id="astructToolDAQChainargs_html_a7a1a530427154eceee7def04bab4c423"><div class="ttname"><a href="structToolDAQChainargs.html#a7a1a530427154eceee7def04bab4c423">ToolDAQChainargs::msgflag</a></div><div class="ttdeci">bool * msgflag</div><div class="ttdoc">Message flag used to indiacte if a new interactive command has been submitted to the interactive thre...</div><div class="ttdef"><b>Definition:</b> ToolDAQChain.h:44</div></div>
-<div class="ttc" id="astructToolDAQChainargs_html_add600f877a3368b09492e39c7e4efa50"><div class="ttname"><a href="structToolDAQChainargs.html#add600f877a3368b09492e39c7e4efa50">ToolDAQChainargs::context</a></div><div class="ttdeci">zmq::context_t * context</div><div class="ttdoc">ZMQ context used for creating sockets.</div><div class="ttdef"><b>Definition:</b> ToolDAQChain.h:41</div></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">class </span><a class="code" href="classDataModel.html">DataModel</a>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">namespace </span>ToolFramework{</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  </div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structToolFramework_1_1ToolDAQChainargs.html">   43</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structToolFramework_1_1ToolDAQChainargs.html">ToolDAQChainargs</a>{</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="structToolFramework_1_1ToolDAQChainargs.html">ToolDAQChainargs</a>(){};</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    </div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="structToolFramework_1_1ToolDAQChainargs.html#ad9be6a2065a37068140b03863793f1e6">   47</a></span>&#160;    zmq::context_t* <a class="code" href="structToolFramework_1_1ToolDAQChainargs.html#ad9be6a2065a37068140b03863793f1e6">context</a>; </div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="structToolFramework_1_1ToolDAQChainargs.html#a4fd1d7135f8eab693d0faa906a9f4552">   48</a></span>&#160;    <span class="keywordtype">bool</span> *<a class="code" href="structToolFramework_1_1ToolDAQChainargs.html#a4fd1d7135f8eab693d0faa906a9f4552">msgflag</a>; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  };</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  </div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classToolFramework_1_1ToolDAQChain.html">   61</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classToolFramework_1_1ToolDAQChain.html">ToolDAQChain</a> : <span class="keyword">public</span> ToolChain {</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="classToolFramework_1_1ToolDAQChain.html#ab69ccc4c933ebbb8125589f0c2386f5c">ToolDAQChain</a>(std::string configfile, <a class="code" href="classDataModel.html">DataModel</a>* data_model, <span class="keywordtype">int</span> argc=0, <span class="keywordtype">char</span>* argv[]=0); </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <a class="code" href="classToolFramework_1_1ToolDAQChain.html#ab69ccc4c933ebbb8125589f0c2386f5c">ToolDAQChain</a>(<span class="keywordtype">int</span> verbose, <span class="keywordtype">int</span> errorlevel=0, std::string service=<span class="stringliteral">&quot;test&quot;</span>,  <span class="keywordtype">bool</span> interactive=<span class="keyword">true</span>, <span class="keywordtype">bool</span> local=<span class="keyword">false</span>, std::string log_local_path=<span class="stringliteral">&quot;./log&quot;</span>, <span class="keywordtype">bool</span> remote=<span class="keyword">false</span>,  std::string log_address=<span class="stringliteral">&quot;239.192.1.1&quot;</span>, <span class="keywordtype">int</span> log_port=5001, <span class="keywordtype">bool</span> split_output_files=<span class="keyword">false</span>, <span class="keywordtype">int</span> pub_sec=5, <span class="keywordtype">int</span> kick_sec=60, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> IO_Threads=1, <a class="code" href="classDataModel.html">DataModel</a>* in_data_model=0); </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="comment">//verbosity: true= print out status messages , false= print only error messages;</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="comment">//errorlevels: 0= do not exit; error 1= exit if unhandeled error ; exit 2= exit on handeled and unhandeled errors; </span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    ~<a class="code" href="classToolFramework_1_1ToolDAQChain.html">ToolDAQChain</a>(); </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classToolFramework_1_1ToolDAQChain.html#a4402df6eea4ccfb10c6849c662bff50c">Remote</a>(<span class="keywordtype">int</span> portnum, std::string SD_address=<span class="stringliteral">&quot;239.192.1.1&quot;</span>, <span class="keywordtype">int</span> SD_port=5000); </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> Init(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> IO_Threads);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">void</span> Init(){};</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">void</span> Remote();</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <a class="code" href="classToolFramework_1_1ServiceDiscovery.html">ServiceDiscovery</a> *SD;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <a class="code" href="classToolFramework_1_1DAQDataModelBase.html">DAQDataModelBase</a>* m_DAQdata;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="comment">//conf variables</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    boost::uuids::uuid m_UUID;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    std::string m_UUID_path;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">bool</span> m_log_remote; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    std::string m_log_address;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordtype">int</span> m_log_port;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    std::string m_service;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordtype">bool</span> m_remote;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="comment">//socket coms and threading variables</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    pthread_t DAQthread[2];</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    zmq::context_t *context;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">int</span> m_remoteport;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordtype">int</span> m_multicastport;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    std::string m_multicastaddress;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordtype">long</span> msg_id;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordtype">int</span> m_pub_sec;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordtype">int</span> m_kick_sec;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  };</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;}</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassDataModel_html"><div class="ttname"><a href="classDataModel.html">DataModel</a></div></div>
+<div class="ttc" id="aclassToolFramework_1_1DAQDataModelBase_html"><div class="ttname"><a href="classToolFramework_1_1DAQDataModelBase.html">ToolFramework::DAQDataModelBase</a></div><div class="ttdef"><b>Definition:</b> DAQDataModelBase.h:33</div></div>
+<div class="ttc" id="aclassToolFramework_1_1ServiceDiscovery_html"><div class="ttname"><a href="classToolFramework_1_1ServiceDiscovery.html">ToolFramework::ServiceDiscovery</a></div><div class="ttdef"><b>Definition:</b> ServiceDiscovery.h:69</div></div>
+<div class="ttc" id="aclassToolFramework_1_1ToolDAQChain_html"><div class="ttname"><a href="classToolFramework_1_1ToolDAQChain.html">ToolFramework::ToolDAQChain</a></div><div class="ttdef"><b>Definition:</b> ToolDAQChain.h:61</div></div>
+<div class="ttc" id="aclassToolFramework_1_1ToolDAQChain_html_a4402df6eea4ccfb10c6849c662bff50c"><div class="ttname"><a href="classToolFramework_1_1ToolDAQChain.html#a4402df6eea4ccfb10c6849c662bff50c">ToolFramework::ToolDAQChain::Remote</a></div><div class="ttdeci">void Remote(int portnum, std::string SD_address=&quot;239.192.1.1&quot;, int SD_port=5000)</div><div class="ttdoc">Run ToolChain in remote mode, where connands are received fomr network connections.</div><div class="ttdef"><b>Definition:</b> ToolDAQChain.cpp:169</div></div>
+<div class="ttc" id="aclassToolFramework_1_1ToolDAQChain_html_ab69ccc4c933ebbb8125589f0c2386f5c"><div class="ttname"><a href="classToolFramework_1_1ToolDAQChain.html#ab69ccc4c933ebbb8125589f0c2386f5c">ToolFramework::ToolDAQChain::ToolDAQChain</a></div><div class="ttdeci">ToolDAQChain(std::string configfile, DataModel *data_model, int argc=0, char *argv[]=0)</div><div class="ttdoc">Constructor that obtains all of the configuration varaibles from an input file.</div><div class="ttdef"><b>Definition:</b> ToolDAQChain.cpp:5</div></div>
+<div class="ttc" id="astructToolFramework_1_1ToolDAQChainargs_html"><div class="ttname"><a href="structToolFramework_1_1ToolDAQChainargs.html">ToolFramework::ToolDAQChainargs</a></div><div class="ttdef"><b>Definition:</b> ToolDAQChain.h:43</div></div>
+<div class="ttc" id="astructToolFramework_1_1ToolDAQChainargs_html_a4fd1d7135f8eab693d0faa906a9f4552"><div class="ttname"><a href="structToolFramework_1_1ToolDAQChainargs.html#a4fd1d7135f8eab693d0faa906a9f4552">ToolFramework::ToolDAQChainargs::msgflag</a></div><div class="ttdeci">bool * msgflag</div><div class="ttdoc">Message flag used to indiacte if a new interactive command has been submitted to the interactive thre...</div><div class="ttdef"><b>Definition:</b> ToolDAQChain.h:48</div></div>
+<div class="ttc" id="astructToolFramework_1_1ToolDAQChainargs_html_ad9be6a2065a37068140b03863793f1e6"><div class="ttname"><a href="structToolFramework_1_1ToolDAQChainargs.html#ad9be6a2065a37068140b03863793f1e6">ToolFramework::ToolDAQChainargs::context</a></div><div class="ttdeci">zmq::context_t * context</div><div class="ttdoc">ZMQ context used for creating sockets.</div><div class="ttdef"><b>Definition:</b> ToolDAQChain.h:45</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
