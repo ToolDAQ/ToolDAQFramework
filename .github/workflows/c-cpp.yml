@@ -53,6 +53,6 @@ jobs:
        && make
     - name: test
       run: cd /opt/ToolDAQFramework
-       && export LD_LIBRARY_PATH=`pwd`/lib:/opt/zeromq-4.0.7/lib:/opt/boost_1_66_0/install/lib:$LD_LIBRARY_PATH
+       && export LD_LIBRARY_PATH=`pwd`/lib:/opt/ToolFrameworkCore/lib:/opt/zeromq-4.0.7/lib:/opt/boost_1_66_0/install/lib:$LD_LIBRARY_PATH
        && ./main
 
