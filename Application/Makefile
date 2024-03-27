@@ -77,11 +77,11 @@ lib/%.so:
 
 NodeDaemon: $(ToolDAQFramework)/NodeDaemon
         @echo -e "\e[38;5;87m\n*************** sym linking " $@ " ****************\e[0m"
-        ln -s ToolDAQFramework/NodeDaemon ./
+        ln -s $(ToolDAQFramework)/NodeDaemon ./
 
 RemoteControl: $(ToolDAQFramework)/RemoteControl
         @echo -e "\e[38;5;87m\n*************** sym linking " $@ " ****************\e[0m"
-        ln -s ToolDAQFramework/RemoteControl ./
+        ln -s $(ToolDAQFramework)/RemoteControl ./
 
 clean:
 	@echo -e "\e[38;5;201m\n*************** Cleaning up ****************\e[0m"
