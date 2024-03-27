@@ -35,7 +35,7 @@ Libs=-L $(SOURCEDIR)/lib/ -lDataModel  $(ToolLibs) -L $(ToolDAQFramework)/lib/ -
 
 #.SECONDARY: $(%.o)
 
-all: $(DataModelHEADERS) $(MyToolHEADERS) $(SOURCEFILES) $(LIBRARIES) main
+all: $(DataModelHEADERS) $(MyToolHEADERS) $(SOURCEFILES) $(LIBRARIES) main NodeDaemon RemoteControl
 
 debug: all
 
@@ -75,12 +75,23 @@ lib/%.so:
 	@echo -e "\e[38;5;87m\n*************** sym linking Tool libs ****************\e[0m"
 	ln -s `pwd`/$(filter %$(strip $(patsubst lib/%.so, /%.so ,$@)), $(wildcard UserTools/*/*.so)) $@
 
+NodeDaemon: $(ToolDAQFramework)/NodeDaemon
+        @echo -e "\e[38;5;87m\n*************** sym linking " $@ " ****************\e[0m"
+        ln -s ToolDAQFramework/NodeDaemon ./
+
+RemoteControl: $(ToolDAQFramework)/RemoteControl
+        @echo -e "\e[38;5;87m\n*************** sym linking " $@ " ****************\e[0m"
+        ln -s ToolDAQFramework/RemoteControl ./
+
 clean:
 	@echo -e "\e[38;5;201m\n*************** Cleaning up ****************\e[0m"
 	rm -f */*/*.o
 	rm -f */*.o
 	rm -f include/*.h
 	rm -f lib/*.so
+	rm -rf main
+	rm -rf NodeDaemon
+	rm -rf RemoteControl
 
 Docs:
 	doxygen Doxyfile

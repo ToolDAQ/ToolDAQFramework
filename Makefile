@@ -31,7 +31,7 @@ SOURCEFILES:=$(patsubst %.cpp, %.o, $(wildcard */*.cpp) $(wildcard */*/*.cpp))
 #.SECONDARY: $(%.o)
 
 
-all: $(HEADERS) $(TempDataModelHEADERS) $(TempToolHEADERS) $(SOURCEFILES) $(LIBRARIES) main
+all: $(HEADERS) $(TempDataModelHEADERS) $(TempToolHEADERS) $(SOURCEFILES) $(LIBRARIES) main NodeDaemon RemoteControl
 
 debug: all
 
@@ -95,6 +95,14 @@ lib/libTempDAQTools.so: $(patsubst %.cpp, %.o , $(wildcard UserTools/*/*.cpp)) |
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes) $(TempDataModelInclude) $(TempToolsInclude)
 
+NodeDaemon: src/NodeDaemon/NodeDaemon.o $(LIBRARIES) $(HEADERS) | $(SOURCEFILES)
+	@echo -e "\e[38;5;11m\n*************** Making " $@ " ****************\e[0m"
+	g++  $(CXXFLAGS) $< -o $@ $(Includes) $(Libs)  
+
+RemoteControl: src/RemoteControl/RemoteControl.o $(LIBRARIES) $(HEADERS) | $(SOURCEFILES)
+	@echo -e "\e[38;5;11m\n*************** Making " $@ " ****************\e[0m"
+	g++  $(CXXFLAGS) $< -o $@ $(Includes) $(Libs)  
+
 clean:
 	@echo -e "\e[38;5;201m\n*************** Cleaning up ****************\e[0m"
 	rm -f */*/*.o
@@ -102,6 +110,9 @@ clean:
 	rm -f include/*.h
 	rm -f tempinclude/*.h
 	rm -f lib/*.so
+	rm -f main
+	rm -f NodeDaemon
+	rm -f RemoteControl
 
 Docs:
 	doxygen Doxyfile
