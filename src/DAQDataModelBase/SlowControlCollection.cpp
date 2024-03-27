@@ -215,8 +215,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     
     ok = args->sock->send(identity, ZMQ_SNDMORE);
-    if(ok) ok &= args->sock->send(blank, ZMQ_SNDMORE);
-    if(ok) ok &= args->sock->send(send);
+    if(ok) ok = ok && args->sock->send(blank, ZMQ_SNDMORE);
+    if(ok) ok = ok && args->sock->send(send);
     if(!ok) std::cerr<<"failed to send '"<<reply<<"' to '"<<str<<"'"<<std::endl;
     // FIXME these sorts of errors should be logged somewhere
     // rather than being silently ignored. This info could be critical for debugging issues!!!
