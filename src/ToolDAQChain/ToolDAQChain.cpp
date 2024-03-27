@@ -1,14 +1,18 @@
 #include "ToolDAQChain.h"
 
-ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]): ToolChain(){
+using namespace ToolFramework;
 
-  m_data=new DataModel();
+ToolDAQChain::ToolDAQChain(std::string configfile, DataModel* data_model, int argc, char* argv[]): ToolChain(){
+
+  m_data=reinterpret_cast<DataModelBase*>(data_model);
+  m_DAQdata=reinterpret_cast<DAQDataModelBase*>(data_model);
 
   if(!m_data->vars.Initialise(configfile)){
     std::cout<<"\033[38;5;196m ERROR!!!: No valid config file quitting \033[0m"<<std::endl;
     exit(1);
   }
-  
+
+  if(!m_data->vars.Get("UUID_path",m_UUID_path)) m_UUID_path="/dev/random";
   if(!m_data->vars.Get("verbose",m_verbose)) m_verbose=9;
   if(!m_data->vars.Get("error_level",m_errorlevel)) m_errorlevel=2;
   if(!m_data->vars.Get("remote_port",m_remoteport)) m_remoteport=24004; 
@@ -26,8 +30,8 @@ ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]): Too
     m_log_local_path= tmp.str();
   }
   if(!m_data->vars.Get("log_remote",m_log_remote)) m_log_remote=false; 
-  if(!m_data->vars.Get("log_service",m_log_service)) m_log_service="LogStore";
-  if(!m_data->vars.Get("log_port",m_log_port)) m_log_port=24010;
+  if(!m_data->vars.Get("log_address",m_log_address)) m_log_address="239.192.1.1";
+  if(!m_data->vars.Get("log_port",m_log_port)) m_log_port=5001;
 
   if(!m_data->vars.Get("service_discovery_address",m_multicastaddress)) m_multicastaddress="239.192.1.1";
   if(!m_data->vars.Get("service_discovery_port",m_multicastport)) m_multicastport=5000;
@@ -63,7 +67,7 @@ ToolDAQChain::ToolDAQChain(std::string configfile,  int argc, char* argv[]): Too
   
 }
 
-ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, bool interactive, bool local, std::string log_local_path, bool remote, std::string log_service, int log_port,  bool split_output_files, int pub_sec, int kick_sec,unsigned int IO_Threads){
+ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, bool interactive, bool local, std::string log_local_path, bool remote, std::string log_address, int log_port,  bool split_output_files, int pub_sec, int kick_sec,unsigned int IO_Threads, DataModel* in_data_model){
   
   m_verbose=verbose;
   m_errorlevel=errorlevel;
@@ -72,11 +76,17 @@ ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, boo
   m_log_local=local;
   m_log_local_path=log_local_path;
   m_log_remote=remote;
-  m_log_service=log_service;
+  m_log_address=log_address;
   m_log_port=log_port;
   m_log_split_files=split_output_files;  
   m_pub_sec=pub_sec;
   m_kick_sec=kick_sec;
+  if(in_data_model==0) m_data=new DataModelBase;
+  else{
+    m_data=reinterpret_cast<DataModelBase*>(in_data_model);
+    m_DAQdata=reinterpret_cast<DAQDataModelBase*>(in_data_model);
+  }
+
   
   Init(IO_Threads);
   
@@ -86,13 +96,33 @@ ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, boo
 void ToolDAQChain::Init(unsigned int IO_Threads){
  
   context=new zmq::context_t(IO_Threads);
-  m_data->context=context;
-  
-  m_UUID = boost::uuids::random_generator()();
+  m_DAQdata->context=context;
 
+  struct stat fbuffer;
+  if(stat (m_UUID_path.c_str(), &fbuffer) == 0){ //if file exists
+
+    BinaryStream tmp;
+    tmp.Bopen(m_UUID_path.c_str(),READ, UNCOMPRESSED);
+    tmp.Bread(&m_UUID, sizeof(m_UUID));
+    tmp.Bclose();
+  }
+
+  else{
+
+    m_UUID = boost::uuids::random_generator()();
+
+    BinaryStream tmp;
+    tmp.Bopen(m_UUID_path.c_str(), NEW, UNCOMPRESSED);
+    tmp.Bwrite(&m_UUID, sizeof(m_UUID));
+    tmp.Bclose();
+    
+    }
+
+  
+  
   m_log=0;
 
-  m_log= new DAQLogging(context, m_UUID, m_service, m_log_interactive, m_log_local, m_log_local_path, m_log_remote, m_log_service, m_log_port, m_log_split_files);
+  m_log= new DAQLogging(context, m_UUID, m_service, m_log_interactive, m_log_local, m_log_local_path, m_log_remote, m_log_address, m_log_port, m_log_split_files);
 
 
   if(!m_data->Log) m_data->Log=m_log;
@@ -262,8 +292,10 @@ ToolDAQChain::~ToolDAQChain(){
     m_data->Log=0;  
     delete m_data;      
     m_data=0;     
-  }   
-  
+  }
+
+  m_DAQdata=0;
+
   delete m_log;
   m_log=0;
   

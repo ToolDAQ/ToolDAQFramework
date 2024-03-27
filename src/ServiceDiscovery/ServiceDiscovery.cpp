@@ -1,5 +1,7 @@
 #include "ServiceDiscovery.h"
 
+using namespace ToolFramework;
+
 ServiceDiscovery::ServiceDiscovery(bool Send, bool Receive, int remoteport, std::string address, int multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec, int kicksec){
  
     
@@ -121,7 +123,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   
   while(running){
   
-    zmq::poll(&items [0], 2, -1);
+    zmq::poll(&items [0], 2, 1000);
 
     if ((items [0].revents & ZMQ_POLLIN) && running) {
       
@@ -466,7 +468,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   
   while(running){
     
-    zmq::poll (&items [0], 2, -1);
+    zmq::poll (&items [0], 2, 1000);
     
     if ((items [0].revents & ZMQ_POLLIN) && running) {
       

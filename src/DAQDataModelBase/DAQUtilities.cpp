@@ -1,5 +1,7 @@
 #include <DAQUtilities.h>
 
+using namespace ToolFramework;
+
 DAQUtilities::DAQUtilities(zmq::context_t* zmqcontext){ 
   context=zmqcontext;
   Threads.clear();

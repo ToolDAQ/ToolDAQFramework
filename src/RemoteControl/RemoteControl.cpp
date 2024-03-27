@@ -19,6 +19,8 @@
 #define FILE_SEND_WAIT 120000
 #define FILE_SEND_PORT 24001
 
+using namespace ToolFramework;
+
 int main(int argc, char** argv){
 
   //  if (argc!=3) return 1;

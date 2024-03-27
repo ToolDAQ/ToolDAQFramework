@@ -1,6 +1,7 @@
 #ToolChain dynamic setup file
 
 ##### Runtime Paramiters #####
+UUID_path ./UUID 	 # UUID_path for fixed UUID, if doesnt exist file will be generated. Remove option for always random 
 verbose 1     		 # Verbosity level of ToolChain
 error_level 0 		 # 0= do not exit, 1= exit on unhandeled errors only, 2= exit on unhandeled errors and handeled errors
 attempt_recover 1 	 # 1= will attempt to finalise if an execute fails, 0= will not
@@ -12,8 +13,8 @@ log_interactive 1	 # Interactive=cout; 0=false, 1= true
 log_local 0 		 # Local = local file log; 0=false, 1= true
 log_local_path ./log 	 # file to store logs to if local is active
 log_remote 0   		 # Remote= remote logging system "serservice_name Remote_Logging";  0=false, 1= true
-log_service LogStore 	 # Remote service name to connect to to send logs
-log_port 24010 		 # port on remote machine to connect to
+log_address 239.192.1.1  # Remote multicast address to send logs
+log_port 5001            # port on remote machine to connect to
 log_append_time 0	 # append seconds since epoch to filename; 0=false, 1= true
 log_split_files 0 	 # seperate output and error log files (named x.o and x.e)
 

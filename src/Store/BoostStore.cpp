@@ -1,5 +1,6 @@
 #include "BoostStore.h"
 
+using namespace ToolFramework;
 
 bool BoostStore::Initialise(std::string filename, int type){
 
