@@ -32,18 +32,29 @@ SlowControlCollection::SlowControlCollection(){
   m_util=0;
   m_context=0;
   m_pub=0;
+  m_new_service=false;
+  m_thread=false;
   
 }
 
 SlowControlCollection::~SlowControlCollection(){
+
+  Stop();  
   
-  if(args) m_util->KillThread(args);
+}
+
+void SlowControlCollection::Stop(){
+
+if(m_thread) m_util->KillThread(args);
+ m_thread=false;
   
   delete args;
   args=0;
   
   delete m_pub;
   m_pub=0;
+
+  if(m_new_service) m_util->RemoveService("SlowControlReceiver");
   
   delete m_util;
   m_util=0;
@@ -59,6 +70,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   m_context=context;
   
   m_util=new DAQUtilities(m_context);
+  m_new_service=new_service;
   
   m_pub= new zmq::socket_t(*(m_context), ZMQ_PUB);
   m_pub->bind("tcp://*:78787");
@@ -121,7 +133,8 @@ bool SlowControlCollection::ListenForData(int poll_length){
 bool SlowControlCollection::InitThreadedReceiver(zmq::context_t* context, int port, int poll_length, bool new_service){
   
   if(args) return false;
-  
+  m_thread=true;
+
   //std::cout<<"new_service="<<new_service<<std::endl;
   Init(context, port, new_service);
   args->poll_length=poll_length;
@@ -151,11 +164,15 @@ void SlowControlCollection::Thread(Thread_args* arg){
     // FIXME handle errors (ok!=true)!
     std::istringstream iss(static_cast<char*>(message.data()));
     Store tmp;
+    //  std::cout<<"iss="<<iss.str()<<std::endl;
     tmp.JsonParser(iss.str());
     
     std::string str="";
     
     tmp.Get("msg_value", str);
+    std::stringstream tmpstream(str);
+    tmpstream>>str;
+
     //tmp.Print();
     //std::cout<<"str="<<str<<std::endl;
     
@@ -163,6 +180,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     if(str == "?") reply=args->SCC->Print();
     else if((*args->SCC)[str]){
+      //std::cout<<"variable exists"<<std::endl;
       if((*args->SCC)[str]->GetType() == SlowControlElementType(INFO)){
         std::string value="";
         (*args->SCC)[str]->GetValue(value);

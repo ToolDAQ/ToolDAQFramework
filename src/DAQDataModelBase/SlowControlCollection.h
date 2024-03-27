@@ -43,6 +43,7 @@ namespace ToolFramework{
     bool AlertSubscribe(std::string alert, std::function<void(const char*, const char*)> function);
     bool AlertSend(std::string alert, std::string="");
     std::string Print();
+    void Stop();
     
     template<typename T> T GetValue(std::string name){
       return SC_vars[name]->GetValue<T>();
@@ -59,6 +60,8 @@ namespace ToolFramework{
     zmq::context_t* m_context;
     zmq::socket_t* m_pub;
     SlowControlCollectionThread_args* args;
+    bool m_new_service;
+    bool m_thread;
     
     static void Thread(Thread_args* arg);
     
