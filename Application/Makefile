@@ -30,7 +30,7 @@ MyToolHEADERS:=$(patsubst %.h, include/%.h, $(filter %.h, $(subst /, ,$(wildcard
 ToolLibs = $(patsubst %.so, %, $(patsubst lib%, -l%,$(filter lib%, $(subst /, , $(wildcard UserTools/*/*.so)))))
 AlreadyCompiled = $(wildcard UserTools/$(filter-out %.so UserTools , $(subst /, ,$(wildcard UserTools/*/*.so)))/*.cpp)
 SOURCEFILES:=$(patsubst %.cpp, %.o,  $(filter-out $(AlreadyCompiled), $(wildcard */*.cpp) $(wildcard */*/*.cpp)))
-Libs=-L $(SOURCEDIR)/lib/ -lDataModel -L $(ToolFrameworkCore)/lib/ -lToolChain -lMyTools -lDataModelBase -lLogging -lStore -lpthread  $(ToolLibs) -L $(ToolDAQFramework)/lib/ -lToolDAQChain -lDAQDataModelBase  -lDAQLogging -lServiceDiscovery -lDAQStore $(ZMQLib) $(BoostLib)
+Libs=-L $(SOURCEDIR)/lib/ -lDataModel -L $(ToolDAQFramework)/lib/ -lToolDAQChain -lDAQDataModelBase  -lDAQLogging -lServiceDiscovery -lDAQStore -L $(ToolFrameworkCore)/lib/ -lToolChain -lMyTools -lDataModelBase -lLogging -lStore -lpthread  $(ToolLibs) -L $(ToolDAQFramework)/lib/ -lToolDAQChain -lDAQDataModelBase  -lDAQLogging -lServiceDiscovery -lDAQStore $(ZMQLib) $(BoostLib)
 
 
 #.SECONDARY: $(%.o)
@@ -76,12 +76,12 @@ lib/%.so:
 	ln -s `pwd`/$(filter %$(strip $(patsubst lib/%.so, /%.so ,$@)), $(wildcard UserTools/*/*.so)) $@
 
 NodeDaemon: $(ToolDAQFramework)/NodeDaemon
-        @echo -e "\e[38;5;87m\n*************** sym linking " $@ " ****************\e[0m"
-        ln -s $(ToolDAQFramework)/NodeDaemon ./
+	@echo -e "\e[38;5;87m\n*************** sym linking " $@ " ****************\e[0m"
+	ln -s $(ToolDAQFramework)/NodeDaemon ./
 
 RemoteControl: $(ToolDAQFramework)/RemoteControl
-        @echo -e "\e[38;5;87m\n*************** sym linking " $@ " ****************\e[0m"
-        ln -s $(ToolDAQFramework)/RemoteControl ./
+	@echo -e "\e[38;5;87m\n*************** sym linking " $@ " ****************\e[0m"
+	ln -s $(ToolDAQFramework)/RemoteControl ./
 
 clean:
 	@echo -e "\e[38;5;201m\n*************** Cleaning up ****************\e[0m"
