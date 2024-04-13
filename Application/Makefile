@@ -41,7 +41,7 @@ debug: all
 
 main: src/main.o $(LIBRARIES) $(DataModelHEADERS) $(MyToolHEADERS) | $(SOURCEFILES)
 	@echo -e "\e[38;5;11m\n*************** Making " $@ " ****************\e[0m"
-	g++  $(CXXFLAGS) $< -o $@ $(Includes) $(Libs) $(DataModelInclude) $(DataModellib) $(MyToolsInclude) $(MyToolslib) 
+	g++  $(CXXFLAGS) $< -o $@ $(Includes) $(Libs) $(DataModelInclude) $(DataModelLib) $(MyToolsInclude) $(MyToolsLib) 
 
 include/%.h:
 	@echo -e "\e[38;5;87m\n*************** sym linking headers ****************\e[0m"
@@ -63,11 +63,11 @@ DataModel/%.o : DataModel/%.cpp DataModel/%.h  $(DataModelHEADERS)
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) -c $< -o $@ $(Includes) $(DataModelInclude)
 
-lib/libDataModel.so: $(patsubst %.cpp, %.o , $(wildcard DataModel/*.cpp)) |  $(DataModelInclude)
+lib/libDataModel.so: $(patsubst %.cpp, %.o , $(wildcard DataModel/*.cpp)) |   $(DataModelHEADERS)
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes) $(DataModelInclude)
 
-lib/libMyTools.so: $(patsubst %.cpp, %.o , $(filter-out $(AlreadyCompiled), $(wildcard UserTools/*/*.cpp))) |  $(DataModelInclude) $(MyToolsInclude)
+lib/libMyTools.so: $(patsubst %.cpp, %.o , $(filter-out $(AlreadyCompiled), $(wildcard UserTools/*/*.cpp))) |   $(DataModelHEADERS) $(MyToolHEADERS)
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes) $(DataModelInclude) $(MyToolsInclude)
 
