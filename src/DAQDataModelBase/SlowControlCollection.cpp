@@ -176,7 +176,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     //tmp.Print();
     //std::cout<<"str="<<str<<std::endl;
     
-    std::string reply="error: " + *tmp["msg_value"];
+    std::string reply="error: " + tmp.Get<std::string>("msg_value");
     
     if(str == "?") reply=args->SCC->Print();
     else if((*args->SCC)[str]){
@@ -187,9 +187,9 @@ void SlowControlCollection::Thread(Thread_args* arg){
         reply=value;
       }
       else{
-        reply=*tmp["msg_value"];
+        tmp.Get("msg_value",reply);
         std::stringstream input;
-        input<<*tmp["msg_value"];
+        input<<tmp.Get<std::string>("msg_value");
         std::string key="";
         std::string value="";
         input>>key>>value;
@@ -205,7 +205,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     Store rr;
     
-    *rr["msg_type"]="Command Reply";
+    rr.Set("msg_type", "Command Reply");
     rr.Set("msg_value",reply);
     
     std::string tmp2="";

@@ -148,40 +148,41 @@ int main(int argc, char* argv[]){
       
       
       std::string ret="Command not recognised (Use ? to find valid commands)";
+      std::string msg_value=bb.Get<std::string>("msg_value");
       
-      if(*(bb["msg_value"])=="KILL"){
+      if(msg_value=="KILL"){
 	ret="Killing NodeDaemon";
       }
       
-      if(*(bb["msg_value"])=="Reboot"){
+      if(msg_value=="Reboot"){
 	ret="Rebooting Node";
       }
       
       
-      if(*(bb["msg_value"])=="Status"){
+      if(msg_value=="Status"){
 	ret="Online";
       }
       
-      else if (*(bb["msg_value"])=="?"){
+      else if (msg_value=="?"){
 	ret="Available commands: Status, Stop, FStop, (Start / Create) Restart, File name, Build, KILL, Reboot ";
 	
       }
 
-      else if (*(bb["msg_value"])=="FStop"){
+      else if (msg_value=="FStop"){
 	ret="Forcing ToolChain to Stop";
 	FStop(&pids);      
       }    
       
-      else if (*(bb["msg_value"])=="Stop"){
+      else if (msg_value=="Stop"){
 	ret="Stopping ToolChains";
 	Stop(&pids);
       }    
-      else if(*(bb["msg_value"])=="Start" || *(bb["msg_value"])=="Create"){
+      else if(msg_value=="Start" || msg_value=="Create"){
 	
-	ret=Start(&pids, *(bb["var1"]));  
+	ret=Start(&pids, bb.Get<std::string>("var1"));  
       }
       
-      else if(*(bb["msg_value"])=="Restart"){
+      else if(msg_value=="Restart"){
 	ret="Restarting ToolChan";
 	Stop(&pids);
 	FStop(&pids);
@@ -190,9 +191,9 @@ int main(int argc, char* argv[]){
       }
       
       
-      else if(*(bb["msg_value"])=="File"){
+      else if(msg_value=="File"){
 	ret="Receiving file";
-	std::ofstream outfile ((*(bb["var1"])).c_str());
+	std::ofstream outfile (bb.Get<std::string>("var1").c_str());
 	if (outfile.is_open()){
 	  
 	  while (1) {
@@ -239,7 +240,7 @@ int main(int argc, char* argv[]){
 	
       }
       
-      else if (*(bb["msg_value"])=="Build"){
+      else if (msg_value=="Build"){
 	ret="Building ToolChain";
 	system("make clean; make");
 	
@@ -258,8 +259,8 @@ int main(int argc, char* argv[]){
       
       rr.Set("uuid",m_UUID);
       rr.Set("msg_id",msg_id);
-      *rr["msg_time"]=isot.str();
-      *rr["msg_type"]="Command Reply";
+      rr.Set("msg_time", isot.str());
+      rr.Set("msg_type", "Command Reply");
       rr.Set("msg_value",ret);
 
       
@@ -275,7 +276,7 @@ int main(int argc, char* argv[]){
       if(out[0].revents & ZMQ_POLLOUT)direct.send(send);
       
       
-      if(*(bb["msg_value"])=="KILL"){
+      if(msg_value=="KILL"){
 	
 	Stop(&pids);
 	FStop(&pids);
@@ -286,7 +287,7 @@ int main(int argc, char* argv[]){
 	//std::cout<<"got kill run set to false"<<std::endl;
       }
       
-      if(*(bb["msg_value"])=="Reboot"){
+      if(msg_value=="Reboot"){
 	Stop(&pids);
 	FStop(&pids);
 	system("reboot --force");

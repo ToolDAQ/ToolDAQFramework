@@ -119,7 +119,7 @@ namespace ToolFramework{
 	  else if (value.at(i)=='"') value.at(i)='\'';
 	}
       }
-      *(options["value"])= value;
+      options.Set("value", value);
       mtx.unlock();
       return true;
     }
@@ -146,7 +146,7 @@ namespace ToolFramework{
 	mtx.unlock();
 	return false;
       }
-      value=*(options["value"]);
+      options.Get("value", value);
       mtx.unlock();
       return true;
     } 

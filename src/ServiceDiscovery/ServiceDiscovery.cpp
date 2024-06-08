@@ -104,12 +104,12 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   std::vector<Store> PubServices;
   
   Store bb; 
-  *bb["msg_type"]="Service Discovery";
+  bb.Set("msg_type", "Service Discovery");
   bb.Set("msg_value",m_service);
   bb.Set("remote_port",m_remoteport);
   if(m_remoteport) bb.Set("status_query",true);
   else bb.Set("status_query",false);
-  bb.Set("uuid",m_UUID);
+  bb.Set("uuid",boost::uuids::to_string(m_UUID));
   PubServices.push_back(bb);
 
   //  Initialize poll set
@@ -147,11 +147,11 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
       else if(command=="Add"){
 	
 	Store bb; 
-	*bb["msg_type"]="Service Discovery";
+	bb.Set("msg_type","Service Discovery");
 	bb.Set("msg_value",service);
 	bb.Set("remote_port",port);
 	bb.Set("status_query",statusquery);
-	bb.Set("uuid",uuid);
+	bb.Set("uuid",boost::uuids::to_string(uuid));
 	PubServices.push_back(bb);
 
       }
@@ -160,7 +160,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	for (it = PubServices.begin() ; it != PubServices.end(); ++it){
 	  //std::cout<<"d3.5 "<<*((*it)["msg_value"])<<std::endl;
 	  
-	  if(*((*it)["msg_value"])==service)break;
+	  if((*it).Get<std::string>("msg_value")==service)break;
 	  
 	  
 	}
@@ -231,7 +231,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  //StatusCheck.setsockopt(ZMQ_RCVTIMEO, a);
 	  //StatusCheck.setsockopt(ZMQ_SNDTIMEO, a);
 	  std::stringstream connection;
-	  connection<<"tcp://localhost:"<<*(PubServices.at(i)["remote_port"]);
+	  connection<<"tcp://localhost:"<<PubServices.at(i).Get<std::string>("remote_port");
 	  // StatusCheck.setsockopt(ZMQ_IMMEDIATE, 1);
 	   StatusCheck.setsockopt (ZMQ_LINGER, &linger, sizeof (linger)); 
 	  
@@ -338,12 +338,12 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  
 	  //	  PubServices.at(i).Set("uuid",m_UUID);
 	  PubServices.at(i).Set("msg_id",msg_id);
-	  *(PubServices.at(i))["msg_time"]=isot.str();
+	  PubServices.at(i).Set("msg_time", isot.str());
 	  // *bb["msg_type"]="Service Discovery";
 	  // bb.Set("msg_value",m_service);
 	  //bb.Set("remote_port",m_remoteport);
-	 	if(statusquery) *(PubServices.at(i))["status"]=*mm["msg_value"]; 
-		else *(PubServices.at(i))["status"]= "N/A";
+	  if(statusquery) PubServices.at(i).Set("status",mm.Get<std::string>("msg_value")); 
+	  else PubServices.at(i).Set("status","N/A");
 	  std::string pubmessage;
 	  PubServices.at(i)>>pubmessage;
 	  
@@ -490,7 +490,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	std::string uuid;
 	newservice->Get("uuid",uuid);
 	if(RemoteServices.count(uuid)) delete RemoteServices[uuid];
-	
+	//std::cout<<uuid<<std::endl;
 	RemoteServices[uuid]=newservice;
 	
 	

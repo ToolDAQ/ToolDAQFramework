@@ -34,10 +34,10 @@ std::string SlowControlElement::Print(){
   out+=m_name;
   
   if(m_type==SlowControlElementType(VARIABLE)){
-    std::string min=*options["min"];
-    std::string max=*options["max"];
-    std::string step=*options["step"];
-    std::string value=*options["value"];
+    std::string min=options.Get<std::string>("min");
+    std::string max=options.Get<std::string>("max");
+    std::string step=options.Get<std::string>("step");
+    std::string value=options.Get<std::string>("value");
     
     
     out+=":" + min + ":" + max + ":" + step + ":" + value + "]";
@@ -53,7 +53,7 @@ std::string SlowControlElement::Print(){
       out+=";" + tmp;
       
     }
-    std::string value=*options["value"];
+    std::string value=options.Get<std::string>("value");
     
     out+= ";" + value + "]";
   }
@@ -71,7 +71,7 @@ std::string SlowControlElement::Print(){
   }
   
   else if(m_type==SlowControlElementType(INFO)){
-    std::string value=*options["value"];
+    std::string value=options.Get<std::string>("value");
     out+="{" + value + "}";
   }
   

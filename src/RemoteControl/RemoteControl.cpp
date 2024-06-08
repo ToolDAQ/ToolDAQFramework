@@ -100,7 +100,7 @@ int main(int argc, char** argv){
 	std::istringstream ss(static_cast<char*>(servicem.data()));
 	service->JsonParser(ss.str());
 	std::string name;
-	name=*((*(service))["msg_value"]);
+	name=(*service).Get<std::string>("msg_value");
 	
 	if(filter=="" || filter==name) RemoteServices.push_back(service);
 	else delete service;
@@ -123,10 +123,10 @@ int main(int argc, char** argv){
 	std::string time;
 	
 	//*(it->second)>> output;
-	ip=*((*(RemoteServices.at(i)))["ip"]);
-	service=*((*(RemoteServices.at(i)))["msg_value"]);
-	status=*((*(RemoteServices.at(i)))["status"]);
-	time=*((*(RemoteServices.at(i)))["msg_time"]);
+	(*(RemoteServices.at(i))).Get("ip", ip);
+	(*(RemoteServices.at(i))).Get("msg_value", service);
+	(*(RemoteServices.at(i))).Get("status", status);
+	(*(RemoteServices.at(i))).Get("msg_time", time);
 
 	std::cout<<"["<<i<<"]  "<<ip<<" , "<<service<<" , "<<status<<" , "<<time<<std::endl;
 	
@@ -160,7 +160,7 @@ int main(int argc, char** argv){
 	  ServiceSend.setsockopt(ZMQ_SNDTIMEO, a);
 	  
 	  std::stringstream connection;
-	  connection<<"tcp://"<<*((*(RemoteServices.at(ServiceNum)))["ip"])<<":"<<*((*(RemoteServices.at(ServiceNum)))["remote_port"]);
+	  connection<<"tcp://"<<(*(RemoteServices.at(ServiceNum))).Get<std::string>("ip")<<":"<<(*(RemoteServices.at(ServiceNum))).Get<std::string>("remote_port");
 	  ServiceSend.connect(connection.str().c_str());
 	  
 	  
@@ -173,8 +173,8 @@ int main(int argc, char** argv){
 	  
 	  bb.Set("uuid",m_UUID);
 	  bb.Set("msg_id",msg_id);
-	  *bb["msg_time"]=isot.str();
-	  *bb["msg_type"]="Command";
+	  bb.Set("msg_time", isot.str());
+	  bb.Set("msg_type", "Command");
 	  bb.Set("msg_value",Send);
 	  bb.Set("var1",var1);
 	  
@@ -192,7 +192,7 @@ int main(int argc, char** argv){
 	  if(Send=="File"){
 	    
 	    std::stringstream connection;
-	    connection<<"tcp://"<<*((*(RemoteServices.at(ServiceNum)))["ip"])<<":"<<FILE_SEND_PORT;
+	    connection<<"tcp://"<<(*(RemoteServices.at(ServiceNum))).Get<std::string>("ip")<<":"<<FILE_SEND_PORT;
 	    
 	    
 	    zmq::socket_t ftp (context, ZMQ_PUSH);
@@ -243,7 +243,7 @@ int main(int argc, char** argv){
 	    
 	    Store rr;
 	    rr.JsonParser(answer);
-	    if(*rr["msg_type"]=="Command Reply") std::cout<<std::endl<<*rr["msg_value"]<<std::endl<<std::endl;
+	    if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<(rr.Get<std::string>("msg_value"))<<std::endl<<std::endl;
 	  }
 	  else std::cout<<std::endl<<"message timed out"<<std::endl; 
 	  
@@ -277,7 +277,7 @@ int main(int argc, char** argv){
 	for(unsigned int i=0; i<RemoteServices.size(); i++){
 	  
 	  std::string service;
-	  service=*((*(RemoteServices.at(i)))["msg_value"]);
+	  (*(RemoteServices.at(i))).Get("msg_value", service);
 	  
 	  if(service==ServiceName){
 	    
@@ -287,7 +287,7 @@ int main(int argc, char** argv){
 	    ServiceSend.setsockopt(ZMQ_SNDTIMEO, a);
 	    
 	    std::stringstream connection;
-	    connection<<"tcp://"<<*((*(RemoteServices.at(i)))["ip"])<<":"<<*((*(RemoteServices.at(i)))["remote_port"]);
+	    connection<<"tcp://"<<(*(RemoteServices.at(i))).Get<std::string>("ip")<<":"<<(*(RemoteServices.at(i))).Get<std::string>("remote_port");
 	    ServiceSend.connect(connection.str().c_str());
 	    
 	    
@@ -300,8 +300,8 @@ int main(int argc, char** argv){
 	    
 	    bb.Set("uuid",m_UUID);
 	    bb.Set("msg_id",msg_id);
-	    *bb["msg_time"]=isot.str();
-	    *bb["msg_type"]="Command";
+	    bb.Set("msg_time", isot.str());
+	    bb.Set("msg_type", "Command");
 	    bb.Set("msg_value",Send);
 	    bb.Set("var1",var1);
 	    
@@ -319,7 +319,7 @@ int main(int argc, char** argv){
 	    if(Send=="File"){
 	      
 	      std::stringstream connection;
-	      connection<<"tcp://"<<*((*(RemoteServices.at(i)))["ip"])<<":"<<FILE_SEND_PORT;
+	      connection<<"tcp://"<<(*(RemoteServices.at(i))).Get<std::string>("ip")<<":"<<FILE_SEND_PORT;
 	      
 	      
 	      zmq::socket_t ftp (context, ZMQ_PUSH);
@@ -370,7 +370,7 @@ int main(int argc, char** argv){
 	      
 	      Store rr;
 	      rr.JsonParser(answer);
-	      if(*rr["msg_type"]=="Command Reply") std::cout<<std::endl<<*rr["msg_value"]<<std::endl<<std::endl;
+	      if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<rr.Get<std::string>("msg_value")<<std::endl<<std::endl;
 	    }
 	  }
 	}

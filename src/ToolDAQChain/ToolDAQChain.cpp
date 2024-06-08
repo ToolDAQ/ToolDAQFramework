@@ -214,7 +214,7 @@ void ToolDAQChain::Remote(){
 
       Store rr;
       rr.JsonParser(command);
-      if(*rr["msg_type"]=="Command") command=*rr["msg_value"];
+      if(rr.Get<std::string>("msg_type")=="Command") command=rr.Get<std::string>("msg_value");
       else command="NULL";
 
 
@@ -225,10 +225,10 @@ void ToolDAQChain::Remote(){
       msg_id++;
       Store bb;
 
-      bb.Set("uuid",m_UUID);
+      bb.Set("uuid",boost::uuids::to_string(m_UUID));
       bb.Set("msg_id",msg_id);
-      *bb["msg_time"]=isot.str();
-      *bb["msg_type"]="Command Reply";
+      bb.Set("msg_time", isot.str());
+      bb.Set("msg_type", "Command Reply");
       bb.Set("msg_value",ExecuteCommand(command));
     
 

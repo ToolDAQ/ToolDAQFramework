@@ -381,8 +381,8 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 	   
 	   outmessage.Set("uuid",UUID);
 	   outmessage.Set("msg_id",msg_id);
-	   *outmessage["msg_time"]=isot.str();
-	   *outmessage["msg_type"]="Log";
+	   outmessage.Set("msg_time", isot.str());
+	   outmessage.Set("msg_type", "Log");
 	   outmessage.Set("msg_value",ss.str());
 	     
 	     
