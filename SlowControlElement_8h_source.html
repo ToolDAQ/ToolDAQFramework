@@ -190,7 +190,7 @@ $(function() {
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      <span class="keywordflow">else</span> <span class="keywordflow">if</span> (value.at(i)==<span class="charliteral">&#39;&quot;&#39;</span>) value.at(i)=<span class="charliteral">&#39;\&#39;&#39;</span>;</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    }</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      }</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      *(options[<span class="stringliteral">&quot;value&quot;</span>])= value;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      options.Set(<span class="stringliteral">&quot;value&quot;</span>, value);</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      mtx.unlock();</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    }</div>
@@ -217,7 +217,7 @@ $(function() {
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    mtx.unlock();</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;      }</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      value=*(options[<span class="stringliteral">&quot;value&quot;</span>]);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      options.Get(<span class="stringliteral">&quot;value&quot;</span>, value);</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      mtx.unlock();</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    } </div>
