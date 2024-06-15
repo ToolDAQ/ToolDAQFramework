@@ -1,0 +1,25 @@
+# backups
+*~
+# objects
+*.o
+# libraries
+*.so
+*.a
+# dependency files
+*.d
+# root dictionary pcm files
+*.pcm
+# python pre-compiled modules
+*.pyc
+
+# lib folder is populated during build
+lib/
+# include folder is also populated during build
+include/
+# as is tempinclude
+tempinclude/
+
+# executables
+main
+NodeDaemon
+RemoteControl
