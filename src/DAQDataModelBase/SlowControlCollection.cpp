@@ -116,7 +116,9 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   args->SCC=this;
   
   Add("Status",SlowControlElementType(INFO));
+   Add("?",SlowControlElementType(BUTTON));
   SC_vars["Status"]->SetValue("N/A");
+  
   
   return true;
 }
@@ -164,41 +166,62 @@ void SlowControlCollection::Thread(Thread_args* arg){
     // FIXME handle errors (ok!=true)!
     std::istringstream iss(static_cast<char*>(message.data()));
     Store tmp;
-    //  std::cout<<"iss="<<iss.str()<<std::endl;
+    //printf("iss=%s\n",iss.str().c_str());
     tmp.JsonParser(iss.str());
     
-    std::string str="";
     
-    tmp.Get("msg_value", str);
-    std::stringstream tmpstream(str);
-    tmpstream>>str;
+    std::string key=tmp.Get<std::string>("msg_value");
+    std::string value=tmp.Get<std::string>("var1");
+    
+    // std::stringstream tmpstream(str);
+    // tmpstream>>str;
 
-    //tmp.Print();
-    //std::cout<<"str="<<str<<std::endl;
+    tmp.Print();
+    //printf("key=%s\n",key.c_str());
     
-    std::string reply="error: " + tmp.Get<std::string>("msg_value");
+    std::string reply="error: " + key;
+    bool strip=false;
     
-    if(str == "?") reply=args->SCC->Print();
-    else if((*args->SCC)[str]){
+    if(key == "?"){
+      //printf("args->SCC->Print()=%s\n", args->SCC->Print().c_str());
+      if(value=="JSON"){
+	reply=args->SCC->PrintJSON();
+	strip=true;
+      }
+      else  reply=args->SCC->Print();
+      //printf("reply=%s\n", reply.c_str());
+    }
+    else if((*args->SCC)[key]){
       //std::cout<<"variable exists"<<std::endl;
-      if((*args->SCC)[str]->GetType() == SlowControlElementType(INFO)){
-        std::string value="";
-        (*args->SCC)[str]->GetValue(value);
+      if((*args->SCC)[key]->GetType() == SlowControlElementType(INFO)){
+        (*args->SCC)[key]->GetValue(value);
         reply=value;
       }
+      else if((*args->SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
+	(*args->SCC)[key]->SetValue("1");
+	reply=key;
+      }
       else{
-        tmp.Get("msg_value",reply);
-        std::stringstream input;
-        input<<tmp.Get<std::string>("msg_value");
-        std::string key="";
-        std::string value="";
-        input>>key>>value;
-        if(value=="") value="1";
+	reply=key;
+        //std::stringstream input;
+        //input<<tmp.Get<std::string>("msg_value");
+	//        std::string key="";
+	// std::string value="";
+        //input>>key>>value;
+	//printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
         if((*args->SCC)[key]){
-          (*args->SCC)[key]->SetValue(value);
-          std::function<std::string(const char*)> tmp_func= (*args->SCC)[key]->GetFunction();
-          if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
-          //std::cout<<"value="<<value<<std::endl;
+	  if(value!=""){
+	    (*args->SCC)[key]->SetValue(value);
+	    SCFunction tmp_func= (*args->SCC)[key]->GetChangeFunction();
+	    if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+	    
+	  }
+	  else{
+	    SCFunction tmp_func= (*args->SCC)[key]->GetReadFunction();
+	    if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+	    else (*args->SCC)[key]->GetValue(reply);
+	    
+	  }
         }
       }
     }
@@ -207,9 +230,11 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     rr.Set("msg_type", "Command Reply");
     rr.Set("msg_value",reply);
-    
+    if(strip) rr.Destring("msg_value");
+       
     std::string tmp2="";
     rr>>tmp2;
+    //printf("reply message is= %s \n",tmp2.c_str());
     zmq::message_t send(tmp2.length()+1);
     snprintf ((char *) send.data(), tmp2.length()+1 , "%s" ,tmp2.c_str()) ;
     
@@ -217,7 +242,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     ok = args->sock->send(identity, ZMQ_SNDMORE);
     if(ok) ok &= args->sock->send(blank, ZMQ_SNDMORE);
     if(ok) ok &= args->sock->send(send);
-    if(!ok) std::cerr<<"failed to send '"<<reply<<"' to '"<<str<<"'"<<std::endl;
+    if(!ok) std::cerr<<"failed to send '"<<reply<<"' to '"<<key<<"'"<<std::endl;
     // FIXME these sorts of errors should be logged somewhere
     // rather than being silently ignored. This info could be critical for debugging issues!!!
   }
@@ -274,10 +299,10 @@ void SlowControlCollection::Clear(){
 }
 
 
-bool SlowControlCollection::Add(std::string name, SlowControlElementType type, std::function<std::string(const char*)> function){
+bool SlowControlCollection::Add(std::string name, SlowControlElementType type, SCFunction change_function, SCFunction read_function){
   
   if(SC_vars.count(name)) return false;
-  SC_vars[name] = new SlowControlElement(name, type, function);
+  SC_vars[name] = new SlowControlElement(name, type, change_function, read_function);
   
   return true;
   
@@ -307,16 +332,34 @@ SlowControlElement* SlowControlCollection::operator[](std::string key){
 
 std::string SlowControlCollection::Print(){
   
-  std::string reply = "?";
+  std::string reply = "";
+  bool first=true;
   for(std::map<std::string, SlowControlElement*>::iterator it=SC_vars.begin(); it!=SC_vars.end(); it++){
-    reply += ", " + it->second->Print();
+    if(!first) reply+=", ";
+    reply += it->first;
+    first=false;
   }
   
   return reply;
   
 }
 
-bool SlowControlCollection::AlertSubscribe(std::string alert, std::function<void(const char*, const char*)> function){
+std::string SlowControlCollection::PrintJSON(){
+  
+  std::string reply = "[";
+  bool first=true;
+  for(std::map<std::string, SlowControlElement*>::iterator it=SC_vars.begin(); it!=SC_vars.end(); it++){
+    if(!first) reply+=", ";
+    reply +=it->second->Print();
+    first = false;
+  }
+  reply+="]";
+
+  return reply;
+  
+}
+
+bool SlowControlCollection::AlertSubscribe(std::string alert, AlertFunction function){
   
   if(function==nullptr) return false;
   m_alert_functions_mutex.lock();
@@ -340,4 +383,85 @@ bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
   snprintf((char*) message2.data(), payload.length()+1, "%s", payload.c_str());
   return m_pub->send(message2);
   
+}
+
+void SlowControlCollection::JsonParser(std::string json){
+
+  std::map<std::string, std::string> out;
+
+  Unpack(json, out);
+
+  //std::cout<<"out map"<<std::endl;
+  
+  for(std::map<std::string, std::string>::iterator it=out.begin(); it!=out.end(); it++){
+
+    //std::cout<<it->first<<" -> "<<it->second<<std::endl;
+    
+    Add(it->first, SlowControlElementType::VARIABLE);
+    SC_vars[it->first]->JsonParser(it->second);
+    
+  }
+  
+  
+}
+
+void SlowControlCollection::Unpack(std::string in, std::map<std::string, std::string> &out, std::string header){
+
+  if(header!="") header+="::";
+  //std::cout<<std::endl<<std::endl<<std::endl<<"unpacking "<<header<<std::endl;//<<" : in="<<in<<std::endl;
+  //std::cout<<"printing store"<<std::endl;
+  Store test;
+  test.JsonParser(in);
+  //test.Print();
+  //std::cout<<"#############################"<<std::endl<<std::endl;
+  
+  for(std::map<std::string, std::string>::iterator it=test.begin(); it!=test.end(); it++){
+    //std::cout<<"it->first="<<it->first<<" : it->second[0]="<<it->second[0]<<" : "<<it->second<<std::endl;
+    if(it->first=="SCObject"){
+
+      Store tmp;
+      tmp.JsonParser(it->second);
+      out[header+tmp.Get<std::string>("name")]=it->second;
+    }
+    else if(it->first=="SCArray"){
+      
+      //      unsigned int counter=0;
+      unsigned int first=0;
+      for(unsigned int i=1; i<it->second.length(); i++){
+	if(it->second[i]=='{') first=i;
+	if(it->second[i]=='}'){
+	  //  std::stringstream tmp;
+	  //tmp<<counter;
+	  Store tmp;
+	  tmp.JsonParser(it->second.substr(first,i-first+1));
+	  out[header+tmp.Get<std::string>("name")]=it->second.substr(first,i-first+1);	  
+	  //	  counter++;
+	}
+	
+      }
+      
+    }
+    else if(it->second[0]=='{') Unpack(it->second, out, header+it->first);
+    else if(it->second[0]=='['){
+
+      int bracket_counter=0;
+      unsigned int start=0;
+      unsigned int counter=0;
+      
+      for(unsigned int i = 1; i<it->second.length(); i++){
+	//std::cout<<"i="<<i<<" : it->second[i]="<<it->second[i]<<" : counter="<<counter<<" : bracket_counter="<<bracket_counter<<std::endl; 
+	if(it->second[i]=='{' && bracket_counter==0) start=i;
+	if(it->second[i]=='{') bracket_counter++;
+	else if(it->second[i]=='}' && bracket_counter==1) {
+	  std::stringstream tmp;
+	  tmp<<counter;
+	  Unpack(it->second.substr(start,i-start+1), out, header+it->first+"::"+tmp.str());
+	  counter++;
+	  bracket_counter=0;
+	}
+	else if (it->second[i]=='}') bracket_counter--;
+      }
+    }
+  }
+
 }

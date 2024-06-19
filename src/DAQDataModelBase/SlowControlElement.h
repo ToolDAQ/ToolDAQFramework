@@ -5,9 +5,11 @@
 #include <Store.h>
 #include <sstream>
 #include <mutex>
-#include <functional>
+//#include <functional>
 
 namespace ToolFramework{
+
+  typedef std::string (*SCFunction)(const char*);
   
   enum SlowControlElementType { BUTTON, VARIABLE, OPTIONS, COMMAND, INFO };
   
@@ -17,12 +19,21 @@ namespace ToolFramework{
     
   public:
     
-    SlowControlElement(std::string name, SlowControlElementType type,  std::function<std::string(const char*)> function=nullptr);
+    SlowControlElement(std::string name, SlowControlElementType type, SCFunction change_function = 0, SCFunction read_function = 0);
+		       //std::function<std::string(const char*)> function=nullptr);
     std::string GetName();
     bool IsName(std::string name);
     std::string Print();
-    std::function<std::string(const char*)> GetFunction();
+    bool JsonParser(std::string json);
+    SCFunction GetChangeFunction();
+    SCFunction GetReadFunction();
     SlowControlElementType GetType();
+    bool AddCommand(std::string value);
+    bool SetValue(const char value[]);
+    bool SetDefault(std::string value);
+    bool SetValue(std::string value);
+    bool GetValue(std::string &value); 
+
     
     template<typename T> bool SetMin(T value){ 
       if(m_type == SlowControlElementType(VARIABLE)){
@@ -58,27 +69,23 @@ namespace ToolFramework{
       if(m_type == SlowControlElementType(OPTIONS)){
 	mtx.lock();
 	num_options++;
+	std::string current;
 	std::stringstream tmp;
-	tmp<<num_options;
-	options.Set(tmp.str(), value);
+	tmp<<value;
+	if(!options.Get("options",current)) current="["+tmp.str()+"]";
+	else {
+	  current=current.substr(0,current.length()-1);
+	  current+="," + tmp.str() + "]";
+	}
+	options.Set("options", current);
+	options.Destring("options");
 	mtx.unlock();
 	return true;
       }
       else return false;
     }
     
-    bool AddCommand(std::string value){
-      if(m_type == SlowControlElementType(COMMAND)){
-	mtx.lock();
-	num_options++;
-	std::stringstream tmp;
-	tmp<<num_options;
-	options.Set(tmp.str(), value);
-	mtx.unlock();
-	return true;
-      }
-      else return false;
-    }
+
     
     template<typename T> bool SetValue(T value){
       mtx.lock();
@@ -97,32 +104,6 @@ namespace ToolFramework{
       return true;
     }
     
-    bool SetValue(const char value[]){
-      std::string tmp_value=value;
-      return SetValue(tmp_value);
-    }
-    
-    bool SetValue(std::string value){
-      mtx.lock();
-      if(m_type == SlowControlElementType(VARIABLE)){
-	std::stringstream tmp(value);
-	double val=0;
-	tmp>>val;
-	mtx.unlock();
-	return SetValue(val);
-      }
-      else if(m_type == SlowControlElementType(INFO)){ //sanitising for web printout
-	for(unsigned int i=0; i<value.length(); i++){
-	  if(value.at(i)==',') value.at(i)='.';
-	  else if (value.at(i)=='{') value.at(i)='[';
-	  else if (value.at(i)=='}') value.at(i)=']';
-	  else if (value.at(i)=='"') value.at(i)='\'';
-	}
-      }
-      options.Set("value", value);
-      mtx.unlock();
-      return true;
-    }
     
     template<typename T> T GetValue(){
       T tmp;
@@ -140,16 +121,6 @@ namespace ToolFramework{
       return ret;
     }
     
-    bool GetValue(std::string &value){
-      mtx.lock();
-      if(!options.Has("value")){
-	mtx.unlock();
-	return false;
-      }
-      options.Get("value", value);
-      mtx.unlock();
-      return true;
-    } 
     
  private:
     
@@ -157,7 +128,8 @@ namespace ToolFramework{
     SlowControlElementType m_type;
     Store options;
     unsigned int num_options;
-    std::function<std::string(const char*)> m_function;
+    SCFunction m_change_function;
+    SCFunction m_read_function;
     
     std::mutex mtx;
     

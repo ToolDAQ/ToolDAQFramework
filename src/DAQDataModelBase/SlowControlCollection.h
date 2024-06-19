@@ -7,6 +7,8 @@
 #include <functional>
 
 namespace ToolFramework{
+
+  typedef void (*AlertFunction)(const char*, const char*);
   
   class SlowControlCollection;
   
@@ -21,7 +23,7 @@ namespace ToolFramework{
     int poll_length;
     
     SlowControlCollection* SCC;
-    std::map<std::string, std::function<void(const char*, const char*)> >* alert_functions;
+    std::map<std::string, AlertFunction>* alert_functions;
     std::mutex* alert_functions_mutex;
     
   };
@@ -37,13 +39,16 @@ namespace ToolFramework{
     bool ListenForData(int poll_length=0);
     bool InitThreadedReceiver(zmq::context_t* context, int port=555, int poll_length=100, bool new_service=true);
     SlowControlElement* operator[](std::string key);
-    bool Add(std::string name, SlowControlElementType type, std::function<std::string(const char*)> function=nullptr);
+    bool Add(std::string name, SlowControlElementType type, SCFunction change_function = 0, SCFunction read_function = 0 );
     bool Remove(std::string name);
     void Clear();
-    bool AlertSubscribe(std::string alert, std::function<void(const char*, const char*)> function);
+    bool AlertSubscribe(std::string alert, AlertFunction function);
     bool AlertSend(std::string alert, std::string="");
     std::string Print();
+    std::string PrintJSON();
     void Stop();
+    void JsonParser(std::string json);
+    
     
     template<typename T> T GetValue(std::string name){
       return SC_vars[name]->GetValue<T>();
@@ -53,7 +58,7 @@ namespace ToolFramework{
    private:
     
     std::map<std::string, SlowControlElement*> SC_vars;
-    std::map<std::string, std::function<void(const char*, const char*)> > m_alert_functions;
+    std::map<std::string, AlertFunction>  m_alert_functions;
     std::mutex m_alert_functions_mutex;
     
     DAQUtilities* m_util;
@@ -64,6 +69,7 @@ namespace ToolFramework{
     bool m_thread;
     
     static void Thread(Thread_args* arg);
+    void Unpack(std::string in, std::map<std::string,std::string> &out, std::string header="");
     
   };
   

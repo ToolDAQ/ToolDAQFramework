@@ -230,13 +230,38 @@ void ToolDAQChain::Remote(){
       bb.Set("msg_time", isot.str());
       bb.Set("msg_type", "Command Reply");
       bb.Set("msg_value",ExecuteCommand(command));
-    
 
+      
+      if(command =="?" && rr.Get<std::string>("var1")=="JSON"){
+	
+	std::string in= bb.Get<std::string>("msg_value");
+	std::string out="[";
+	std::vector<std::string> commands;
+	std::string tmp="";
+	for( unsigned int i=20; i<in.length(); i++){
+	  if(in[i]!=',' && in[i]!=' ') tmp+=in[i];
+	  if(in[i]==',' || (i==in.length()-1)){
+	    commands.push_back(tmp);
+	    tmp="";
+	  }
+	}
+	for(unsigned int i=0; i<commands.size(); i++){
+	  if(i!=0)out+=',';
+	  out+="{\"name\":\"" + commands.at(i) + "\",\"type\":\"BUTTON\"}";	    	  
+	}
+	
+	out+="]";
+	bb.Set("msg_value",out);
+	bb.Destring("msg_value");
+      }
+      
+      
+      
       std::string tmp="";
       bb>>tmp;
       zmq::message_t send(tmp.length()+1);
       snprintf ((char *) send.data(), tmp.length()+1 , "%s" ,tmp.c_str()) ;
-    
+      
       zmq::poll(out,1,2000);
       if (out[0].revents & ZMQ_POLLOUT)  Ireceiver.send(send);
       
