@@ -87,27 +87,33 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>InitThreadedReceiver<
 <tr class="memitem:a8a335148054d1f139c3de8f93b625e1c"><td class="memItemLeft" align="right" valign="top"><a id="a8a335148054d1f139c3de8f93b625e1c"></a>
 <a class="el" href="classToolFramework_1_1SlowControlElement.html">SlowControlElement</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>operator[]</b> (std::string key)</td></tr>
 <tr class="separator:a8a335148054d1f139c3de8f93b625e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13c739a1cf37f639176cfc86199be6a7"><td class="memItemLeft" align="right" valign="top"><a id="a13c739a1cf37f639176cfc86199be6a7"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>Add</b> (std::string name, SlowControlElementType type, std::function&lt; std::string(const char *)&gt; function=nullptr)</td></tr>
-<tr class="separator:a13c739a1cf37f639176cfc86199be6a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ef6e4bc431635272b31b9a06fa43b27"><td class="memItemLeft" align="right" valign="top"><a id="a6ef6e4bc431635272b31b9a06fa43b27"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>Add</b> (std::string name, SlowControlElementType type, SCFunction change_function=0, SCFunction read_function=0)</td></tr>
+<tr class="separator:a6ef6e4bc431635272b31b9a06fa43b27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25f82ef2bb236bdac8c8986d8e41b188"><td class="memItemLeft" align="right" valign="top"><a id="a25f82ef2bb236bdac8c8986d8e41b188"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>Remove</b> (std::string name)</td></tr>
 <tr class="separator:a25f82ef2bb236bdac8c8986d8e41b188"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e99cc7ef9d6bf71a5c282ad4f657913"><td class="memItemLeft" align="right" valign="top"><a id="a3e99cc7ef9d6bf71a5c282ad4f657913"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Clear</b> ()</td></tr>
 <tr class="separator:a3e99cc7ef9d6bf71a5c282ad4f657913"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a911ef719bec264d2ff8a1c2707409899"><td class="memItemLeft" align="right" valign="top"><a id="a911ef719bec264d2ff8a1c2707409899"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>AlertSubscribe</b> (std::string alert, std::function&lt; void(const char *, const char *)&gt; function)</td></tr>
-<tr class="separator:a911ef719bec264d2ff8a1c2707409899"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a854aca1b92667396a8220f2483cfb466"><td class="memItemLeft" align="right" valign="top"><a id="a854aca1b92667396a8220f2483cfb466"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>AlertSubscribe</b> (std::string alert, AlertFunction function)</td></tr>
+<tr class="separator:a854aca1b92667396a8220f2483cfb466"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86c609fc9648393b9da4e4824913c8aa"><td class="memItemLeft" align="right" valign="top"><a id="a86c609fc9648393b9da4e4824913c8aa"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>AlertSend</b> (std::string alert, std::string=&quot;&quot;)</td></tr>
 <tr class="separator:a86c609fc9648393b9da4e4824913c8aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4e8c45a5bf07feb53de4b0624a4c027"><td class="memItemLeft" align="right" valign="top"><a id="ae4e8c45a5bf07feb53de4b0624a4c027"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>Print</b> ()</td></tr>
 <tr class="separator:ae4e8c45a5bf07feb53de4b0624a4c027"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06aaa3bc77e1e6e97b219070092f945e"><td class="memItemLeft" align="right" valign="top"><a id="a06aaa3bc77e1e6e97b219070092f945e"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>PrintJSON</b> ()</td></tr>
+<tr class="separator:a06aaa3bc77e1e6e97b219070092f945e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2147f320708eef46febf7e6f1ccd60e"><td class="memItemLeft" align="right" valign="top"><a id="ad2147f320708eef46febf7e6f1ccd60e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Stop</b> ()</td></tr>
 <tr class="separator:ad2147f320708eef46febf7e6f1ccd60e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a6ec133b73896d550ff57ca970cead2"><td class="memItemLeft" align="right" valign="top"><a id="a2a6ec133b73896d550ff57ca970cead2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>JsonParser</b> (std::string json)</td></tr>
+<tr class="separator:a2a6ec133b73896d550ff57ca970cead2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd2408dd7bf2d90ae34e17c9dc6e934c"><td class="memTemplParams" colspan="2"><a id="acd2408dd7bf2d90ae34e17c9dc6e934c"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:acd2408dd7bf2d90ae34e17c9dc6e934c"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>GetValue</b> (std::string name)</td></tr>

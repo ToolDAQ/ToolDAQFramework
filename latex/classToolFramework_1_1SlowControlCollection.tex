@@ -15,8 +15,8 @@ bool {\bfseries Init\+Threaded\+Receiver} (zmq\+::context\+\_\+t $\ast$context, 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a8a335148054d1f139c3de8f93b625e1c}\label{classToolFramework_1_1SlowControlCollection_a8a335148054d1f139c3de8f93b625e1c}} 
 \mbox{\hyperlink{classToolFramework_1_1SlowControlElement}{Slow\+Control\+Element}} $\ast$ {\bfseries operator\mbox{[}$\,$\mbox{]}} (std\+::string key)
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a13c739a1cf37f639176cfc86199be6a7}\label{classToolFramework_1_1SlowControlCollection_a13c739a1cf37f639176cfc86199be6a7}} 
-bool {\bfseries Add} (std\+::string name, Slow\+Control\+Element\+Type type, std\+::function$<$ std\+::string(const char $\ast$)$>$ function=nullptr)
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a6ef6e4bc431635272b31b9a06fa43b27}\label{classToolFramework_1_1SlowControlCollection_a6ef6e4bc431635272b31b9a06fa43b27}} 
+bool {\bfseries Add} (std\+::string name, Slow\+Control\+Element\+Type type, SCFunction change\+\_\+function=0, SCFunction read\+\_\+function=0)
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a25f82ef2bb236bdac8c8986d8e41b188}\label{classToolFramework_1_1SlowControlCollection_a25f82ef2bb236bdac8c8986d8e41b188}} 
 bool {\bfseries Remove} (std\+::string name)
@@ -24,8 +24,8 @@ bool {\bfseries Remove} (std\+::string name)
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a3e99cc7ef9d6bf71a5c282ad4f657913}\label{classToolFramework_1_1SlowControlCollection_a3e99cc7ef9d6bf71a5c282ad4f657913}} 
 void {\bfseries Clear} ()
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a911ef719bec264d2ff8a1c2707409899}\label{classToolFramework_1_1SlowControlCollection_a911ef719bec264d2ff8a1c2707409899}} 
-bool {\bfseries Alert\+Subscribe} (std\+::string alert, std\+::function$<$ void(const char $\ast$, const char $\ast$)$>$ function)
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a854aca1b92667396a8220f2483cfb466}\label{classToolFramework_1_1SlowControlCollection_a854aca1b92667396a8220f2483cfb466}} 
+bool {\bfseries Alert\+Subscribe} (std\+::string alert, Alert\+Function function)
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a86c609fc9648393b9da4e4824913c8aa}\label{classToolFramework_1_1SlowControlCollection_a86c609fc9648393b9da4e4824913c8aa}} 
 bool {\bfseries Alert\+Send} (std\+::string alert, std\+::string=\char`\"{}\char`\"{})
@@ -33,8 +33,14 @@ bool {\bfseries Alert\+Send} (std\+::string alert, std\+::string=\char`\"{}\char
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_ae4e8c45a5bf07feb53de4b0624a4c027}\label{classToolFramework_1_1SlowControlCollection_ae4e8c45a5bf07feb53de4b0624a4c027}} 
 std\+::string {\bfseries Print} ()
 \item 
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a06aaa3bc77e1e6e97b219070092f945e}\label{classToolFramework_1_1SlowControlCollection_a06aaa3bc77e1e6e97b219070092f945e}} 
+std\+::string {\bfseries Print\+JSON} ()
+\item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_ad2147f320708eef46febf7e6f1ccd60e}\label{classToolFramework_1_1SlowControlCollection_ad2147f320708eef46febf7e6f1ccd60e}} 
 void {\bfseries Stop} ()
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a2a6ec133b73896d550ff57ca970cead2}\label{classToolFramework_1_1SlowControlCollection_a2a6ec133b73896d550ff57ca970cead2}} 
+void {\bfseries Json\+Parser} (std\+::string json)
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_acd2408dd7bf2d90ae34e17c9dc6e934c}\label{classToolFramework_1_1SlowControlCollection_acd2408dd7bf2d90ae34e17c9dc6e934c}} 
 {\footnotesize template$<$typename T $>$ }\\T {\bfseries Get\+Value} (std\+::string name)

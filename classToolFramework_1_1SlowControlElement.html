@@ -75,9 +75,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a124df33718f50ff0a796a3cc8b4434f0"><td class="memItemLeft" align="right" valign="top"><a id="a124df33718f50ff0a796a3cc8b4434f0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SlowControlElement</b> (std::string name, SlowControlElementType type, std::function&lt; std::string(const char *)&gt; function=nullptr)</td></tr>
-<tr class="separator:a124df33718f50ff0a796a3cc8b4434f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab200cd682161babd9310c36eae1cd273"><td class="memItemLeft" align="right" valign="top"><a id="ab200cd682161babd9310c36eae1cd273"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SlowControlElement</b> (std::string name, SlowControlElementType type, SCFunction change_function=0, SCFunction read_function=0)</td></tr>
+<tr class="separator:ab200cd682161babd9310c36eae1cd273"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82b1da8b295d771e8799ec33f79f94c0"><td class="memItemLeft" align="right" valign="top"><a id="a82b1da8b295d771e8799ec33f79f94c0"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetName</b> ()</td></tr>
 <tr class="separator:a82b1da8b295d771e8799ec33f79f94c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -87,12 +87,33 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>IsName</b> (std::stri
 <tr class="memitem:a2d1cff157eeec800672cebc547de3bc8"><td class="memItemLeft" align="right" valign="top"><a id="a2d1cff157eeec800672cebc547de3bc8"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>Print</b> ()</td></tr>
 <tr class="separator:a2d1cff157eeec800672cebc547de3bc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa25130e9be2eff01d41f286119f0dbc4"><td class="memItemLeft" align="right" valign="top"><a id="aa25130e9be2eff01d41f286119f0dbc4"></a>
-std::function&lt; std::string(const char *)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetFunction</b> ()</td></tr>
-<tr class="separator:aa25130e9be2eff01d41f286119f0dbc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d2054b4950d1563aa66e08c1739714a"><td class="memItemLeft" align="right" valign="top"><a id="a9d2054b4950d1563aa66e08c1739714a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>JsonParser</b> (std::string json)</td></tr>
+<tr class="separator:a9d2054b4950d1563aa66e08c1739714a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae372df00b14d4fc6aa97c04feb772d32"><td class="memItemLeft" align="right" valign="top"><a id="ae372df00b14d4fc6aa97c04feb772d32"></a>
+SCFunction&#160;</td><td class="memItemRight" valign="bottom"><b>GetChangeFunction</b> ()</td></tr>
+<tr class="separator:ae372df00b14d4fc6aa97c04feb772d32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a940d3593cdaacf14bdecdc2020b85c"><td class="memItemLeft" align="right" valign="top"><a id="a8a940d3593cdaacf14bdecdc2020b85c"></a>
+SCFunction&#160;</td><td class="memItemRight" valign="bottom"><b>GetReadFunction</b> ()</td></tr>
+<tr class="separator:a8a940d3593cdaacf14bdecdc2020b85c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae02f611e9a3cccabd627d71daf7ce083"><td class="memItemLeft" align="right" valign="top"><a id="ae02f611e9a3cccabd627d71daf7ce083"></a>
 SlowControlElementType&#160;</td><td class="memItemRight" valign="bottom"><b>GetType</b> ()</td></tr>
 <tr class="separator:ae02f611e9a3cccabd627d71daf7ce083"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a790dcb80efc1350833062856db9404"><td class="memItemLeft" align="right" valign="top"><a id="a5a790dcb80efc1350833062856db9404"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>AddCommand</b> (std::string value)</td></tr>
+<tr class="separator:a5a790dcb80efc1350833062856db9404"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cfebfa7015ec7f9d9b643391ad5fd3c"><td class="memItemLeft" align="right" valign="top"><a id="a9cfebfa7015ec7f9d9b643391ad5fd3c"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SetValue</b> (const char value[])</td></tr>
+<tr class="separator:a9cfebfa7015ec7f9d9b643391ad5fd3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12eb98179c79e2014d96a5f89332edbf"><td class="memItemLeft" align="right" valign="top"><a id="a12eb98179c79e2014d96a5f89332edbf"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SetDefault</b> (std::string value)</td></tr>
+<tr class="separator:a12eb98179c79e2014d96a5f89332edbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a655825af63edba4c8141689d00dbc27d"><td class="memItemLeft" align="right" valign="top"><a id="a655825af63edba4c8141689d00dbc27d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SetValue</b> (std::string value)</td></tr>
+<tr class="separator:a655825af63edba4c8141689d00dbc27d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf2f71a2531892e9eaac4dc103724fd2"><td class="memItemLeft" align="right" valign="top"><a id="adf2f71a2531892e9eaac4dc103724fd2"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetValue</b> (std::string &amp;value)</td></tr>
+<tr class="separator:adf2f71a2531892e9eaac4dc103724fd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acae55ba2d94f85db232b6581e4e563c9"><td class="memTemplParams" colspan="2"><a id="acae55ba2d94f85db232b6581e4e563c9"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:acae55ba2d94f85db232b6581e4e563c9"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>SetMin</b> (T value)</td></tr>
@@ -109,19 +130,10 @@ template&lt;typename T &gt; </td></tr>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a707a0c3cdcd32386a15f58401318cb5d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>AddOption</b> (T value)</td></tr>
 <tr class="separator:a707a0c3cdcd32386a15f58401318cb5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad74be3e023272cbc3c444a660ea5fdc0"><td class="memItemLeft" align="right" valign="top"><a id="ad74be3e023272cbc3c444a660ea5fdc0"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>AddCommand</b> (std::string value)</td></tr>
-<tr class="separator:ad74be3e023272cbc3c444a660ea5fdc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d09d2c5a1ebe29486c37520a7b2e955"><td class="memTemplParams" colspan="2"><a id="a3d09d2c5a1ebe29486c37520a7b2e955"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a3d09d2c5a1ebe29486c37520a7b2e955"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>SetValue</b> (T value)</td></tr>
 <tr class="separator:a3d09d2c5a1ebe29486c37520a7b2e955"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9271c6a36991c1d72240a8fd5b5385c7"><td class="memItemLeft" align="right" valign="top"><a id="a9271c6a36991c1d72240a8fd5b5385c7"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SetValue</b> (const char value[])</td></tr>
-<tr class="separator:a9271c6a36991c1d72240a8fd5b5385c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af396bac08a6aa508fbc4fea5f70053e2"><td class="memItemLeft" align="right" valign="top"><a id="af396bac08a6aa508fbc4fea5f70053e2"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SetValue</b> (std::string value)</td></tr>
-<tr class="separator:af396bac08a6aa508fbc4fea5f70053e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3cada1f261efd614fe165f4f2b98605"><td class="memTemplParams" colspan="2"><a id="aa3cada1f261efd614fe165f4f2b98605"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:aa3cada1f261efd614fe165f4f2b98605"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>GetValue</b> ()</td></tr>
@@ -130,9 +142,6 @@ template&lt;typename T &gt; </td></tr>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ae9de6f50ad8d768343f539f20c7c57a1"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>GetValue</b> (T &amp;value)</td></tr>
 <tr class="separator:ae9de6f50ad8d768343f539f20c7c57a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7460fc30389e256eb6cf8b1856b1539b"><td class="memItemLeft" align="right" valign="top"><a id="a7460fc30389e256eb6cf8b1856b1539b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetValue</b> (std::string &amp;value)</td></tr>
-<tr class="separator:a7460fc30389e256eb6cf8b1856b1539b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/DAQDataModelBase/<a class="el" href="SlowControlElement_8h_source.html">SlowControlElement.h</a></li>
