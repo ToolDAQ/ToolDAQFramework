@@ -312,38 +312,50 @@ ToolDAQChain::~ToolDAQChain(){
       m_tools.clear();
       printf("yakka3\n");
   */ 
-  
-  if(m_data!=0 && m_data->Log==m_log){    
-    m_data->Log=0;  
-    delete m_data;      
-    m_data=0;     
-  }
 
-  m_DAQdata=0;
+  m_DAQdata->SC_vars.Stop();
 
   delete m_log;
   m_log=0;
   
-  //  printf("%s \n","tdebug 1");
-  //  delete m_data->Log;   // change this to m_log
-  //printf("%s \n","tdebug 2");
-  //m_data->Log=0;
-  //printf("%s \n","tdebug 3");  
+  //  printf("%s \n","tdebug 3");  
     
   delete SD;
   //printf("%s \n","tdebug 4");
   SD=0;  
   //printf("%s \n","tdebug 5");
+
+  //printf("%s \n","tdebug 6");  
+  delete context;
+  //printf("%s \n","tdebug 7");
+  context=0;
+  
+  //printf("%s \n","tdebug 8");
+  
+  /*
+  if(m_data!=0 && m_data->Log==m_log){    
+    m_data->Log=0;  
+    delete m_data;      
+    m_data=0;     
+  }
+  */
+  delete m_DAQdata;
+  m_DAQdata=0;
+
+  /*
+  delete m_log;
+  m_log=0;
+  */
+  
+  //  printf("%s \n","tdebug 1");
+  //  delete m_data->Log;   // change this to m_log
+  //printf("%s \n","tdebug 2");
+  //m_data->Log=0;
   //sleep(30);
   //printf("%s \n","tdebug 6");
   //  context->close();
   //printf("%s \n","tdebug 6.5");
-  
-  delete context;
-  // printf("%s \n","tdebug 7");
-  context=0;
-  
-  //printf("%s \n","tdebug 8");
+
   // if(m_log_mode!="Off"){
   //std::cout.rdbuf(bcout);
   //printf("%s \n","tdebug 9");

@@ -104,7 +104,6 @@ std::string SlowControlElement::Print(){
 
 bool SlowControlElement::JsonParser(std::string json){
 
-  mtx.lock();
   Store tmp;
   tmp.JsonParser(json);
   //m_name=tmp.Get<std::string>("name");
@@ -148,11 +147,9 @@ bool SlowControlElement::JsonParser(std::string json){
     SetValue(tmp.Get<std::string>("value"));
   }
   else{
-    mtx.unlock();
     return false;
   }
   
-  mtx.unlock();
   return true;
 }
 
@@ -207,9 +204,7 @@ bool SlowControlElement::SetDefault(std::string value){
 bool SlowControlElement::SetValue(const char value[]){
   bool ret=false;
   std::string tmp_value=value;
-  mtx.lock();
   ret=SetValue(tmp_value);
-  mtx.unlock();
   return ret;
 }
 

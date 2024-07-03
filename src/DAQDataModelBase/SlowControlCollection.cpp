@@ -44,43 +44,49 @@ SlowControlCollection::~SlowControlCollection(){
 }
 
 void SlowControlCollection::Stop(){
-
-if(m_thread) m_util->KillThread(args);
+  //printf("p0\n");
+  std::cout<<args<<std::endl;
+  //printf("p1 %p \n",args);
+if(m_thread && args) m_util->KillThread(args);
  m_thread=false;
-  
+   //printf("p2\n");
   delete args;
   args=0;
-  
+   //printf("p3\n");
   delete m_pub;
   m_pub=0;
-
+ //printf("p4\n");
   if(m_new_service) m_util->RemoveService("SlowControlReceiver");
-  
+  m_new_service=false;
+   //printf("p5\n");
   delete m_util;
   m_util=0;
-  
+   //printf("p6\n");
   Clear();
-  
+   //printf("p7\n");
 }
 
 bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_service){
   
   if(args) return false;
-  
+  //printf("Init\n");
   m_context=context;
   
   m_util=new DAQUtilities(m_context);
   m_new_service=new_service;
   
   m_pub= new zmq::socket_t(*(m_context), ZMQ_PUB);
+  m_pub->setsockopt(ZMQ_LINGER, 0);
   m_pub->bind("tcp://*:78787");
   
   args=new SlowControlCollectionThread_args();
+  //printf("init p=%p\n", args);
   
   args->alert_functions=&m_alert_functions;
   args->alert_functions_mutex=&m_alert_functions_mutex;
   
   args->sock = new zmq::socket_t(*(m_context), ZMQ_ROUTER);
+  args->sock->setsockopt(ZMQ_LINGER, 0);
   
   std::stringstream tmp;
   tmp<<"tcp://*:"<<port;
@@ -89,6 +95,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   
   args->sub = new zmq::socket_t(*(m_context), ZMQ_SUB);
   args->sub->setsockopt(ZMQ_SUBSCRIBE, "", 0);
+  args->sub->setsockopt(ZMQ_LINGER, 0);
   args->sub->bind("tcp://*:78788");
   
   
@@ -135,6 +142,7 @@ bool SlowControlCollection::ListenForData(int poll_length){
 bool SlowControlCollection::InitThreadedReceiver(zmq::context_t* context, int port, int poll_length, bool new_service){
   
   if(args) return false;
+  //printf("InitThreadedReceiver\n");
   m_thread=true;
 
   //std::cout<<"new_service="<<new_service<<std::endl;
@@ -176,7 +184,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     // std::stringstream tmpstream(str);
     // tmpstream>>str;
 
-    tmp.Print();
+    //tmp.Print();
     //printf("key=%s\n",key.c_str());
     
     std::string reply="error: " + key;
