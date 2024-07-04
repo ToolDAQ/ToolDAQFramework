@@ -162,28 +162,45 @@ void SlowControlCollection::Thread(Thread_args* arg){
   if (args->items[0].revents & ZMQ_POLLIN){ //received slow control value
     
     zmq::message_t identity;
-    bool ok = args->sock->recv(&identity);
-    // FIXME handle errors (ok!=true)!
+    int ok = args->sock->recv(&identity);
+
+    if(ok==0 || !identity.more()){
+      std::cerr<<"error: Poorly formatted slowcontrol input [identity problem]"<<std::endl;
+      return;
+    }
     
     zmq::message_t blank;
     ok = args->sock->recv(&blank);
-    // FIXME handle errors (ok!=true)!
+    
+    if (!blank.more()){
+      std::cerr<<"error: Poorly formatted slowcontrol input [blank problem]"<<std::endl;
+      return;
+    }
     
     zmq::message_t message;
     ok = args->sock->recv(&message);
-    // FIXME handle errors (ok!=true)!
+    
+    if(ok==0 || message.more()){
+      std::cerr<<"error: Poorly formatted slowcontrol input [message problem]"<<std::endl;
+      return;
+    }
+    
     std::istringstream iss(static_cast<char*>(message.data()));
     Store tmp;
     //printf("iss=%s\n",iss.str().c_str());
     tmp.JsonParser(iss.str());
     
+    if(!tmp.Has("msg_value")){
+      std::cerr<<"error: Poorly formatted slowcontrol input [no msg_value]"<<std::endl;
+      return;
+    }
     
     std::string key=tmp.Get<std::string>("msg_value");
     std::string value=tmp.Get<std::string>("var1");
     
     // std::stringstream tmpstream(str);
     // tmpstream>>str;
-
+    
     //tmp.Print();
     //printf("key=%s\n",key.c_str());
     
@@ -247,10 +264,13 @@ void SlowControlCollection::Thread(Thread_args* arg){
     snprintf ((char *) send.data(), tmp2.length()+1 , "%s" ,tmp2.c_str()) ;
     
     
-    ok = args->sock->send(identity, ZMQ_SNDMORE);
-    if(ok) ok &= args->sock->send(blank, ZMQ_SNDMORE);
-    if(ok) ok &= args->sock->send(send);
-    if(!ok) std::cerr<<"failed to send '"<<reply<<"' to '"<<key<<"'"<<std::endl;
+    bool tmp_ok = args->sock->send(identity, ZMQ_SNDMORE);
+    if(tmp_ok) tmp_ok = tmp_ok && args->sock->send(blank, ZMQ_SNDMORE);
+    if(tmp_ok) tmp_ok= tmp_ok && args->sock->send(send);
+    if(!tmp_ok){
+      std::cerr<<"failed to send '"<<reply<<"' to '"<<key<<"'"<<std::endl;
+      return;
+    }
     // FIXME these sorts of errors should be logged somewhere
     // rather than being silently ignored. This info could be critical for debugging issues!!!
   }
@@ -260,8 +280,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
     zmq::message_t message;
     
     // receive alert type
-    bool ok = args->sub->recv(&message);
-    if(!ok){
+    int ok = args->sub->recv(&message);
+    if(ok==0){
       // FIXME this case should be handled! what do we do?
       std::cerr<<"failed to receive alert!"<<std::endl;
     }
@@ -272,7 +292,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     bool has_data=false;
     if(message.more()){
       ok = args->sub->recv(&message);
-      if(!ok){
+      if(ok==0){
         // FIXME this case should be handled! what do we do?
         std::cerr<<"failed to receive alert payload!"<<std::endl;
       }
