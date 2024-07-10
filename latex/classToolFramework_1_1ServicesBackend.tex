@@ -1,0 +1,32 @@
+\hypertarget{classToolFramework_1_1ServicesBackend}{}\doxysection{Tool\+Framework\+::Services\+Backend Class Reference}
+\label{classToolFramework_1_1ServicesBackend}\index{ToolFramework::ServicesBackend@{ToolFramework::ServicesBackend}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1ServicesBackend_a7417bfc07779d1c0ae81e9ac83138e84}\label{classToolFramework_1_1ServicesBackend_a7417bfc07779d1c0ae81e9ac83138e84}} 
+void {\bfseries Set\+Up} (zmq\+::context\+\_\+t $\ast$in\+\_\+context, std\+::function$<$ void(std\+::string msg, int msg\+\_\+verb, int verbosity)$>$ log=nullptr)
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1ServicesBackend_a1b9c3e7aa0dbcaf055a2daa9187b33ee}\label{classToolFramework_1_1ServicesBackend_a1b9c3e7aa0dbcaf055a2daa9187b33ee}} 
+bool {\bfseries Initialise} (std\+::string configfile)
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1ServicesBackend_a8b10c4e4c0810a96b3c7ff07aa4a5698}\label{classToolFramework_1_1ServicesBackend_a8b10c4e4c0810a96b3c7ff07aa4a5698}} 
+bool {\bfseries Initialise} (Store \&varaibles\+\_\+in)
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1ServicesBackend_ad00d8e592847a5666b573e9deac8965f}\label{classToolFramework_1_1ServicesBackend_ad00d8e592847a5666b573e9deac8965f}} 
+bool {\bfseries Finalise} ()
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1ServicesBackend_a765df8a193be797fb65ff9b7b0730c7a}\label{classToolFramework_1_1ServicesBackend_a765df8a193be797fb65ff9b7b0730c7a}} 
+bool {\bfseries Send\+Command} (const std\+::string \&topic, const std\+::string \&command, std\+::vector$<$ std\+::string $>$ $\ast$results=nullptr, const unsigned int $\ast$timeout\+\_\+ms=nullptr, std\+::string $\ast$err=nullptr)
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1ServicesBackend_ac5cbbdf96384487709d064d34dce6502}\label{classToolFramework_1_1ServicesBackend_ac5cbbdf96384487709d064d34dce6502}} 
+bool {\bfseries Send\+Command} (const std\+::string \&topic, const std\+::string \&command, std\+::string $\ast$results=nullptr, const unsigned int $\ast$timeout\+\_\+ms=nullptr, std\+::string $\ast$err=nullptr)
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1ServicesBackend_a66f306c8c31367ee1033b3fcc2f46ce3}\label{classToolFramework_1_1ServicesBackend_a66f306c8c31367ee1033b3fcc2f46ce3}} 
+bool {\bfseries Send\+Multicast} (std\+::string command, std\+::string $\ast$err=nullptr)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/Services\+Backend.\+h\item 
+src/\+Service\+Discovery/Services\+Backend.\+cpp\end{DoxyCompactItemize}

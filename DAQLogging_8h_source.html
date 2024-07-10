@@ -100,77 +100,79 @@ $(function() {
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  </div>
 <div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html">   41</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html">DAQLogging_thread_args</a>{</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    </div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#abd631d2e19b703020a4c47ab1d2f8cfc">   43</a></span>&#160;    <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#abd631d2e19b703020a4c47ab1d2f8cfc">DAQLogging_thread_args</a>( zmq::context_t *incontext,  boost::uuids::uuid inUUID, std::string inlogaddress, <span class="keywordtype">int</span> inlogport){</div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#aedb636fa8277ebf91403d557c7cd3de7">   43</a></span>&#160;    <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#aedb636fa8277ebf91403d557c7cd3de7">DAQLogging_thread_args</a>( zmq::context_t *incontext,  boost::uuids::uuid inUUID, std::string inlogaddress, <span class="keywordtype">int</span> inlogport, std::string service){</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#a41e38ce1700f9ae17d434a31cb6bb82f">context</a>=incontext;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#ade5f66691c6d92c980215461319a9148">log_address</a>=inlogaddress;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#a756e2e590a0801909386237292c47c40">UUID</a>=inUUID;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#ab1f548a3a40c17c06088cae5bbe799d4">log_port</a>=inlogport;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    } </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    </div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#a41e38ce1700f9ae17d434a31cb6bb82f">   50</a></span>&#160;    zmq::context_t *<a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#a41e38ce1700f9ae17d434a31cb6bb82f">context</a>; </div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#a756e2e590a0801909386237292c47c40">   51</a></span>&#160;    boost::uuids::uuid <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#a756e2e590a0801909386237292c47c40">UUID</a>; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="comment">//std::string remoteservice; </span></div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#ade5f66691c6d92c980215461319a9148">   53</a></span>&#160;    std::string <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#ade5f66691c6d92c980215461319a9148">log_address</a>; </div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#ab1f548a3a40c17c06088cae5bbe799d4">   54</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#ab1f548a3a40c17c06088cae5bbe799d4">log_port</a>; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  };</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  </div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classToolFramework_1_1DAQLogging.html">   70</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classToolFramework_1_1DAQLogging.html">DAQLogging</a>: <span class="keyword">virtual</span> <span class="keyword">public</span> std::ostream, <span class="keyword">public</span> Logging {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    </div>
-<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">   74</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">TDAQStreamBuf</a>: <span class="keyword">virtual</span> <span class="keyword">public</span> std::stringbuf, <span class="keyword">public</span> Logging::TFStreamBuf{</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      m_service=service;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    } </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    </div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#a41e38ce1700f9ae17d434a31cb6bb82f">   51</a></span>&#160;    zmq::context_t *<a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#a41e38ce1700f9ae17d434a31cb6bb82f">context</a>; </div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#a756e2e590a0801909386237292c47c40">   52</a></span>&#160;    boost::uuids::uuid <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#a756e2e590a0801909386237292c47c40">UUID</a>; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="comment">//std::string remoteservice; </span></div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#ade5f66691c6d92c980215461319a9148">   54</a></span>&#160;    std::string <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#ade5f66691c6d92c980215461319a9148">log_address</a>; </div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="structToolFramework_1_1DAQLogging__thread__args.html#ab1f548a3a40c17c06088cae5bbe799d4">   55</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html#ab1f548a3a40c17c06088cae5bbe799d4">log_port</a>; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    std::string m_service;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  };</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  </div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classToolFramework_1_1DAQLogging.html">   71</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classToolFramework_1_1DAQLogging.html">DAQLogging</a>: <span class="keyword">virtual</span> <span class="keyword">public</span> std::ostream, <span class="keyword">public</span> Logging {</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    </div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">   75</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">TDAQStreamBuf</a>: <span class="keyword">virtual</span> <span class="keyword">public</span> std::stringbuf, <span class="keyword">public</span> Logging::TFStreamBuf{</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <a class="code" href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">TDAQStreamBuf</a>(zmq::context_t *context, boost::uuids::uuid UUID, std::string service, <span class="keywordtype">bool</span> interactive=<span class="keyword">true</span>, <span class="keywordtype">bool</span> local=<span class="keyword">false</span>,  std::string localpath=<span class="stringliteral">&quot;./log&quot;</span>, <span class="keywordtype">bool</span> remote=<span class="keyword">false</span>, std::string log_address=<span class="stringliteral">&quot;239.192.1.1&quot;</span>, <span class="keywordtype">int</span> log_port=5001, <span class="keywordtype">bool</span> error=<span class="keyword">false</span>, std::ostream* filestream=0);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">TDAQStreamBuf</a>();</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">int</span> sync ( );</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">TDAQStreamBuf</a>(zmq::context_t *context, boost::uuids::uuid UUID, std::string service, <span class="keywordtype">bool</span> interactive=<span class="keyword">true</span>, <span class="keywordtype">bool</span> local=<span class="keyword">false</span>,  std::string localpath=<span class="stringliteral">&quot;./log&quot;</span>, <span class="keywordtype">bool</span> remote=<span class="keyword">false</span>, std::string log_address=<span class="stringliteral">&quot;239.192.1.1&quot;</span>, <span class="keywordtype">int</span> log_port=5001, <span class="keywordtype">bool</span> error=<span class="keyword">false</span>, std::ostream* filestream=0);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">TDAQStreamBuf</a>();</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">int</span> sync ( );</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">static</span>  <span class="keywordtype">void</span> *RemoteThread(<span class="keywordtype">void</span>* arg);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    zmq::context_t *m_context;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    zmq::socket_t *LogSender;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    pthread_t thread;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html">DAQLogging_thread_args</a> *args;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    std::string m_service;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">bool</span> m_remote;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  }; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <a class="code" href="classToolFramework_1_1DAQLogging.html#ae0adb3ad0eec50d81515ca33b9c28db4">DAQLogging</a>(zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, <span class="keywordtype">bool</span> interactive=<span class="keyword">true</span>, <span class="keywordtype">bool</span> local=<span class="keyword">false</span>, std::string localpath=<span class="stringliteral">&quot;./log&quot;</span>,  <span class="keywordtype">bool</span> remote=<span class="keyword">false</span>, std::string logservice=<span class="stringliteral">&quot;&quot;</span>, <span class="keywordtype">int</span> logport=0, <span class="keywordtype">bool</span> split_output_files=<span class="keyword">false</span>);</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">static</span>  <span class="keywordtype">void</span> *RemoteThread(<span class="keywordtype">void</span>* arg);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    zmq::context_t *m_context;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    zmq::socket_t *LogSender;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    pthread_t thread;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <a class="code" href="structToolFramework_1_1DAQLogging__thread__args.html">DAQLogging_thread_args</a> *args;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    std::string m_service;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">bool</span> m_remote;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  }; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <a class="code" href="classToolFramework_1_1DAQLogging.html#ae0adb3ad0eec50d81515ca33b9c28db4">DAQLogging</a>(zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, <span class="keywordtype">bool</span> interactive=<span class="keyword">true</span>, <span class="keywordtype">bool</span> local=<span class="keyword">false</span>, std::string localpath=<span class="stringliteral">&quot;./log&quot;</span>,  <span class="keywordtype">bool</span> remote=<span class="keyword">false</span>, std::string logservice=<span class="stringliteral">&quot;&quot;</span>, <span class="keywordtype">int</span> logport=0, <span class="keywordtype">bool</span> split_output_files=<span class="keyword">false</span>);</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  <span class="keyword">virtual</span> ~<a class="code" href="classToolFramework_1_1DAQLogging.html">DAQLogging</a>();</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  </div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keyword">virtual</span> ~<a class="code" href="classToolFramework_1_1DAQLogging.html">DAQLogging</a>();</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  };</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;}</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  </div>
-<div class="ttc" id="aclassToolFramework_1_1DAQLogging_1_1TDAQStreamBuf_html"><div class="ttname"><a href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">ToolFramework::DAQLogging::TDAQStreamBuf</a></div><div class="ttdef"><b>Definition:</b> DAQLogging.h:74</div></div>
-<div class="ttc" id="aclassToolFramework_1_1DAQLogging_html"><div class="ttname"><a href="classToolFramework_1_1DAQLogging.html">ToolFramework::DAQLogging</a></div><div class="ttdef"><b>Definition:</b> DAQLogging.h:70</div></div>
-<div class="ttc" id="aclassToolFramework_1_1DAQLogging_html_ae0adb3ad0eec50d81515ca33b9c28db4"><div class="ttname"><a href="classToolFramework_1_1DAQLogging.html#ae0adb3ad0eec50d81515ca33b9c28db4">ToolFramework::DAQLogging::DAQLogging</a></div><div class="ttdeci">DAQLogging(zmq::context_t *context, boost::uuids::uuid UUID, std::string service, bool interactive=true, bool local=false, std::string localpath=&quot;./log&quot;, bool remote=false, std::string logservice=&quot;&quot;, int logport=0, bool split_output_files=false)</div><div class="ttdef"><b>Definition:</b> DAQLogging.cpp:640</div></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  </div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  };</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;}</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  </div>
+<div class="ttc" id="aclassToolFramework_1_1DAQLogging_1_1TDAQStreamBuf_html"><div class="ttname"><a href="classToolFramework_1_1DAQLogging_1_1TDAQStreamBuf.html">ToolFramework::DAQLogging::TDAQStreamBuf</a></div><div class="ttdef"><b>Definition:</b> DAQLogging.h:75</div></div>
+<div class="ttc" id="aclassToolFramework_1_1DAQLogging_html"><div class="ttname"><a href="classToolFramework_1_1DAQLogging.html">ToolFramework::DAQLogging</a></div><div class="ttdef"><b>Definition:</b> DAQLogging.h:71</div></div>
+<div class="ttc" id="aclassToolFramework_1_1DAQLogging_html_ae0adb3ad0eec50d81515ca33b9c28db4"><div class="ttname"><a href="classToolFramework_1_1DAQLogging.html#ae0adb3ad0eec50d81515ca33b9c28db4">ToolFramework::DAQLogging::DAQLogging</a></div><div class="ttdeci">DAQLogging(zmq::context_t *context, boost::uuids::uuid UUID, std::string service, bool interactive=true, bool local=false, std::string localpath=&quot;./log&quot;, bool remote=false, std::string logservice=&quot;&quot;, int logport=0, bool split_output_files=false)</div><div class="ttdef"><b>Definition:</b> DAQLogging.cpp:645</div></div>
 <div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html">ToolFramework::DAQLogging_thread_args</a></div><div class="ttdef"><b>Definition:</b> DAQLogging.h:41</div></div>
-<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_a41e38ce1700f9ae17d434a31cb6bb82f"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#a41e38ce1700f9ae17d434a31cb6bb82f">ToolFramework::DAQLogging_thread_args::context</a></div><div class="ttdeci">zmq::context_t * context</div><div class="ttdoc">pointer to ZMQ context for socket creation</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:50</div></div>
-<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_a756e2e590a0801909386237292c47c40"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#a756e2e590a0801909386237292c47c40">ToolFramework::DAQLogging_thread_args::UUID</a></div><div class="ttdeci">boost::uuids::uuid UUID</div><div class="ttdoc">ToolChain UUID for unique labelling of log messages.</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:51</div></div>
-<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_ab1f548a3a40c17c06088cae5bbe799d4"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#ab1f548a3a40c17c06088cae5bbe799d4">ToolFramework::DAQLogging_thread_args::log_port</a></div><div class="ttdeci">int log_port</div><div class="ttdoc">Port to connect to to send remote logging information.</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:54</div></div>
-<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_abd631d2e19b703020a4c47ab1d2f8cfc"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#abd631d2e19b703020a4c47ab1d2f8cfc">ToolFramework::DAQLogging_thread_args::DAQLogging_thread_args</a></div><div class="ttdeci">DAQLogging_thread_args(zmq::context_t *incontext, boost::uuids::uuid inUUID, std::string inlogaddress, int inlogport)</div><div class="ttdoc">Simple constructor to assign thread variables.</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:43</div></div>
-<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_ade5f66691c6d92c980215461319a9148"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#ade5f66691c6d92c980215461319a9148">ToolFramework::DAQLogging_thread_args::log_address</a></div><div class="ttdeci">std::string log_address</div><div class="ttdoc">Remote multicast address.</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:53</div></div>
+<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_a41e38ce1700f9ae17d434a31cb6bb82f"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#a41e38ce1700f9ae17d434a31cb6bb82f">ToolFramework::DAQLogging_thread_args::context</a></div><div class="ttdeci">zmq::context_t * context</div><div class="ttdoc">pointer to ZMQ context for socket creation</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:51</div></div>
+<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_a756e2e590a0801909386237292c47c40"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#a756e2e590a0801909386237292c47c40">ToolFramework::DAQLogging_thread_args::UUID</a></div><div class="ttdeci">boost::uuids::uuid UUID</div><div class="ttdoc">ToolChain UUID for unique labelling of log messages.</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:52</div></div>
+<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_ab1f548a3a40c17c06088cae5bbe799d4"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#ab1f548a3a40c17c06088cae5bbe799d4">ToolFramework::DAQLogging_thread_args::log_port</a></div><div class="ttdeci">int log_port</div><div class="ttdoc">Port to connect to to send remote logging information.</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:55</div></div>
+<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_ade5f66691c6d92c980215461319a9148"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#ade5f66691c6d92c980215461319a9148">ToolFramework::DAQLogging_thread_args::log_address</a></div><div class="ttdeci">std::string log_address</div><div class="ttdoc">Remote multicast address.</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:54</div></div>
+<div class="ttc" id="astructToolFramework_1_1DAQLogging__thread__args_html_aedb636fa8277ebf91403d557c7cd3de7"><div class="ttname"><a href="structToolFramework_1_1DAQLogging__thread__args.html#aedb636fa8277ebf91403d557c7cd3de7">ToolFramework::DAQLogging_thread_args::DAQLogging_thread_args</a></div><div class="ttdeci">DAQLogging_thread_args(zmq::context_t *incontext, boost::uuids::uuid inUUID, std::string inlogaddress, int inlogport, std::string service)</div><div class="ttdoc">Simple constructor to assign thread variables.</div><div class="ttdef"><b>Definition:</b> DAQLogging.h:43</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
