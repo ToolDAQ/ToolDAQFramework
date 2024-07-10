@@ -38,7 +38,6 @@ namespace ToolFramework{
    *
    * $Author: B.Richards $
    * $Date: 2019/05/28 10:44:00 $
-   * Contact: b.richards@qmul.ac.uk
    */
   struct ToolDAQChainargs{
     
@@ -56,7 +55,6 @@ namespace ToolFramework{
    *
    * $Author: B.Richards $
    * $Date: 2019/05/28 10:44:00 $
-   * Contact: b.richards@qmul.ac.uk
    */
   class ToolDAQChain : public ToolChain {
     
@@ -101,6 +99,7 @@ namespace ToolFramework{
     int m_log_port;
     std::string m_service;
     bool m_remote;
+    bool m_backend_services;
     
     //socket coms and threading variables
     pthread_t DAQthread[2];

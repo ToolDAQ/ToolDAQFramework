@@ -14,7 +14,7 @@ log_local 1 		# Local = local file log; 0=false, 1= true
 log_local_path ./log 	# file to store logs to if local is active
 log_remote 1   		# Remote= remote logging system "serservice_name Remote_Logging";  0=false, 1= true
 log_address 239.192.1.1 # Remote multicast address to send logs
-log_port 5001 		# port on remote machine to connect to
+log_port 55554 		# port on remote machine to connect to
 log_append_time 0       # append seconds since epoch to filename; 0=false, 1= true
 log_split_files 1	# seperate output and error log files (named x.o and x.e)
 
@@ -24,6 +24,24 @@ service_discovery_port 5000	      # port to use for service discovery
 service_name main_service2	      # name of Toolchain service to braodcast
 service_publish_sec 5		      # heartbeat send period
 service_kick_sec 60 		      # remove hosts with no heartbeat after given period
+
+###### Backend Services #####   NEWLY ADDED NEEDS TO HAVE PROPER DESCRIPTIONS AND SOME PRUNING BEFORE RELEASE
+use_backed_services 1		#
+db_name daq			#
+verbosity 1			#
+max_retries 3			#
+advertise_endpoints 0		#
+resend_period_ms 1000		#
+print_stats_period_ms 1000	#
+clt_pub_port 55556    		#
+clt_dlr_port 55555		#
+clt_pub_socket_timeout 500	#
+clt_dlr_socket_timeout 500	#
+inpoll_timeout 50      		# keep these short!
+outpoll_timeout 50  		# keep these short!
+command_timeout 2000		#
+multicast_port 55554		#
+multicast_address 239.192.1.1	#
 
 ##### Tools To Add #####
 Tools_File configfiles/Dummy/ToolsConfig	# list of tools to run and their config files

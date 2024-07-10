@@ -25,6 +25,24 @@ service_name ToolDAQ_Service 	      # name of Toolchain service to braodcast
 service_publish_sec 5 		      # heartbeat send period
 service_kick_sec 60 		      # remove hosts with no heartbeat after given period
 
+###### Backend Services #####   NEWLY ADDED NEEDS TO HAVE PROPER DESCRIPTIONS AND SOME PRUNING BEFORE RELEASE
+use_backed_services 1		#
+db_name daq			#
+verbosity 1			#
+max_retries 3			#
+advertise_endpoints 0		#
+resend_period_ms 1000		#
+print_stats_period_ms 1000	#
+clt_pub_port 55556    		#
+clt_dlr_port 55555		#
+clt_pub_socket_timeout 500	#
+clt_dlr_socket_timeout 500	#
+inpoll_timeout 50      		# keep these short!
+outpoll_timeout 50  		# keep these short!
+command_timeout 2000		#
+multicast_port 55554		#
+multicast_address 239.192.1.1	#
+
 ##### Tools To Add #####
 Tools_File configfiles/ToolsConfig    # list of tools to run and their config files
 

@@ -40,11 +40,12 @@ namespace ToolFramework{
   
   struct DAQLogging_thread_args{
     
-    DAQLogging_thread_args( zmq::context_t *incontext,  boost::uuids::uuid inUUID, std::string inlogaddress, int inlogport){
+    DAQLogging_thread_args( zmq::context_t *incontext,  boost::uuids::uuid inUUID, std::string inlogaddress, int inlogport, std::string service){
       context=incontext;
       log_address=inlogaddress;
       UUID=inUUID;
       log_port=inlogport;
+      m_service=service;
     } ///< Simple constructor to assign thread variables
     
     zmq::context_t *context; ///< pointer to ZMQ context for socket creation
@@ -52,6 +53,7 @@ namespace ToolFramework{
     //std::string remoteservice; 
     std::string log_address; ///< Remote multicast address 
     int log_port; ///< Port to connect to to send remote logging information
+    std::string m_service;
   };
   
   
@@ -63,7 +65,6 @@ namespace ToolFramework{
    *
    * $Author: B.Richards $
    * $Date: 2019/05/27 18:34:00 $
-   * Contact: b.richards@qmul.ac.uk
    */
   
   

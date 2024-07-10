@@ -38,10 +38,12 @@ ToolDAQChain::ToolDAQChain(std::string configfile, DataModel* data_model, int ar
   if(!m_data->vars.Get("service_name",m_service)) m_service="ToolDAQ_Service";
   if(!m_data->vars.Get("service_publish_sec",m_pub_sec)) m_pub_sec=5;
   if(!m_data->vars.Get("service_kick_sec",m_kick_sec)) m_kick_sec=60;
+  if(!m_data->vars.Get("use_backend_services",m_backend_services)) m_backend_services=false;
   
   if(!m_data->vars.Get("Inline", m_inline))  m_inline=0;
   if(!m_data->vars.Get("Interactive", m_interactive)) m_interactive=false;
   if(!m_data->vars.Get("Remote", m_remote)) m_remote=false;
+  
   
   unsigned int IO_Threads=1;
   m_data->vars.Get("IO_Threads",IO_Threads);
@@ -81,15 +83,14 @@ ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, boo
   m_log_split_files=split_output_files;  
   m_pub_sec=pub_sec;
   m_kick_sec=kick_sec;
-  if(in_data_model==0) m_data=new DataModelBase;
+  if(in_data_model==0) m_data=new DAQDataModelBase;
   else{
     m_data=reinterpret_cast<DataModelBase*>(in_data_model);
     m_DAQdata=reinterpret_cast<DAQDataModelBase*>(in_data_model);
   }
-
   
-  Init(IO_Threads);
   
+  Init(IO_Threads);  
   
 }
 
@@ -118,7 +119,7 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
     
     }
 
-  
+  m_data->vars.Set("UUID", m_UUID);
   
   m_log=0;
 
@@ -160,6 +161,11 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
   //  *m_log<<MsgL(1,m_verbose)<<cyan<<"UUID = "<<m_UUID<<std::endl<<yellow<<"\n********************************************************\n"<<"**** Tool chain created ****\n"<<"********************************************************"<<std::endl;
   *m_log<<MsgL(1,m_verbose)<<cyan<<"UUID = "<<m_UUID<<yellow<<"\n********************************************************\n"<<"**** Tool chain created ****\n"<<"********************************************************"<<std::endl;
 
+  if(m_backend_services){
+    m_DAQdata->services= new Services();
+    m_DAQdata->services->Init(m_data->vars, m_DAQdata->context, &m_DAQdata->sc_vars);
+  }
+  
 }
 
 
@@ -313,8 +319,10 @@ ToolDAQChain::~ToolDAQChain(){
       printf("yakka3\n");
   */ 
 
-  m_DAQdata->SC_vars.Stop();
-
+  //  m_DAQdata->sc_vars.Stop();
+  delete m_DAQdata->services;
+  m_DAQdata->services=0;
+  
   delete m_log;
   m_log=0;
   
@@ -341,6 +349,7 @@ ToolDAQChain::~ToolDAQChain(){
   */
   delete m_DAQdata;
   m_DAQdata=0;
+  m_data=0;
 
   /*
   delete m_log;

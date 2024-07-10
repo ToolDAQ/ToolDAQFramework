@@ -13,6 +13,8 @@
 #include "DAQUtilities.h"
 #include "SlowControlCollection.h"
 #include "DataModelBase.h"
+#include "Services.h"
+
 
 #include <zmq.hpp>
 
@@ -26,7 +28,6 @@ namespace ToolFramework{
    *
    * $Author: B.Richards $ 
    * $Date: 2019/05/26 18:34:00 $
-   * Contact: b.richards@qmul.ac.uk
    *
    */
   
@@ -47,7 +48,9 @@ namespace ToolFramework{
     
     zmq::context_t* context; ///< ZMQ contex used for producing zmq sockets for inter thread,  process, or computer communication
     
-    SlowControlCollection SC_vars; ///< calss for defining and handelling slow control variables
+    SlowControlCollection sc_vars; ///< calss for defining and handelling slow control variables
+
+    Services* services;
     
     //  bool (*Log)(std::string, int);
     

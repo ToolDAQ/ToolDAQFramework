@@ -10,7 +10,6 @@ namespace ToolFramework{
    *
    * $Author: B.Richards $
    * $Date: 2019/05/28 10:44:00 $
-   * Contact: b.richards@qmul.ac.uk
    */
   class PointerWrapperBase{
     
@@ -28,7 +27,6 @@ namespace ToolFramework{
    *
    * $Author: B.Richards $
    * $Date: 2019/05/28 10:44:00 $
-   * Contact: b.richards@qmul.ac.uk
    */
   template <class T> class PointerWrapper : public PointerWrapperBase {
     

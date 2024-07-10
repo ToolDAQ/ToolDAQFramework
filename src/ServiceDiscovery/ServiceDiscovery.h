@@ -30,7 +30,7 @@ namespace ToolFramework{
    *
    * $Author: B.Richards $
    * $Date: 2019/05/27 18:34:00 $
-   * Contact: b.richards@qmul.ac.uk                                                                                                                                                                     */
+   */
   
   struct thread_args{
     
@@ -63,7 +63,6 @@ namespace ToolFramework{
    *
    * $Author: B.Richards $
    * $Date: 2019/05/27 18:34:00 $
-   * Contact: b.richards@qmul.ac.uk
    */
   
   class ServiceDiscovery{

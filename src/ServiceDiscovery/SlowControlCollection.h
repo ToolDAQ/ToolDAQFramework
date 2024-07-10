@@ -8,7 +8,8 @@
 
 namespace ToolFramework{
 
-  typedef void (*AlertFunction)(const char*, const char*);
+  //typedef void (*AlertFunction)(const char*, const char*);
+  typedef std::function<void(const char*, const char*)> AlertFunction;
   
   class SlowControlCollection;
   

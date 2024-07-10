@@ -5,11 +5,12 @@
 #include <Store.h>
 #include <sstream>
 #include <mutex>
-//#include <functional>
+#include <functional>
 
 namespace ToolFramework{
 
-  typedef std::string (*SCFunction)(const char*);
+  //  typedef std::string (*SCFunction)(const char*);
+  typedef std::function<std::string(const char*)> SCFunction;
   
   enum SlowControlElementType { BUTTON, VARIABLE, OPTIONS, COMMAND, INFO };
   

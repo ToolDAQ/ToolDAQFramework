@@ -45,7 +45,7 @@ SlowControlCollection::~SlowControlCollection(){
 
 void SlowControlCollection::Stop(){
   //printf("p0\n");
-  std::cout<<args<<std::endl;
+  //  std::cout<<args<<std::endl;
   //printf("p1 %p \n",args);
 if(m_thread && args) m_util->KillThread(args);
  m_thread=false;

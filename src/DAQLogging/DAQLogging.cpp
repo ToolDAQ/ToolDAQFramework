@@ -68,7 +68,7 @@ DAQLogging::TDAQStreamBuf::TDAQStreamBuf(zmq::context_t *context, boost::uuids::
     
     if(m_remote && !m_error){
       
-      args=new DAQLogging_thread_args(m_context, UUID , log_address, log_port);
+      args=new DAQLogging_thread_args(m_context, UUID , log_address, log_port, m_service);
       
       pthread_create (&thread, NULL, DAQLogging::TDAQStreamBuf::RemoteThread, args); // make pushthread with two socets one going out one comming in and buffer socket
       
@@ -378,13 +378,18 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 	   msg_id++;
 	   
 	   Store outmessage;
-	   
+	   /*
 	   outmessage.Set("uuid",UUID);
 	   outmessage.Set("msg_id",msg_id);
 	   outmessage.Set("msg_time", isot.str());
 	   outmessage.Set("msg_type", "Log");
 	   outmessage.Set("msg_value",ss.str());
-	     
+	   */
+	   outmessage.Set("topic","logging");
+	   outmessage.Set("time", isot.str());
+	   outmessage.Set("device",args->m_service);
+	   outmessage.Set("severity","logging");
+	   outmessage.Set("message",ss.str());
 	     
 	   std::string rmessage;
 	   outmessage>>rmessage;
