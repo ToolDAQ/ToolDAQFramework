@@ -272,11 +272,6 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   
 }
 
-bool Services::GetPlot(){
-  // placeholder for evgenii
-  return true;
-}
-
 bool Services::SQLQuery(const std::string& database, const std::string& query, std::vector<std::string>* responses, const unsigned int timeout){
   
   if(responses) responses->clear();
@@ -444,10 +439,87 @@ bool Services::SendTemporaryROOTplot(const std::string& plot_name, const std::st
   
 }
 
-bool Services::SendPlot(){
-  
-  // placeholder for evgenii
-  
+static std::vector<float> decodePostgresArray(const std::string& string) {
+  if (string.length() < 2) return std::vector<float>(); // "{}"
+  size_t length = 1;
+  for (size_t i = 0; i < string.size(); ++i) if (string[i] == ',') ++length;
+
+  std::vector<float> result(length);
+
+  std::stringstream ss;
+  ss << string;
+  size_t i = 0;
+  char c;
+  ss >> c; // '{'
+  while (ss && c != '}' && i < length) ss >> result[i++] >> c;
+  return result;
+};
+
+static std::string encodePostgresArray(const std::vector<float>& array) {
+  std::stringstream ss;
+  ss << "'{";
+  bool first = true;
+  for (float x : array) {
+    if (!first) ss << ',';
+    first = false;
+    ss << x;
+  };
+  ss << "}'";
+  return ss.str();
+}
+
+bool Services::GetPlot(const std::string& name, Plot& plot, unsigned timeout) {
+  std::string cmd = "{\"name\":\"" + name + "\"}";
+  std::string err = "";
+  std::string response;
+  if (!m_backend_client.SendCommand("R_PLOT", cmd, &response, &timeout, &err)) {
+    std::cerr << "GetPlot error: " << err << std::endl;
+    return false;
+  };
+
+  plot.name = name;
+
+  Store data;
+  data.JsonParser(response);
+
+#define get(slot, var) if (!data.Get(slot, var)) return false;
+  std::string array;
+  get("x", array);
+  plot.x = decodePostgresArray(array);
+  get("y", array);
+  plot.y = decodePostgresArray(array);
+  get("title",  plot.title);
+  get("xlabel", plot.xlabel);
+  get("ylabel", plot.ylabel);
+  get("info",   plot.info);
+#undef get
+
+  return true;
+}
+
+bool Services::SendPlot(Plot& plot, unsigned timeout) {
+  Store data;
+  data.Set("name",   plot.name);
+  data.Set("x",      encodePostgresArray(plot.x));
+  data.Set("y",      encodePostgresArray(plot.y));
+  data.Set("title",  plot.title);
+  data.Set("xlabel", plot.xlabel);
+  data.Set("ylabel", plot.ylabel);
+
+  std::string string;
+  plot.info >> string;
+  data.Set("info", string);
+
+  data >> string;
+  std::string err;
+  if (!m_backend_client.SendCommand(
+        "W_PLOT", string, static_cast<std::string*>(nullptr), &timeout, &err
+       ))
+  {
+    std::cerr << "SendPlot error: " << err << std::endl;
+    return false;
+  };
+
   return true;
 }
 

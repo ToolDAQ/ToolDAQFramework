@@ -95,7 +95,7 @@ bool ServicesBackend::Initialise(std::string configfile){
   // configuration options can be parsed via a Store class
   if(configfile!="") m_variables.Initialise(configfile);
 
-  Initialise(m_variables);
+  return Initialise(m_variables);
 
 }
   
