@@ -196,7 +196,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
     }
     
     std::string key=tmp.Get<std::string>("msg_value");
-    std::string value=tmp.Get<std::string>("var1");
+    std::string value="";
+    tmp.Get("var1",value);
     
     // std::stringstream tmpstream(str);
     // tmpstream>>str;

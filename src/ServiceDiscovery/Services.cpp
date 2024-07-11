@@ -324,7 +324,7 @@ bool Services::SQLQuery(const std::string& query, const std::string& database, s
 // ===========================================================================
 // Multicast Senders
 // -----------------
-/*
+
 bool Services::SendLog(const std::string& message, unsigned int severity, const std::string& device, unsigned int timestamp){
   
   const std::string& name = (device=="") ? m_name : device;
@@ -350,7 +350,7 @@ bool Services::SendLog(const std::string& message, unsigned int severity, const 
   return true;
   
 }
-*/
+
 
 bool Services::SendMonitoringData(const std::string& json_data, const std::string& device, unsigned int timestamp){
   

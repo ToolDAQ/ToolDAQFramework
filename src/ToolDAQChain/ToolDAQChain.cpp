@@ -237,8 +237,10 @@ void ToolDAQChain::Remote(){
       bb.Set("msg_type", "Command Reply");
       bb.Set("msg_value",ExecuteCommand(command));
 
+      std::string var1="";
+      rr.Get("var1",var1);
       
-      if(command =="?" && rr.Get<std::string>("var1")=="JSON"){
+      if(command =="?" && var1=="JSON"){
 	
 	std::string in= bb.Get<std::string>("msg_value");
 	std::string out="[";
