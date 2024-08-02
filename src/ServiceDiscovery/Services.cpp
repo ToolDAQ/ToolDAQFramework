@@ -439,7 +439,7 @@ bool Services::SendTemporaryROOTplot(const std::string& plot_name, const std::st
   
 }
 
-static std::vector<float> decodePostgresArray(const std::string& string) {
+static std::vector<float> decodeArray(const std::string& string) {
   if (string.length() < 2) return std::vector<float>(); // "{}"
   size_t length = 1;
   for (size_t i = 0; i < string.size(); ++i) if (string[i] == ',') ++length;
@@ -455,7 +455,7 @@ static std::vector<float> decodePostgresArray(const std::string& string) {
   return result;
 };
 
-static std::string encodePostgresArray(const std::vector<float>& array) {
+static std::string encodeArray(const std::vector<float>& array) {
   std::stringstream ss;
   ss << "'{";
   bool first = true;
@@ -485,9 +485,9 @@ bool Services::GetPlot(const std::string& name, Plot& plot, unsigned timeout) {
 #define get(slot, var) if (!data.Get(slot, var)) return false;
   std::string array;
   get("x", array);
-  plot.x = decodePostgresArray(array);
+  plot.x = decodeArray(array);
   get("y", array);
-  plot.y = decodePostgresArray(array);
+  plot.y = decodeArray(array);
   get("title",  plot.title);
   get("xlabel", plot.xlabel);
   get("ylabel", plot.ylabel);
@@ -500,8 +500,8 @@ bool Services::GetPlot(const std::string& name, Plot& plot, unsigned timeout) {
 bool Services::SendPlot(Plot& plot, unsigned timeout) {
   Store data;
   data.Set("name",   plot.name);
-  data.Set("x",      encodePostgresArray(plot.x));
-  data.Set("y",      encodePostgresArray(plot.y));
+  data.Set("x",      encodeArray(plot.x));
+  data.Set("y",      encodeArray(plot.y));
   data.Set("title",  plot.title);
   data.Set("xlabel", plot.xlabel);
   data.Set("ylabel", plot.ylabel);
