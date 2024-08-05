@@ -17,6 +17,16 @@
 #include <ServicesBackend.h>
 
 namespace ToolFramework {
+
+  struct Plot {
+    std::string name;
+    std::string title;
+    std::string xlabel;
+    std::string ylabel;
+    std::vector<float> x;
+    std::vector<float> y;
+    Store info;
+  };
   
   class Services{
     
@@ -41,8 +51,8 @@ namespace ToolFramework {
     bool SendTemporaryROOTplot(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version=nullptr, const unsigned int timestamp=0);
     bool SendPersistentROOTplot(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version=nullptr, const unsigned int timestamp=0, const unsigned int timeout=300);
     bool GetROOTplot(const std::string& plot_name, int& version, std::string& draw_option, std::string& json_data, std::string* timestamp=nullptr, const unsigned int timeout=300);
-    bool SendPlot();
-    bool GetPlot();
+    bool SendPlot(Plot& plot, unsigned timeout=300);
+    bool GetPlot(const std::string& name, Plot& plot, unsigned timeout=300);
     
     SlowControlCollection* GetSlowControlCollection();
     SlowControlElement* GetSlowControlVariable(std::string key);
