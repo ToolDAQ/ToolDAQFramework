@@ -474,14 +474,15 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
       
 
       cnt = recvfrom(sock, message, sizeof(message), 0, (struct sockaddr *) &addr, (socklen_t*) &addrlen);
-      if (cnt < 0) {
+      if (cnt < 1) {
 	//perror("recvfrom");
 	// exit(1);
+	break;
       } 
-      else if (cnt > 0){
-	//printf("%s: message = \"%s\"\n", inet_ntoa(addr.sin_addr), message);
+      //else if (cnt > 0){
+        //printf("%s: message = \"%s\"\n", inet_ntoa(addr.sin_addr), message);
 	
-
+	if(message[0]!='[') break;
 	
 	Store* newservice= new Store();
 	newservice->Set("ip",inet_ntoa(addr.sin_addr));
@@ -496,13 +497,13 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	
 	//	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
 	
-      }
+	// }
       
-
+      
       
     }
     //	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
-
+    
     std::vector<std::string> erase_list;
     
     for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){ 
@@ -698,7 +699,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	  
   }
 
-  for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
+for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
     delete it->second;
     it->second=0;
     

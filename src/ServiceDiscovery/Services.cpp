@@ -453,7 +453,7 @@ static std::vector<float> decodeArray(const std::string& string) {
   ss >> c; // '{'
   while (ss && c != '}' && i < length) ss >> result[i++] >> c;
   return result;
-};
+}
 
 static std::string encodeArray(const std::vector<float>& array) {
   std::stringstream ss;

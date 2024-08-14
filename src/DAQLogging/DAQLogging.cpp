@@ -304,7 +304,7 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
    DAQLogging_thread_args* args= static_cast<DAQLogging_thread_args*>(arg);
    zmq::context_t * context = args->context;
    std::string log_address=args->log_address;
-   boost::uuids::uuid UUID=args->UUID;
+   //   boost::uuids::uuid UUID=args->UUID;
    int log_port=args->log_port;
    
    zmq::socket_t LogReceiver(*context, ZMQ_PULL);
