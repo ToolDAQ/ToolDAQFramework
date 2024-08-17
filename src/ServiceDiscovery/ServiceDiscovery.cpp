@@ -472,17 +472,17 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
     
     if ((items [0].revents & ZMQ_POLLIN) && running) {
       
-
+      
       cnt = recvfrom(sock, message, sizeof(message), 0, (struct sockaddr *) &addr, (socklen_t*) &addrlen);
-      if (cnt < 1) {
+      if ((cnt > 0) && (message[0]!='{') ) {
 	//perror("recvfrom");
 	// exit(1);
-	break;
-      } 
-      //else if (cnt > 0){
+	//	break;
+	//} 
+	//else if (cnt > 0){
         //printf("%s: message = \"%s\"\n", inet_ntoa(addr.sin_addr), message);
 	
-	if(message[0]!='[') break;
+	//if(message[0]!='[') break;
 	
 	Store* newservice= new Store();
 	newservice->Set("ip",inet_ntoa(addr.sin_addr));
@@ -498,10 +498,12 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	//	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
 	
 	// }
+	
       
-      
-      
+	
+      }
     }
+    
     //	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
     
     std::vector<std::string> erase_list;
@@ -709,7 +711,7 @@ for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=Remot
   pthread_exit(NULL);
   //return (NULL);
   
-}
+  }
 
    
 
