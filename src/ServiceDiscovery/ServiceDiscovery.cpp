@@ -474,7 +474,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
       
       
       cnt = recvfrom(sock, message, sizeof(message), 0, (struct sockaddr *) &addr, (socklen_t*) &addrlen);
-      if ((cnt > 0) && (message[0]!='{') ) {
+      if ((cnt > 0) && (message[0]=='{') ) {
 	//perror("recvfrom");
 	// exit(1);
 	//	break;
