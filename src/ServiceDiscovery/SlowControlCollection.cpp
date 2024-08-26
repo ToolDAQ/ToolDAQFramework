@@ -225,7 +225,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
       else if((*args->SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
         SCFunction tmp_func= (*args->SCC)[key]->GetChangeFunction();
-	      if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+	      if (tmp_func!=nullptr) tmp_func(key.c_str());
 	(*args->SCC)[key]->SetValue("1");
 	reply=key;
       }
