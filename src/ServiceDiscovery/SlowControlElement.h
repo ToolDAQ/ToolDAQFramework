@@ -72,7 +72,7 @@ namespace ToolFramework{
 	num_options++;
 	std::string current;
 	std::stringstream tmp;
-	tmp<<value;
+	tmp<<"\""<<value<<"\"";
 	if(!options.Get("options",current)) current="["+tmp.str()+"]";
 	else {
 	  current=current.substr(0,current.length()-1);
