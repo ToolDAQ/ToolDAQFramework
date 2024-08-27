@@ -163,7 +163,7 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
 
   if(m_backend_services){
     m_DAQdata->services= new Services();
-    m_DAQdata->services->Init(m_data->vars, m_DAQdata->context, &m_DAQdata->sc_vars);
+    m_DAQdata->services->Init(m_data->vars, m_DAQdata->context, &m_DAQdata->sc_vars, true);
   }
   
 }

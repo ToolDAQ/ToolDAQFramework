@@ -35,7 +35,7 @@ namespace ToolFramework {
     
     Services();
     ~Services();
-    bool Init(Store &m_variables, zmq::context_t* context_in, SlowControlCollection* sc_vars_in);
+    bool Init(Store &m_variables, zmq::context_t* context_in, SlowControlCollection* sc_vars_in, bool new_service=false);
     
     bool SQLQuery(const std::string& database, const std::string& query, std::vector<std::string>* responses=nullptr, const unsigned int timeout=300);
     bool SQLQuery(const std::string& database, const std::string& query, std::string* response=nullptr, const unsigned int timeout=300);

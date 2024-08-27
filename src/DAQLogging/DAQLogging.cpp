@@ -4,12 +4,14 @@ using namespace ToolFramework;
 
 DAQLogging::TDAQStreamBuf::~TDAQStreamBuf(){
  
-  if(m_remote && (!m_error)){
-    zmq::message_t Send(5);
-    snprintf ((char *) Send.data(), 5 , "%s" ,"Quit");
-    LogSender->send(Send);
-
-    pthread_join(thread, NULL);
+  if(m_remote){
+    if(!m_error){
+      zmq::message_t Send(5);
+      snprintf ((char *) Send.data(), 5 , "%s" ,"Quit");
+      LogSender->send(Send);
+      
+      pthread_join(thread, NULL);
+    }
     delete LogSender;
     LogSender=0;
     delete args;
@@ -66,11 +68,11 @@ DAQLogging::TDAQStreamBuf::TDAQStreamBuf(zmq::context_t *context, boost::uuids::
     if(m_interactive) output=new std::ostream(backup1);
     
     
-    if(m_remote && !m_error){
+    if(m_remote){
       
       args=new DAQLogging_thread_args(m_context, UUID , log_address, log_port, m_service);
       
-      pthread_create (&thread, NULL, DAQLogging::TDAQStreamBuf::RemoteThread, args); // make pushthread with two socets one going out one comming in and buffer socket
+      if(!m_error) pthread_create (&thread, NULL, DAQLogging::TDAQStreamBuf::RemoteThread, args); // make pushthread with two socets one going out one comming in and buffer socket
       
       LogSender = new zmq::socket_t(*context, ZMQ_PUSH);
       LogSender->connect("inproc://LogSender");
@@ -116,7 +118,7 @@ int DAQLogging::TDAQStreamBuf::sync (){
     timeinfo = localtime(&rawtime);
     strftime(buffer,80,"%d-%m-%Y %I:%M:%S",timeinfo);
     std::string t(buffer);
- 
+
     if(m_local){
       if(m_error)(*fileoutput)<<red;
       (*fileoutput)<< "{"<<t<<"} [";
@@ -126,7 +128,7 @@ int DAQLogging::TDAQStreamBuf::sync (){
       if(m_error)(*fileoutput)<<plain;
       fileoutput->flush();
     }
-    
+
     if(m_interactive){
       if(m_error) (*output)<<red;
       (*output)<<"[";
@@ -136,27 +138,27 @@ int DAQLogging::TDAQStreamBuf::sync (){
       if(m_error) (*output)<<plain;
       output->flush();
     }
-    
+
     if (m_remote){
+
       zmq::pollitem_t items[] = {
         { *LogSender, 0, ZMQ_POLLOUT, 0 }
       };
-      
+
       // printf("starting poll \n");   
       zmq::poll(&items[0], 1, 1000);
       // printf("finnished poll \n");
-      
+
       if (items[0].revents & ZMQ_POLLOUT) {
 	std::stringstream tmp;
         //printf("in sync send \n");
 	tmp << "{"<<m_service<<":"<<t<<"} ["<<m_messagelevel<<"]: "<< str();
 	std::string line=tmp.str();
-	
 	zmq::message_t Send(line.length()+1);
         snprintf ((char *) Send.data(), line.length()+1 , "%s" ,line.c_str());
-        //printf(" sync sending %s\n",line.c_str()); 
+        //printf(" sync sending %s\n",line.c_str());
 	LogSender->send(Send);
-        //printf("sync sent \n");                                                                                                                                                                                      
+        //printf("sync sent \n");
       }
       
     }

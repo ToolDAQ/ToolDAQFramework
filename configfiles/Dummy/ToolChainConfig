@@ -26,7 +26,7 @@ service_publish_sec 5		      # heartbeat send period
 service_kick_sec 60 		      # remove hosts with no heartbeat after given period
 
 ###### Backend Services #####   NEWLY ADDED NEEDS TO HAVE PROPER DESCRIPTIONS AND SOME PRUNING BEFORE RELEASE
-use_backed_services 1		#
+use_backend_services 1		#
 db_name daq			#
 verbosity 1			#
 max_retries 3			#
