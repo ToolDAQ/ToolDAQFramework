@@ -143,7 +143,7 @@ $(function() {
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    num_options++;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    std::string current;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    std::stringstream tmp;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    tmp&lt;&lt;value;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    tmp&lt;&lt;<span class="stringliteral">&quot;\&quot;&quot;</span>&lt;&lt;value&lt;&lt;<span class="stringliteral">&quot;\&quot;&quot;</span>;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordflow">if</span>(!options.Get(<span class="stringliteral">&quot;options&quot;</span>,current)) current=<span class="stringliteral">&quot;[&quot;</span>+tmp.str()+<span class="stringliteral">&quot;]&quot;</span>;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      current=current.substr(0,current.length()-1);</div>
