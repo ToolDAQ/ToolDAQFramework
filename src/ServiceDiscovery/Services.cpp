@@ -21,7 +21,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
 
   m_context = context_in;
   sc_vars = sc_vars_in;
-  sc_vars->InitThreadedReceiver(m_context, 88888, 100, false);
+  sc_vars->InitThreadedReceiver(m_context, 60000, 100, false);
   m_backend_client.SetUp(m_context);
   
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";
