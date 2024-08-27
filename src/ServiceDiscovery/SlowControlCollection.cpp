@@ -223,34 +223,34 @@ void SlowControlCollection::Thread(Thread_args* arg){
         (*args->SCC)[key]->GetValue(value);
         reply=value;
       }
-      else if((*args->SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
-	(*args->SCC)[key]->SetValue("1");
-	reply=key;
-      }
+      
       else{
 	reply=key;
+	if((*args->SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
+	  (*args->SCC)[key]->SetValue("1");
+	  value="1";
+	}
         //std::stringstream input;
         //input<<tmp.Get<std::string>("msg_value");
 	//        std::string key="";
 	// std::string value="";
         //input>>key>>value;
 	//printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
-        if((*args->SCC)[key]){
-	  if(value!=""){
-	    (*args->SCC)[key]->SetValue(value);
-	    SCFunction tmp_func= (*args->SCC)[key]->GetChangeFunction();
-	    if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
-	    
-	  }
-	  else{
-	    SCFunction tmp_func= (*args->SCC)[key]->GetReadFunction();
-	    if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
-	    else (*args->SCC)[key]->GetValue(reply);
-	    
-	  }
-        }
+	if(value!=""){
+	  (*args->SCC)[key]->SetValue(value);
+	  SCFunction tmp_func= (*args->SCC)[key]->GetChangeFunction();
+	  if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+	  
+	}
+	else{
+	  SCFunction tmp_func= (*args->SCC)[key]->GetReadFunction();
+	  if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+	  else (*args->SCC)[key]->GetValue(reply);
+	  
+	}
       }
     }
+    
     
     Store rr;
     
