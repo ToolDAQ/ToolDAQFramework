@@ -85,7 +85,7 @@ int DAQUtilities::UpdateConnections(std::string ServiceName, zmq::socket_t* sock
       std::string tmp=ip + ":" + remote_port;
 
 
-      if((type == ServiceName || ServiceName=="") && connections.count(tmp)==0){
+      if((type.substr(0,ServiceName.length()) == ServiceName || ServiceName=="") && connections.count(tmp)==0){
 	connections[tmp]=service;
 	//std::string ip;
 	//std::string port;
