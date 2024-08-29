@@ -66,7 +66,7 @@ if(m_thread && args) m_util->KillThread(args);
    //printf("p7\n");
 }
 
-bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_service){
+bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_service, bool alerts){
   
   if(args) return false;
   //printf("Init\n");
@@ -74,17 +74,29 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   
   m_util=new DAQUtilities(m_context);
   m_new_service=new_service;
-  
-  m_pub= new zmq::socket_t(*(m_context), ZMQ_PUB);
-  m_pub->setsockopt(ZMQ_LINGER, 0);
-  m_pub->bind("tcp://*:78787");
-  
+
+  m_alerts=alerts;
+
   args=new SlowControlCollectionThread_args();
   //printf("init p=%p\n", args);
+
+  args->alerts=m_alerts;
   
-  args->alert_functions=&m_alert_functions;
-  args->alert_functions_mutex=&m_alert_functions_mutex;
+  if(m_alerts){
+    m_pub= new zmq::socket_t(*(m_context), ZMQ_PUB);
+    m_pub->setsockopt(ZMQ_LINGER, 0);
+    m_pub->bind("tcp://*:78787");
   
+    args->alert_functions=&m_alert_functions;
+    args->alert_functions_mutex=&m_alert_functions_mutex;
+    
+    args->sub = new zmq::socket_t(*(m_context), ZMQ_SUB);
+    args->sub->setsockopt(ZMQ_SUBSCRIBE, "", 0);
+    args->sub->setsockopt(ZMQ_LINGER, 0);
+    args->sub->bind("tcp://*:78788");
+  }
+
+ 
   args->sock = new zmq::socket_t(*(m_context), ZMQ_ROUTER);
   args->sock->setsockopt(ZMQ_LINGER, 0);
   
@@ -92,11 +104,6 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   tmp<<"tcp://*:"<<port;
   
   args->sock->bind(tmp.str().c_str());
-  
-  args->sub = new zmq::socket_t(*(m_context), ZMQ_SUB);
-  args->sub->setsockopt(ZMQ_SUBSCRIBE, "", 0);
-  args->sub->setsockopt(ZMQ_LINGER, 0);
-  args->sub->bind("tcp://*:78788");
   
   
   //  std::cout<<"new_service="<<new_service<<std::endl;
@@ -115,15 +122,17 @@ bool SlowControlCollection::Init(zmq::context_t* context, int port, bool new_ser
   args->items[0].fd=0;
   args->items[0].events=ZMQ_POLLIN;
   args->items[0].revents=0;
-  args->items[1].socket=*(args->sub);
-  args->items[1].fd=0;
-  args->items[1].events=ZMQ_POLLIN;
-  args->items[1].revents=0;
-  
+
+  if(m_alerts){
+    args->items[1].socket=*(args->sub);
+    args->items[1].fd=0;
+    args->items[1].events=ZMQ_POLLIN;
+    args->items[1].revents=0;
+  }
   args->SCC=this;
   
   Add("Status",SlowControlElementType(INFO));
-   Add("?",SlowControlElementType(BUTTON));
+  Add("?",SlowControlElementType(BUTTON));
   SC_vars["Status"]->SetValue("N/A");
   
   
@@ -139,14 +148,14 @@ bool SlowControlCollection::ListenForData(int poll_length){
   
 }
 
-bool SlowControlCollection::InitThreadedReceiver(zmq::context_t* context, int port, int poll_length, bool new_service){
+bool SlowControlCollection::InitThreadedReceiver(zmq::context_t* context, int port, int poll_length, bool new_service, bool alerts){
   
   if(args) return false;
   //printf("InitThreadedReceiver\n");
   m_thread=true;
 
   //std::cout<<"new_service="<<new_service<<std::endl;
-  Init(context, port, new_service);
+  Init(context, port, new_service, alerts);
   args->poll_length=poll_length;
   m_util->CreateThread("receiver", &Thread, args);
   
@@ -156,9 +165,10 @@ bool SlowControlCollection::InitThreadedReceiver(zmq::context_t* context, int po
 void SlowControlCollection::Thread(Thread_args* arg){
   
   SlowControlCollectionThread_args* args=reinterpret_cast<SlowControlCollectionThread_args*>(arg);
-  
-  zmq::poll(&(args->items[0]), 2, args->poll_length);
-  
+
+  if(args->alerts)  zmq::poll(&(args->items[0]), 2, args->poll_length);
+  else zmq::poll(&(args->items[0]), 1, args->poll_length);
+    
   if (args->items[0].revents & ZMQ_POLLIN){ //received slow control value
     
     zmq::message_t identity;
@@ -276,7 +286,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     // rather than being silently ignored. This info could be critical for debugging issues!!!
   }
   
-  if (args->items[1].revents & ZMQ_POLLIN){ //received alert value;
+  if (args->alerts && args->items[1].revents & ZMQ_POLLIN){ //received alert value;
     
     zmq::message_t message;
     
@@ -390,7 +400,7 @@ std::string SlowControlCollection::PrintJSON(){
 
 bool SlowControlCollection::AlertSubscribe(std::string alert, AlertFunction function){
   
-  if(function==nullptr) return false;
+  if(function==nullptr || !m_alerts) return false;
   m_alert_functions_mutex.lock();
   m_alert_functions[alert]=function;
   m_alert_functions_mutex.unlock();
@@ -400,7 +410,8 @@ bool SlowControlCollection::AlertSubscribe(std::string alert, AlertFunction func
 
 
 bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
-  
+
+  if(!m_alerts) return false;
   zmq::message_t message(alert.length()+1);
   snprintf((char*) message.data(), alert.length()+1, "%s", alert.c_str());
   if(payload==""){

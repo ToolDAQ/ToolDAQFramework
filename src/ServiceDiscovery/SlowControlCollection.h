@@ -26,6 +26,7 @@ namespace ToolFramework{
     SlowControlCollection* SCC;
     std::map<std::string, AlertFunction>* alert_functions;
     std::mutex* alert_functions_mutex;
+    bool alerts;
     
   };
   
@@ -36,9 +37,9 @@ namespace ToolFramework{
     SlowControlCollection();
     ~SlowControlCollection();
     
-    bool Init(zmq::context_t* context, int port=555, bool new_service=true);
+    bool Init(zmq::context_t* context, int port=555, bool new_service=true, bool alerts=true);
     bool ListenForData(int poll_length=0);
-    bool InitThreadedReceiver(zmq::context_t* context, int port=555, int poll_length=100, bool new_service=true);
+    bool InitThreadedReceiver(zmq::context_t* context, int port=555, int poll_length=100, bool new_service=true, bool alerts=true);
     SlowControlElement* operator[](std::string key);
     bool Add(std::string name, SlowControlElementType type, SCFunction change_function = 0, SCFunction read_function = 0 );
     bool Remove(std::string name);
@@ -68,6 +69,7 @@ namespace ToolFramework{
     SlowControlCollectionThread_args* args;
     bool m_new_service;
     bool m_thread;
+    bool m_alerts;
     
     static void Thread(Thread_args* arg);
     void Unpack(std::string in, std::map<std::string,std::string> &out, std::string header="");
