@@ -21,7 +21,7 @@ TempToolsLib =
 
 
 Includes=  -I $(ToolFrameworkDIR)/include/ -I $(SOURCEDIR)/include/  -I $(SOURCEDIR)/tempinclude/ $(ZMQInclude) $(BoostInclude) 
-Libs=-L $(SOURCEDIR)/lib/ -lTempDAQDataModel -lTempDAQTools -lToolDAQChain -lDAQDataModelBase -lDAQStore -lServiceDiscovery -lDAQLogging  $(BoostLib) $(ZMQLib) -L $(ToolFrameworkDIR)/lib/  -lToolChain -lTempDAQTools -lDataModelBase  -lpthread -lLogging -lStore
+Libs=-L $(SOURCEDIR)/lib/ -lTempDAQDataModel -lTempDAQTools -lToolDAQChain -lServiceDiscovery -lDAQDataModelBase -lDAQStore -lDAQLogging  $(BoostLib) $(ZMQLib) -L $(ToolFrameworkDIR)/lib/  -lToolChain -lTempDAQTools -lDataModelBase  -lpthread -lLogging -lStore
 LIBRARIES=lib/libDAQStore.so lib/libDAQLogging.so lib/libToolDAQChain.so lib/libDAQDataModelBase.so lib/libTempDAQDataModel.so lib/libTempDAQTools.so lib/libServiceDiscovery.so
 HEADERS:=$(patsubst %.h, include/%.h, $(filter %.h, $(subst /, ,$(wildcard src/*/*.h) )))
 TempDataModelHEADERS:=$(patsubst %.h, tempinclude/%.h, $(filter %.h, $(subst /, , $(wildcard DataModel/*.h))))
