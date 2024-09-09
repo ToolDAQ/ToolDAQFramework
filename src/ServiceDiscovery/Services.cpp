@@ -267,11 +267,16 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
     return false;
   }
   
-  // response format '{"data":"<contents>"}' - strip out contents
-  if(json_data.length()>11){
-    json_data.replace(0,9,"");
-    json_data.replace(json_data.end()-2, json_data.end(),"");
-  } else {
+  // response format '{"data":<contents>}' - strip out contents
+  Store tmp;
+  tmp.JsonParser(json_data);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok){
+    //version = tmp_version;  // cannot pass back
+    ok = tmp.Get("data", json_data);
+  }
+  if(!ok){
     std::cerr<<"GetRunConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
     return false;
   }
@@ -290,7 +295,6 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
     std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
