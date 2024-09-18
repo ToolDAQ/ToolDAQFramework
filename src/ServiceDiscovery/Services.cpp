@@ -234,7 +234,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
   
   std::string err="";
   
-  if(m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
     std::cerr<<"GetDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -267,7 +267,7 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
   
   std::string err="";
   
-  if(m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
     std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -296,7 +296,7 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
   
   std::string err="";
   
-  if(m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
     std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
