@@ -295,6 +295,7 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
   
   std::string err="";
   
+  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
     std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
