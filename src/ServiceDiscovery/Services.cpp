@@ -493,7 +493,7 @@ bool Services::SQLQuery(const std::string& database, const std::string& query, s
   
   std::vector<std::string> responses;
   
-  bool ok = !SQLQuery(db, query, &responses, timeout);
+  bool ok = SQLQuery(db, query, &responses, timeout);
   
   if(response!=nullptr && responses.size()!=0){
     *response = responses.front();
