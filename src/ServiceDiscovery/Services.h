@@ -37,8 +37,9 @@ namespace ToolFramework {
     ~Services();
     bool Init(Store &m_variables, zmq::context_t* context_in, SlowControlCollection* sc_vars_in, bool new_service=false);
     
-    bool SQLQuery(const std::string& database, const std::string& query, std::vector<std::string>* responses=nullptr, const unsigned int timeout=300);
-    bool SQLQuery(const std::string& database, const std::string& query, std::string* response=nullptr, const unsigned int timeout=300);
+    bool SQLQuery(const std::string& database, const std::string& query, std::vector<std::string>& responses, const unsigned int timeout=300);
+    bool SQLQuery(const std::string& database, const std::string& query, std::string& response, const unsigned int timeout=300);
+    bool SQLQuery(const std::string& database, const std::string& query, const unsigned int timeout=300);
     
     bool SendLog(const std::string& message, unsigned int severity=2, const std::string& device="", const unsigned int timestamp=0);
     bool SendAlarm(const std::string& message, unsigned int level=0, const std::string& device="", const unsigned int timestamp=0, const unsigned int timeout=300);

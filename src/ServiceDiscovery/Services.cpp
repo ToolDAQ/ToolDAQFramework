@@ -461,9 +461,9 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   
 }
 
-bool Services::SQLQuery(const std::string& database, const std::string& query, std::vector<std::string>* responses, const unsigned int timeout){
+bool Services::SQLQuery(const std::string& database, const std::string& query, std::vector<std::string>& responses, const unsigned int timeout){
   
-  if(responses) responses->clear();
+  responses.clear();
   
   const std::string& db = (database=="") ? m_dbname : database;
   
@@ -472,12 +472,10 @@ bool Services::SQLQuery(const std::string& database, const std::string& query, s
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_QUERY", command, responses, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_QUERY", command, &responses, &timeout, &err)){
     std::cerr<<"SQLQuery error: "<<err<<std::endl;
-    if(responses){
-      responses->resize(1);
-      responses->front() = err;
-    }
+    responses.resize(1);
+    responses.front() = err;
     return false;
   }
   
@@ -485,24 +483,32 @@ bool Services::SQLQuery(const std::string& database, const std::string& query, s
   
 }
 
-bool Services::SQLQuery(const std::string& database, const std::string& query, std::string* response, const unsigned int timeout){
+bool Services::SQLQuery(const std::string& database, const std::string& query, std::string& response, const unsigned int timeout){
   
-  if(response) *response="";
+  response="";
   
   const std::string& db = (database=="") ? m_dbname : database;
   
   std::vector<std::string> responses;
   
-  bool ok = SQLQuery(db, query, &responses, timeout);
+  bool ok = SQLQuery(db, query, responses, timeout);
   
-  if(response!=nullptr && responses.size()!=0){
-    *response = responses.front();
+  if(responses.size()!=0){
+    response = responses.front();
     if(responses.size()>1){
       std::cerr<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
     }
   }
   
   return ok;
+}
+
+// for things like insertions, the user may not have any return they care about
+bool Services::SQLQuery(const std::string& database, const std::string& query, const unsigned int timeout){
+  
+  std::string tmp;
+  return SQLQuery(database, query, tmp, timeout);
+
 }
 
 // ===========================================================================
