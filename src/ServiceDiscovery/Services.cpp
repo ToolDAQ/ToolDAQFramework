@@ -475,7 +475,7 @@ bool Services::SQLQuery(const std::string& database, const std::string& query, s
   
 }
 
-bool Services::SQLQuery(const std::string& query, const std::string& database, std::string* response, const unsigned int timeout){
+bool Services::SQLQuery(const std::string& database, const std::string& query, std::string* response, const unsigned int timeout){
   
   if(response) *response="";
   
