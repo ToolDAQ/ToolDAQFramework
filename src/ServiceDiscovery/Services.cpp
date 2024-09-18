@@ -240,11 +240,16 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
     return false;
   }
   
-  // response format '{"data":"<contents>"}' - strip out contents
-  if(json_data.length()>11){
-    json_data.replace(0,9,"");
-    json_data.replace(json_data.end()-2, json_data.end(),"");
-  } else {
+  // response format '{"version":X, "data":"<contents>"}' - strip out contents
+  Store tmp;
+  tmp.JsonParser(json_data);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok){
+    //version = tmp_version;  // cannot pass back... without a more complex signature
+    ok = tmp.Get("data", json_data);
+  }
+  if(!ok){
     std::cerr<<"GetDeviceConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
     return false;
   }
@@ -297,11 +302,16 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
     return false;
   }
   
-  // response format '{"data":"<contents>"}' - strip out contents
-  if(json_data.length()>11){
-    json_data.replace(0,9,"");
-    json_data.replace(json_data.end()-2, json_data.end(),"");
-  } else {
+  // response format '{"version":X, "data":"<contents>"}' - strip out contents
+  Store tmp;
+  tmp.JsonParser(json_data);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok){
+    //version = tmp_version;  // cannot pass back
+    ok = tmp.Get("data", json_data);
+  }
+  if(!ok){
     std::cerr<<"GetRunConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
     return false;
   }
@@ -337,7 +347,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
   // 2. extract the device's configuration id
   Store tmp;
   tmp.JsonParser(run_config);
-  unsigned int device_config_id;
+  int device_config_id;
   get_ok = tmp.Get(name, device_config_id);
   
   if(!get_ok){
@@ -375,7 +385,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   // 2. extract the device's configuration id
   Store tmp;
   tmp.JsonParser(run_config);
-  unsigned int device_config_id;
+  int device_config_id;
   get_ok = tmp.Get(name, device_config_id);
   
   if(!get_ok){
