@@ -101,18 +101,16 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   }
   
   // response is json with the version number of the created config entry
-  // e.g. '{"version":"3"}'. check this is what we got, as validation.
-  if(response.length()>14){
-    response.replace(0,12,"");
-    response.replace(response.end()-2, response.end(),"");
-    try {
-      if(version) *version = std::stoi(response);
-    } catch (...){
-      std::cerr<<"SendConfig error: invalid response '"<<response<<"'"<<std::endl;
-      return false;
-    }
-  } else {
-    std::cerr<<"SendConfig error: invalid response: '"<<response<<"'"<<std::endl;
+  // e.g. '{"version":3}'. check this is what we got, as validation.
+  Store tmp;
+  tmp.JsonParser(response);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(version){
+    *version = tmp_version;
+  }
+  if(!ok){
+    std::cerr<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
     return false;
   }
   
@@ -120,7 +118,7 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   
 }
 
-bool Services::SendConfig(const std::string& json_data, const std::string& author, const std::string& description, const std::string& device, unsigned int timestamp, int* version, const unsigned int timeout){
+bool Services::SendDeviceConfig(const std::string& json_data, const std::string& author, const std::string& description, const std::string& device, unsigned int timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
@@ -135,24 +133,58 @@ bool Services::SendConfig(const std::string& json_data, const std::string& autho
   std::string response="";
   std::string err="";
   
-  if(!m_backend_client.SendCommand("W_CONFIG", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendConfig error: "<<err<<std::endl;
+  if(!m_backend_client.SendCommand("W_DEVCONFIG", cmd_string, &response, &timeout, &err)){
+    std::cerr<<"SendDeviceConfig error: "<<err<<std::endl;
     return false;
   }
   
   // response is json with the version number of the created config entry
-  // e.g. '{"version":"3"}'. check this is what we got, as validation.
-  if(response.length()>14){
-    response.replace(0,12,"");
-    response.replace(response.end()-2, response.end(),"");
-    try {
-      if(version) *version = std::stoi(response);
-    } catch (...){
-      std::cerr<<"SendConfig error: invalid response '"<<response<<"'"<<std::endl;
-      return false;
-    }
-  } else {
-    std::cerr<<"SendConfig error: invalid response: '"<<response<<"'"<<std::endl;
+  // e.g. '{"version":3}'. check this is what we got, as validation.
+  Store tmp;
+  tmp.JsonParser(response);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(version){
+    *version = tmp_version;
+  }
+  if(!ok){
+    std::cerr<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
+    return false;
+  }
+  
+  return true;
+  
+}
+
+bool Services::SendRunConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, unsigned int timestamp, int* version, const unsigned int timeout){
+  
+  if(version) *version=-1;
+  
+  std::string cmd_string = "{ \"time\":"+std::to_string(timestamp)
+                         + ", \"name\":\""+ name+"\""
+                         + ", \"author\":\""+ author+"\""
+                         + ", \"description\":\""+ description+"\""
+                         + ", \"data\":\""+ json_data +"\" }";
+  
+  std::string response="";
+  std::string err="";
+  
+  if(!m_backend_client.SendCommand("W_RUNCONFIG", cmd_string, &response, &timeout, &err)){
+    std::cerr<<"SendRunConfig error: "<<err<<std::endl;
+    return false;
+  }
+  
+  // response is json with the version number of the created config entry
+  // e.g. '{"version":3}'. check this is what we got, as validation.
+  Store tmp;
+  tmp.JsonParser(response);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(version){
+    *version = tmp_version;
+  }
+  if(!ok){
+    std::cerr<<"SendRunConfig error: invalid response: '"<<response<<"'"<<std::endl;
     return false;
   }
   
@@ -185,7 +217,7 @@ bool Services::GetCalibrationData(std::string& json_data, int version, const std
   
 }
 
-bool Services::GetConfig(std::string& json_data, int version, const std::string& device, const unsigned int timeout){
+bool Services::GetDeviceConfig(std::string& json_data, const int version, const std::string& device, const unsigned int timeout){
 
   json_data="";
   
@@ -196,8 +228,41 @@ bool Services::GetConfig(std::string& json_data, int version, const std::string&
   
   std::string err="";
   
-  if(m_backend_client.SendCommand("R_CONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetConfig error: "<<err<<std::endl;
+  if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
+    std::cerr<<"GetDeviceConfig error: "<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  
+  // response format '{"version":X, "data":"<contents>"}' - strip out contents
+  Store tmp;
+  tmp.JsonParser(json_data);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok){
+    //version = tmp_version;  // cannot pass back... without a more complex signature
+    ok = tmp.Get("data", json_data);
+  }
+  if(!ok){
+    std::cerr<<"GetDeviceConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
+    return false;
+  }
+  
+  return true;
+  
+}
+
+// get a run configuration via configuration ID
+bool Services::GetRunConfig(std::string& json_data, const int config_id, const unsigned int timeout){
+
+  json_data="";
+  
+  std::string cmd_string = "{ \"config_id\":"+std::to_string(config_id) + "}";
+  
+  std::string err="";
+  
+  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
+    std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -207,13 +272,131 @@ bool Services::GetConfig(std::string& json_data, int version, const std::string&
     json_data.replace(0,9,"");
     json_data.replace(json_data.end()-2, json_data.end(),"");
   } else {
-    std::cerr<<"GetConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
+    std::cerr<<"GetRunConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
     return false;
   }
   
   return true;
   
 }
+
+// get a run configuration by name and version (e.g. name: AmBe, version: 3)
+bool Services::GetRunConfig(std::string& json_data, const std::string& name, const int version, const unsigned int timeout){
+
+  json_data="";
+  
+  std::string cmd_string = "{ \"name\":\""+ name +"\""
+                         + ", \"version\":"+std::to_string(version) + "}";
+  
+  std::string err="";
+  
+  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
+    std::cerr<<"GetRunConfig error: "<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  
+  // response format '{"version":X, "data":"<contents>"}' - strip out contents
+  Store tmp;
+  tmp.JsonParser(json_data);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok){
+    //version = tmp_version;  // cannot pass back
+    ok = tmp.Get("data", json_data);
+  }
+  if(!ok){
+    std::cerr<<"GetRunConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
+    return false;
+  }
+  
+  return true;
+  
+}
+
+// quick aside for a couple of convenience wrappers.
+// For a device to get its configuration from a *run* configuration ID, it needs to:
+// 1. get the run configuration JSON from that ID (this represents a map of devices to device config IDs)
+// 2. extract its device configuration ID from this map
+// 3. get its device configuration from the database via this device configuration ID.
+// to make things easy for end users, provide a wrapper that does this.
+// technically we have two wrappers as there are two ways to specify a run configuration (by id or by name+version)
+
+bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id, const std::string& device, int* version, unsigned int timeout){
+  
+  json_data="";
+  
+  const std::string& name = (device=="") ? m_name : device;
+  
+  // 1. get the run configuration
+  std::string run_config="";
+  bool get_ok = GetRunConfig(run_config, runconfig_id, timeout/2);
+  
+  if(!get_ok){
+    std::cerr<<"GetRunDeviceConfig error getting run config id "<<runconfig_id<<": '"<<run_config<<"'"<<std::endl;
+    json_data = run_config;
+    return false;
+  }
+  
+  // 2. extract the device's configuration id
+  Store tmp;
+  tmp.JsonParser(run_config);
+  int device_config_id;
+  get_ok = tmp.Get(name, device_config_id);
+  
+  if(!get_ok){
+    std::string err= "GetRunDeviceConfig error getting device config; device '"+name
+                   +"' not found in run configuration '"+run_config+"'";
+    std::cerr<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  if(version!=nullptr) *version=device_config_id;
+  
+  // 3. use the device config id to get the device configuration
+  return GetDeviceConfig(json_data, device_config_id, name, timeout/2);
+  
+}
+
+// second convenience wrapper
+bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& runconfig_name, const int runconfig_version, const std::string& device, int* version, unsigned int timeout){
+  
+  json_data="";
+  
+  const std::string& name = (device=="") ? m_name : device;
+  
+  // 1. get the run configuration
+  std::string run_config="";
+  bool get_ok = GetRunConfig(run_config, runconfig_name, runconfig_version, timeout/2);
+  
+  if(!get_ok){
+    std::cerr<<"GetRunDeviceConfig error getting run config '"<<runconfig_name<<"' version "
+             <<runconfig_version<<": '"<<run_config<<"'"<<std::endl;
+    json_data = run_config;
+    return false;
+  }
+  
+  // 2. extract the device's configuration id
+  Store tmp;
+  tmp.JsonParser(run_config);
+  int device_config_id;
+  get_ok = tmp.Get(name, device_config_id);
+  
+  if(!get_ok){
+    std::string err= "GetRunDeviceConfig error getting device config; device '"+name
+                   +"' not found in run configuration '"+run_config+"'";
+    std::cerr<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  if(version!=nullptr) *version=device_config_id;
+  
+  // 3. use the device config id to get the device configuration
+  return GetDeviceConfig(json_data, device_config_id, name, timeout/2);
+  
+}
+
+// end convenience wrappers
 
 bool Services::GetROOTplot(const std::string& plot_name, int& version, std::string& draw_options, std::string& json_data, std::string* timestamp, const unsigned int timeout){
   
@@ -272,9 +455,9 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   
 }
 
-bool Services::SQLQuery(const std::string& database, const std::string& query, std::vector<std::string>* responses, const unsigned int timeout){
+bool Services::SQLQuery(const std::string& database, const std::string& query, std::vector<std::string>& responses, const unsigned int timeout){
   
-  if(responses) responses->clear();
+  responses.clear();
   
   const std::string& db = (database=="") ? m_dbname : database;
   
@@ -283,12 +466,10 @@ bool Services::SQLQuery(const std::string& database, const std::string& query, s
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_QUERY", command, responses, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_QUERY", command, &responses, &timeout, &err)){
     std::cerr<<"SQLQuery error: "<<err<<std::endl;
-    if(responses){
-      responses->resize(1);
-      responses->front() = err;
-    }
+    responses.resize(1);
+    responses.front() = err;
     return false;
   }
   
@@ -296,24 +477,32 @@ bool Services::SQLQuery(const std::string& database, const std::string& query, s
   
 }
 
-bool Services::SQLQuery(const std::string& query, const std::string& database, std::string* response, const unsigned int timeout){
+bool Services::SQLQuery(const std::string& database, const std::string& query, std::string& response, const unsigned int timeout){
   
-  if(response) *response="";
+  response="";
   
   const std::string& db = (database=="") ? m_dbname : database;
   
   std::vector<std::string> responses;
   
-  bool ok = !SQLQuery(db, query, &responses, timeout);
+  bool ok = SQLQuery(db, query, responses, timeout);
   
-  if(response!=nullptr && responses.size()!=0){
-    *response = responses.front();
+  if(responses.size()!=0){
+    response = responses.front();
     if(responses.size()>1){
       std::cerr<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
     }
   }
   
   return ok;
+}
+
+// for things like insertions, the user may not have any return they care about
+bool Services::SQLQuery(const std::string& database, const std::string& query, const unsigned int timeout){
+  
+  std::string tmp;
+  return SQLQuery(database, query, tmp, timeout);
+
 }
 
 // ===========================================================================
