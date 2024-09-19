@@ -101,18 +101,16 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   }
   
   // response is json with the version number of the created config entry
-  // e.g. '{"version":"3"}'. check this is what we got, as validation.
-  if(response.length()>14){
-    response.replace(0,12,"");
-    response.replace(response.end()-2, response.end(),"");
-    try {
-      if(version) *version = std::stoi(response);
-    } catch (...){
-      std::cerr<<"SendConfig error: invalid response '"<<response<<"'"<<std::endl;
-      return false;
-    }
-  } else {
-    std::cerr<<"SendConfig error: invalid response: '"<<response<<"'"<<std::endl;
+  // e.g. '{"version":3}'. check this is what we got, as validation.
+  Store tmp;
+  tmp.JsonParser(response);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(version){
+    *version = tmp_version;
+  }
+  if(!ok){
+    std::cerr<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
     return false;
   }
   
@@ -141,17 +139,15 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
   }
   
   // response is json with the version number of the created config entry
-  // e.g. '{"version":"3"}'. check this is what we got, as validation.
-  if(response.length()>14){
-    response.replace(0,12,"");
-    response.replace(response.end()-2, response.end(),"");
-    try {
-      if(version) *version = std::stoi(response);
-    } catch (...){
-      std::cerr<<"SendDeviceConfig error: invalid response '"<<response<<"'"<<std::endl;
-      return false;
-    }
-  } else {
+  // e.g. '{"version":3}'. check this is what we got, as validation.
+  Store tmp;
+  tmp.JsonParser(response);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(version){
+    *version = tmp_version;
+  }
+  if(!ok){
     std::cerr<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
     return false;
   }
@@ -179,17 +175,15 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
   }
   
   // response is json with the version number of the created config entry
-  // e.g. '{"version":"3"}'. check this is what we got, as validation.
-  if(response.length()>14){
-    response.replace(0,12,"");
-    response.replace(response.end()-2, response.end(),"");
-    try {
-      if(version) *version = std::stoi(response);
-    } catch (...){
-      std::cerr<<"SendRunConfig error: invalid response '"<<response<<"'"<<std::endl;
-      return false;
-    }
-  } else {
+  // e.g. '{"version":3}'. check this is what we got, as validation.
+  Store tmp;
+  tmp.JsonParser(response);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(version){
+    *version = tmp_version;
+  }
+  if(!ok){
     std::cerr<<"SendRunConfig error: invalid response: '"<<response<<"'"<<std::endl;
     return false;
   }
