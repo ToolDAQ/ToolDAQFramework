@@ -199,7 +199,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     Store tmp;
     //printf("iss=%s\n",iss.str().c_str());
     tmp.JsonParser(iss.str());
-    
+    //tmp.Print();
     if(!tmp.Has("msg_value")){
       std::cerr<<"error: Poorly formatted slowcontrol input [no msg_value]"<<std::endl;
       return;
@@ -208,6 +208,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
     std::string key=tmp.Get<std::string>("msg_value");
     std::string value="";
     tmp.Get("var1",value);
+    
+    //printf("value=%s\n",value.c_str());
     
     // std::stringstream tmpstream(str);
     // tmpstream>>str;
@@ -248,6 +250,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
 	//printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
 	if(value!=""){
 	  (*args->SCC)[key]->SetValue(value);
+	  //(*args->SCC)[key]->Print();
 	  SCFunction tmp_func= (*args->SCC)[key]->GetChangeFunction();
 	  if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
 	  
