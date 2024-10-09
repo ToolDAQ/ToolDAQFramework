@@ -79,69 +79,69 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab5247f26618c18e6f648a46d91b7ab47"><td class="memItemLeft" align="right" valign="top"><a id="ab5247f26618c18e6f648a46d91b7ab47"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (Store &amp;m_variables, zmq::context_t *context_in, <a class="el" href="classToolFramework_1_1SlowControlCollection.html">SlowControlCollection</a> *sc_vars_in, bool new_service=false)</td></tr>
 <tr class="separator:ab5247f26618c18e6f648a46d91b7ab47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a700dd0d1a3693a3d291813f0ffd99f"><td class="memItemLeft" align="right" valign="top"><a id="a6a700dd0d1a3693a3d291813f0ffd99f"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SQLQuery</b> (const std::string &amp;database, const std::string &amp;query, std::vector&lt; std::string &gt; &amp;responses, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a6a700dd0d1a3693a3d291813f0ffd99f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53c9bc5b567b5c100931eac1f98223c0"><td class="memItemLeft" align="right" valign="top"><a id="a53c9bc5b567b5c100931eac1f98223c0"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SQLQuery</b> (const std::string &amp;database, const std::string &amp;query, std::string &amp;response, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a53c9bc5b567b5c100931eac1f98223c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fa68c19dc4e3284c5dfcba90a14e962"><td class="memItemLeft" align="right" valign="top"><a id="a6fa68c19dc4e3284c5dfcba90a14e962"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SQLQuery</b> (const std::string &amp;database, const std::string &amp;query, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a6fa68c19dc4e3284c5dfcba90a14e962"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bbf480928280cb8ec5c9c85c4027a3e"><td class="memItemLeft" align="right" valign="top"><a id="a1bbf480928280cb8ec5c9c85c4027a3e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SQLQuery</b> (const std::string &amp;database, const std::string &amp;query, std::vector&lt; std::string &gt; &amp;responses, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a1bbf480928280cb8ec5c9c85c4027a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa45ae1d618d7a767d0e1616d9351ab00"><td class="memItemLeft" align="right" valign="top"><a id="aa45ae1d618d7a767d0e1616d9351ab00"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SQLQuery</b> (const std::string &amp;database, const std::string &amp;query, std::string &amp;response, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:aa45ae1d618d7a767d0e1616d9351ab00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa4a3d676cbc3836c8d14a1c262057a8"><td class="memItemLeft" align="right" valign="top"><a id="aaa4a3d676cbc3836c8d14a1c262057a8"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SQLQuery</b> (const std::string &amp;database, const std::string &amp;query, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:aaa4a3d676cbc3836c8d14a1c262057a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bd404e6802f49573d4a990464d87d3a"><td class="memItemLeft" align="right" valign="top"><a id="a7bd404e6802f49573d4a990464d87d3a"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendLog</b> (const std::string &amp;message, unsigned int severity=2, const std::string &amp;device=&quot;&quot;, const unsigned int timestamp=0)</td></tr>
 <tr class="separator:a7bd404e6802f49573d4a990464d87d3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79d1ccce24a4da86beb15681bc935a43"><td class="memItemLeft" align="right" valign="top"><a id="a79d1ccce24a4da86beb15681bc935a43"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendAlarm</b> (const std::string &amp;message, unsigned int level=0, const std::string &amp;device=&quot;&quot;, const unsigned int timestamp=0, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a79d1ccce24a4da86beb15681bc935a43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a252e6edf3d41c016fe3672fb2406d69f"><td class="memItemLeft" align="right" valign="top"><a id="a252e6edf3d41c016fe3672fb2406d69f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendAlarm</b> (const std::string &amp;message, unsigned int level=0, const std::string &amp;device=&quot;&quot;, const unsigned int timestamp=0, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a252e6edf3d41c016fe3672fb2406d69f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f830c695a3eeee5a3ad8c41e3c01956"><td class="memItemLeft" align="right" valign="top"><a id="a2f830c695a3eeee5a3ad8c41e3c01956"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendMonitoringData</b> (const std::string &amp;json_data, const std::string &amp;device=&quot;&quot;, unsigned int timestamp=0)</td></tr>
 <tr class="separator:a2f830c695a3eeee5a3ad8c41e3c01956"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad78c787c775443eff88f2c59d16b78c9"><td class="memItemLeft" align="right" valign="top"><a id="ad78c787c775443eff88f2c59d16b78c9"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendCalibrationData</b> (const std::string &amp;json_data, const std::string &amp;description, const std::string &amp;device=&quot;&quot;, unsigned int timestamp=0, int *version=nullptr, const unsigned int timeout=300)</td></tr>
-<tr class="separator:ad78c787c775443eff88f2c59d16b78c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bfcaab70d08347400f49c2135f7df19"><td class="memItemLeft" align="right" valign="top"><a id="a7bfcaab70d08347400f49c2135f7df19"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetCalibrationData</b> (std::string &amp;json_data, int version=-1, const std::string &amp;device=&quot;&quot;, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a7bfcaab70d08347400f49c2135f7df19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa743ddfa713e9d5f88a5e6be6df503aa"><td class="memItemLeft" align="right" valign="top"><a id="aa743ddfa713e9d5f88a5e6be6df503aa"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendDeviceConfig</b> (const std::string &amp;json_data, const std::string &amp;author, const std::string &amp;description, const std::string &amp;device=&quot;&quot;, unsigned int timestamp=0, int *version=nullptr, const unsigned int timeout=300)</td></tr>
-<tr class="separator:aa743ddfa713e9d5f88a5e6be6df503aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32042217f4f0f9b94fb83f1339396f1e"><td class="memItemLeft" align="right" valign="top"><a id="a32042217f4f0f9b94fb83f1339396f1e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendRunConfig</b> (const std::string &amp;json_data, const std::string &amp;name, const std::string &amp;author, const std::string &amp;description, unsigned int timestamp=0, int *version=nullptr, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a32042217f4f0f9b94fb83f1339396f1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a1b1793f442adfe2de5d827a360e425"><td class="memItemLeft" align="right" valign="top"><a id="a9a1b1793f442adfe2de5d827a360e425"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetDeviceConfig</b> (std::string &amp;json_data, const int version=-1, const std::string &amp;device=&quot;&quot;, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a9a1b1793f442adfe2de5d827a360e425"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae723653ba39dd983a0b4cb2d5bdff100"><td class="memItemLeft" align="right" valign="top"><a id="ae723653ba39dd983a0b4cb2d5bdff100"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetRunConfig</b> (std::string &amp;json_data, const int config_id, const unsigned int timeout=300)</td></tr>
-<tr class="separator:ae723653ba39dd983a0b4cb2d5bdff100"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16ad374c752326b9173644200745cf6b"><td class="memItemLeft" align="right" valign="top"><a id="a16ad374c752326b9173644200745cf6b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetRunConfig</b> (std::string &amp;json_data, const std::string &amp;name, const int version=-1, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a16ad374c752326b9173644200745cf6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd1abdb24fa23fc1f8209c7c79f8d849"><td class="memItemLeft" align="right" valign="top"><a id="acd1abdb24fa23fc1f8209c7c79f8d849"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetRunDeviceConfig</b> (std::string &amp;json_data, const int runconfig_id, const std::string &amp;device=&quot;&quot;, int *version=nullptr, const unsigned int timeout=300)</td></tr>
-<tr class="separator:acd1abdb24fa23fc1f8209c7c79f8d849"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16ef71921c2c31674bf2838b2e62c03e"><td class="memItemLeft" align="right" valign="top"><a id="a16ef71921c2c31674bf2838b2e62c03e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetRunDeviceConfig</b> (std::string &amp;json_data, const std::string &amp;runconfig_name, const int runconfig_version=-1, const std::string &amp;device=&quot;&quot;, int *version=nullptr, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a16ef71921c2c31674bf2838b2e62c03e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ba882b1e4a5e9dc99f1d70a6bbc1a29"><td class="memItemLeft" align="right" valign="top"><a id="a6ba882b1e4a5e9dc99f1d70a6bbc1a29"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendROOTplot</b> (const std::string &amp;plot_name, const std::string &amp;draw_options, const std::string &amp;json_data, bool persistent=false, int *version=nullptr, const unsigned int timestamp=0, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a6ba882b1e4a5e9dc99f1d70a6bbc1a29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a208e8dc17264e4443f93bb5382394986"><td class="memItemLeft" align="right" valign="top"><a id="a208e8dc17264e4443f93bb5382394986"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendCalibrationData</b> (const std::string &amp;json_data, const std::string &amp;description, const std::string &amp;device=&quot;&quot;, unsigned int timestamp=0, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a208e8dc17264e4443f93bb5382394986"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca38a8582a500186e6fbe22172aed5e8"><td class="memItemLeft" align="right" valign="top"><a id="aca38a8582a500186e6fbe22172aed5e8"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetCalibrationData</b> (std::string &amp;json_data, int version=-1, const std::string &amp;device=&quot;&quot;, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:aca38a8582a500186e6fbe22172aed5e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad7c9381097cff49e03dd27ed9b9dcd9"><td class="memItemLeft" align="right" valign="top"><a id="aad7c9381097cff49e03dd27ed9b9dcd9"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendDeviceConfig</b> (const std::string &amp;json_data, const std::string &amp;author, const std::string &amp;description, const std::string &amp;device=&quot;&quot;, unsigned int timestamp=0, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:aad7c9381097cff49e03dd27ed9b9dcd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ce08a811882cfa914cd537c5e6cf879"><td class="memItemLeft" align="right" valign="top"><a id="a6ce08a811882cfa914cd537c5e6cf879"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendRunConfig</b> (const std::string &amp;json_data, const std::string &amp;name, const std::string &amp;author, const std::string &amp;description, unsigned int timestamp=0, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a6ce08a811882cfa914cd537c5e6cf879"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fdf12cfeb956f341258531f20647a07"><td class="memItemLeft" align="right" valign="top"><a id="a3fdf12cfeb956f341258531f20647a07"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetDeviceConfig</b> (std::string &amp;json_data, const int version=-1, const std::string &amp;device=&quot;&quot;, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a3fdf12cfeb956f341258531f20647a07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa0c6406a1df75099552546275eb6bef"><td class="memItemLeft" align="right" valign="top"><a id="afa0c6406a1df75099552546275eb6bef"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetRunConfig</b> (std::string &amp;json_data, const int config_id, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:afa0c6406a1df75099552546275eb6bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6811bf0a6934da6140198131fcba79aa"><td class="memItemLeft" align="right" valign="top"><a id="a6811bf0a6934da6140198131fcba79aa"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetRunConfig</b> (std::string &amp;json_data, const std::string &amp;name, const int version=-1, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a6811bf0a6934da6140198131fcba79aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fd44cca8a991988b9efa050de15173d"><td class="memItemLeft" align="right" valign="top"><a id="a0fd44cca8a991988b9efa050de15173d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetRunDeviceConfig</b> (std::string &amp;json_data, const int runconfig_id, const std::string &amp;device=&quot;&quot;, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a0fd44cca8a991988b9efa050de15173d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec3b701660a9efd32f5dc8981f153d0e"><td class="memItemLeft" align="right" valign="top"><a id="aec3b701660a9efd32f5dc8981f153d0e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetRunDeviceConfig</b> (std::string &amp;json_data, const std::string &amp;runconfig_name, const int runconfig_version=-1, const std::string &amp;device=&quot;&quot;, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:aec3b701660a9efd32f5dc8981f153d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae330a4017c2343fee264fdb8bc915c1"><td class="memItemLeft" align="right" valign="top"><a id="aae330a4017c2343fee264fdb8bc915c1"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendROOTplot</b> (const std::string &amp;plot_name, const std::string &amp;draw_options, const std::string &amp;json_data, bool persistent=false, int *version=nullptr, const unsigned int timestamp=0, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:aae330a4017c2343fee264fdb8bc915c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1de08cc6ec59abf120f8f3750f677c28"><td class="memItemLeft" align="right" valign="top"><a id="a1de08cc6ec59abf120f8f3750f677c28"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendTemporaryROOTplot</b> (const std::string &amp;plot_name, const std::string &amp;draw_options, const std::string &amp;json_data, int *version=nullptr, const unsigned int timestamp=0)</td></tr>
 <tr class="separator:a1de08cc6ec59abf120f8f3750f677c28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0294497fc3c30a803bd41281d1b2e612"><td class="memItemLeft" align="right" valign="top"><a id="a0294497fc3c30a803bd41281d1b2e612"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendPersistentROOTplot</b> (const std::string &amp;plot_name, const std::string &amp;draw_options, const std::string &amp;json_data, int *version=nullptr, const unsigned int timestamp=0, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a0294497fc3c30a803bd41281d1b2e612"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a5094efafdb598db7a3566e203282f6"><td class="memItemLeft" align="right" valign="top"><a id="a6a5094efafdb598db7a3566e203282f6"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetROOTplot</b> (const std::string &amp;plot_name, int &amp;version, std::string &amp;draw_option, std::string &amp;json_data, std::string *timestamp=nullptr, const unsigned int timeout=300)</td></tr>
-<tr class="separator:a6a5094efafdb598db7a3566e203282f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92685177fb2eba1220c5ddd547452ee3"><td class="memItemLeft" align="right" valign="top"><a id="a92685177fb2eba1220c5ddd547452ee3"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendPlot</b> (<a class="el" href="structToolFramework_1_1Plot.html">Plot</a> &amp;plot, unsigned timeout=300)</td></tr>
-<tr class="separator:a92685177fb2eba1220c5ddd547452ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83280b01ce0a21f668598ff8fe383a6a"><td class="memItemLeft" align="right" valign="top"><a id="a83280b01ce0a21f668598ff8fe383a6a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetPlot</b> (const std::string &amp;name, <a class="el" href="structToolFramework_1_1Plot.html">Plot</a> &amp;plot, unsigned timeout=300)</td></tr>
-<tr class="separator:a83280b01ce0a21f668598ff8fe383a6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa263573a77a52632cd54b1166e6c9089"><td class="memItemLeft" align="right" valign="top"><a id="aa263573a77a52632cd54b1166e6c9089"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendPersistentROOTplot</b> (const std::string &amp;plot_name, const std::string &amp;draw_options, const std::string &amp;json_data, int *version=nullptr, const unsigned int timestamp=0, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:aa263573a77a52632cd54b1166e6c9089"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c61230a3656afcdbecb4df0a7a78a57"><td class="memItemLeft" align="right" valign="top"><a id="a3c61230a3656afcdbecb4df0a7a78a57"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetROOTplot</b> (const std::string &amp;plot_name, int &amp;version, std::string &amp;draw_option, std::string &amp;json_data, std::string *timestamp=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a3c61230a3656afcdbecb4df0a7a78a57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae432215b340372fcc6ff8b79086500d9"><td class="memItemLeft" align="right" valign="top"><a id="ae432215b340372fcc6ff8b79086500d9"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendPlot</b> (<a class="el" href="structToolFramework_1_1Plot.html">Plot</a> &amp;plot, unsigned timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:ae432215b340372fcc6ff8b79086500d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c3d9ccd221ade6211e00286bbadcfa4"><td class="memItemLeft" align="right" valign="top"><a id="a1c3d9ccd221ade6211e00286bbadcfa4"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetPlot</b> (const std::string &amp;name, <a class="el" href="structToolFramework_1_1Plot.html">Plot</a> &amp;plot, unsigned timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a1c3d9ccd221ade6211e00286bbadcfa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40ed4af73e55fa5a4abbf2ff3e6f63d0"><td class="memItemLeft" align="right" valign="top"><a id="a40ed4af73e55fa5a4abbf2ff3e6f63d0"></a>
 <a class="el" href="classToolFramework_1_1SlowControlCollection.html">SlowControlCollection</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>GetSlowControlCollection</b> ()</td></tr>
 <tr class="separator:a40ed4af73e55fa5a4abbf2ff3e6f63d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
