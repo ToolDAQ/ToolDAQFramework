@@ -19,6 +19,10 @@
 #define FILE_SEND_WAIT 120000
 #define FILE_SEND_PORT 24001
 
+#define RED "\033[31m"                                      
+#define RESET "\033[0m"                                     
+#define BLUE "\033[34m"  
+
 using namespace ToolFramework;
 
 int main(int argc, char** argv){
@@ -128,7 +132,13 @@ int main(int argc, char** argv){
 	(*(RemoteServices.at(i))).Get("status", status);
 	(*(RemoteServices.at(i))).Get("msg_time", time);
 
-	std::cout<<"["<<i<<"]  "<<ip<<" , "<<service<<" , "<<status<<" , "<<time<<std::endl;
+	if (status.find("Waiting") != std::string::npos) {                                                                                                                                                                                         
+            std::cout << RED << "[" << i << "]  " << ip << " , " << service << " , " << status << " , " << time << RESET << std::endl;                                                                                                             
+        } else if (status == "Online"){                                                                                                                                                                                                            
+            std::cout << BLUE << "[" << i << "]  " << ip << " , " << service << " , " << status << " , " << time << RESET << std::endl;                                                                                                            
+        } else {                                                                                                                                                                                                                                   
+            std::cout << "[" << i << "]  " << ip << " , " << service << " , " << status << " , " << time << std::endl;                                                                                                                             
+        } 
 	
       }
 
