@@ -30,7 +30,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   
     
   if(!m_backend_client.Initialise(m_variables)){
-    std::cerr<<"error initialising slowcontrol client"<<std::endl;
+    std::clog<<"error initialising slowcontrol client"<<std::endl;
     return false;
   }
    
@@ -63,7 +63,7 @@ bool Services::SendAlarm(const std::string& message, unsigned int level, const s
   // send the alarm on the pub socket
   bool ok = m_backend_client.SendCommand("W_ALARM", cmd_string, (std::vector<std::string>*)nullptr, &timeout,  &err);
   if(!ok){
-    std::cerr<<"SendAlarm error: "<<err<<std::endl;
+    std::clog<<"SendAlarm error: "<<err<<std::endl;
   }
   
   // also record it to the logging socket
@@ -73,10 +73,10 @@ bool Services::SendAlarm(const std::string& message, unsigned int level, const s
              + ",\"severity\":0"
              + ",\"message\":\"" + message + "\"}";
   
-  ok = m_backend_client.SendMulticast(cmd_string, &err);
+  ok = ok && m_backend_client.SendMulticast(cmd_string, &err);
   
   if(!ok){
-    std::cerr<<"SendAlarm (log) error: "<<err<<std::endl;
+    std::clog<<"SendAlarm (log) error: "<<err<<std::endl;
   }
   
   return ok;
@@ -96,7 +96,7 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   std::string response="";
   
   if(!m_backend_client.SendCommand("W_CALIBRATION", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendCalibrationData error: "<<err<<std::endl;
+    std::clog<<"SendCalibrationData error: "<<err<<std::endl;
     return false;
   }
   
@@ -110,7 +110,7 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
     *version = tmp_version;
   }
   if(!ok){
-    std::cerr<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
+    std::clog<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
     return false;
   }
   
@@ -134,7 +134,7 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
   std::string err="";
   
   if(!m_backend_client.SendCommand("W_DEVCONFIG", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendDeviceConfig error: "<<err<<std::endl;
+    std::clog<<"SendDeviceConfig error: "<<err<<std::endl;
     return false;
   }
   
@@ -148,7 +148,7 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
     *version = tmp_version;
   }
   if(!ok){
-    std::cerr<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
+    std::clog<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
     return false;
   }
   
@@ -170,7 +170,7 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
   std::string err="";
   
   if(!m_backend_client.SendCommand("W_RUNCONFIG", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendRunConfig error: "<<err<<std::endl;
+    std::clog<<"SendRunConfig error: "<<err<<std::endl;
     return false;
   }
   
@@ -184,7 +184,7 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
     *version = tmp_version;
   }
   if(!ok){
-    std::cerr<<"SendRunConfig error: invalid response: '"<<response<<"'"<<std::endl;
+    std::clog<<"SendRunConfig error: invalid response: '"<<response<<"'"<<std::endl;
     return false;
   }
   
@@ -208,7 +208,7 @@ bool Services::GetCalibrationData(std::string& json_data, int version, const std
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_CALIBRATION", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetCalibrationData error: "<<err<<std::endl;
+    std::clog<<"GetCalibrationData error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -229,12 +229,20 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetDeviceConfig error: "<<err<<std::endl;
+    std::clog<<"GetDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
   
   // response format '{"version":X, "data":"<contents>"}' - strip out contents
+  if(json_data.length()==0){
+    // if we got an empty response but the command succeeded,
+    // the query worked but matched no records - run config not found
+    err = "GetDeviceConfig error: config for device "+name+" version "+std::to_string(version)+" not found";
+    std::clog<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
   Store tmp;
   tmp.JsonParser(json_data);
   int tmp_version;
@@ -244,7 +252,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
     ok = tmp.Get("data", json_data);
   }
   if(!ok){
-    std::cerr<<"GetDeviceConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
+    std::clog<<"GetDeviceConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
     return false;
   }
   
@@ -262,7 +270,7 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetRunConfig error: "<<err<<std::endl;
+    std::clog<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -296,12 +304,18 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetRunConfig error: "<<err<<std::endl;
+    std::clog<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
   
   // response format '{"version":X, "data":"<contents>"}' - strip out contents
+  if(json_data.length()==0){
+    // if we got an empty response but the command succeeded,
+    // the query worked but matched no records - run config not found
+    std::clog<<"GetRunConfig error: config "<<name<<" version "<<version<<" not found"<<std::endl;
+    return false;
+  }
   Store tmp;
   tmp.JsonParser(json_data);
   int tmp_version;
@@ -311,7 +325,9 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
     ok = tmp.Get("data", json_data);
   }
   if(!ok){
-    std::cerr<<"GetRunConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
+    err="GetRunConfig error: invalid response: '"+json_data+"'";
+    std::clog<<err<<std::endl;
+    json_data=err;
     return false;
   }
   
@@ -338,21 +354,26 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
   bool get_ok = GetRunConfig(run_config, runconfig_id, timeout/2);
   
   if(!get_ok){
-    std::cerr<<"GetRunDeviceConfig error getting run config id "<<runconfig_id<<": '"<<run_config<<"'"<<std::endl;
-    json_data = run_config;
+    // redundant as GetRunConfig prints the error - but is this still useful as calling context?
+    // TODO we should be using exceptions, of course
+    //std::clog<<"GetRunDeviceConfig error getting run config id "<<runconfig_id<<": '"<<run_config<<"'"<<std::endl;
+    json_data=run_config;
     return false;
   }
   
+printf("GetRunConfig from GetRunDev returned: '%s'\n",run_config.c_str());
   // 2. extract the device's configuration id
   Store tmp;
   tmp.JsonParser(run_config);
   int device_config_id;
   get_ok = tmp.Get(name, device_config_id);
+printf("tmp store contains:\n");
+tmp.Print();
   
   if(!get_ok){
     std::string err= "GetRunDeviceConfig error getting device config; device '"+name
                    +"' not found in run configuration '"+run_config+"'";
-    std::cerr<<err<<std::endl;
+    std::clog<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -375,8 +396,10 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   bool get_ok = GetRunConfig(run_config, runconfig_name, runconfig_version, timeout/2);
   
   if(!get_ok){
-    std::cerr<<"GetRunDeviceConfig error getting run config '"<<runconfig_name<<"' version "
-             <<runconfig_version<<": '"<<run_config<<"'"<<std::endl;
+    // redundant as GetRunConfig prints the error - but is this still useful as calling context?
+    // TODO we should be using exceptions, of course
+    //std::clog<<"GetRunDeviceConfig error getting run config '"<<runconfig_name<<"' version "
+    //         <<runconfig_version<<": '"<<run_config<<"'"<<std::endl;
     json_data = run_config;
     return false;
   }
@@ -390,7 +413,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   if(!get_ok){
     std::string err= "GetRunDeviceConfig error getting device config; device '"+name
                    +"' not found in run configuration '"+run_config+"'";
-    std::cerr<<err<<std::endl;
+    std::clog<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -411,7 +434,7 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   std::string err="";
   std::string response="";
   if(!m_backend_client.SendCommand("R_ROOTPLOT", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"GetROOTplot error: "<<err<<std::endl;
+    std::clog<<"GetROOTplot error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -445,7 +468,7 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
     version = std::stoi(vals["version"]);
     json_data = vals["data"];
   } catch(...){
-    std::cerr<<"GetROOTplot error: failed to parse response '"<<response<<"'"<<std::endl;
+    std::clog<<"GetROOTplot error: failed to parse response '"<<response<<"'"<<std::endl;
     json_data = "Parse error";
     return false;
   }
@@ -472,7 +495,7 @@ bool Services::SQLQuery(const std::string& database, const std::string& query, s
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_QUERY", command, &responses, &timeout, &err)){
-    std::cerr<<"SQLQuery error: "<<err<<std::endl;
+    std::clog<<"SQLQuery error: "<<err<<std::endl;
     responses.resize(1);
     responses.front() = err;
     return false;
@@ -495,7 +518,7 @@ bool Services::SQLQuery(const std::string& database, const std::string& query, s
   if(responses.size()!=0){
     response = responses.front();
     if(responses.size()>1){
-      std::cerr<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
+      std::clog<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
     }
   }
   
@@ -525,14 +548,14 @@ bool Services::SendLog(const std::string& message, unsigned int severity, const 
                          + ",\"message\":\"" +  message + "\"}";
   
   if(cmd_string.length()>655355){
-    std::cerr<<"Logging message is too long! Maximum length may be 655355 bytes"<<std::endl;
+    std::clog<<"Logging message is too long! Maximum length may be 655355 bytes"<<std::endl;
     return false;
   }
   
   std::string err="";
   
   if(!m_backend_client.SendMulticast(cmd_string, &err)){
-    std::cerr<<"SendLog error: "<<err<<std::endl;
+    std::clog<<"SendLog error: "<<err<<std::endl;
     return false;
   }
   
@@ -551,14 +574,14 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
                          + ", \"data\":\""+ json_data +"\" }";
   
   if(cmd_string.length()>655355){
-    std::cerr<<"Monitoring message is too long! Maximum length may be 655355 bytes"<<std::endl;
+    std::clog<<"Monitoring message is too long! Maximum length may be 655355 bytes"<<std::endl;
     return false;
   }
   
   std::string err="";
   
   if(!m_backend_client.SendMulticast(cmd_string, &err)){
-    std::cerr<<"SendMonitoringData error: "<<err<<std::endl;
+    std::clog<<"SendMonitoringData error: "<<err<<std::endl;
     return false;
   }
   
@@ -584,23 +607,24 @@ bool Services::SendPersistentROOTplot(const std::string& plot_name, const std::s
   std::string response="";
   
   if(!m_backend_client.SendCommand("W_ROOTPLOT", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendROOTplot error: "<<err<<std::endl;
+    std::clog<<"SendROOTplot error: "<<err<<std::endl;
     return false;
   }
   
   // response is json with the version number of the created plot entry
   // e.g. '{"version":"3"}'. check this is what we got, as validation.
   if(response.length()>14){
-    response.replace(0,12,"");
-    response.replace(response.end()-2, response.end(),"");
+    // FIXME change to Store parsing so we can check this is the right key
+    response.replace(0,response.find_first_of(':')+1,"");
+    response.replace(response.find_last_of('}'),std::string::npos,"");
     try {
       if(version) *version = std::stoi(response);
     } catch (...){
-      std::cerr<<"SendROOTplot error: invalid response '"<<response<<"'"<<std::endl;
+      std::clog<<"SendROOTplot error: invalid response '"<<response<<"'"<<std::endl;
       return false;
     }
   } else {
-    std::cerr<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
+    std::clog<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
     return false;
   }
   
@@ -618,14 +642,14 @@ bool Services::SendTemporaryROOTplot(const std::string& plot_name, const std::st
                          + ", \"data\":\""+ json_data+"\" }";
   
   if(cmd_string.length()>655355){
-    std::cerr<<"ROOT plot json is too long! Maximum length may be 655355 bytes"<<std::endl;
+    std::clog<<"ROOT plot json is too long! Maximum length may be 655355 bytes"<<std::endl;
     return false;
   }
   
   std::string err="";
   
   if(!m_backend_client.SendMulticast(cmd_string, &err)){
-    std::cerr<<"SendROOTplot error: "<<err<<std::endl;
+    std::clog<<"SendROOTplot error: "<<err<<std::endl;
     return false;
   }
   
@@ -667,7 +691,7 @@ bool Services::GetPlot(const std::string& name, Plot& plot, unsigned timeout) {
   std::string err = "";
   std::string response;
   if (!m_backend_client.SendCommand("R_PLOT", cmd, &response, &timeout, &err)) {
-    std::cerr << "GetPlot error: " << err << std::endl;
+    std::clog << "GetPlot error: " << err << std::endl;
     return false;
   };
 
@@ -710,7 +734,7 @@ bool Services::SendPlot(Plot& plot, unsigned timeout) {
         "W_PLOT", string, static_cast<std::string*>(nullptr), &timeout, &err
        ))
   {
-    std::cerr << "SendPlot error: " << err << std::endl;
+    std::clog << "SendPlot error: " << err << std::endl;
     return false;
   };
 
