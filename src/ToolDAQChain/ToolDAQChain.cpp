@@ -117,7 +117,7 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
     tmp.Bwrite(&m_UUID, sizeof(m_UUID));
     tmp.Bclose();
     
-    }
+  }
 
   m_data->vars.Set("UUID", m_UUID);
   
