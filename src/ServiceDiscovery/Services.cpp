@@ -278,14 +278,9 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
   // response format '{"data":<contents>}' - strip out contents
   Store tmp;
   tmp.JsonParser(json_data);
-  int tmp_version;
-  bool ok = tmp.Get("version",tmp_version);
-  if(ok){
-    //version = tmp_version;  // cannot pass back
-    ok = tmp.Get("data", json_data);
-  }
+  bool ok = tmp.Get("data", json_data);
   if(!ok){
-    std::cerr<<"GetRunConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
+    std::clog<<"GetRunConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
     return false;
   }
   
@@ -361,14 +356,11 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
     return false;
   }
   
-printf("GetRunConfig from GetRunDev returned: '%s'\n",run_config.c_str());
   // 2. extract the device's configuration id
   Store tmp;
   tmp.JsonParser(run_config);
   int device_config_id;
   get_ok = tmp.Get(name, device_config_id);
-printf("tmp store contains:\n");
-tmp.Print();
   
   if(!get_ok){
     std::string err= "GetRunDeviceConfig error getting device config; device '"+name
@@ -440,7 +432,7 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   }
   
   if(response.empty()){
-    std::cout<<"GetROOTplot error: empty response, "<<err<<std::endl;
+    std::clog<<"GetROOTplot error: empty response, "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -474,7 +466,7 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   }
   
   /*
-  std::cout<<"timestamp: "<<timestamp<<"\n"
+  std::clog<<"timestamp: "<<timestamp<<"\n"
            <<"draw opts: "<<draw_options<<"\n"
            <<"json data: '"<<json_data<<"'"<<std::endl;
   */
