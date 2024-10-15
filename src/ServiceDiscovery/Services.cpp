@@ -652,84 +652,66 @@ bool Services::SendTemporaryROOTplot(const std::string& plot_name, const std::st
   
 }
 
-static std::vector<float> decodeArray(const std::string& string) {
-  if (string.length() < 2) return std::vector<float>(); // "{}"
-  size_t length = 1;
-  for (size_t i = 0; i < string.size(); ++i) if (string[i] == ',') ++length;
+bool Services::GetPlotlyPlot(
+    const std::string& name,
+    int&               version,
+    std::string&       trace,
+    std::string&       layout,
+    unsigned int*      timestamp,
+    unsigned int       timeout
+) {
+  Store cmd;
+  cmd.Set("name", name);
+  if (version >= 0) cmd.Set("version", version);
 
-  std::vector<float> result(length);
+  std::string cmd_string;
+  cmd >> cmd_string;
 
-  std::stringstream ss;
-  ss << string;
-  size_t i = 0;
-  char c;
-  ss >> c; // '{'
-  while (ss && c != '}' && i < length) ss >> result[i++] >> c;
-  return result;
-}
-
-static std::string encodeArray(const std::vector<float>& array) {
-  std::stringstream ss;
-  ss << "'{";
-  bool first = true;
-  for (float x : array) {
-    if (!first) ss << ',';
-    first = false;
-    ss << x;
-  };
-  ss << "}'";
-  return ss.str();
-}
-
-bool Services::GetPlot(const std::string& name, Plot& plot, unsigned timeout) {
-  std::string cmd = "{\"name\":\"" + name + "\"}";
-  std::string err = "";
+  std::string err;
   std::string response;
-  if (!m_backend_client.SendCommand("R_PLOT", cmd, &response, &timeout, &err)) {
-    std::clog << "GetPlot error: " << err << std::endl;
+  if (!m_backend_client.SendCommand(
+        "R_PLOTLYPLOT", cmd_string, &response, &timeout, &err
+      ))
+  {
+    std::clog << "GetPlotlyPlot error: " << err << std::endl;
     return false;
   };
 
-  plot.name = name;
+  Store plot;
+  plot.JsonParser(response);
 
-  Store data;
-  data.JsonParser(response);
-
-#define get(slot, var) if (!data.Get(slot, var)) return false;
-  std::string array;
-  get("x", array);
-  plot.x = decodeArray(array);
-  get("y", array);
-  plot.y = decodeArray(array);
-  get("title",  plot.title);
-  get("xlabel", plot.xlabel);
-  get("ylabel", plot.ylabel);
-  get("info",   plot.info);
-#undef get
+  trace   = plot.Get<std::string>("trace");
+  layout  = plot.Get<std::string>("layout");
+  version = plot.Get<int>("version");
+  if (timestamp) *timestamp = plot.Get<int>("time");
 
   return true;
-}
+};
 
-bool Services::SendPlot(Plot& plot, unsigned timeout) {
-  Store data;
-  data.Set("name",   plot.name);
-  data.Set("x",      encodeArray(plot.x));
-  data.Set("y",      encodeArray(plot.y));
-  data.Set("title",  plot.title);
-  data.Set("xlabel", plot.xlabel);
-  data.Set("ylabel", plot.ylabel);
+bool Services::SendPlotlyPlot(
+    const std::string& name,
+    const std::string& trace,
+    const std::string& layout,
+    int*               version,
+    unsigned int       timestamp,
+    unsigned int       timeout
+) {
+  Store plot;
+  plot.Set("name",      name);
+  plot.Set("trace",     trace);
+  plot.Set("layout",    layout);
+  if (version)   plot.Set("version",   *version);
+  if (timestamp) plot.Set("timestamp", timestamp);
 
-  std::string string;
-  plot.info >> string;
-  data.Set("info", string);
+  std::string cmd;
+  plot >> cmd;
 
-  data >> string;
   std::string err;
   if (!m_backend_client.SendCommand(
-        "W_PLOT", string, static_cast<std::string*>(nullptr), &timeout, &err
-       ))
+        "W_PLOTLYPLOT", cmd, static_cast<std::string*>(nullptr), &timeout, &err
+     ))
   {
-    std::clog << "SendPlot error: " << err << std::endl;
+    std::clog << "SendPlotlyPlot error: " << err << std::endl;
     return false;
   };
 
