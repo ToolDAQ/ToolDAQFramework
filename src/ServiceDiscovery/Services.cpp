@@ -696,19 +696,44 @@ bool Services::SendPlotlyPlot(
     unsigned int       timestamp,
     unsigned int       timeout
 ) {
-  Store plot;
-  plot.Set("name",      name);
-  plot.Set("trace",     trace);
-  plot.Set("layout",    layout);
-  if (version)   plot.Set("version",   *version);
-  if (timestamp) plot.Set("timestamp", timestamp);
+  return SendPlotlyPlot(
+      name,
+      std::vector<std::string> { trace },
+      layout,
+      version,
+      timestamp,
+      timeout
+  );
+}
 
-  std::string cmd;
-  plot >> cmd;
+bool Services::SendPlotlyPlot(
+    const std::string&              name,
+    const std::vector<std::string>& traces,
+    const std::string&              layout,
+    int*                            version,
+    unsigned int                    timestamp,
+    unsigned int                    timeout
+) {
+  std::stringstream ss;
+  ss
+    << "{\"name\":\"" << name
+    << "\",\"layout\":" << layout;
+  if (version) ss << ",\"version\":" << *version;
+  if (timestamp) ss << ",\"timestamp\":" << timestamp;
+  ss << ",\"traces\":[";
+  bool first = true;
+  for (auto& trace : traces) {
+    if (first)
+      first = false;
+    else
+      ss << ',';
+    ss << trace;
+  };
+  ss << "]}";
 
   std::string err;
   if (!m_backend_client.SendCommand(
-        "W_PLOTLYPLOT", cmd, static_cast<std::string*>(nullptr), &timeout, &err
+        "W_PLOTLYPLOT", ss.str(), static_cast<std::string*>(nullptr), &timeout, &err
      ))
   {
     std::clog << "SendPlotlyPlot error: " << err << std::endl;
