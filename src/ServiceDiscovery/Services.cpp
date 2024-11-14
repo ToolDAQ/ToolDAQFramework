@@ -27,17 +27,16 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";
   if(!m_variables.Get("db_name",m_dbname)) m_dbname="daq";
   
-  
-    
   if(!m_backend_client.Initialise(m_variables)){
     std::clog<<"error initialising slowcontrol client"<<std::endl;
     return false;
   }
    
-  // TODO FIXME with better mechanism
-  // after Initilising the slow control client needs ~15 seconds for the middleman to connect
-  std::this_thread::sleep_for(std::chrono::seconds(15));
-  // hopefully the middleman has found us by now
+  // wait for the middleman to connect. ServiceDiscovery broadcasts are sent out intermittently,
+  // so we need to wait for the middleman to receive one & connect before we can communicate with it.
+  int pub_period=5;
+  m_variables.Get("service_publish_sec",pub_period);
+  Ready(pub_period*1000);
   
   return true;
 }
