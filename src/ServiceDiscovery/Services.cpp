@@ -42,6 +42,10 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   return true;
 }
 
+bool Services::Ready(const unsigned int timeout){
+  return m_backend_client.Ready(timeout);
+}
+
 // ===========================================================================
 // Write Functions
 // ---------------

@@ -51,6 +51,7 @@ class ServicesBackend {
 	ServicesBackend(){};
 	~ServicesBackend(){};
 	void SetUp(zmq::context_t* in_context, std::function<void(std::string msg, int msg_verb, int verbosity)> log=nullptr); // possibly move to constructor
+	bool Ready(int timeout); // check if zmq sockets have connections
 	bool Initialise(std::string configfile);
 	bool Initialise(Store &varaibles_in);
 	bool Finalise();
