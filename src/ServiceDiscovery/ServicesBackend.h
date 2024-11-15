@@ -102,7 +102,7 @@ class ServicesBackend {
 	bool InitMulticast(); // private
 	bool RegisterServices(); //private
 	// wrapper funtion; add command to outgoing queue, receive response. ~30s timeout.
-	bool DoCommand(Command cmd, std::promise<Command>); //private
+	bool DoCommand(Command& cmd, int timeout_ms); //private
 	// actual send/receive functions
 	bool SendNextCommand(); //private
 	bool GetNextResponse(); //priavte

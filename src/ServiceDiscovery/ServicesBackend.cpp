@@ -384,15 +384,6 @@ bool ServicesBackend::SendMulticast(std::string command, std::string* err){
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FIXME ok, i think the combination of SendCommand and DoCommand are an over-complication.             //
-// SendCommand is basically a pointless wrapper that spawns a thread to do what it could do itself.     //
-// This would remove the surplus promise/future layer. The only change to DoCommand required            //
-// would be that the timeouts from each stage (wait for send, wait for reply)                           //
-// would need to be appropriately modified -.e.g if total timeout is 300ms and it takes 100ms to send,  //
-// then we would only wait for 200ms for the reply.                                                     //
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results, const unsigned int* timeout_ms, std::string* err){
 	// send a command and receive response.
 	// This is a wrapper that ensures we always return within the requested timeout.
@@ -428,50 +419,18 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	// (for now) go over a dealer/router combination that cannot filter on the topic.
 	Command cmd{command, type, topic.substr(2,std::string::npos)};
 	
-	// submit the command asynchrously.
-	// This way we have control over how long we wait for the response
-	// The response will be a Command object with remaining members populated.
-	//std::future<Command> response = std::async(std::launch::async, &ServicesBackend::DoCommand, this, cmd);
-	// std::async returns a std::future that will block on destruction until the promise returns.
-	// if we don't want that to happen, i.e. we want to abandon it if it times out,
-	// we instead need to obtain a future from a promise (which is somehow not blocking?),
-	// and run our code in a detached thread, using the promise to pass back the result.
-	// tbh i don't quite get why this is different but there we go.
-	// see https://stackoverflow.com/a/23454840/3544936 and https://stackoverflow.com/a/23460094/3544936
-	std::promise<Command> returnval;
-	std::future<Command> response = returnval.get_future();
-	if(verbosity>10) std::cout<<"ServicesBackend::SendCommand spinning up new thread"<<std::endl;
-	std::thread{&ServicesBackend::DoCommand, this, cmd, std::move(returnval)}.detach();
-	
-	// the return from a std::async call is a 'future' object
-	// this object will be populated with the return value when it becomes available,
-	// but we can wait for a given timeout and then bail if it hasn't resolved in time.
-	
 	int timeout=command_timeout;            // default timeout for submission of command and receipt of response
 	if(timeout_ms) timeout=*timeout_ms;     // override by user if a custom timeout is given
-	std::chrono::milliseconds span(timeout);
-	// wrap our attempt to get the future in a try-catch, in case of exception
+	
+	// wrap our attempt to get the response in try/catch, just in case?
 	try {
-		// wait_for will return either when the result is ready, or when it times out
-		if(verbosity>10) std::cout<<"ServicesBackend::SendCommand waiting for response"<<std::endl;
-		if(response.wait_for(span)!=std::future_status::timeout){
-			// we got a response in time. retrieve and parse return value
-			if(verbosity>10) std::cout<<"ServicesBackend::SendCommand fetching response"<<std::endl;
-			cmd = response.get();
-			if(verbosity>10) std::cout<<"ServicesBackend::SendCommand response is "<<cmd.response.size()
-			                          <<" parts"<<std::endl;
-			if(results) *results = cmd.response;
-			if(err) *err = cmd.err;
-			return cmd.success;
-		} else {
-			// timed out
-			std::string errmsg="Timed out after waiting "+std::to_string(timeout)+"ms for response "
-			                   "from command '"+command+"'";
-			if(verbosity>3) std::cerr<<errmsg<<std::endl;
-			if(err) *err=errmsg;
-			//std::cout<<"SendCommand returning false"<<std::endl;
-			return false;
-		}
+		if(verbosity>10) std::cout<<"ServicesBackend::SendCommand calling DoCommand"<<std::endl;
+		DoCommand(cmd, timeout);
+		if(verbosity>10) std::cout<<"ServicesBackend::SendCommand response is "<<cmd.response.size()
+		                          <<" parts"<<std::endl;
+		if(results) *results = cmd.response;
+		if(err) *err = cmd.err;
+		return cmd.success;
 	} catch(std::exception& e){
 		// one thing that can cause an exception is if we terminate the application
 		// before the promise is fulfilled (i.e. the response came, or zmq timed out)
@@ -495,13 +454,25 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	return ret;
 }
 
-bool ServicesBackend::DoCommand(Command cmd, std::promise<Command> result){
+bool ServicesBackend::DoCommand(Command& cmd, int timeout_ms){
 	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand received command"<<std::endl;
 	// submit a command, wait for the response and return it
 	
 	// capture a unique id for this message
 	uint32_t thismsgid = ++msg_id;
 	cmd.msg_id = thismsgid;
+	
+	// we submit the command asynchrously.
+	// This way we control how long we wait for the response, ensuring we don't block the caller indefinitely.
+	// The response will be a Command object with remaining members populated.
+	// initial guess would have been to use:
+	//std::future<Command> response = std::async(std::launch::async, &ServicesBackend::DoCommand, this, cmd);
+	// but std::async returns a std::future that will block on destruction until the function returns.
+	// if we don't want that to happen, i.e. we want to abandon it if it times out,
+	// we instead need to obtain a future from a promise (which is somehow not blocking?),
+	// and run our code in a detached thread, using the promise to pass back the result.
+	// tbh i don't quite get why this is different but there we go.
+	// see https://stackoverflow.com/a/23454840/3544936 and https://stackoverflow.com/a/23460094/3544936
 	
 	// zmq sockets aren't thread-safe, so we have one central sender.
 	// we submit our command and keep a ticket to retrieve the return status on completion.
@@ -527,9 +498,27 @@ bool ServicesBackend::DoCommand(Command cmd, std::promise<Command> result){
 	waiting_senders.emplace(cmd, std::move(send_ticket));
 	send_queue_mutex.unlock();
 	
-	// wait for our number to come up. loooong timeout, but don't hang forever.
 	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand waiting for send confirmation"<<std::endl;
-	if(send_receipt.wait_for(std::chrono::seconds(30))==std::future_status::timeout){
+	// make a note of the time
+	auto send_start = std::chrono::high_resolution_clock::now();
+	// wait for confirmation of sending
+	bool timedout=false;
+	if(send_receipt.wait_for(std::chrono::milliseconds(timeout_ms))==std::future_status::timeout){
+		// wait_for timed out.
+		timedout=true;
+	} else {
+		// got the response before timeout!
+		// See how long that took to send, and subtract that from our total time allotment
+		// to see how long we have to wait for the response to arrive.
+		auto send_end = std::chrono::high_resolution_clock::now();
+		int send_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(send_end - send_start).count();
+		timeout_ms -= send_time_ms;
+		// juuuust in case, ensure our remaining time is not negative. :)
+		if(timeout_ms<0) timedout=true;
+	}
+	
+	// did we get a response in time?
+	if(timedout){
 		if(verbosity>10) std::cerr<<"ServicesBackend::DoCommand timeout"<<std::endl;
 		// sending timed out
 		if(cmd.type=='w') ++write_commands_failed;
@@ -537,20 +526,19 @@ bool ServicesBackend::DoCommand(Command cmd, std::promise<Command> result){
 		Log("Timed out sending command "+std::to_string(thismsgid),v_warning,verbosity);
 		cmd.success = false;
 		cmd.err = "Timed out sending command";
-		result.set_value(cmd);
 		
-		// since we are giving up waiting for the response, remove ourselves from
-		// the list of waiting recipients
+		// since we are giving up waiting for the response, remove ourselves
+		// from the list of recipients awaiting response
 		if(verbosity>10) std::cout<<"ServicesBackend::DoCommand de-registering for response on id "<<thismsgid<<std::endl;
 		send_queue_mutex.lock();
 		waiting_recipients.erase(thismsgid);
 		send_queue_mutex.unlock();
 		
-		return true;
-	} // else got a return value
+		return false;
+	} // else got send confirmation in time
 	
 	// so we got response about our send request, but did it go through?
-	// check for errors sending
+	// check for errors in sending
 	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand got send confirmation"<<std::endl;
 	int ret = send_receipt.get();
 	std::string errmsg;
@@ -565,7 +553,6 @@ bool ServicesBackend::DoCommand(Command cmd, std::promise<Command> result){
 		Log(errmsg,v_debug,verbosity);
 		cmd.success = false;
 		cmd.err = errmsg;
-		result.set_value(cmd);
 		
 		// since the send failed we don't expect a response, so remove ourselves
 		// from the list of recipients awaiting response
@@ -581,7 +568,7 @@ bool ServicesBackend::DoCommand(Command cmd, std::promise<Command> result){
 	
 	// if we succeeded in sending the message, we now need to wait for a repsonse.
 	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand waiting for response"<<std::endl;
-	if(response_reciept.wait_for(std::chrono::seconds(30))==std::future_status::timeout){
+	if(response_reciept.wait_for(std::chrono::milliseconds(timeout_ms))==std::future_status::timeout){
 		if(verbosity>10) std::cout<<"ServicesBackend::DoCommand response timeout"<<std::endl;
 		// timed out
 		if(cmd.type=='w') ++write_commands_failed;
@@ -589,19 +576,17 @@ bool ServicesBackend::DoCommand(Command cmd, std::promise<Command> result){
 		Log("Timed out waiting for response for command "+std::to_string(thismsgid),v_warning,verbosity);
 		cmd.success = false;
 		cmd.err = "Timed out waiting for response";
-		result.set_value(cmd);
 		return false;
 	} else {
 		// got a response!
 		if(verbosity>10) std::cout<<"ServicesBackend::DoCommand got a response for command "<<cmd.msg_id
 		                          <<", passing back to caller"<<std::endl;
 		try{
-			result.set_value(response_reciept.get());
+			cmd = response_reciept.get();
 		} catch(std::exception& e){
 			Log("ServicesBackend response for command "+std::to_string(cmd.msg_id)+" was exception "+e.what(),v_error,verbosity);
 			cmd.err=e.what();
 			cmd.success=false;
-			result.set_value(cmd);
 			return false;
 		}
 		return true;
@@ -622,6 +607,7 @@ bool ServicesBackend::GetNextResponse(){
 	
 	// check return status
 	if(ret==-2) return true;      // no messages waiting to be received
+	printf("GNR poll returned %d\n",ret);
 	
 	if(verbosity>10) std::cout<<"ServicesBackend::GetNextResponse had response in socket"<<std::endl;
 	if(ret==-3){
