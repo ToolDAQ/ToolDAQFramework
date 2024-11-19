@@ -265,7 +265,8 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
 
 // get a run configuration via configuration ID
 bool Services::GetRunConfig(std::string& json_data, const int config_id, const unsigned int timeout){
-
+  
+  printf("GetRunConfig with timeout %d\n",timeout);
   json_data="";
   
   std::string cmd_string = "{ \"config_id\":"+std::to_string(config_id) + "}";
@@ -343,6 +344,7 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
 
 bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id, const std::string& device, int* version, unsigned int timeout){
   
+  printf("GetRunDeviceConfig with timeout %d\n",timeout);
   json_data="";
   
   const std::string& name = (device=="") ? m_name : device;

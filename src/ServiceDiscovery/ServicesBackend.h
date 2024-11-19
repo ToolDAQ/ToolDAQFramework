@@ -27,7 +27,7 @@
 namespace ToolFramework {
 
 struct Command {
-	Command(std::string command_in, char cmd_type_in, std::string topic_in);
+	Command(std::string command_in, char cmd_type_in, std::string topic_in, const unsigned int timeout_ms_in);
 	
 	Command(const Command& cmd_in);  // copy constructor
 	Command(Command&& cmd_in);       // move constructor
@@ -41,6 +41,7 @@ struct Command {
 	uint32_t success;            // middleman treats this as BOOL: 1=success, 0=fail
 	std::string err;
 	uint32_t msg_id;
+	uint32_t timeout_ms;
 };
 
 
@@ -198,15 +199,20 @@ class ServicesBackend {
 		int send_ok=0;
 		// check for listener
 		int ret=0;
+		printf("polling out socket for %d ms\n",timeout);
 		try {
 			ret = zmq::poll(&poll, 1, timeout);
 		} catch (zmq::error_t& err){
 			std::cerr<<"ServicesBackend::PollAndSend poller caught "<<err.what()<<std::endl;
 			ret = -1;
 		}
+		printf("ret %d\n",ret);
 		if(ret<0){
 			// error polling - is the socket closed?
 			send_ok = -3;
+		} else if(ret==0){
+			// 'resource temporarily unavailable'...? no connections on this socket?
+			send_ok = -4;
 		} else if(poll.revents & ZMQ_POLLOUT){
 			bool success = Send(sock, false, std::forward<T>(message));
 			send_ok = success ? 0 : -1;
@@ -226,15 +232,20 @@ class ServicesBackend {
 		int send_ok = 0;
 		// check for listener
 		int ret = 0;
+		printf("polling out socket for %d ms\n",timeout);
 		try {
 			ret = zmq::poll(&poll, 1, timeout);
 		} catch (zmq::error_t& err){
 			std::cerr<<"ServicesBackend::PollAndSend poller caught "<<err.what()<<std::endl;
 			ret = -1;
 		}
+		printf("ret %d\n",ret);
 		if(ret<0){
 			// error polling - is the socket closed?
 			send_ok = -3;
+		} else if(ret==0){
+			// 'resource temporarily unavailable'...? no connections on this socket?
+			send_ok = -4;
 		} else if(poll.revents & ZMQ_POLLOUT){
 			bool success = Send(sock, false, std::forward<T>(message), std::forward<Rest>(rest)...);
 			send_ok = success ? 0 : -1;

@@ -2,7 +2,7 @@
 
 using namespace ToolFramework;
 
-Command::Command(std::string command_in, char type_in, std::string topic_in){
+Command::Command(std::string command_in, char type_in, std::string topic_in, const unsigned int timeout_ms_in){
 	command = command_in;
 	type = type_in;
 	topic=topic_in;
@@ -10,6 +10,7 @@ Command::Command(std::string command_in, char type_in, std::string topic_in){
 	response=std::vector<std::string>{};
 	err="";
 	msg_id=0;
+	timeout_ms=timeout_ms_in;
 }
 
 Command::Command(){
@@ -20,12 +21,14 @@ Command::Command(){
 	response=std::vector<std::string>{};
 	err="";
 	msg_id=0;
+	timeout_ms=0;
 }
 
 void Command::Print() const {
 	std::cout<<"command="<<command<<std::endl;
 	std::cout<<"type="<<type<<std::endl;
 	std::cout<<"topic="<<topic<<std::endl;
+	std::cout<<"timeout="<<timeout_ms<<std::endl;
 	std::cout<<"success="<<success<<std::endl;
 	std::cout<<"err="<<err<<std::endl;
 	std::cout<<"id="<<msg_id<<std::endl;
@@ -43,6 +46,7 @@ Command::Command(const Command& cmd_in){
 	response = cmd_in.response;
 	err = cmd_in.err;
 	msg_id = cmd_in.msg_id;
+	timeout_ms = cmd_in.timeout_ms;
 }
 
 Command::Command(Command&& cmd_in){
@@ -53,12 +57,14 @@ Command::Command(Command&& cmd_in){
 	response = std::move(cmd_in.response);
 	err = cmd_in.err;
 	msg_id = cmd_in.msg_id;
+	timeout_ms = cmd_in.timeout_ms;
 	cmd_in.command="";
 	cmd_in.type='\0';
 	cmd_in.topic="";
 	cmd_in.success=0;
 	cmd_in.msg_id=0;
 	cmd_in.response=std::vector<std::string>{};
+	cmd_in.timeout_ms=0;
 }
 
 Command& Command::operator=(Command&& cmd_in){
@@ -70,12 +76,14 @@ Command& Command::operator=(Command&& cmd_in){
 		response = std::move(cmd_in.response);
 		err = cmd_in.err;
 		msg_id = cmd_in.msg_id;
+		timeout_ms = cmd_in.timeout_ms;
 		cmd_in.command="";
 		cmd_in.type='\0';
 		cmd_in.topic="";
 		cmd_in.success=0;
 		cmd_in.msg_id=0;
 		cmd_in.response=std::vector<std::string>{};
+		cmd_in.timeout_ms=0;
 	}
 	return *this;
 }
@@ -389,6 +397,9 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	// This is a wrapper that ensures we always return within the requested timeout.
 	if(verbosity>10) std::cout<<"ServicesBackend::SendCommand invoked with command '"<<command<<"'"<<std::endl;
 	
+	int timeout=command_timeout;            // default timeout for submission of command and receipt of response
+	if(timeout_ms) timeout=*timeout_ms;     // override by user if a custom timeout is given
+	
 	// encapsulate the command in an object.
 	// We need this since we can only get one return value from an asynchronous function call,
 	// and we want both a response string and error flag.
@@ -417,10 +428,9 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	// can use with ZMQ_SUBSCRIBE to filter out particular messages.
 	// In fact it's useful to indicate a topic in all cases, even when the actual message will
 	// (for now) go over a dealer/router combination that cannot filter on the topic.
-	Command cmd{command, type, topic.substr(2,std::string::npos)};
-	
-	int timeout=command_timeout;            // default timeout for submission of command and receipt of response
-	if(timeout_ms) timeout=*timeout_ms;     // override by user if a custom timeout is given
+	// forward the timeout to the Command (and thus zmq::poll in PollAndSend...) ... is this sensible? HMMMMM FIXME
+	Command cmd{command, type, topic.substr(2,std::string::npos),timeout};
+	printf("formed command with timeout %d ms from timeout at %p of value %d\n",cmd.timeout_ms,timeout_ms,(timeout_ms ? *timeout_ms : 0));
 	
 	// wrap our attempt to get the response in try/catch, just in case?
 	try {
@@ -455,6 +465,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 }
 
 bool ServicesBackend::DoCommand(Command& cmd, int timeout_ms){
+	printf("DoCommand with timeout %d ms\n",timeout_ms);
 	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand received command"<<std::endl;
 	// submit a command, wait for the response and return it
 	
@@ -542,6 +553,7 @@ bool ServicesBackend::DoCommand(Command& cmd, int timeout_ms){
 	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand got send confirmation"<<std::endl;
 	int ret = send_receipt.get();
 	std::string errmsg;
+	if(ret==-4) errmsg="No connection on out socket in PollAndSend!";
 	if(ret==-3) errmsg="Error polling out socket in PollAndSend! Is socket closed?";
 	if(ret==-2) errmsg="No listener on out socket in PollAndSend!";
 	if(ret==-1) errmsg="Error sending in PollAndSend!";
@@ -708,9 +720,6 @@ bool ServicesBackend::SendNextCommand(){
 		//Log(logmsg.str(),v_debug,verbosity);
 	}
 	
-	// write commands go to the pub socket, read commands to the dealer
-	zmq::socket_t* thesocket = (cmd.type=='w') ? clt_pub_socket : clt_dlr_socket;
-	
 	// send out the command
 	// commands should be formatted as 4 parts:
 	// 0. pub topic (used by ZMQ_SUBSCRIBE for pub, but send it always)
@@ -723,11 +732,13 @@ bool ServicesBackend::SendNextCommand(){
 	dlr_socket_mutex.lock();
 	if(verbosity>10) std::cout<<"ServicesBackend::SendNextCommand calling PollAndSend"
 	                          <<", message type: "<<cmd.type<<", topic '"<<cmd.topic<<"'"<<std::endl;
+	printf("calling PollAndSend with timeout %d ms\n",cmd.timeout_ms);
 	if(cmd.type=='w'){
-		ret = PollAndSend(thesocket, out_polls.at(1), outpoll_timeout, cmd.topic, clt_ID, cmd.msg_id, cmd.command);
+		// write commands go to the pub socket, read commands to the dealer
+		ret = PollAndSend(clt_pub_socket, out_polls.at(0), cmd.timeout_ms, cmd.topic, clt_ID, cmd.msg_id, cmd.command);
 	} else {
 		// clt_ID already added by dealer socket
-		ret = PollAndSend(thesocket, out_polls.at(1), outpoll_timeout, cmd.topic, cmd.msg_id, cmd.command);
+		ret = PollAndSend(clt_dlr_socket, out_polls.at(1), cmd.timeout_ms, cmd.topic, cmd.msg_id, cmd.command);
 	}
 	if(verbosity>10) std::cout<<"ServicesBackend::SendNextCommand send returned "<<ret<<", passing to recipient"<<std::endl;
 	dlr_socket_mutex.unlock();
