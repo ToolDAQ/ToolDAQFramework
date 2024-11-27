@@ -356,14 +356,11 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
     return false;
   }
   
-printf("GetRunConfig from GetRunDev returned: '%s'\n",run_config.c_str());
   // 2. extract the device's configuration id
   Store tmp;
   tmp.JsonParser(run_config);
   int device_config_id;
   get_ok = tmp.Get(name, device_config_id);
-printf("tmp store contains:\n");
-tmp.Print();
   
   if(!get_ok){
     std::string err= "GetRunDeviceConfig error getting device config; device '"+name
