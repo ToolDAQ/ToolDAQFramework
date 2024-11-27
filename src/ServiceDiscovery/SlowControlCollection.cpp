@@ -239,7 +239,6 @@ void SlowControlCollection::Thread(Thread_args* arg){
       else{
 	reply=key;
 	if((*args->SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
-	  (*args->SCC)[key]->SetValue("1");
 	  value="1";
 	}
         //std::stringstream input;
