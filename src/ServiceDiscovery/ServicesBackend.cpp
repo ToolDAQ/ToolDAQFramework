@@ -943,7 +943,9 @@ bool ServicesBackend::Ready(int timeout){
 	// polling the input socket checks for a message, so don't do that.
 	int ret;
 	try {
+		dlr_socket_mutex.lock();
 		ret = zmq::poll(&out_polls.at(1), 1, timeout);
+		dlr_socket_mutex.unlock();
 	} catch (zmq::error_t& err){
 		std::cerr<<"ServicesBackend::Ready caught "<<err.what()<<std::endl;
 		return false;
