@@ -430,7 +430,6 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	// (for now) go over a dealer/router combination that cannot filter on the topic.
 	// forward the timeout to the Command (and thus zmq::poll in PollAndSend...) ... is this sensible? HMMMMM FIXME
 	Command cmd{command, type, topic.substr(2,std::string::npos),timeout};
-	printf("formed command with timeout %d ms from timeout at %p of value %d\n",cmd.timeout_ms,timeout_ms,(timeout_ms ? *timeout_ms : 0));
 	
 	// wrap our attempt to get the response in try/catch, just in case?
 	try {
@@ -465,7 +464,6 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 }
 
 bool ServicesBackend::DoCommand(Command& cmd, int timeout_ms){
-	printf("DoCommand with timeout %d ms\n",timeout_ms);
 	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand received command"<<std::endl;
 	// submit a command, wait for the response and return it
 	
@@ -619,7 +617,6 @@ bool ServicesBackend::GetNextResponse(){
 	
 	// check return status
 	if(ret==-2) return true;      // no messages waiting to be received
-	printf("GNR poll returned %d\n",ret);
 	
 	if(verbosity>10) std::cout<<"ServicesBackend::GetNextResponse had response in socket"<<std::endl;
 	if(ret==-3){
@@ -732,7 +729,6 @@ bool ServicesBackend::SendNextCommand(){
 	dlr_socket_mutex.lock();
 	if(verbosity>10) std::cout<<"ServicesBackend::SendNextCommand calling PollAndSend"
 	                          <<", message type: "<<cmd.type<<", topic '"<<cmd.topic<<"'"<<std::endl;
-	printf("calling PollAndSend with timeout %d ms\n",cmd.timeout_ms);
 	if(cmd.type=='w'){
 		// write commands go to the pub socket, read commands to the dealer
 		ret = PollAndSend(clt_pub_socket, out_polls.at(0), cmd.timeout_ms, cmd.topic, clt_ID, cmd.msg_id, cmd.command);
@@ -816,7 +812,6 @@ bool ServicesBackend::Send(zmq::socket_t* sock, bool more, std::string messageda
 	if(verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
 	// form the zmq::message_t
 	zmq::message_t message(messagedata.size());
-	//snprintf((char*)message.data(), messagedata.size()+1, "%s", messagedata.c_str());
 	memcpy(message.data(), messagedata.data(), message.size());
 	
 	// send it with given SNDMORE flag
@@ -844,7 +839,6 @@ bool ServicesBackend::Send(zmq::socket_t* sock, bool more, std::vector<std::stri
 		// form zmq::message_t
 		zmq::message_t message(messages.at(i).size());
 		memcpy(message.data(), messages.at(i).data(), messages.at(i).size());
-		//snprintf((char*)message.data(), messages.at(i).size()+1, "%s", messages.at(i).c_str());
 		
 		// send this part
 		bool send_ok = sock->send(message, ZMQ_SNDMORE);
@@ -859,7 +853,6 @@ bool ServicesBackend::Send(zmq::socket_t* sock, bool more, std::vector<std::stri
 	// form the zmq::message_t for the last part
 	zmq::message_t message(messages.back().size());
 	memcpy(message.data(), messages.back().data(), messages.back().size());
-	//snprintf((char*)message.data(), messages.back().size()+1, "%s", messages.back().c_str());
 	
 	// send it with, or without SNDMORE flag as requested
 	bool send_ok;

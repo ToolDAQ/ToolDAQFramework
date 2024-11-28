@@ -199,14 +199,12 @@ class ServicesBackend {
 		int send_ok=0;
 		// check for listener
 		int ret=0;
-		printf("polling out socket for %d ms\n",timeout);
 		try {
 			ret = zmq::poll(&poll, 1, timeout);
 		} catch (zmq::error_t& err){
 			std::cerr<<"ServicesBackend::PollAndSend poller caught "<<err.what()<<std::endl;
 			ret = -1;
 		}
-		printf("ret %d\n",ret);
 		if(ret<0){
 			// error polling - is the socket closed?
 			send_ok = -3;
@@ -232,14 +230,12 @@ class ServicesBackend {
 		int send_ok = 0;
 		// check for listener
 		int ret = 0;
-		printf("polling out socket for %d ms\n",timeout);
 		try {
 			ret = zmq::poll(&poll, 1, timeout);
 		} catch (zmq::error_t& err){
 			std::cerr<<"ServicesBackend::PollAndSend poller caught "<<err.what()<<std::endl;
 			ret = -1;
 		}
-		printf("ret %d\n",ret);
 		if(ret<0){
 			// error polling - is the socket closed?
 			send_ok = -3;

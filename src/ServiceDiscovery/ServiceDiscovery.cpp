@@ -446,7 +446,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);         
   if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,&mreq, sizeof(mreq)) < 0) {
     perror("setsockopt mreq");
-    printf("Failed to goin multicast group listen thread");
+    printf("Failed to join multicast group listen thread");
     exit(1);
   }         
   

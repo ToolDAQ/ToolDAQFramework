@@ -30,7 +30,6 @@ namespace ToolFramework {
     Store info;
   };
   
-  
   class Services{
     
     
