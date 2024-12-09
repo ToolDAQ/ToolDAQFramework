@@ -136,12 +136,15 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendPersistentROOTplo
 <tr class="memitem:a3c61230a3656afcdbecb4df0a7a78a57"><td class="memItemLeft" align="right" valign="top"><a id="a3c61230a3656afcdbecb4df0a7a78a57"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetROOTplot</b> (const std::string &amp;plot_name, int &amp;version, std::string &amp;draw_option, std::string &amp;json_data, std::string *timestamp=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
 <tr class="separator:a3c61230a3656afcdbecb4df0a7a78a57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae432215b340372fcc6ff8b79086500d9"><td class="memItemLeft" align="right" valign="top"><a id="ae432215b340372fcc6ff8b79086500d9"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendPlot</b> (<a class="el" href="structToolFramework_1_1Plot.html">Plot</a> &amp;plot, unsigned timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
-<tr class="separator:ae432215b340372fcc6ff8b79086500d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c3d9ccd221ade6211e00286bbadcfa4"><td class="memItemLeft" align="right" valign="top"><a id="a1c3d9ccd221ade6211e00286bbadcfa4"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetPlot</b> (const std::string &amp;name, <a class="el" href="structToolFramework_1_1Plot.html">Plot</a> &amp;plot, unsigned timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
-<tr class="separator:a1c3d9ccd221ade6211e00286bbadcfa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4e1b4ce6045d3e4436011097b85e793"><td class="memItemLeft" align="right" valign="top"><a id="ac4e1b4ce6045d3e4436011097b85e793"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendPlotlyPlot</b> (const std::string &amp;name, const std::string &amp;json_trace, const std::string &amp;json_layout=&quot;{}&quot;, int *version=nullptr, unsigned int timestamp=0, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:ac4e1b4ce6045d3e4436011097b85e793"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada8c79a1c7459958abb30a62a016483f"><td class="memItemLeft" align="right" valign="top"><a id="ada8c79a1c7459958abb30a62a016483f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendPlotlyPlot</b> (const std::string &amp;name, const std::vector&lt; std::string &gt; &amp;json_traces, const std::string &amp;json_layout=&quot;{}&quot;, int *version=nullptr, unsigned int timestamp=0, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:ada8c79a1c7459958abb30a62a016483f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d19e74dfe1abb8cc9fc5ff0842d60f8"><td class="memItemLeft" align="right" valign="top"><a id="a6d19e74dfe1abb8cc9fc5ff0842d60f8"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetPlotlyPlot</b> (const std::string &amp;name, int &amp;version, std::string &amp;json_trace, std::string &amp;json_layout, unsigned int *timestamp=nullptr, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a6d19e74dfe1abb8cc9fc5ff0842d60f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40ed4af73e55fa5a4abbf2ff3e6f63d0"><td class="memItemLeft" align="right" valign="top"><a id="a40ed4af73e55fa5a4abbf2ff3e6f63d0"></a>
 <a class="el" href="classToolFramework_1_1SlowControlCollection.html">SlowControlCollection</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>GetSlowControlCollection</b> ()</td></tr>
 <tr class="separator:a40ed4af73e55fa5a4abbf2ff3e6f63d0"><td class="memSeparator" colspan="2">&#160;</td></tr>

@@ -63,11 +63,14 @@ bool {\bfseries Send\+Persistent\+ROOTplot} (const std\+::string \&plot\+\_\+nam
 \mbox{\Hypertarget{classToolFramework_1_1Services_a3c61230a3656afcdbecb4df0a7a78a57}\label{classToolFramework_1_1Services_a3c61230a3656afcdbecb4df0a7a78a57}} 
 bool {\bfseries Get\+ROOTplot} (const std\+::string \&plot\+\_\+name, int \&version, std\+::string \&draw\+\_\+option, std\+::string \&json\+\_\+data, std\+::string $\ast$timestamp=nullptr, const unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1Services_ae432215b340372fcc6ff8b79086500d9}\label{classToolFramework_1_1Services_ae432215b340372fcc6ff8b79086500d9}} 
-bool {\bfseries Send\+Plot} (\mbox{\hyperlink{structToolFramework_1_1Plot}{Plot}} \&plot, unsigned timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
+\mbox{\Hypertarget{classToolFramework_1_1Services_ac4e1b4ce6045d3e4436011097b85e793}\label{classToolFramework_1_1Services_ac4e1b4ce6045d3e4436011097b85e793}} 
+bool {\bfseries Send\+Plotly\+Plot} (const std\+::string \&name, const std\+::string \&json\+\_\+trace, const std\+::string \&json\+\_\+layout=\char`\"{}\{\}\char`\"{}, int $\ast$version=nullptr, unsigned int timestamp=0, unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1Services_a1c3d9ccd221ade6211e00286bbadcfa4}\label{classToolFramework_1_1Services_a1c3d9ccd221ade6211e00286bbadcfa4}} 
-bool {\bfseries Get\+Plot} (const std\+::string \&name, \mbox{\hyperlink{structToolFramework_1_1Plot}{Plot}} \&plot, unsigned timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
+\mbox{\Hypertarget{classToolFramework_1_1Services_ada8c79a1c7459958abb30a62a016483f}\label{classToolFramework_1_1Services_ada8c79a1c7459958abb30a62a016483f}} 
+bool {\bfseries Send\+Plotly\+Plot} (const std\+::string \&name, const std\+::vector$<$ std\+::string $>$ \&json\+\_\+traces, const std\+::string \&json\+\_\+layout=\char`\"{}\{\}\char`\"{}, int $\ast$version=nullptr, unsigned int timestamp=0, unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1Services_a6d19e74dfe1abb8cc9fc5ff0842d60f8}\label{classToolFramework_1_1Services_a6d19e74dfe1abb8cc9fc5ff0842d60f8}} 
+bool {\bfseries Get\+Plotly\+Plot} (const std\+::string \&name, int \&version, std\+::string \&json\+\_\+trace, std\+::string \&json\+\_\+layout, unsigned int $\ast$timestamp=nullptr, unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1Services_a40ed4af73e55fa5a4abbf2ff3e6f63d0}\label{classToolFramework_1_1Services_a40ed4af73e55fa5a4abbf2ff3e6f63d0}} 
 \mbox{\hyperlink{classToolFramework_1_1SlowControlCollection}{Slow\+Control\+Collection}} $\ast$ {\bfseries Get\+Slow\+Control\+Collection} ()
