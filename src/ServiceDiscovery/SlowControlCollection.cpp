@@ -413,17 +413,19 @@ bool SlowControlCollection::AlertSubscribe(std::string alert, AlertFunction func
 
 bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
 
-  if(!m_alerts) return false;
+  // TODO add some means of returning error info, e.g. accept alert by reference and set to err description on error
+  if(!m_alerts) return false;  // err: "unknown alert"
   zmq::message_t message(alert.length()+1);
   snprintf((char*) message.data(), alert.length()+1, "%s", alert.c_str());
   if(payload==""){
-    return m_pub->send(message);
+    return m_pub->send(message); // err: "zmq send "+zmq_strerror(errno)
   }
   // if we didn't return, we have a payload as well
-  m_pub->send(message, ZMQ_SNDMORE);
+  bool ok = m_pub->send(message, ZMQ_SNDMORE);
+  if(!ok) return false; // err: "zmq send "+zmq_strerror(errno)
   zmq::message_t message2(payload.length()+1);
   snprintf((char*) message2.data(), payload.length()+1, "%s", payload.c_str());
-  return m_pub->send(message2);
+  return m_pub->send(message2);  // err: "zmq send "+zmq_strerror(errno)
   
 }
 
