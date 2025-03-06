@@ -124,32 +124,33 @@ $(function() {
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    </div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; T GetValue(std::string name){</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      <span class="keywordflow">return</span> SC_vars[name]-&gt;GetValue&lt;T&gt;();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      <span class="keywordflow">if</span>(!SC_vars.count(name)) <span class="keywordflow">return</span> T{};</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <span class="keywordflow">return</span> SC_vars[name]-&gt;GetValue&lt;T&gt;();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    }</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;   <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    std::map&lt;std::string, SlowControlElement*&gt; SC_vars;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    std::map&lt;std::string, AlertFunction&gt;  m_alert_functions;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    std::mutex m_alert_functions_mutex;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <a class="code" href="classToolFramework_1_1DAQUtilities.html">DAQUtilities</a>* m_util;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    zmq::context_t* m_context;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    zmq::socket_t* m_pub;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="structToolFramework_1_1SlowControlCollectionThread__args.html">SlowControlCollectionThread_args</a>* args;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">bool</span> m_new_service;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">bool</span> m_thread;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> m_alerts;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> Thread(Thread_args* arg);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> Unpack(std::string in, std::map&lt;std::string,std::string&gt; &amp;out, std::string header=<span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  };</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;}</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;   <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    std::map&lt;std::string, SlowControlElement*&gt; SC_vars;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    std::map&lt;std::string, AlertFunction&gt;  m_alert_functions;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    std::mutex m_alert_functions_mutex;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <a class="code" href="classToolFramework_1_1DAQUtilities.html">DAQUtilities</a>* m_util;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    zmq::context_t* m_context;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    zmq::socket_t* m_pub;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="structToolFramework_1_1SlowControlCollectionThread__args.html">SlowControlCollectionThread_args</a>* args;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">bool</span> m_new_service;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> m_thread;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">bool</span> m_alerts;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> Thread(Thread_args* arg);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> Unpack(std::string in, std::map&lt;std::string,std::string&gt; &amp;out, std::string header=<span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  };</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;}</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassToolFramework_1_1DAQUtilities_html"><div class="ttname"><a href="classToolFramework_1_1DAQUtilities.html">ToolFramework::DAQUtilities</a></div><div class="ttdef"><b>Definition:</b> DAQUtilities.h:86</div></div>
 <div class="ttc" id="aclassToolFramework_1_1SlowControlCollection_html"><div class="ttname"><a href="classToolFramework_1_1SlowControlCollection.html">ToolFramework::SlowControlCollection</a></div><div class="ttdef"><b>Definition:</b> SlowControlCollection.h:33</div></div>
 <div class="ttc" id="aclassToolFramework_1_1SlowControlElement_html"><div class="ttname"><a href="classToolFramework_1_1SlowControlElement.html">ToolFramework::SlowControlElement</a></div><div class="ttdef"><b>Definition:</b> SlowControlElement.h:19</div></div>
