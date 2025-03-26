@@ -346,7 +346,7 @@ bool ServicesBackend::BackgroundThread(std::future<void> signaller){
 	Log("ServicesBackend BackgroundThread starting!",v_debug,verbosity);
 	while(true){
 		// check if we've been signalled to terminate
-		std::chrono::milliseconds span(10);
+		std::chrono::microseconds span(100);
 		if(signaller.wait_for(span)!=std::future_status::timeout){
 			// terminate has been set
 			Log("ServicesBackend background thread received terminate signal",v_debug,verbosity);
