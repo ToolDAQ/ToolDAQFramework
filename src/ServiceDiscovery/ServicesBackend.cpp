@@ -936,3 +936,30 @@ bool ServicesBackend::Receive(zmq::socket_t* sock, std::vector<zmq::message_t>& 
 	return true;
 }
 
+bool ServicesBackend::Ready(int timeout){
+	
+	// poll the output sockets for listeners
+	// only poll dealer socket, pub sockets always return true immediately so ignore the timeout
+	// polling the input socket checks for a message, so don't do that.
+	int ret;
+	try {
+		dlr_socket_mutex.lock();
+		ret = zmq::poll(&out_polls.at(1), 1, timeout);
+		dlr_socket_mutex.unlock();
+	} catch (zmq::error_t& err){
+		std::cerr<<"ServicesBackend::Ready caught "<<err.what()<<std::endl;
+		return false;
+	}
+	if(ret<0){
+		// error polling - is the socket closed?
+		std::cerr<<"ServicesBackend::Ready error: "<<zmq_strerror(errno)<<std::endl;
+		return false;
+	} else if(ret==0){
+		// 'resource temoprarily unavailable' - no-one connected.
+	} else if(out_polls.at(1).revents & ZMQ_POLLOUT){
+		return true;
+	}
+	
+	return false;
+	
+}
