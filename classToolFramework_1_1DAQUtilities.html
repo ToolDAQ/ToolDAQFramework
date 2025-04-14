@@ -95,10 +95,18 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQUtilities.html#a7db1d1362f3e55a49f5c92e12f3db01c">RemoveService</a> (std::string ServiceName)</td></tr>
 <tr class="memdesc:a7db1d1362f3e55a49f5c92e12f3db01c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes service broadcasts for a service. <br /></td></tr>
 <tr class="separator:a7db1d1362f3e55a49f5c92e12f3db01c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a2f0b8dc11c83e4153de3e53770ea76"><td class="memItemLeft" align="right" valign="top"><a id="a1a2f0b8dc11c83e4153de3e53770ea76"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQUtilities.html#a1a2f0b8dc11c83e4153de3e53770ea76">UpdateConnections</a> (std::string ServiceName, zmq::socket_t *sock, std::map&lt; std::string, Store * &gt; &amp;connections, std::string port=&quot;&quot;)</td></tr>
-<tr class="memdesc:a1a2f0b8dc11c83e4153de3e53770ea76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dynamically connects a socket tp services broadcast with a specific name. <br /></td></tr>
-<tr class="separator:a1a2f0b8dc11c83e4153de3e53770ea76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91596b17a158f8a2a16ae906aea43ef0"><td class="memItemLeft" align="right" valign="top"><a id="a91596b17a158f8a2a16ae906aea43ef0"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQUtilities.html#a91596b17a158f8a2a16ae906aea43ef0">AddPort</a> (std::string ServiceName, unsigned int port)</td></tr>
+<tr class="memdesc:a91596b17a158f8a2a16ae906aea43ef0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcasts an available port (only in remote mode) <br /></td></tr>
+<tr class="separator:a91596b17a158f8a2a16ae906aea43ef0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaaab315b9547afd5ea8e8e40d1481321"><td class="memItemLeft" align="right" valign="top"><a id="aaaab315b9547afd5ea8e8e40d1481321"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQUtilities.html#aaaab315b9547afd5ea8e8e40d1481321">RemovePort</a> (std::string ServiceName)</td></tr>
+<tr class="memdesc:aaaab315b9547afd5ea8e8e40d1481321"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes port broadcasts for a service. <br /></td></tr>
+<tr class="separator:aaaab315b9547afd5ea8e8e40d1481321"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6236a19d178aec5733870c8df7404013"><td class="memItemLeft" align="right" valign="top"><a id="a6236a19d178aec5733870c8df7404013"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQUtilities.html#a6236a19d178aec5733870c8df7404013">UpdateConnections</a> (std::string ServiceName, zmq::socket_t *sock, std::map&lt; std::string, Store * &gt; &amp;connections, std::string port=&quot;&quot;, std::string port_name=&quot;&quot;)</td></tr>
+<tr class="memdesc:a6236a19d178aec5733870c8df7404013"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dynamically connects a socket tp services broadcast with a specific name. <br /></td></tr>
+<tr class="separator:a6236a19d178aec5733870c8df7404013"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3249ea0e0fd1aa48aa8044a7d551aa3"><td class="memItemLeft" align="right" valign="top"><a id="af3249ea0e0fd1aa48aa8044a7d551aa3"></a>
 <a class="el" href="structToolFramework_1_1DAQThread__args.html">DAQThread_args</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>CreateThread</b> (std::string ThreadName, void(*func)(std::string))</td></tr>
 <tr class="separator:af3249ea0e0fd1aa48aa8044a7d551aa3"><td class="memSeparator" colspan="2">&#160;</td></tr>

@@ -22,8 +22,14 @@ bool \mbox{\hyperlink{classToolFramework_1_1DAQUtilities_adc1db69680c293e8e83c83
 \mbox{\Hypertarget{classToolFramework_1_1DAQUtilities_a7db1d1362f3e55a49f5c92e12f3db01c}\label{classToolFramework_1_1DAQUtilities_a7db1d1362f3e55a49f5c92e12f3db01c}} 
 bool \mbox{\hyperlink{classToolFramework_1_1DAQUtilities_a7db1d1362f3e55a49f5c92e12f3db01c}{Remove\+Service}} (std\+::string Service\+Name)
 \begin{DoxyCompactList}\small\item\em Removes service broadcasts for a service. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classToolFramework_1_1DAQUtilities_a1a2f0b8dc11c83e4153de3e53770ea76}\label{classToolFramework_1_1DAQUtilities_a1a2f0b8dc11c83e4153de3e53770ea76}} 
-int \mbox{\hyperlink{classToolFramework_1_1DAQUtilities_a1a2f0b8dc11c83e4153de3e53770ea76}{Update\+Connections}} (std\+::string Service\+Name, zmq\+::socket\+\_\+t $\ast$sock, std\+::map$<$ std\+::string, Store $\ast$ $>$ \&connections, std\+::string port=\char`\"{}\char`\"{})
+\mbox{\Hypertarget{classToolFramework_1_1DAQUtilities_a91596b17a158f8a2a16ae906aea43ef0}\label{classToolFramework_1_1DAQUtilities_a91596b17a158f8a2a16ae906aea43ef0}} 
+bool \mbox{\hyperlink{classToolFramework_1_1DAQUtilities_a91596b17a158f8a2a16ae906aea43ef0}{Add\+Port}} (std\+::string Service\+Name, unsigned int port)
+\begin{DoxyCompactList}\small\item\em Broadcasts an available port (only in remote mode) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classToolFramework_1_1DAQUtilities_aaaab315b9547afd5ea8e8e40d1481321}\label{classToolFramework_1_1DAQUtilities_aaaab315b9547afd5ea8e8e40d1481321}} 
+bool \mbox{\hyperlink{classToolFramework_1_1DAQUtilities_aaaab315b9547afd5ea8e8e40d1481321}{Remove\+Port}} (std\+::string Service\+Name)
+\begin{DoxyCompactList}\small\item\em Removes port broadcasts for a service. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classToolFramework_1_1DAQUtilities_a6236a19d178aec5733870c8df7404013}\label{classToolFramework_1_1DAQUtilities_a6236a19d178aec5733870c8df7404013}} 
+int \mbox{\hyperlink{classToolFramework_1_1DAQUtilities_a6236a19d178aec5733870c8df7404013}{Update\+Connections}} (std\+::string Service\+Name, zmq\+::socket\+\_\+t $\ast$sock, std\+::map$<$ std\+::string, Store $\ast$ $>$ \&connections, std\+::string port=\char`\"{}\char`\"{}, std\+::string port\+\_\+name=\char`\"{}\char`\"{})
 \begin{DoxyCompactList}\small\item\em Dynamically connects a socket tp services broadcast with a specific name. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classToolFramework_1_1DAQUtilities_af3249ea0e0fd1aa48aa8044a7d551aa3}\label{classToolFramework_1_1DAQUtilities_af3249ea0e0fd1aa48aa8044a7d551aa3}} 
 \mbox{\hyperlink{structToolFramework_1_1DAQThread__args}{DAQThread\+\_\+args}} $\ast$ {\bfseries Create\+Thread} (std\+::string Thread\+Name, void($\ast$func)(std\+::string))
