@@ -168,6 +168,12 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	
 	
       }
+      else if(command=="PortAdd"){
+	if(PubServices.size()) PubServices.at(0).Set(service, port);     
+      }
+      else if(command =="PortDelete"){
+	if(PubServices.size()) PubServices.at(0).Erase(service);     
+      }
       
     }
     
@@ -248,7 +254,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  
 	  // zmq::message_t Esend(256);
 	  //std::string command="Status;
-	
+	  mm.Delete();	
 	  
 	  zmq::message_t Esend(command.length()+1);
 	  snprintf ((char *) Esend.data(), command.length()+1 , "%s" ,command.c_str()) ;
