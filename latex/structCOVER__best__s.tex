@@ -1,0 +1,40 @@
+\hypertarget{structCOVER__best__s}{}\doxysection{COVER\+\_\+best\+\_\+s Struct Reference}
+\label{structCOVER__best__s}\index{COVER\_best\_s@{COVER\_best\_s}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structCOVER__best__s_a2f435939db7b1ec75ece5da8ed077a51}\label{structCOVER__best__s_a2f435939db7b1ec75ece5da8ed077a51}} 
+ZSTD\+\_\+pthread\+\_\+mutex\+\_\+t {\bfseries mutex}
+\item 
+\mbox{\Hypertarget{structCOVER__best__s_a32ba325c890fedd92aaef54af9229208}\label{structCOVER__best__s_a32ba325c890fedd92aaef54af9229208}} 
+ZSTD\+\_\+pthread\+\_\+cond\+\_\+t {\bfseries cond}
+\item 
+\mbox{\Hypertarget{structCOVER__best__s_aaa4940d9a1da05d09ccead1b9105607c}\label{structCOVER__best__s_aaa4940d9a1da05d09ccead1b9105607c}} 
+size\+\_\+t {\bfseries live\+Jobs}
+\item 
+\mbox{\Hypertarget{structCOVER__best__s_aa70610bad8754f5b3b8bf00b1f23f6b3}\label{structCOVER__best__s_aa70610bad8754f5b3b8bf00b1f23f6b3}} 
+void $\ast$ {\bfseries dict}
+\item 
+\mbox{\Hypertarget{structCOVER__best__s_af1a1ac03fe3cd4137f6e6934ca048e43}\label{structCOVER__best__s_af1a1ac03fe3cd4137f6e6934ca048e43}} 
+size\+\_\+t {\bfseries dict\+Size}
+\item 
+\mbox{\Hypertarget{structCOVER__best__s_afa8e108b2ce9a21fbbfc54286ab522ac}\label{structCOVER__best__s_afa8e108b2ce9a21fbbfc54286ab522ac}} 
+\mbox{\hyperlink{structZDICT__cover__params__t}{ZDICT\+\_\+cover\+\_\+params\+\_\+t}} {\bfseries parameters}
+\item 
+\mbox{\Hypertarget{structCOVER__best__s_a9420869daf273f8b5c134f7def51d57d}\label{structCOVER__best__s_a9420869daf273f8b5c134f7def51d57d}} 
+size\+\_\+t {\bfseries compressed\+Size}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+COVER\+\_\+best\+\_\+t is used for two purposes\+:
+\begin{DoxyEnumerate}
+\item Synchronizing threads.
+\item Saving the best parameters and dictionary.
+\end{DoxyEnumerate}
+
+All of the methods except \mbox{\hyperlink{zstd_8c_ad0e0964587f6d04e93bd019b9cfc6d4e}{COVER\+\_\+best\+\_\+init()}} are thread safe if zstd is compiled with multithreaded support. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

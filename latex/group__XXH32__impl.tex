@@ -1,0 +1,61 @@
+\hypertarget{group__XXH32__impl}{}\doxysection{XXH32 implementation}
+\label{group__XXH32__impl}\index{XXH32 implementation@{XXH32 implementation}}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{group__XXH32__impl_ga29fede2b86ee758448c55edf6171e11f}{XXH\+\_\+\+PRIME32\+\_\+1}}~0x9\+E3779\+B1U
+\item 
+\#define \mbox{\hyperlink{group__XXH32__impl_ga23d49e684c0551afaed8e4ff40940c79}{XXH\+\_\+\+PRIME32\+\_\+2}}~0x85\+EBCA77U
+\item 
+\#define \mbox{\hyperlink{group__XXH32__impl_gacdda6ef95561d39cf2f9b7f2cd5c6693}{XXH\+\_\+\+PRIME32\+\_\+3}}~0x\+C2\+B2\+AE3\+DU
+\item 
+\#define \mbox{\hyperlink{group__XXH32__impl_ga9f43a7ed63cb15dfc49b1a42c250e511}{XXH\+\_\+\+PRIME32\+\_\+4}}~0x27\+D4\+EB2\+FU
+\item 
+\#define \mbox{\hyperlink{group__XXH32__impl_gaa4ab6ba3eb0659356b8ed3b84c43e3e7}{XXH\+\_\+\+PRIME32\+\_\+5}}~0x165667\+B1U
+\item 
+\mbox{\Hypertarget{group__XXH32__impl_gada11171377462c53a42c6f5bf450de7b}\label{group__XXH32__impl_gada11171377462c53a42c6f5bf450de7b}} 
+\#define {\bfseries XXH\+\_\+get32bits}(p)~XXH\+\_\+read\+LE32\+\_\+align(p, align)
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__XXH32__impl_gaaafc43e66631d1642be8c0034dd9a60f}\label{group__XXH32__impl_gaaafc43e66631d1642be8c0034dd9a60f}} 
+XXH\+\_\+\+FORCE\+\_\+\+INLINE XXH\+\_\+\+PUREF xxh\+\_\+u32 {\bfseries XXH32\+\_\+endian\+\_\+align} (const xxh\+\_\+u8 $\ast$input, size\+\_\+t len, xxh\+\_\+u32 seed, \mbox{\hyperlink{group__impl_gadec56fccd4f83e34902b6b09ecccfff5}{XXH\+\_\+alignment}} align)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Details on the XXH32 implementation. 
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{group__XXH32__impl_ga29fede2b86ee758448c55edf6171e11f}\label{group__XXH32__impl_ga29fede2b86ee758448c55edf6171e11f}} 
+\index{XXH32 implementation@{XXH32 implementation}!XXH\_PRIME32\_1@{XXH\_PRIME32\_1}}
+\index{XXH\_PRIME32\_1@{XXH\_PRIME32\_1}!XXH32 implementation@{XXH32 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME32\_1}{XXH\_PRIME32\_1}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME32\+\_\+1~0x9\+E3779\+B1U}
+
+0b10011110001101110111100110110001 \mbox{\Hypertarget{group__XXH32__impl_ga23d49e684c0551afaed8e4ff40940c79}\label{group__XXH32__impl_ga23d49e684c0551afaed8e4ff40940c79}} 
+\index{XXH32 implementation@{XXH32 implementation}!XXH\_PRIME32\_2@{XXH\_PRIME32\_2}}
+\index{XXH\_PRIME32\_2@{XXH\_PRIME32\_2}!XXH32 implementation@{XXH32 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME32\_2}{XXH\_PRIME32\_2}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME32\+\_\+2~0x85\+EBCA77U}
+
+0b10000101111010111100101001110111 \mbox{\Hypertarget{group__XXH32__impl_gacdda6ef95561d39cf2f9b7f2cd5c6693}\label{group__XXH32__impl_gacdda6ef95561d39cf2f9b7f2cd5c6693}} 
+\index{XXH32 implementation@{XXH32 implementation}!XXH\_PRIME32\_3@{XXH\_PRIME32\_3}}
+\index{XXH\_PRIME32\_3@{XXH\_PRIME32\_3}!XXH32 implementation@{XXH32 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME32\_3}{XXH\_PRIME32\_3}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME32\+\_\+3~0x\+C2\+B2\+AE3\+DU}
+
+0b11000010101100101010111000111101 \mbox{\Hypertarget{group__XXH32__impl_ga9f43a7ed63cb15dfc49b1a42c250e511}\label{group__XXH32__impl_ga9f43a7ed63cb15dfc49b1a42c250e511}} 
+\index{XXH32 implementation@{XXH32 implementation}!XXH\_PRIME32\_4@{XXH\_PRIME32\_4}}
+\index{XXH\_PRIME32\_4@{XXH\_PRIME32\_4}!XXH32 implementation@{XXH32 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME32\_4}{XXH\_PRIME32\_4}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME32\+\_\+4~0x27\+D4\+EB2\+FU}
+
+0b00100111110101001110101100101111 \mbox{\Hypertarget{group__XXH32__impl_gaa4ab6ba3eb0659356b8ed3b84c43e3e7}\label{group__XXH32__impl_gaa4ab6ba3eb0659356b8ed3b84c43e3e7}} 
+\index{XXH32 implementation@{XXH32 implementation}!XXH\_PRIME32\_5@{XXH\_PRIME32\_5}}
+\index{XXH\_PRIME32\_5@{XXH\_PRIME32\_5}!XXH32 implementation@{XXH32 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME32\_5}{XXH\_PRIME32\_5}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME32\+\_\+5~0x165667\+B1U}
+
+0b00010110010101100110011110110001 

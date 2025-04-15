@@ -1,0 +1,61 @@
+\hypertarget{group__XXH64__impl}{}\doxysection{XXH64 implementation}
+\label{group__XXH64__impl}\index{XXH64 implementation@{XXH64 implementation}}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{group__XXH64__impl_ga20651a9ad53cae6f0a4feb1393d5a716}{XXH\+\_\+\+PRIME64\+\_\+1}}~0x9\+E3779\+B185\+EBCA87\+ULL
+\item 
+\#define \mbox{\hyperlink{group__XXH64__impl_ga33a01ca165b68cef76da009a54e3ba54}{XXH\+\_\+\+PRIME64\+\_\+2}}~0x\+C2\+B2\+AE3\+D27\+D4\+EB4\+FULL
+\item 
+\#define \mbox{\hyperlink{group__XXH64__impl_gad18b925ab3b4ad25ae26eb4fb00ebcb8}{XXH\+\_\+\+PRIME64\+\_\+3}}~0x165667\+B19\+E3779\+F9\+ULL
+\item 
+\#define \mbox{\hyperlink{group__XXH64__impl_ga6326d9c3883242a3b5602fae1507afc5}{XXH\+\_\+\+PRIME64\+\_\+4}}~0x85\+EBCA77\+C2\+B2\+AE63\+ULL
+\item 
+\#define \mbox{\hyperlink{group__XXH64__impl_gae44b2a496b0a4184699e7d11ec2d70c6}{XXH\+\_\+\+PRIME64\+\_\+5}}~0x27\+D4\+EB2\+F165667\+C5\+ULL
+\item 
+\mbox{\Hypertarget{group__XXH64__impl_gac5c5037e820ac15ae30f36c553d5b95e}\label{group__XXH64__impl_gac5c5037e820ac15ae30f36c553d5b95e}} 
+\#define {\bfseries XXH\+\_\+get64bits}(p)~XXH\+\_\+read\+LE64\+\_\+align(p, align)
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__XXH64__impl_gab6c28d4b5f850fc6e364ad5e1565de2d}\label{group__XXH64__impl_gab6c28d4b5f850fc6e364ad5e1565de2d}} 
+XXH\+\_\+\+FORCE\+\_\+\+INLINE XXH\+\_\+\+PUREF xxh\+\_\+u64 {\bfseries XXH64\+\_\+endian\+\_\+align} (const xxh\+\_\+u8 $\ast$input, size\+\_\+t len, xxh\+\_\+u64 seed, \mbox{\hyperlink{group__impl_gadec56fccd4f83e34902b6b09ecccfff5}{XXH\+\_\+alignment}} align)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Details on the XXH64 implementation. 
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{group__XXH64__impl_ga20651a9ad53cae6f0a4feb1393d5a716}\label{group__XXH64__impl_ga20651a9ad53cae6f0a4feb1393d5a716}} 
+\index{XXH64 implementation@{XXH64 implementation}!XXH\_PRIME64\_1@{XXH\_PRIME64\_1}}
+\index{XXH\_PRIME64\_1@{XXH\_PRIME64\_1}!XXH64 implementation@{XXH64 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME64\_1}{XXH\_PRIME64\_1}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME64\+\_\+1~0x9\+E3779\+B185\+EBCA87\+ULL}
+
+0b1001111000110111011110011011000110000101111010111100101010000111 \mbox{\Hypertarget{group__XXH64__impl_ga33a01ca165b68cef76da009a54e3ba54}\label{group__XXH64__impl_ga33a01ca165b68cef76da009a54e3ba54}} 
+\index{XXH64 implementation@{XXH64 implementation}!XXH\_PRIME64\_2@{XXH\_PRIME64\_2}}
+\index{XXH\_PRIME64\_2@{XXH\_PRIME64\_2}!XXH64 implementation@{XXH64 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME64\_2}{XXH\_PRIME64\_2}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME64\+\_\+2~0x\+C2\+B2\+AE3\+D27\+D4\+EB4\+FULL}
+
+0b1100001010110010101011100011110100100111110101001110101101001111 \mbox{\Hypertarget{group__XXH64__impl_gad18b925ab3b4ad25ae26eb4fb00ebcb8}\label{group__XXH64__impl_gad18b925ab3b4ad25ae26eb4fb00ebcb8}} 
+\index{XXH64 implementation@{XXH64 implementation}!XXH\_PRIME64\_3@{XXH\_PRIME64\_3}}
+\index{XXH\_PRIME64\_3@{XXH\_PRIME64\_3}!XXH64 implementation@{XXH64 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME64\_3}{XXH\_PRIME64\_3}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME64\+\_\+3~0x165667\+B19\+E3779\+F9\+ULL}
+
+0b0001011001010110011001111011000110011110001101110111100111111001 \mbox{\Hypertarget{group__XXH64__impl_ga6326d9c3883242a3b5602fae1507afc5}\label{group__XXH64__impl_ga6326d9c3883242a3b5602fae1507afc5}} 
+\index{XXH64 implementation@{XXH64 implementation}!XXH\_PRIME64\_4@{XXH\_PRIME64\_4}}
+\index{XXH\_PRIME64\_4@{XXH\_PRIME64\_4}!XXH64 implementation@{XXH64 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME64\_4}{XXH\_PRIME64\_4}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME64\+\_\+4~0x85\+EBCA77\+C2\+B2\+AE63\+ULL}
+
+0b1000010111101011110010100111011111000010101100101010111001100011 \mbox{\Hypertarget{group__XXH64__impl_gae44b2a496b0a4184699e7d11ec2d70c6}\label{group__XXH64__impl_gae44b2a496b0a4184699e7d11ec2d70c6}} 
+\index{XXH64 implementation@{XXH64 implementation}!XXH\_PRIME64\_5@{XXH\_PRIME64\_5}}
+\index{XXH\_PRIME64\_5@{XXH\_PRIME64\_5}!XXH64 implementation@{XXH64 implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_PRIME64\_5}{XXH\_PRIME64\_5}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+PRIME64\+\_\+5~0x27\+D4\+EB2\+F165667\+C5\+ULL}
+
+0b0010011111010100111010110010111100010110010101100110011111000101 

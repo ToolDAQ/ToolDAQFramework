@@ -1,0 +1,284 @@
+\hypertarget{group__XXH64__family}{}\doxysection{XXH64 family}
+\label{group__XXH64__family}\index{XXH64 family@{XXH64 family}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Canonical (big endian) representation of XXH64\+\_\+hash\+\_\+t. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{group__XXH64__family_ga79efe920b4f18004110a6e9bcc0385e0}{XXH64\+\_\+create\+State}}(void)~XXH\+\_\+\+NAME2(XXH\+\_\+\+NAMESPACE, XXH64\+\_\+create\+State)
+\begin{DoxyCompactList}\small\item\em Allocates an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structXXH64__state__s}{XXH64\+\_\+state\+\_\+s}} \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em The opaque state struct for the XXH64 streaming API. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+\+PUREF XXH64\+\_\+hash\+\_\+t \mbox{\hyperlink{group__XXH64__family_ga1e9837cb71877781b9d5c9f942fcf923}{XXH64}} (XXH\+\_\+\+NOESCAPE const void $\ast$input, size\+\_\+t length, XXH64\+\_\+hash\+\_\+t seed)
+\begin{DoxyCompactList}\small\item\em Calculates the 64-\/bit hash of {\ttfamily input} using xx\+Hash64. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode \mbox{\hyperlink{group__XXH64__family_gae490ef51db9c960da09189c2774cf82e}{XXH64\+\_\+free\+State}} (\mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$state\+Ptr)
+\begin{DoxyCompactList}\small\item\em Frees an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API void \mbox{\hyperlink{group__XXH64__family_ga83b5dd41dddb52667cef0525cf43f43a}{XXH64\+\_\+copy\+State}} (XXH\+\_\+\+NOESCAPE \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$dst\+\_\+state, const \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$src\+\_\+state)
+\begin{DoxyCompactList}\small\item\em Copies one \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} to another. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode \mbox{\hyperlink{group__XXH64__family_ga3d9aebe63b2d4687808385c70460de1a}{XXH64\+\_\+reset}} (XXH\+\_\+\+NOESCAPE \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$state\+Ptr, XXH64\+\_\+hash\+\_\+t seed)
+\begin{DoxyCompactList}\small\item\em Resets an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} to begin a new hash. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode \mbox{\hyperlink{group__XXH64__family_ga8cf987b6f8910fea00aa458b6a513e01}{XXH64\+\_\+update}} (XXH\+\_\+\+NOESCAPE \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$state\+Ptr, XXH\+\_\+\+NOESCAPE const void $\ast$input, size\+\_\+t length)
+\begin{DoxyCompactList}\small\item\em Consumes a block of {\ttfamily input} to an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+\+PUREF XXH64\+\_\+hash\+\_\+t \mbox{\hyperlink{group__XXH64__family_gae33184b2b593fced263842be35a4ea90}{XXH64\+\_\+digest}} (XXH\+\_\+\+NOESCAPE const \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$state\+Ptr)
+\begin{DoxyCompactList}\small\item\em Returns the calculated hash value from an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API void \mbox{\hyperlink{group__XXH64__family_ga5ad28aa4810c34a5e439077feb4fd32b}{XXH64\+\_\+canonical\+From\+Hash}} (XXH\+\_\+\+NOESCAPE \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}} $\ast$dst, XXH64\+\_\+hash\+\_\+t hash)
+\begin{DoxyCompactList}\small\item\em Converts an XXH64\+\_\+hash\+\_\+t to a big endian \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}}. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+\+PUREF XXH64\+\_\+hash\+\_\+t \mbox{\hyperlink{group__XXH64__family_ga22cd9a932467a6ea2396a8496f57ddf9}{XXH64\+\_\+hash\+From\+Canonical}} (XXH\+\_\+\+NOESCAPE const \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}} $\ast$src)
+\begin{DoxyCompactList}\small\item\em Converts an \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}} to a native XXH64\+\_\+hash\+\_\+t. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Contains functions used in the classic 64-\/bit xx\+Hash algorithm.
+
+\begin{DoxyNote}{Note}
+XXH3 provides competitive speed for both 32-\/bit and 64-\/bit systems, and offers true 64/128 bit hash results. It provides better speed for systems with vector processing capabilities. 
+\end{DoxyNote}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{group__XXH64__family_ga79efe920b4f18004110a6e9bcc0385e0}\label{group__XXH64__family_ga79efe920b4f18004110a6e9bcc0385e0}} 
+\index{XXH64 family@{XXH64 family}!XXH64\_createState@{XXH64\_createState}}
+\index{XXH64\_createState@{XXH64\_createState}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64\_createState}{XXH64\_createState}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$ XXH64\+\_\+create\+State(\begin{DoxyParamCaption}\item[{}]{void }\end{DoxyParamCaption})~XXH\+\_\+\+NAME2(XXH\+\_\+\+NAMESPACE, XXH64\+\_\+create\+State)}
+
+
+
+Allocates an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}. 
+
+\begin{DoxyReturn}{Returns}
+An allocated pointer of \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} on success. 
+
+{\ttfamily NULL} on failure.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Must be freed with \mbox{\hyperlink{group__XXH64__family_gae490ef51db9c960da09189c2774cf82e}{XXH64\+\_\+free\+State()}}. 
+\end{DoxyNote}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}\label{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}} 
+\index{XXH64 family@{XXH64 family}!XXH64\_state\_t@{XXH64\_state\_t}}
+\index{XXH64\_state\_t@{XXH64\_state\_t}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64\_state\_t}{XXH64\_state\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structXXH64__state__s}{XXH64\+\_\+state\+\_\+s}} \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}}
+
+
+
+The opaque state struct for the XXH64 streaming API. 
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{structXXH64__state__s}{XXH64\+\_\+state\+\_\+s}} for details. 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{group__XXH64__family_ga1e9837cb71877781b9d5c9f942fcf923}\label{group__XXH64__family_ga1e9837cb71877781b9d5c9f942fcf923}} 
+\index{XXH64 family@{XXH64 family}!XXH64@{XXH64}}
+\index{XXH64@{XXH64}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64()}{XXH64()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH64\+\_\+hash\+\_\+t XXH64 (\begin{DoxyParamCaption}\item[{XXH\+\_\+\+NOESCAPE const void $\ast$}]{input,  }\item[{size\+\_\+t}]{length,  }\item[{XXH64\+\_\+hash\+\_\+t}]{seed }\end{DoxyParamCaption})}
+
+
+
+Calculates the 64-\/bit hash of {\ttfamily input} using xx\+Hash64. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The block of data to be hashed, at least {\ttfamily length} bytes in size. \\
+\hline
+{\em length} & The length of {\ttfamily input}, in bytes. \\
+\hline
+{\em seed} & The 64-\/bit seed to alter the hash\textquotesingle{}s output predictably.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+The memory between {\ttfamily input} and {\ttfamily input} + {\ttfamily length} must be valid, readable, contiguous memory. However, if {\ttfamily length} is {\ttfamily 0}, {\ttfamily input} may be {\ttfamily NULL}. In C++, this also must be {\itshape Trivially\+Copyable}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+The calculated 64-\/bit xx\+Hash64 value.
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{index_single_shot_example}{Single Shot Example}} for an example. 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__XXH64__family_ga5ad28aa4810c34a5e439077feb4fd32b}\label{group__XXH64__family_ga5ad28aa4810c34a5e439077feb4fd32b}} 
+\index{XXH64 family@{XXH64 family}!XXH64\_canonicalFromHash@{XXH64\_canonicalFromHash}}
+\index{XXH64\_canonicalFromHash@{XXH64\_canonicalFromHash}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64\_canonicalFromHash()}{XXH64\_canonicalFromHash()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API void XXH64\+\_\+canonical\+From\+Hash (\begin{DoxyParamCaption}\item[{XXH\+\_\+\+NOESCAPE \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}} $\ast$}]{dst,  }\item[{XXH64\+\_\+hash\+\_\+t}]{hash }\end{DoxyParamCaption})}
+
+
+
+Converts an XXH64\+\_\+hash\+\_\+t to a big endian \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dst} & The \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}} pointer to be stored to. \\
+\hline
+{\em hash} & The XXH64\+\_\+hash\+\_\+t to be converted.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily dst} must not be {\ttfamily NULL}.
+\end{DoxyPrecond}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{index_canonical_representation_example}{Canonical Representation Example}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__XXH64__family_ga83b5dd41dddb52667cef0525cf43f43a}\label{group__XXH64__family_ga83b5dd41dddb52667cef0525cf43f43a}} 
+\index{XXH64 family@{XXH64 family}!XXH64\_copyState@{XXH64\_copyState}}
+\index{XXH64\_copyState@{XXH64\_copyState}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64\_copyState()}{XXH64\_copyState()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API void XXH64\+\_\+copy\+State (\begin{DoxyParamCaption}\item[{XXH\+\_\+\+NOESCAPE \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$}]{dst\+\_\+state,  }\item[{const \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$}]{src\+\_\+state }\end{DoxyParamCaption})}
+
+
+
+Copies one \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} to another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dst\+\_\+state} & The state to copy to. \\
+\hline
+{\em src\+\_\+state} & The state to copy from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily dst\+\_\+state} and {\ttfamily src\+\_\+state} must not be {\ttfamily NULL} and must not overlap. 
+\end{DoxyPrecond}
+\mbox{\Hypertarget{group__XXH64__family_gae33184b2b593fced263842be35a4ea90}\label{group__XXH64__family_gae33184b2b593fced263842be35a4ea90}} 
+\index{XXH64 family@{XXH64 family}!XXH64\_digest@{XXH64\_digest}}
+\index{XXH64\_digest@{XXH64\_digest}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64\_digest()}{XXH64\_digest()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH64\+\_\+hash\+\_\+t XXH64\+\_\+digest (\begin{DoxyParamCaption}\item[{XXH\+\_\+\+NOESCAPE const \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$}]{state\+Ptr }\end{DoxyParamCaption})}
+
+
+
+Returns the calculated hash value from an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state\+Ptr} & The state struct to calculate the hash from.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily state\+Ptr} must not be {\ttfamily NULL}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+The calculated 64-\/bit xx\+Hash64 value from that state.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Calling \mbox{\hyperlink{group__XXH64__family_gae33184b2b593fced263842be35a4ea90}{XXH64\+\_\+digest()}} will not affect {\ttfamily state\+Ptr}, so you can update, digest, and update again. 
+\end{DoxyNote}
+\mbox{\Hypertarget{group__XXH64__family_gae490ef51db9c960da09189c2774cf82e}\label{group__XXH64__family_gae490ef51db9c960da09189c2774cf82e}} 
+\index{XXH64 family@{XXH64 family}!XXH64\_freeState@{XXH64\_freeState}}
+\index{XXH64\_freeState@{XXH64\_freeState}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64\_freeState()}{XXH64\_freeState()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode XXH64\+\_\+free\+State (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$}]{state\+Ptr }\end{DoxyParamCaption})}
+
+
+
+Frees an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state\+Ptr} & A pointer to an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} allocated with \mbox{\hyperlink{group__XXH64__family_ga79efe920b4f18004110a6e9bcc0385e0}{XXH64\+\_\+create\+State()}}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+XXH\+\_\+\+OK.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+{\ttfamily state\+Ptr} must be allocated with \mbox{\hyperlink{group__XXH64__family_ga79efe920b4f18004110a6e9bcc0385e0}{XXH64\+\_\+create\+State()}}. 
+\end{DoxyNote}
+\mbox{\Hypertarget{group__XXH64__family_ga22cd9a932467a6ea2396a8496f57ddf9}\label{group__XXH64__family_ga22cd9a932467a6ea2396a8496f57ddf9}} 
+\index{XXH64 family@{XXH64 family}!XXH64\_hashFromCanonical@{XXH64\_hashFromCanonical}}
+\index{XXH64\_hashFromCanonical@{XXH64\_hashFromCanonical}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64\_hashFromCanonical()}{XXH64\_hashFromCanonical()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH64\+\_\+hash\+\_\+t XXH64\+\_\+hash\+From\+Canonical (\begin{DoxyParamCaption}\item[{XXH\+\_\+\+NOESCAPE const \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}} $\ast$}]{src }\end{DoxyParamCaption})}
+
+
+
+Converts an \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}} to a native XXH64\+\_\+hash\+\_\+t. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & The \mbox{\hyperlink{structXXH64__canonical__t}{XXH64\+\_\+canonical\+\_\+t}} to convert.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily src} must not be {\ttfamily NULL}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+The converted hash.
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{index_canonical_representation_example}{Canonical Representation Example}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__XXH64__family_ga3d9aebe63b2d4687808385c70460de1a}\label{group__XXH64__family_ga3d9aebe63b2d4687808385c70460de1a}} 
+\index{XXH64 family@{XXH64 family}!XXH64\_reset@{XXH64\_reset}}
+\index{XXH64\_reset@{XXH64\_reset}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64\_reset()}{XXH64\_reset()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode XXH64\+\_\+reset (\begin{DoxyParamCaption}\item[{XXH\+\_\+\+NOESCAPE \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$}]{state\+Ptr,  }\item[{XXH64\+\_\+hash\+\_\+t}]{seed }\end{DoxyParamCaption})}
+
+
+
+Resets an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} to begin a new hash. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state\+Ptr} & The state struct to reset. \\
+\hline
+{\em seed} & The 64-\/bit seed to alter the hash result predictably.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily state\+Ptr} must not be {\ttfamily NULL}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+XXH\+\_\+\+OK on success. 
+
+XXH\+\_\+\+ERROR on failure.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+This function resets and seeds a state. Call it before \mbox{\hyperlink{group__XXH64__family_ga8cf987b6f8910fea00aa458b6a513e01}{XXH64\+\_\+update()}}. 
+\end{DoxyNote}
+\mbox{\Hypertarget{group__XXH64__family_ga8cf987b6f8910fea00aa458b6a513e01}\label{group__XXH64__family_ga8cf987b6f8910fea00aa458b6a513e01}} 
+\index{XXH64 family@{XXH64 family}!XXH64\_update@{XXH64\_update}}
+\index{XXH64\_update@{XXH64\_update}!XXH64 family@{XXH64 family}}
+\doxysubsubsection{\texorpdfstring{XXH64\_update()}{XXH64\_update()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode XXH64\+\_\+update (\begin{DoxyParamCaption}\item[{XXH\+\_\+\+NOESCAPE \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} $\ast$}]{state\+Ptr,  }\item[{XXH\+\_\+\+NOESCAPE const void $\ast$}]{input,  }\item[{size\+\_\+t}]{length }\end{DoxyParamCaption})}
+
+
+
+Consumes a block of {\ttfamily input} to an \mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state\+Ptr} & The state struct to update. \\
+\hline
+{\em input} & The block of data to be hashed, at least {\ttfamily length} bytes in size. \\
+\hline
+{\em length} & The length of {\ttfamily input}, in bytes.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily state\+Ptr} must not be {\ttfamily NULL}. 
+
+The memory between {\ttfamily input} and {\ttfamily input} + {\ttfamily length} must be valid, readable, contiguous memory. However, if {\ttfamily length} is {\ttfamily 0}, {\ttfamily input} may be {\ttfamily NULL}. In C++, this also must be {\itshape Trivially\+Copyable}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+XXH\+\_\+\+OK on success. 
+
+XXH\+\_\+\+ERROR on failure.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Call this to incrementally consume blocks of data. 
+\end{DoxyNote}

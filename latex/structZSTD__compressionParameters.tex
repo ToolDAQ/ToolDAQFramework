@@ -1,0 +1,69 @@
+\hypertarget{structZSTD__compressionParameters}{}\doxysection{ZSTD\+\_\+compression\+Parameters Struct Reference}
+\label{structZSTD__compressionParameters}\index{ZSTD\_compressionParameters@{ZSTD\_compressionParameters}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+unsigned \mbox{\hyperlink{structZSTD__compressionParameters_a58dbc174de9ad1f4a5eacbbfc034d0a8}{window\+Log}}
+\item 
+unsigned \mbox{\hyperlink{structZSTD__compressionParameters_a13c93d6a0f970ed22faeb8a5159fd234}{chain\+Log}}
+\item 
+unsigned \mbox{\hyperlink{structZSTD__compressionParameters_a49e637767c8bf20f9c06d7357f8965c1}{hash\+Log}}
+\item 
+unsigned \mbox{\hyperlink{structZSTD__compressionParameters_aa636ee1fc1b79453c87cc17389dba51d}{search\+Log}}
+\item 
+unsigned \mbox{\hyperlink{structZSTD__compressionParameters_a11e59adcab5559d8feef0b692f7c5a63}{min\+Match}}
+\item 
+unsigned \mbox{\hyperlink{structZSTD__compressionParameters_af61a7dfef1744383033d9b55bf302c43}{target\+Length}}
+\item 
+ZSTD\+\_\+strategy \mbox{\hyperlink{structZSTD__compressionParameters_afe5244790e7d2450376af02a9ab2ec08}{strategy}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{structZSTD__compressionParameters_a13c93d6a0f970ed22faeb8a5159fd234}\label{structZSTD__compressionParameters_a13c93d6a0f970ed22faeb8a5159fd234}} 
+\index{ZSTD\_compressionParameters@{ZSTD\_compressionParameters}!chainLog@{chainLog}}
+\index{chainLog@{chainLog}!ZSTD\_compressionParameters@{ZSTD\_compressionParameters}}
+\doxysubsubsection{\texorpdfstring{chainLog}{chainLog}}
+{\footnotesize\ttfamily unsigned ZSTD\+\_\+compression\+Parameters\+::chain\+Log}
+
+fully searched segment \+: larger == more compression, slower, more memory (useless for fast) \mbox{\Hypertarget{structZSTD__compressionParameters_a49e637767c8bf20f9c06d7357f8965c1}\label{structZSTD__compressionParameters_a49e637767c8bf20f9c06d7357f8965c1}} 
+\index{ZSTD\_compressionParameters@{ZSTD\_compressionParameters}!hashLog@{hashLog}}
+\index{hashLog@{hashLog}!ZSTD\_compressionParameters@{ZSTD\_compressionParameters}}
+\doxysubsubsection{\texorpdfstring{hashLog}{hashLog}}
+{\footnotesize\ttfamily unsigned ZSTD\+\_\+compression\+Parameters\+::hash\+Log}
+
+dispatch table \+: larger == faster, more memory \mbox{\Hypertarget{structZSTD__compressionParameters_a11e59adcab5559d8feef0b692f7c5a63}\label{structZSTD__compressionParameters_a11e59adcab5559d8feef0b692f7c5a63}} 
+\index{ZSTD\_compressionParameters@{ZSTD\_compressionParameters}!minMatch@{minMatch}}
+\index{minMatch@{minMatch}!ZSTD\_compressionParameters@{ZSTD\_compressionParameters}}
+\doxysubsubsection{\texorpdfstring{minMatch}{minMatch}}
+{\footnotesize\ttfamily unsigned ZSTD\+\_\+compression\+Parameters\+::min\+Match}
+
+match length searched \+: larger == faster decompression, sometimes less compression \mbox{\Hypertarget{structZSTD__compressionParameters_aa636ee1fc1b79453c87cc17389dba51d}\label{structZSTD__compressionParameters_aa636ee1fc1b79453c87cc17389dba51d}} 
+\index{ZSTD\_compressionParameters@{ZSTD\_compressionParameters}!searchLog@{searchLog}}
+\index{searchLog@{searchLog}!ZSTD\_compressionParameters@{ZSTD\_compressionParameters}}
+\doxysubsubsection{\texorpdfstring{searchLog}{searchLog}}
+{\footnotesize\ttfamily unsigned ZSTD\+\_\+compression\+Parameters\+::search\+Log}
+
+nb of searches \+: larger == more compression, slower \mbox{\Hypertarget{structZSTD__compressionParameters_afe5244790e7d2450376af02a9ab2ec08}\label{structZSTD__compressionParameters_afe5244790e7d2450376af02a9ab2ec08}} 
+\index{ZSTD\_compressionParameters@{ZSTD\_compressionParameters}!strategy@{strategy}}
+\index{strategy@{strategy}!ZSTD\_compressionParameters@{ZSTD\_compressionParameters}}
+\doxysubsubsection{\texorpdfstring{strategy}{strategy}}
+{\footnotesize\ttfamily ZSTD\+\_\+strategy ZSTD\+\_\+compression\+Parameters\+::strategy}
+
+see ZSTD\+\_\+strategy definition above \mbox{\Hypertarget{structZSTD__compressionParameters_af61a7dfef1744383033d9b55bf302c43}\label{structZSTD__compressionParameters_af61a7dfef1744383033d9b55bf302c43}} 
+\index{ZSTD\_compressionParameters@{ZSTD\_compressionParameters}!targetLength@{targetLength}}
+\index{targetLength@{targetLength}!ZSTD\_compressionParameters@{ZSTD\_compressionParameters}}
+\doxysubsubsection{\texorpdfstring{targetLength}{targetLength}}
+{\footnotesize\ttfamily unsigned ZSTD\+\_\+compression\+Parameters\+::target\+Length}
+
+acceptable match size for optimal parser (only) \+: larger == more compression, slower \mbox{\Hypertarget{structZSTD__compressionParameters_a58dbc174de9ad1f4a5eacbbfc034d0a8}\label{structZSTD__compressionParameters_a58dbc174de9ad1f4a5eacbbfc034d0a8}} 
+\index{ZSTD\_compressionParameters@{ZSTD\_compressionParameters}!windowLog@{windowLog}}
+\index{windowLog@{windowLog}!ZSTD\_compressionParameters@{ZSTD\_compressionParameters}}
+\doxysubsubsection{\texorpdfstring{windowLog}{windowLog}}
+{\footnotesize\ttfamily unsigned ZSTD\+\_\+compression\+Parameters\+::window\+Log}
+
+largest match distance \+: larger == more compression, more memory needed during decompression 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

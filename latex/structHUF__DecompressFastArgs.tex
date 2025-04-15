@@ -1,0 +1,36 @@
+\hypertarget{structHUF__DecompressFastArgs}{}\doxysection{HUF\+\_\+\+Decompress\+Fast\+Args Struct Reference}
+\label{structHUF__DecompressFastArgs}\index{HUF\_DecompressFastArgs@{HUF\_DecompressFastArgs}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structHUF__DecompressFastArgs_ab9f7d67fc09606724c77d80799c1437a}\label{structHUF__DecompressFastArgs_ab9f7d67fc09606724c77d80799c1437a}} 
+BYTE const  $\ast$ {\bfseries ip} \mbox{[}4\mbox{]}
+\item 
+\mbox{\Hypertarget{structHUF__DecompressFastArgs_a1006d37f1c9a6415e1e0b45caefcc552}\label{structHUF__DecompressFastArgs_a1006d37f1c9a6415e1e0b45caefcc552}} 
+BYTE $\ast$ {\bfseries op} \mbox{[}4\mbox{]}
+\item 
+\mbox{\Hypertarget{structHUF__DecompressFastArgs_a5190134bee49e3bd151d9b1e29d08de5}\label{structHUF__DecompressFastArgs_a5190134bee49e3bd151d9b1e29d08de5}} 
+U64 {\bfseries bits} \mbox{[}4\mbox{]}
+\item 
+\mbox{\Hypertarget{structHUF__DecompressFastArgs_afc8a9f07013131b930a59efdea7a1a87}\label{structHUF__DecompressFastArgs_afc8a9f07013131b930a59efdea7a1a87}} 
+void const  $\ast$ {\bfseries dt}
+\item 
+\mbox{\Hypertarget{structHUF__DecompressFastArgs_a2bcaaa8cdead78aa42be3b6e9b3d3202}\label{structHUF__DecompressFastArgs_a2bcaaa8cdead78aa42be3b6e9b3d3202}} 
+BYTE const  $\ast$ {\bfseries ilowest}
+\item 
+\mbox{\Hypertarget{structHUF__DecompressFastArgs_a5e43758d00846f2737f914b861a0767d}\label{structHUF__DecompressFastArgs_a5e43758d00846f2737f914b861a0767d}} 
+BYTE $\ast$ {\bfseries oend}
+\item 
+\mbox{\Hypertarget{structHUF__DecompressFastArgs_aff388aa1f5a813328193b6d827c982f5}\label{structHUF__DecompressFastArgs_aff388aa1f5a813328193b6d827c982f5}} 
+BYTE const  $\ast$ {\bfseries iend} \mbox{[}4\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The input/output arguments to the Huffman fast decoding loop\+:
+
+ip \mbox{[}in/out\mbox{]} -\/ The input pointers, must be updated to reflect what is consumed. op \mbox{[}in/out\mbox{]} -\/ The output pointers, must be updated to reflect what is written. bits \mbox{[}in/out\mbox{]} -\/ The bitstream containers, must be updated to reflect the current state. dt \mbox{[}in\mbox{]} -\/ The decoding table. ilowest \mbox{[}in\mbox{]} -\/ The beginning of the valid range of the input. Decoders may read down to this pointer. It may be below iend\mbox{[}0\mbox{]}. oend \mbox{[}in\mbox{]} -\/ The end of the output stream. op\mbox{[}3\mbox{]} must not cross oend. iend \mbox{[}in\mbox{]} -\/ The end of each input stream. ip\mbox{[}i\mbox{]} may cross iend\mbox{[}i\mbox{]}, as long as it is above ilowest, but that indicates corruption. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

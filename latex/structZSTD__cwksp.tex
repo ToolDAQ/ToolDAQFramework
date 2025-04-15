@@ -1,0 +1,98 @@
+\hypertarget{structZSTD__cwksp}{}\doxysection{ZSTD\+\_\+cwksp Struct Reference}
+\label{structZSTD__cwksp}\index{ZSTD\_cwksp@{ZSTD\_cwksp}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_aaf997d6b32f18dee07fcbe9452d37062}\label{structZSTD__cwksp_aaf997d6b32f18dee07fcbe9452d37062}} 
+void $\ast$ {\bfseries workspace}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_a0cbea25172e7dc9c1ac2fbae0e539e74}\label{structZSTD__cwksp_a0cbea25172e7dc9c1ac2fbae0e539e74}} 
+void $\ast$ {\bfseries workspace\+End}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_a8156e41d1ff6c92ceaa75edb56619017}\label{structZSTD__cwksp_a8156e41d1ff6c92ceaa75edb56619017}} 
+void $\ast$ {\bfseries object\+End}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_a24b2a3ebbb454fa0154ae74f27a89594}\label{structZSTD__cwksp_a24b2a3ebbb454fa0154ae74f27a89594}} 
+void $\ast$ {\bfseries table\+End}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_a05a28e3c713b260601997c8dd31833ea}\label{structZSTD__cwksp_a05a28e3c713b260601997c8dd31833ea}} 
+void $\ast$ {\bfseries table\+Valid\+End}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_ad11c6fcee8a2e1562b754122b3afe165}\label{structZSTD__cwksp_ad11c6fcee8a2e1562b754122b3afe165}} 
+void $\ast$ {\bfseries alloc\+Start}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_a7c1394ca81fb2f53940cc9e4f2a9a00c}\label{structZSTD__cwksp_a7c1394ca81fb2f53940cc9e4f2a9a00c}} 
+void $\ast$ {\bfseries init\+Once\+Start}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_a64b34ee7fcf6317ef3daee1f89dd8dc8}\label{structZSTD__cwksp_a64b34ee7fcf6317ef3daee1f89dd8dc8}} 
+BYTE {\bfseries alloc\+Failed}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_a1e78a023a5bd52056393ac6f3f1e80ae}\label{structZSTD__cwksp_a1e78a023a5bd52056393ac6f3f1e80ae}} 
+int {\bfseries workspace\+Oversized\+Duration}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_a73353689bb49ac0d357c3ff3c19e44e6}\label{structZSTD__cwksp_a73353689bb49ac0d357c3ff3c19e44e6}} 
+ZSTD\+\_\+cwksp\+\_\+alloc\+\_\+phase\+\_\+e {\bfseries phase}
+\item 
+\mbox{\Hypertarget{structZSTD__cwksp_afe45ebf762506746035f34ad51346852}\label{structZSTD__cwksp_afe45ebf762506746035f34ad51346852}} 
+\mbox{\hyperlink{zstd_8c_a1df52ae5f2538c70f0db6f9c9377f6c7}{ZSTD\+\_\+cwksp\+\_\+static\+\_\+alloc\+\_\+e}} {\bfseries is\+Static}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Zstd fits all its internal datastructures into a single continuous buffer, so that it only needs to perform a single OS allocation (or so that a buffer can be provided to it and it can perform no allocations at all). This buffer is called the workspace.
+
+Several optimizations complicate that process of allocating memory ranges from this workspace for each internal datastructure\+:
+
+
+\begin{DoxyItemize}
+\item These different internal datastructures have different setup requirements\+:
+\begin{DoxyItemize}
+\item The static objects need to be cleared once and can then be trivially reused for each compression.
+\item Various buffers don\textquotesingle{}t need to be initialized at all--they are always written into before they\textquotesingle{}re read.
+\item The matchstate tables have a unique requirement that they don\textquotesingle{}t need their memory to be totally cleared, but they do need the memory to have some bound, i.\+e., a guarantee that all values in the memory they\textquotesingle{}ve been allocated is less than some maximum value (which is the starting value for the indices that they will then use for compression). When this guarantee is provided to them, they can use the memory without any setup work. When it can\textquotesingle{}t, they have to clear the area.
+\end{DoxyItemize}
+\item These buffers also have different alignment requirements.
+\item We would like to reuse the objects in the workspace for multiple compressions without having to perform any expensive reallocation or reinitialization work.
+\item We would like to be able to efficiently reuse the workspace across multiple compressions {\bfseries{even when the compression parameters change}} and we need to resize some of the objects (where possible).
+\end{DoxyItemize}
+
+To attempt to manage this buffer, given these constraints, the \mbox{\hyperlink{structZSTD__cwksp}{ZSTD\+\_\+cwksp}} abstraction was created. It works as follows\+:
+
+Workspace Layout\+:
+
+\mbox{[} ... workspace ... \mbox{]} \mbox{[}objects\mbox{]}\mbox{[}tables -\/$>$\mbox{]} free space \mbox{[}$<$-\/ buffers\mbox{]}\mbox{[}$<$-\/ aligned\mbox{]}\mbox{[}$<$-\/ init once\mbox{]}
+
+The various objects that live in the workspace are divided into the following categories, and are allocated separately\+:
+
+
+\begin{DoxyItemize}
+\item Static objects\+: this is optionally the enclosing ZSTD\+\_\+\+CCtx or ZSTD\+\_\+\+CDict, so that literally everything fits in a single buffer. Note\+: if present, this must be the first object in the workspace, since ZSTD\+\_\+custom\+Free\{CCtx, CDict\}() rely on a pointer comparison to see whether one or two frees are required.
+\item Fixed size objects\+: these are fixed-\/size, fixed-\/count objects that are nonetheless \char`\"{}dynamically\char`\"{} allocated in the workspace so that we can control how they\textquotesingle{}re initialized separately from the broader ZSTD\+\_\+\+CCtx. Examples\+:
+\begin{DoxyItemize}
+\item Entropy Workspace
+\item 2 x \mbox{\hyperlink{structZSTD__compressedBlockState__t}{ZSTD\+\_\+compressed\+Block\+State\+\_\+t}}
+\item CDict dictionary contents
+\end{DoxyItemize}
+\item Tables\+: these are any of several different datastructures (hash tables, chain tables, binary trees) that all respect a common format\+: they are uint32\+\_\+t arrays, all of whose values are between 0 and (next\+Src -\/ base). Their sizes depend on the cparams. These tables are 64-\/byte aligned.
+\item Init once\+: these buffers require to be initialized at least once before use. They should be used when we want to skip memory initialization while not triggering memory checkers (like Valgrind) when reading from from this memory without writing to it first. These buffers should be used carefully as they might contain data from previous compressions. Buffers are aligned to 64 bytes.
+\item Aligned\+: these buffers don\textquotesingle{}t require any initialization before they\textquotesingle{}re used. The user of the buffer should make sure they write into a buffer location before reading from it. Buffers are aligned to 64 bytes.
+\item Buffers\+: these buffers are used for various purposes that don\textquotesingle{}t require any alignment or initialization before they\textquotesingle{}re used. This means they can be moved around at no cost for a new compression.
+\end{DoxyItemize}
+
+Allocating Memory\+:
+
+The various types of objects must be allocated in order, so they can be correctly packed into the workspace buffer. That order is\+:
+
+
+\begin{DoxyEnumerate}
+\item Objects
+\item Init once / Tables
+\item Aligned / Tables
+\item Buffers / Tables
+\end{DoxyEnumerate}
+
+Attempts to reserve objects of different types out of order will fail. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

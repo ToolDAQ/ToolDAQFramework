@@ -1,0 +1,61 @@
+\hypertarget{structXXH64__state__s}{}\doxysection{XXH64\+\_\+state\+\_\+s Struct Reference}
+\label{structXXH64__state__s}\index{XXH64\_state\_s@{XXH64\_state\_s}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+XXH64\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH64__state__s_af9e2c07ff283799907491063fbde80d5}{total\+\_\+len}}
+\item 
+XXH64\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH64__state__s_a12e49560b44a992dca09b7b46a90b58b}{v}} \mbox{[}4\mbox{]}
+\item 
+XXH64\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH64__state__s_a3c8545036954ddce75900a06622532b0}{mem64}} \mbox{[}4\mbox{]}
+\item 
+XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH64__state__s_a185fd6173814b70df4d76e6f43e6cbdf}{memsize}}
+\item 
+XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH64__state__s_a1aedff2659c5622ad35b22f71928aa08}{reserved32}}
+\item 
+XXH64\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH64__state__s_a8312bc02a62178387f9865ab49222065}{reserved64}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{structXXH64__state__s_a3c8545036954ddce75900a06622532b0}\label{structXXH64__state__s_a3c8545036954ddce75900a06622532b0}} 
+\index{XXH64\_state\_s@{XXH64\_state\_s}!mem64@{mem64}}
+\index{mem64@{mem64}!XXH64\_state\_s@{XXH64\_state\_s}}
+\doxysubsubsection{\texorpdfstring{mem64}{mem64}}
+{\footnotesize\ttfamily XXH64\+\_\+hash\+\_\+t XXH64\+\_\+state\+\_\+s\+::mem64\mbox{[}4\mbox{]}}
+
+Internal buffer for partial reads. Treated as unsigned char\mbox{[}32\mbox{]}. \mbox{\Hypertarget{structXXH64__state__s_a185fd6173814b70df4d76e6f43e6cbdf}\label{structXXH64__state__s_a185fd6173814b70df4d76e6f43e6cbdf}} 
+\index{XXH64\_state\_s@{XXH64\_state\_s}!memsize@{memsize}}
+\index{memsize@{memsize}!XXH64\_state\_s@{XXH64\_state\_s}}
+\doxysubsubsection{\texorpdfstring{memsize}{memsize}}
+{\footnotesize\ttfamily XXH32\+\_\+hash\+\_\+t XXH64\+\_\+state\+\_\+s\+::memsize}
+
+Amount of data in \mbox{\hyperlink{structXXH64__state__s_a3c8545036954ddce75900a06622532b0}{mem64}} \mbox{\Hypertarget{structXXH64__state__s_a1aedff2659c5622ad35b22f71928aa08}\label{structXXH64__state__s_a1aedff2659c5622ad35b22f71928aa08}} 
+\index{XXH64\_state\_s@{XXH64\_state\_s}!reserved32@{reserved32}}
+\index{reserved32@{reserved32}!XXH64\_state\_s@{XXH64\_state\_s}}
+\doxysubsubsection{\texorpdfstring{reserved32}{reserved32}}
+{\footnotesize\ttfamily XXH32\+\_\+hash\+\_\+t XXH64\+\_\+state\+\_\+s\+::reserved32}
+
+Reserved field, needed for padding anyways \mbox{\Hypertarget{structXXH64__state__s_a8312bc02a62178387f9865ab49222065}\label{structXXH64__state__s_a8312bc02a62178387f9865ab49222065}} 
+\index{XXH64\_state\_s@{XXH64\_state\_s}!reserved64@{reserved64}}
+\index{reserved64@{reserved64}!XXH64\_state\_s@{XXH64\_state\_s}}
+\doxysubsubsection{\texorpdfstring{reserved64}{reserved64}}
+{\footnotesize\ttfamily XXH64\+\_\+hash\+\_\+t XXH64\+\_\+state\+\_\+s\+::reserved64}
+
+Reserved field. Do not read or write to it. \mbox{\Hypertarget{structXXH64__state__s_af9e2c07ff283799907491063fbde80d5}\label{structXXH64__state__s_af9e2c07ff283799907491063fbde80d5}} 
+\index{XXH64\_state\_s@{XXH64\_state\_s}!total\_len@{total\_len}}
+\index{total\_len@{total\_len}!XXH64\_state\_s@{XXH64\_state\_s}}
+\doxysubsubsection{\texorpdfstring{total\_len}{total\_len}}
+{\footnotesize\ttfamily XXH64\+\_\+hash\+\_\+t XXH64\+\_\+state\+\_\+s\+::total\+\_\+len}
+
+Total length hashed. This is always 64-\/bit. \mbox{\Hypertarget{structXXH64__state__s_a12e49560b44a992dca09b7b46a90b58b}\label{structXXH64__state__s_a12e49560b44a992dca09b7b46a90b58b}} 
+\index{XXH64\_state\_s@{XXH64\_state\_s}!v@{v}}
+\index{v@{v}!XXH64\_state\_s@{XXH64\_state\_s}}
+\doxysubsubsection{\texorpdfstring{v}{v}}
+{\footnotesize\ttfamily XXH64\+\_\+hash\+\_\+t XXH64\+\_\+state\+\_\+s\+::v\mbox{[}4\mbox{]}}
+
+Accumulator lanes 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

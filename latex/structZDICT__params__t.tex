@@ -1,0 +1,41 @@
+\hypertarget{structZDICT__params__t}{}\doxysection{ZDICT\+\_\+params\+\_\+t Struct Reference}
+\label{structZDICT__params__t}\index{ZDICT\_params\_t@{ZDICT\_params\_t}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{structZDICT__params__t_a5621800404b8a16edfce4a7f97b8be97}{compression\+Level}}
+\item 
+unsigned \mbox{\hyperlink{structZDICT__params__t_ae3478eb07719b3bcc3623d64c7dc039d}{notification\+Level}}
+\item 
+unsigned \mbox{\hyperlink{structZDICT__params__t_ad3cfd3fe5e96eb8b0b589dfefe399991}{dict\+ID}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{structZDICT__params__t_a5621800404b8a16edfce4a7f97b8be97}\label{structZDICT__params__t_a5621800404b8a16edfce4a7f97b8be97}} 
+\index{ZDICT\_params\_t@{ZDICT\_params\_t}!compressionLevel@{compressionLevel}}
+\index{compressionLevel@{compressionLevel}!ZDICT\_params\_t@{ZDICT\_params\_t}}
+\doxysubsubsection{\texorpdfstring{compressionLevel}{compressionLevel}}
+{\footnotesize\ttfamily int ZDICT\+\_\+params\+\_\+t\+::compression\+Level}
+
+optimize for a specific zstd compression level; 0 means default \mbox{\Hypertarget{structZDICT__params__t_ad3cfd3fe5e96eb8b0b589dfefe399991}\label{structZDICT__params__t_ad3cfd3fe5e96eb8b0b589dfefe399991}} 
+\index{ZDICT\_params\_t@{ZDICT\_params\_t}!dictID@{dictID}}
+\index{dictID@{dictID}!ZDICT\_params\_t@{ZDICT\_params\_t}}
+\doxysubsubsection{\texorpdfstring{dictID}{dictID}}
+{\footnotesize\ttfamily unsigned ZDICT\+\_\+params\+\_\+t\+::dict\+ID}
+
+force dict\+ID value; 0 means auto mode (32-\/bits random value) NOTE\+: The zstd format reserves some dictionary IDs for future use. You may use them in private settings, but be warned that they may be used by zstd in a public dictionary registry in the future. These dictionary IDs are\+:
+\begin{DoxyItemize}
+\item low range \+: $<$= 32767
+\item high range \+: $>$= (2$^\wedge$31) 
+\end{DoxyItemize}\mbox{\Hypertarget{structZDICT__params__t_ae3478eb07719b3bcc3623d64c7dc039d}\label{structZDICT__params__t_ae3478eb07719b3bcc3623d64c7dc039d}} 
+\index{ZDICT\_params\_t@{ZDICT\_params\_t}!notificationLevel@{notificationLevel}}
+\index{notificationLevel@{notificationLevel}!ZDICT\_params\_t@{ZDICT\_params\_t}}
+\doxysubsubsection{\texorpdfstring{notificationLevel}{notificationLevel}}
+{\footnotesize\ttfamily unsigned ZDICT\+\_\+params\+\_\+t\+::notification\+Level}
+
+Write log to stderr; 0 = none (default); 1 = errors; 2 = progression; 3 = details; 4 = debug; 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

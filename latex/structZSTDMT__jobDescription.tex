@@ -1,0 +1,67 @@
+\hypertarget{structZSTDMT__jobDescription}{}\doxysection{ZSTDMT\+\_\+job\+Description Struct Reference}
+\label{structZSTDMT__jobDescription}\index{ZSTDMT\_jobDescription@{ZSTDMT\_jobDescription}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_a7850c6279b98d3da0944a2831b1eefc4}\label{structZSTDMT__jobDescription_a7850c6279b98d3da0944a2831b1eefc4}} 
+size\+\_\+t {\bfseries consumed}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_a3d01f1440a21bd640141b952a1cd10d3}\label{structZSTDMT__jobDescription_a3d01f1440a21bd640141b952a1cd10d3}} 
+size\+\_\+t {\bfseries c\+Size}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_ad3d4138510d8a401f2d7e56e47b61e2f}\label{structZSTDMT__jobDescription_ad3d4138510d8a401f2d7e56e47b61e2f}} 
+ZSTD\+\_\+pthread\+\_\+mutex\+\_\+t {\bfseries job\+\_\+mutex}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_aa6e8e2e9202935e46a274c5060919a42}\label{structZSTDMT__jobDescription_aa6e8e2e9202935e46a274c5060919a42}} 
+ZSTD\+\_\+pthread\+\_\+cond\+\_\+t {\bfseries job\+\_\+cond}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_aa3c430c4718b08642c8ed1b3d5ee4deb}\label{structZSTDMT__jobDescription_aa3c430c4718b08642c8ed1b3d5ee4deb}} 
+\mbox{\hyperlink{structZSTDMT__CCtxPool}{ZSTDMT\+\_\+\+CCtx\+Pool}} $\ast$ {\bfseries cctx\+Pool}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_aab2e2d8de7495fc470acf12c18e5ecdf}\label{structZSTDMT__jobDescription_aab2e2d8de7495fc470acf12c18e5ecdf}} 
+\mbox{\hyperlink{structZSTDMT__bufferPool__s}{ZSTDMT\+\_\+buffer\+Pool}} $\ast$ {\bfseries buf\+Pool}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_a388945b41e6567dfe8b58df1126ac6c0}\label{structZSTDMT__jobDescription_a388945b41e6567dfe8b58df1126ac6c0}} 
+\mbox{\hyperlink{structZSTDMT__bufferPool__s}{ZSTDMT\+\_\+seq\+Pool}} $\ast$ {\bfseries seq\+Pool}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_adef400c6808a8a9541df35f70ba9e4a6}\label{structZSTDMT__jobDescription_adef400c6808a8a9541df35f70ba9e4a6}} 
+\mbox{\hyperlink{structSerialState}{Serial\+State}} $\ast$ {\bfseries serial}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_aca53c05b09a4da008fb18c298bcd810a}\label{structZSTDMT__jobDescription_aca53c05b09a4da008fb18c298bcd810a}} 
+\mbox{\hyperlink{structbuffer__s}{Buffer}} {\bfseries dst\+Buff}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_a035162ee65580a9f9f1a90acbc9e4c39}\label{structZSTDMT__jobDescription_a035162ee65580a9f9f1a90acbc9e4c39}} 
+\mbox{\hyperlink{structRange}{Range}} {\bfseries prefix}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_abbae9590fd649e090db48490020b6095}\label{structZSTDMT__jobDescription_abbae9590fd649e090db48490020b6095}} 
+\mbox{\hyperlink{structRange}{Range}} {\bfseries src}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_ae3ee2c937b7276d36e8e7b794b97b2aa}\label{structZSTDMT__jobDescription_ae3ee2c937b7276d36e8e7b794b97b2aa}} 
+unsigned {\bfseries job\+ID}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_ab6dcd4a602780902e6382b1b377ed7cb}\label{structZSTDMT__jobDescription_ab6dcd4a602780902e6382b1b377ed7cb}} 
+unsigned {\bfseries first\+Job}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_a281ada9d19c0f9639fd2ed09548b682f}\label{structZSTDMT__jobDescription_a281ada9d19c0f9639fd2ed09548b682f}} 
+unsigned {\bfseries last\+Job}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_a65444ba13ba599826d37ca0234673c8b}\label{structZSTDMT__jobDescription_a65444ba13ba599826d37ca0234673c8b}} 
+\mbox{\hyperlink{structZSTD__CCtx__params__s}{ZSTD\+\_\+\+CCtx\+\_\+params}} {\bfseries params}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_ac682c3728266a14161e78e36e4c6e901}\label{structZSTDMT__jobDescription_ac682c3728266a14161e78e36e4c6e901}} 
+const \mbox{\hyperlink{structZSTD__CDict__s}{ZSTD\+\_\+\+CDict}} $\ast$ {\bfseries cdict}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_a7e7b95de70b4f2d80513caa435961229}\label{structZSTDMT__jobDescription_a7e7b95de70b4f2d80513caa435961229}} 
+unsigned long long {\bfseries full\+Frame\+Size}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_a3d766c37b68280b0b9943d9f23ed7657}\label{structZSTDMT__jobDescription_a3d766c37b68280b0b9943d9f23ed7657}} 
+size\+\_\+t {\bfseries dst\+Flushed}
+\item 
+\mbox{\Hypertarget{structZSTDMT__jobDescription_a8a8fa8c18f4d07b49dcd0cf5bf78ff55}\label{structZSTDMT__jobDescription_a8a8fa8c18f4d07b49dcd0cf5bf78ff55}} 
+unsigned {\bfseries frame\+Checksum\+Needed}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

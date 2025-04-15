@@ -1,0 +1,26 @@
+\hypertarget{structHUF__compress__tables__t}{}\doxysection{HUF\+\_\+compress\+\_\+tables\+\_\+t Struct Reference}
+\label{structHUF__compress__tables__t}\index{HUF\_compress\_tables\_t@{HUF\_compress\_tables\_t}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structHUF__compress__tables__t_ad9580c2483dc48e960f760544c05679b}\label{structHUF__compress__tables__t_ad9580c2483dc48e960f760544c05679b}} 
+unsigned {\bfseries count} \mbox{[}HUF\+\_\+\+SYMBOLVALUE\+\_\+\+MAX+1\mbox{]}
+\item 
+\mbox{\Hypertarget{structHUF__compress__tables__t_a76d322419c041c7e56b48b43a39b517f}\label{structHUF__compress__tables__t_a76d322419c041c7e56b48b43a39b517f}} 
+HUF\+\_\+\+CElt {\bfseries CTable} \mbox{[}HUF\+\_\+\+CTABLE\+\_\+\+SIZE\+\_\+\+ST(HUF\+\_\+\+SYMBOLVALUE\+\_\+\+MAX)\mbox{]}
+\item 
+\mbox{\Hypertarget{structHUF__compress__tables__t_ac73a04b8b58df411d9dadf37b566e58c}\label{structHUF__compress__tables__t_ac73a04b8b58df411d9dadf37b566e58c}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>\mbox{\hyperlink{structHUF__buildCTable__wksp__tables}{HUF\_buildCTable\_wksp\_tables}} {\bfseries buildCTable\_wksp}\\
+\>\mbox{\hyperlink{structHUF__WriteCTableWksp}{HUF\_WriteCTableWksp}} {\bfseries writeCTable\_wksp}\\
+\>U32 {\bfseries hist\_wksp} \mbox{[}HIST\_WKSP\_SIZE\_U32\mbox{]}\\
+\} {\bfseries wksps}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

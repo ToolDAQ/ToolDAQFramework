@@ -1,0 +1,112 @@
+\hypertarget{group__impl}{}\doxysection{Implementation}
+\label{group__impl}\index{Implementation@{Implementation}}
+\doxysubsection*{Modules}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{group__XXH32__impl}{XXH32 implementation}}
+\item 
+\mbox{\hyperlink{group__XXH64__impl}{XXH64 implementation}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__impl_ga0a8bb8696c17683cef1664f8da952f71}\label{group__impl_ga0a8bb8696c17683cef1664f8da952f71}} 
+\#define {\bfseries XXH\+\_\+\+FORCE\+\_\+\+INLINE}~static
+\item 
+\mbox{\Hypertarget{group__impl_gae4e774da04374ac3c5822e4da03e2b01}\label{group__impl_gae4e774da04374ac3c5822e4da03e2b01}} 
+\#define {\bfseries XXH\+\_\+\+NO\+\_\+\+INLINE}~static
+\item 
+\mbox{\Hypertarget{group__impl_ga0d35fde640dac7fa87754ba31a115399}\label{group__impl_ga0d35fde640dac7fa87754ba31a115399}} 
+\#define {\bfseries XXH3\+\_\+\+WITH\+\_\+\+SECRET\+\_\+\+INLINE}~XXH\+\_\+\+FORCE\+\_\+\+INLINE
+\item 
+\mbox{\Hypertarget{group__impl_gad5a20151ce2dee0b963dd81f3f5bf42b}\label{group__impl_gad5a20151ce2dee0b963dd81f3f5bf42b}} 
+\#define {\bfseries XXH\+\_\+\+ASSERT}(c)~XXH\+\_\+\+ASSUME(c)
+\item 
+\mbox{\Hypertarget{group__impl_ga76ef6efddd1a03df01bd94642409a27d}\label{group__impl_ga76ef6efddd1a03df01bd94642409a27d}} 
+\#define {\bfseries XXH\+\_\+\+STATIC\+\_\+\+ASSERT\+\_\+\+WITH\+\_\+\+MESSAGE}(c,  m)~do \{ struct xxh\+\_\+sa \{ char x\mbox{[}(c) ? 1 \+: -\/1\mbox{]}; \}; \} while(0)
+\item 
+\mbox{\Hypertarget{group__impl_ga3bc33577f47cf99f8b35a52d87c642c4}\label{group__impl_ga3bc33577f47cf99f8b35a52d87c642c4}} 
+\#define {\bfseries XXH\+\_\+\+STATIC\+\_\+\+ASSERT}(c)~XXH\+\_\+\+STATIC\+\_\+\+ASSERT\+\_\+\+WITH\+\_\+\+MESSAGE((c),\#c)
+\item 
+\mbox{\Hypertarget{group__impl_gae6925393fb5122b81f1be774e5925658}\label{group__impl_gae6925393fb5122b81f1be774e5925658}} 
+\#define {\bfseries XXH\+\_\+\+COMPILER\+\_\+\+GUARD}(var)~((void)0)
+\item 
+\mbox{\Hypertarget{group__impl_gaf87e473cf48d93cec7aa88dff1651e15}\label{group__impl_gaf87e473cf48d93cec7aa88dff1651e15}} 
+\#define {\bfseries XXH\+\_\+\+COMPILER\+\_\+\+GUARD\+\_\+\+CLANG\+\_\+\+NEON}(var)~((void)0)
+\item 
+\mbox{\Hypertarget{group__impl_ga65078327d35a1656a9850f490c95cb69}\label{group__impl_ga65078327d35a1656a9850f490c95cb69}} 
+\#define {\bfseries XXH\+\_\+\+GCC\+\_\+\+VERSION}~(\+\_\+\+\_\+\+GNUC\+\_\+\+\_\+ $\ast$ 100 + \+\_\+\+\_\+\+GNUC\+\_\+\+MINOR\+\_\+\+\_\+)
+\item 
+\mbox{\Hypertarget{group__impl_ga82cd67d6de6f76518d2ecf9f64baa53f}\label{group__impl_ga82cd67d6de6f76518d2ecf9f64baa53f}} 
+\#define {\bfseries XXH\+\_\+\+HAS\+\_\+\+BUILTIN}(x)~\+\_\+\+\_\+has\+\_\+builtin(x)
+\item 
+\mbox{\Hypertarget{group__impl_ga0da95b9cd6b3cbe83149ec2602a2cbbe}\label{group__impl_ga0da95b9cd6b3cbe83149ec2602a2cbbe}} 
+\#define {\bfseries XXH\+\_\+\+UNREACHABLE}()
+\item 
+\mbox{\Hypertarget{group__impl_ga19febf6e29ba22bbdb86f5fe7d84d450}\label{group__impl_ga19febf6e29ba22bbdb86f5fe7d84d450}} 
+\#define {\bfseries XXH\+\_\+\+ASSUME}(c)~if (!(c)) \{ XXH\+\_\+\+UNREACHABLE(); \}
+\item 
+\mbox{\Hypertarget{group__impl_ga70a4b202f9523a2a811da16cde3f52eb}\label{group__impl_ga70a4b202f9523a2a811da16cde3f52eb}} 
+\#define {\bfseries XXH\+\_\+rotl32}(x,  r)~(((x) $<$$<$ (r)) $\vert$ ((x) $>$$>$ (32 -\/ (r))))
+\item 
+\mbox{\Hypertarget{group__impl_ga056473e50ab5e7acb43d00ca3d41632e}\label{group__impl_ga056473e50ab5e7acb43d00ca3d41632e}} 
+\#define {\bfseries XXH\+\_\+rotl64}(x,  r)~(((x) $<$$<$ (r)) $\vert$ ((x) $>$$>$ (64 -\/ (r))))
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__impl_ga123c2a5e40e80541988c2277799f922d}\label{group__impl_ga123c2a5e40e80541988c2277799f922d}} 
+typedef unsigned char {\bfseries xxh\+\_\+u8}
+\item 
+\mbox{\Hypertarget{group__impl_ga0c32ec5f4e0a062ea510d53ed009beb9}\label{group__impl_ga0c32ec5f4e0a062ea510d53ed009beb9}} 
+typedef XXH32\+\_\+hash\+\_\+t {\bfseries xxh\+\_\+u32}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{group__impl_gadec56fccd4f83e34902b6b09ecccfff5}{XXH\+\_\+alignment}} \{ \mbox{\hyperlink{group__impl_ggadec56fccd4f83e34902b6b09ecccfff5a41340c9f33fe739cef7a1c56dc617194}{XXH\+\_\+aligned}}
+, \mbox{\hyperlink{group__impl_ggadec56fccd4f83e34902b6b09ecccfff5ab082c14fd7eef12bcb1dfda2e813586f}{XXH\+\_\+unaligned}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__impl_ga147dcfc03a43fa8cb851d9390c690aa7}\label{group__impl_ga147dcfc03a43fa8cb851d9390c690aa7}} 
+XXH\+\_\+\+FORCE\+\_\+\+INLINE xxh\+\_\+u32 {\bfseries XXH\+\_\+read\+LE32} (const void $\ast$ptr)
+\item 
+\mbox{\Hypertarget{group__impl_ga2279f0253f2fa64e95f3ed43f5b81e77}\label{group__impl_ga2279f0253f2fa64e95f3ed43f5b81e77}} 
+XXH\+\_\+\+FORCE\+\_\+\+INLINE xxh\+\_\+u32 {\bfseries XXH\+\_\+read\+LE32\+\_\+align} (const void $\ast$ptr, \mbox{\hyperlink{group__impl_gadec56fccd4f83e34902b6b09ecccfff5}{XXH\+\_\+alignment}} align)
+\end{DoxyCompactItemize}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__impl_ga7e6127b51e114eb1f745a89f2702a473}\label{group__impl_ga7e6127b51e114eb1f745a89f2702a473}} 
+typedef XXH64\+\_\+hash\+\_\+t {\bfseries xxh\+\_\+u64}
+\item 
+\mbox{\Hypertarget{group__impl_ga7828b4ef2238269aa530beaebecffc69}\label{group__impl_ga7828b4ef2238269aa530beaebecffc69}} 
+XXH\+\_\+\+FORCE\+\_\+\+INLINE xxh\+\_\+u64 {\bfseries XXH\+\_\+read\+LE64} (const void $\ast$ptr)
+\item 
+\mbox{\Hypertarget{group__impl_ga58d225972687c3d087ffcceb116e856d}\label{group__impl_ga58d225972687c3d087ffcceb116e856d}} 
+XXH\+\_\+\+FORCE\+\_\+\+INLINE xxh\+\_\+u64 {\bfseries XXH\+\_\+read\+LE64\+\_\+align} (const void $\ast$ptr, \mbox{\hyperlink{group__impl_gadec56fccd4f83e34902b6b09ecccfff5}{XXH\+\_\+alignment}} align)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{group__impl_gadec56fccd4f83e34902b6b09ecccfff5}\label{group__impl_gadec56fccd4f83e34902b6b09ecccfff5}} 
+\index{Implementation@{Implementation}!XXH\_alignment@{XXH\_alignment}}
+\index{XXH\_alignment@{XXH\_alignment}!Implementation@{Implementation}}
+\doxysubsubsection{\texorpdfstring{XXH\_alignment}{XXH\_alignment}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{group__impl_gadec56fccd4f83e34902b6b09ecccfff5}{XXH\+\_\+alignment}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{XXH\_aligned@{XXH\_aligned}!Implementation@{Implementation}}\index{Implementation@{Implementation}!XXH\_aligned@{XXH\_aligned}}}\mbox{\Hypertarget{group__impl_ggadec56fccd4f83e34902b6b09ecccfff5a41340c9f33fe739cef7a1c56dc617194}\label{group__impl_ggadec56fccd4f83e34902b6b09ecccfff5a41340c9f33fe739cef7a1c56dc617194}} 
+XXH\+\_\+aligned&Aligned \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{XXH\_unaligned@{XXH\_unaligned}!Implementation@{Implementation}}\index{Implementation@{Implementation}!XXH\_unaligned@{XXH\_unaligned}}}\mbox{\Hypertarget{group__impl_ggadec56fccd4f83e34902b6b09ecccfff5ab082c14fd7eef12bcb1dfda2e813586f}\label{group__impl_ggadec56fccd4f83e34902b6b09ecccfff5ab082c14fd7eef12bcb1dfda2e813586f}} 
+XXH\+\_\+unaligned&Possibly unaligned \\
+\hline
+
+\end{DoxyEnumFields}

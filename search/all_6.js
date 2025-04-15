@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['get_20',['Get',['../classToolFramework_1_1BoostStore.html#add09c27d79069dfeea39246a83f4867f',1,'ToolFramework::BoostStore::Get(std::string name, T &amp;out)'],['../classToolFramework_1_1BoostStore.html#a47ea2f69c6405b1d8aea85f4a306a898',1,'ToolFramework::BoostStore::Get(std::string name, T *&amp;out)']]],
-  ['getentry_21',['GetEntry',['../classToolFramework_1_1BoostStore.html#ac2b2fd2169368f715d6d158140d69f0a',1,'ToolFramework::BoostStore']]]
+  ['estats_5fress_5ft_78',['EStats_ress_t',['../structEStats__ress__t.html',1,'']]],
+  ['estimatedblocksize_79',['EstimatedBlockSize',['../structEstimatedBlockSize.html',1,'']]],
+  ['execute_80',['Execute',['../classDummyTool.html#ac107b31f1785c1cc803e0e65be548047',1,'DummyTool::Execute()'],['../classLogger.html#a140ebede2975159a5abe7c59e56ec0ec',1,'Logger::Execute()'],['../classServiceAdd.html#a4908df063074b02e73e589d9f07998ac',1,'ServiceAdd::Execute()'],['../classMyToolServiceAdd.html#a876f8dac7b415b064d09687abac8e296',1,'MyToolServiceAdd::Execute()'],['../classMyToolZMQMultiThread.html#a15dea77298aa4c4b0e8a5cbbd244df28',1,'MyToolZMQMultiThread::Execute()']]]
 ];

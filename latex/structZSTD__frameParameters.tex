@@ -1,0 +1,37 @@
+\hypertarget{structZSTD__frameParameters}{}\doxysection{ZSTD\+\_\+frame\+Parameters Struct Reference}
+\label{structZSTD__frameParameters}\index{ZSTD\_frameParameters@{ZSTD\_frameParameters}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{structZSTD__frameParameters_ad71a9f9441b219a375f85a9c229c4d22}{content\+Size\+Flag}}
+\item 
+int \mbox{\hyperlink{structZSTD__frameParameters_ad395c61ff3c79ef6e2a682620964d179}{checksum\+Flag}}
+\item 
+int \mbox{\hyperlink{structZSTD__frameParameters_a13fff04eb1d6370947f8feadc1825dd5}{no\+Dict\+IDFlag}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{structZSTD__frameParameters_ad395c61ff3c79ef6e2a682620964d179}\label{structZSTD__frameParameters_ad395c61ff3c79ef6e2a682620964d179}} 
+\index{ZSTD\_frameParameters@{ZSTD\_frameParameters}!checksumFlag@{checksumFlag}}
+\index{checksumFlag@{checksumFlag}!ZSTD\_frameParameters@{ZSTD\_frameParameters}}
+\doxysubsubsection{\texorpdfstring{checksumFlag}{checksumFlag}}
+{\footnotesize\ttfamily int ZSTD\+\_\+frame\+Parameters\+::checksum\+Flag}
+
+1\+: generate a 32-\/bits checksum using XXH64 algorithm at end of frame, for error detection \mbox{\Hypertarget{structZSTD__frameParameters_ad71a9f9441b219a375f85a9c229c4d22}\label{structZSTD__frameParameters_ad71a9f9441b219a375f85a9c229c4d22}} 
+\index{ZSTD\_frameParameters@{ZSTD\_frameParameters}!contentSizeFlag@{contentSizeFlag}}
+\index{contentSizeFlag@{contentSizeFlag}!ZSTD\_frameParameters@{ZSTD\_frameParameters}}
+\doxysubsubsection{\texorpdfstring{contentSizeFlag}{contentSizeFlag}}
+{\footnotesize\ttfamily int ZSTD\+\_\+frame\+Parameters\+::content\+Size\+Flag}
+
+1\+: content size will be in frame header (when known) \mbox{\Hypertarget{structZSTD__frameParameters_a13fff04eb1d6370947f8feadc1825dd5}\label{structZSTD__frameParameters_a13fff04eb1d6370947f8feadc1825dd5}} 
+\index{ZSTD\_frameParameters@{ZSTD\_frameParameters}!noDictIDFlag@{noDictIDFlag}}
+\index{noDictIDFlag@{noDictIDFlag}!ZSTD\_frameParameters@{ZSTD\_frameParameters}}
+\doxysubsubsection{\texorpdfstring{noDictIDFlag}{noDictIDFlag}}
+{\footnotesize\ttfamily int ZSTD\+\_\+frame\+Parameters\+::no\+Dict\+IDFlag}
+
+1\+: no dict\+ID will be saved into frame header (dict\+ID is only useful for dictionary compression) 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

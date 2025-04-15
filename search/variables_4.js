@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['log_5faddress_160',['log_address',['../structToolFramework_1_1DAQLogging__thread__args.html#ade5f66691c6d92c980215461319a9148',1,'ToolFramework::DAQLogging_thread_args']]],
-  ['log_5fport_161',['log_port',['../structToolFramework_1_1DAQLogging__thread__args.html#ab1f548a3a40c17c06088cae5bbe799d4',1,'ToolFramework::DAQLogging_thread_args']]]
+  ['kicksec_1144',['kicksec',['../structToolFramework_1_1thread__args.html#ac4dc02dd61b3d2a80808a7614f24d403',1,'ToolFramework::thread_args']]]
 ];

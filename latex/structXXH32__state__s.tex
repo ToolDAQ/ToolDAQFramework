@@ -1,0 +1,61 @@
+\hypertarget{structXXH32__state__s}{}\doxysection{XXH32\+\_\+state\+\_\+s Struct Reference}
+\label{structXXH32__state__s}\index{XXH32\_state\_s@{XXH32\_state\_s}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH32__state__s_a483391d07919dedaa835f67672328c61}{total\+\_\+len\+\_\+32}}
+\item 
+XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH32__state__s_a8f94809f2917da200c5a2bc2fa04926c}{large\+\_\+len}}
+\item 
+XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH32__state__s_a944125849e55eaa1a61175eebe2e3b7e}{v}} \mbox{[}4\mbox{]}
+\item 
+XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH32__state__s_a7674c2142113a6bbe2a6a0414961860b}{mem32}} \mbox{[}4\mbox{]}
+\item 
+XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH32__state__s_a1fd0b124c0572080ae03a8b8b69189bd}{memsize}}
+\item 
+XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{structXXH32__state__s_aa14a64f7deb1efaf6ad0c89ba6b5e92a}{reserved}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{structXXH32__state__s_a8f94809f2917da200c5a2bc2fa04926c}\label{structXXH32__state__s_a8f94809f2917da200c5a2bc2fa04926c}} 
+\index{XXH32\_state\_s@{XXH32\_state\_s}!large\_len@{large\_len}}
+\index{large\_len@{large\_len}!XXH32\_state\_s@{XXH32\_state\_s}}
+\doxysubsubsection{\texorpdfstring{large\_len}{large\_len}}
+{\footnotesize\ttfamily XXH32\+\_\+hash\+\_\+t XXH32\+\_\+state\+\_\+s\+::large\+\_\+len}
+
+Whether the hash is $>$= 16 (handles \mbox{\hyperlink{structXXH32__state__s_a483391d07919dedaa835f67672328c61}{total\+\_\+len\+\_\+32}} overflow) \mbox{\Hypertarget{structXXH32__state__s_a7674c2142113a6bbe2a6a0414961860b}\label{structXXH32__state__s_a7674c2142113a6bbe2a6a0414961860b}} 
+\index{XXH32\_state\_s@{XXH32\_state\_s}!mem32@{mem32}}
+\index{mem32@{mem32}!XXH32\_state\_s@{XXH32\_state\_s}}
+\doxysubsubsection{\texorpdfstring{mem32}{mem32}}
+{\footnotesize\ttfamily XXH32\+\_\+hash\+\_\+t XXH32\+\_\+state\+\_\+s\+::mem32\mbox{[}4\mbox{]}}
+
+Internal buffer for partial reads. Treated as unsigned char\mbox{[}16\mbox{]}. \mbox{\Hypertarget{structXXH32__state__s_a1fd0b124c0572080ae03a8b8b69189bd}\label{structXXH32__state__s_a1fd0b124c0572080ae03a8b8b69189bd}} 
+\index{XXH32\_state\_s@{XXH32\_state\_s}!memsize@{memsize}}
+\index{memsize@{memsize}!XXH32\_state\_s@{XXH32\_state\_s}}
+\doxysubsubsection{\texorpdfstring{memsize}{memsize}}
+{\footnotesize\ttfamily XXH32\+\_\+hash\+\_\+t XXH32\+\_\+state\+\_\+s\+::memsize}
+
+Amount of data in \mbox{\hyperlink{structXXH32__state__s_a7674c2142113a6bbe2a6a0414961860b}{mem32}} \mbox{\Hypertarget{structXXH32__state__s_aa14a64f7deb1efaf6ad0c89ba6b5e92a}\label{structXXH32__state__s_aa14a64f7deb1efaf6ad0c89ba6b5e92a}} 
+\index{XXH32\_state\_s@{XXH32\_state\_s}!reserved@{reserved}}
+\index{reserved@{reserved}!XXH32\_state\_s@{XXH32\_state\_s}}
+\doxysubsubsection{\texorpdfstring{reserved}{reserved}}
+{\footnotesize\ttfamily XXH32\+\_\+hash\+\_\+t XXH32\+\_\+state\+\_\+s\+::reserved}
+
+Reserved field. Do not read nor write to it. \mbox{\Hypertarget{structXXH32__state__s_a483391d07919dedaa835f67672328c61}\label{structXXH32__state__s_a483391d07919dedaa835f67672328c61}} 
+\index{XXH32\_state\_s@{XXH32\_state\_s}!total\_len\_32@{total\_len\_32}}
+\index{total\_len\_32@{total\_len\_32}!XXH32\_state\_s@{XXH32\_state\_s}}
+\doxysubsubsection{\texorpdfstring{total\_len\_32}{total\_len\_32}}
+{\footnotesize\ttfamily XXH32\+\_\+hash\+\_\+t XXH32\+\_\+state\+\_\+s\+::total\+\_\+len\+\_\+32}
+
+Total length hashed, modulo 2$^\wedge$32 \mbox{\Hypertarget{structXXH32__state__s_a944125849e55eaa1a61175eebe2e3b7e}\label{structXXH32__state__s_a944125849e55eaa1a61175eebe2e3b7e}} 
+\index{XXH32\_state\_s@{XXH32\_state\_s}!v@{v}}
+\index{v@{v}!XXH32\_state\_s@{XXH32\_state\_s}}
+\doxysubsubsection{\texorpdfstring{v}{v}}
+{\footnotesize\ttfamily XXH32\+\_\+hash\+\_\+t XXH32\+\_\+state\+\_\+s\+::v\mbox{[}4\mbox{]}}
+
+Accumulator lanes 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

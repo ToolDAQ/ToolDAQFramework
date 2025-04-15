@@ -1,0 +1,289 @@
+\hypertarget{group__XXH32__family}{}\doxysection{XXH32 family}
+\label{group__XXH32__family}\index{XXH32 family@{XXH32 family}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Canonical (big endian) representation of XXH32\+\_\+hash\+\_\+t. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{group__XXH32__family_ga51931b4d4f02a6d818aaa6a258e8c076}{XXH32\+\_\+create\+State}}(void)~XXH\+\_\+\+NAME2(XXH\+\_\+\+NAMESPACE, XXH32\+\_\+create\+State)
+\begin{DoxyCompactList}\small\item\em Allocates an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}}. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}}~XXH\+\_\+\+IPREF(\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}})
+\begin{DoxyCompactList}\small\item\em The opaque state struct for the XXH32 streaming API. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__XXH32__family_ga0048f07d4a3051c20598464f007aa6c5}\label{group__XXH32__family_ga0048f07d4a3051c20598464f007aa6c5}} 
+typedef struct \mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+s}} {\bfseries XXH32\+\_\+state\+\_\+t}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+\+PUREF XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{group__XXH32__family_ga015574d10965c31792507a6446bddd0f}{XXH32}} (const void $\ast$input, size\+\_\+t length, XXH32\+\_\+hash\+\_\+t seed)
+\begin{DoxyCompactList}\small\item\em Calculates the 32-\/bit hash of {\ttfamily input} using xx\+Hash32. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode \mbox{\hyperlink{group__XXH32__family_gaab2c0ec5dbb1b738d3f58aa3fc640243}{XXH32\+\_\+free\+State}} (\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$state\+Ptr)
+\begin{DoxyCompactList}\small\item\em Frees an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}}. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API void \mbox{\hyperlink{group__XXH32__family_ga9354b1d57d79b128917ba28c1ca8230e}{XXH32\+\_\+copy\+State}} (\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$dst\+\_\+state, const \mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$src\+\_\+state)
+\begin{DoxyCompactList}\small\item\em Copies one \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}} to another. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode \mbox{\hyperlink{group__XXH32__family_ga817d5e6ae49b78747e5af15e5cc88b2b}{XXH32\+\_\+reset}} (\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$state\+Ptr, XXH32\+\_\+hash\+\_\+t seed)
+\begin{DoxyCompactList}\small\item\em Resets an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}} to begin a new hash. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode \mbox{\hyperlink{group__XXH32__family_gaacc2e89656b7b7184279c2d621594afa}{XXH32\+\_\+update}} (\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$state\+Ptr, const void $\ast$input, size\+\_\+t length)
+\begin{DoxyCompactList}\small\item\em Consumes a block of {\ttfamily input} to an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}}. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+\+PUREF XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{group__XXH32__family_ga2d5f5298193818366420a8f25e3ee46e}{XXH32\+\_\+digest}} (const \mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$state\+Ptr)
+\begin{DoxyCompactList}\small\item\em Returns the calculated hash value from an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}}. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API void \mbox{\hyperlink{group__XXH32__family_gade47204bc3908fdc401a68e9c295e233}{XXH32\+\_\+canonical\+From\+Hash}} (\mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}} $\ast$dst, XXH32\+\_\+hash\+\_\+t hash)
+\begin{DoxyCompactList}\small\item\em Converts an XXH32\+\_\+hash\+\_\+t to a big endian \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}}. \end{DoxyCompactList}\item 
+XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+\+PUREF XXH32\+\_\+hash\+\_\+t \mbox{\hyperlink{group__XXH32__family_ga206cac74a0c149b244d3532186a4930f}{XXH32\+\_\+hash\+From\+Canonical}} (const \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}} $\ast$src)
+\begin{DoxyCompactList}\small\item\em Converts an \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}} to a native XXH32\+\_\+hash\+\_\+t. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Contains functions used in the classic 32-\/bit xx\+Hash algorithm.
+
+\begin{DoxyNote}{Note}
+XXH32 is useful for older platforms, with no or poor 64-\/bit performance. Note that the XXH3\+\_\+family provides competitive speed for both 32-\/bit and 64-\/bit systems, and offers true 64/128 bit hash results.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{group__XXH64__family}{XXH64 family}}, XXH3\+\_\+family \+: Other xx\+Hash families 
+
+\mbox{\hyperlink{group__XXH32__impl}{XXH32 implementation}} for implementation details 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{group__XXH32__family_ga51931b4d4f02a6d818aaa6a258e8c076}\label{group__XXH32__family_ga51931b4d4f02a6d818aaa6a258e8c076}} 
+\index{XXH32 family@{XXH32 family}!XXH32\_createState@{XXH32\_createState}}
+\index{XXH32\_createState@{XXH32\_createState}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32\_createState}{XXH32\_createState}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API \mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$ XXH32\+\_\+create\+State(\begin{DoxyParamCaption}\item[{}]{void }\end{DoxyParamCaption})~XXH\+\_\+\+NAME2(XXH\+\_\+\+NAMESPACE, XXH32\+\_\+create\+State)}
+
+
+
+Allocates an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}}. 
+
+\begin{DoxyReturn}{Returns}
+An allocated pointer of \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}} on success. 
+
+{\ttfamily NULL} on failure.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Must be freed with \mbox{\hyperlink{group__XXH32__family_gaab2c0ec5dbb1b738d3f58aa3fc640243}{XXH32\+\_\+free\+State()}}. 
+\end{DoxyNote}
+\mbox{\Hypertarget{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}\label{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}} 
+\index{XXH32 family@{XXH32 family}!XXH32\_state\_t@{XXH32\_state\_t}}
+\index{XXH32\_state\_t@{XXH32\_state\_t}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32\_state\_t}{XXH32\_state\_t}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+s}} \mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}}~XXH\+\_\+\+IPREF(\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}})}
+
+
+
+The opaque state struct for the XXH32 streaming API. 
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+s}} for details. 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{group__XXH32__family_ga015574d10965c31792507a6446bddd0f}\label{group__XXH32__family_ga015574d10965c31792507a6446bddd0f}} 
+\index{XXH32 family@{XXH32 family}!XXH32@{XXH32}}
+\index{XXH32@{XXH32}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32()}{XXH32()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH32\+\_\+hash\+\_\+t XXH32 (\begin{DoxyParamCaption}\item[{const void $\ast$}]{input,  }\item[{size\+\_\+t}]{length,  }\item[{XXH32\+\_\+hash\+\_\+t}]{seed }\end{DoxyParamCaption})}
+
+
+
+Calculates the 32-\/bit hash of {\ttfamily input} using xx\+Hash32. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The block of data to be hashed, at least {\ttfamily length} bytes in size. \\
+\hline
+{\em length} & The length of {\ttfamily input}, in bytes. \\
+\hline
+{\em seed} & The 32-\/bit seed to alter the hash\textquotesingle{}s output predictably.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+The memory between {\ttfamily input} and {\ttfamily input} + {\ttfamily length} must be valid, readable, contiguous memory. However, if {\ttfamily length} is {\ttfamily 0}, {\ttfamily input} may be {\ttfamily NULL}. In C++, this also must be {\itshape Trivially\+Copyable}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+The calculated 32-\/bit xx\+Hash32 value.
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{index_single_shot_example}{Single Shot Example}} for an example. 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__XXH32__family_gade47204bc3908fdc401a68e9c295e233}\label{group__XXH32__family_gade47204bc3908fdc401a68e9c295e233}} 
+\index{XXH32 family@{XXH32 family}!XXH32\_canonicalFromHash@{XXH32\_canonicalFromHash}}
+\index{XXH32\_canonicalFromHash@{XXH32\_canonicalFromHash}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32\_canonicalFromHash()}{XXH32\_canonicalFromHash()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API void XXH32\+\_\+canonical\+From\+Hash (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}} $\ast$}]{dst,  }\item[{XXH32\+\_\+hash\+\_\+t}]{hash }\end{DoxyParamCaption})}
+
+
+
+Converts an XXH32\+\_\+hash\+\_\+t to a big endian \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dst} & The \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}} pointer to be stored to. \\
+\hline
+{\em hash} & The XXH32\+\_\+hash\+\_\+t to be converted.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily dst} must not be {\ttfamily NULL}.
+\end{DoxyPrecond}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{index_canonical_representation_example}{Canonical Representation Example}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__XXH32__family_ga9354b1d57d79b128917ba28c1ca8230e}\label{group__XXH32__family_ga9354b1d57d79b128917ba28c1ca8230e}} 
+\index{XXH32 family@{XXH32 family}!XXH32\_copyState@{XXH32\_copyState}}
+\index{XXH32\_copyState@{XXH32\_copyState}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32\_copyState()}{XXH32\_copyState()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API void XXH32\+\_\+copy\+State (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$}]{dst\+\_\+state,  }\item[{const \mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$}]{src\+\_\+state }\end{DoxyParamCaption})}
+
+
+
+Copies one \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}} to another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dst\+\_\+state} & The state to copy to. \\
+\hline
+{\em src\+\_\+state} & The state to copy from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily dst\+\_\+state} and {\ttfamily src\+\_\+state} must not be {\ttfamily NULL} and must not overlap. 
+\end{DoxyPrecond}
+\mbox{\Hypertarget{group__XXH32__family_ga2d5f5298193818366420a8f25e3ee46e}\label{group__XXH32__family_ga2d5f5298193818366420a8f25e3ee46e}} 
+\index{XXH32 family@{XXH32 family}!XXH32\_digest@{XXH32\_digest}}
+\index{XXH32\_digest@{XXH32\_digest}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32\_digest()}{XXH32\_digest()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH32\+\_\+hash\+\_\+t XXH32\+\_\+digest (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$}]{state\+Ptr }\end{DoxyParamCaption})}
+
+
+
+Returns the calculated hash value from an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state\+Ptr} & The state struct to calculate the hash from.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily state\+Ptr} must not be {\ttfamily NULL}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+The calculated 32-\/bit xx\+Hash32 value from that state.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Calling \mbox{\hyperlink{group__XXH32__family_ga2d5f5298193818366420a8f25e3ee46e}{XXH32\+\_\+digest()}} will not affect {\ttfamily state\+Ptr}, so you can update, digest, and update again. 
+\end{DoxyNote}
+\mbox{\Hypertarget{group__XXH32__family_gaab2c0ec5dbb1b738d3f58aa3fc640243}\label{group__XXH32__family_gaab2c0ec5dbb1b738d3f58aa3fc640243}} 
+\index{XXH32 family@{XXH32 family}!XXH32\_freeState@{XXH32\_freeState}}
+\index{XXH32\_freeState@{XXH32\_freeState}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32\_freeState()}{XXH32\_freeState()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode XXH32\+\_\+free\+State (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$}]{state\+Ptr }\end{DoxyParamCaption})}
+
+
+
+Frees an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state\+Ptr} & A pointer to an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}} allocated with \mbox{\hyperlink{group__XXH32__family_ga51931b4d4f02a6d818aaa6a258e8c076}{XXH32\+\_\+create\+State()}}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+XXH\+\_\+\+OK.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+{\ttfamily state\+Ptr} must be allocated with \mbox{\hyperlink{group__XXH32__family_ga51931b4d4f02a6d818aaa6a258e8c076}{XXH32\+\_\+create\+State()}}. 
+\end{DoxyNote}
+\mbox{\Hypertarget{group__XXH32__family_ga206cac74a0c149b244d3532186a4930f}\label{group__XXH32__family_ga206cac74a0c149b244d3532186a4930f}} 
+\index{XXH32 family@{XXH32 family}!XXH32\_hashFromCanonical@{XXH32\_hashFromCanonical}}
+\index{XXH32\_hashFromCanonical@{XXH32\_hashFromCanonical}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32\_hashFromCanonical()}{XXH32\_hashFromCanonical()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH32\+\_\+hash\+\_\+t XXH32\+\_\+hash\+From\+Canonical (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}} $\ast$}]{src }\end{DoxyParamCaption})}
+
+
+
+Converts an \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}} to a native XXH32\+\_\+hash\+\_\+t. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & The \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\+\_\+canonical\+\_\+t}} to convert.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily src} must not be {\ttfamily NULL}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+The converted hash.
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{index_canonical_representation_example}{Canonical Representation Example}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__XXH32__family_ga817d5e6ae49b78747e5af15e5cc88b2b}\label{group__XXH32__family_ga817d5e6ae49b78747e5af15e5cc88b2b}} 
+\index{XXH32 family@{XXH32 family}!XXH32\_reset@{XXH32\_reset}}
+\index{XXH32\_reset@{XXH32\_reset}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32\_reset()}{XXH32\_reset()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode XXH32\+\_\+reset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$}]{state\+Ptr,  }\item[{XXH32\+\_\+hash\+\_\+t}]{seed }\end{DoxyParamCaption})}
+
+
+
+Resets an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}} to begin a new hash. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state\+Ptr} & The state struct to reset. \\
+\hline
+{\em seed} & The 32-\/bit seed to alter the hash result predictably.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily state\+Ptr} must not be {\ttfamily NULL}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+XXH\+\_\+\+OK on success. 
+
+XXH\+\_\+\+ERROR on failure.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+This function resets and seeds a state. Call it before \mbox{\hyperlink{group__XXH32__family_gaacc2e89656b7b7184279c2d621594afa}{XXH32\+\_\+update()}}. 
+\end{DoxyNote}
+\mbox{\Hypertarget{group__XXH32__family_gaacc2e89656b7b7184279c2d621594afa}\label{group__XXH32__family_gaacc2e89656b7b7184279c2d621594afa}} 
+\index{XXH32 family@{XXH32 family}!XXH32\_update@{XXH32\_update}}
+\index{XXH32\_update@{XXH32\_update}!XXH32 family@{XXH32 family}}
+\doxysubsubsection{\texorpdfstring{XXH32\_update()}{XXH32\_update()}}
+{\footnotesize\ttfamily XXH\+\_\+\+PUBLIC\+\_\+\+API XXH\+\_\+errorcode XXH32\+\_\+update (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structXXH32__state__s}{XXH32\+\_\+state\+\_\+t}} $\ast$}]{state\+Ptr,  }\item[{const void $\ast$}]{input,  }\item[{size\+\_\+t}]{length }\end{DoxyParamCaption})}
+
+
+
+Consumes a block of {\ttfamily input} to an \mbox{\hyperlink{group__XXH32__family_ga0c18948935999c41f3f3cb74db83e51e}{XXH32\+\_\+state\+\_\+t}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state\+Ptr} & The state struct to update. \\
+\hline
+{\em input} & The block of data to be hashed, at least {\ttfamily length} bytes in size. \\
+\hline
+{\em length} & The length of {\ttfamily input}, in bytes.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyPrecond}{Precondition}
+{\ttfamily state\+Ptr} must not be {\ttfamily NULL}. 
+
+The memory between {\ttfamily input} and {\ttfamily input} + {\ttfamily length} must be valid, readable, contiguous memory. However, if {\ttfamily length} is {\ttfamily 0}, {\ttfamily input} may be {\ttfamily NULL}. In C++, this also must be {\itshape Trivially\+Copyable}.
+\end{DoxyPrecond}
+\begin{DoxyReturn}{Returns}
+XXH\+\_\+\+OK on success. 
+
+XXH\+\_\+\+ERROR on failure.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Call this to incrementally consume blocks of data. 
+\end{DoxyNote}

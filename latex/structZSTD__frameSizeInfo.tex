@@ -1,0 +1,22 @@
+\hypertarget{structZSTD__frameSizeInfo}{}\doxysection{ZSTD\+\_\+frame\+Size\+Info Struct Reference}
+\label{structZSTD__frameSizeInfo}\index{ZSTD\_frameSizeInfo@{ZSTD\_frameSizeInfo}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structZSTD__frameSizeInfo_a8bcea3ba6ac0c07c54fb11ca2ff977cd}\label{structZSTD__frameSizeInfo_a8bcea3ba6ac0c07c54fb11ca2ff977cd}} 
+size\+\_\+t {\bfseries nb\+Blocks}
+\item 
+\mbox{\Hypertarget{structZSTD__frameSizeInfo_a97712a287b5212fc3e842d268eecab07}\label{structZSTD__frameSizeInfo_a97712a287b5212fc3e842d268eecab07}} 
+size\+\_\+t {\bfseries compressed\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__frameSizeInfo_ae7a3cc54bf928fcb829ebb8fba85cc37}\label{structZSTD__frameSizeInfo_ae7a3cc54bf928fcb829ebb8fba85cc37}} 
+unsigned long long {\bfseries decompressed\+Bound}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Contains the compressed frame size and an upper-\/bound for the decompressed frame size. Note\+: before using {\ttfamily compressed\+Size}, check for errors using \mbox{\hyperlink{zstd_8c_abbd9d17bd95d6109c21f92c569e32fd3}{ZSTD\+\_\+is\+Error()}}. similarly, before using {\ttfamily decompressed\+Bound}, check for errors using\+: {\ttfamily decompressed\+Bound != ZSTD\+\_\+\+CONTENTSIZE\+\_\+\+ERROR} 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}

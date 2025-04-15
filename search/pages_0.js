@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['configure_20files_174',['Configure files',['../md_configfiles_README.html',1,'(Global Namespace)'],['../md_configfiles_template_README.html',1,'(Global Namespace)']]]
+  ['1_29_23define_20zstd_5fstatic_5flinking_5fonly_23define_20fse_5fstatic_5flinking_5fonly_23define_20xxh_5fstatic_5flinking_5fonly_23define_20xxh_5fno_5fxxh3xxhash_1262',['1)#define ZSTD_STATIC_LINKING_ONLY#define FSE_STATIC_LINKING_ONLY#define XXH_STATIC_LINKING_ONLY#define XXH_NO_XXH3xxHash',['../index.html',1,'']]]
 ];

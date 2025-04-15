@@ -1,0 +1,199 @@
+xx\+Hash is an extremely fast non-\/cryptographic hash algorithm, working at RAM speed limits.
+
+It is proposed in four flavors, in three families\+:
+\begin{DoxyEnumerate}
+\item \mbox{\hyperlink{group__XXH32__family}{XXH32 family}}
+\begin{DoxyItemize}
+\item Classic 32-\/bit hash function. Simple, compact, and runs on almost all 32-\/bit and 64-\/bit systems.
+\end{DoxyItemize}
+\item \mbox{\hyperlink{group__XXH64__family}{XXH64 family}}
+\begin{DoxyItemize}
+\item Classic 64-\/bit adaptation of XXH32. Just as simple, and runs well on most 64-\/bit systems (but {\itshape not} 32-\/bit systems).
+\end{DoxyItemize}
+\item XXH3\+\_\+family
+\begin{DoxyItemize}
+\item Modern 64-\/bit and 128-\/bit hash function family which features improved strength and performance across the board, especially on smaller data. It benefits greatly from SIMD and 64-\/bit without requiring it.
+\end{DoxyItemize}
+\end{DoxyEnumerate}\hypertarget{index_autotoc_md7}{}\doxysubsection{Benchmarks}\label{index_autotoc_md7}
+The reference system uses an Intel i7-\/9700K CPU, and runs Ubuntu x64 20.\+04. The open source benchmark program is compiled with clang v10.\+0 using -\/O3 flag.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{5}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Hash Name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ ISA ext   }&\PBS\raggedleft \cellcolor{\tableheadbgcolor}\textbf{ Width   }&\PBS\raggedleft \cellcolor{\tableheadbgcolor}\textbf{ Large Data Speed   }&\PBS\raggedleft \cellcolor{\tableheadbgcolor}\textbf{ Small Data Velocity    }\\\cline{1-5}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Hash Name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ ISA ext   }&\PBS\raggedleft \cellcolor{\tableheadbgcolor}\textbf{ Width   }&\PBS\raggedleft \cellcolor{\tableheadbgcolor}\textbf{ Large Data Speed   }&\PBS\raggedleft \cellcolor{\tableheadbgcolor}\textbf{ Small Data Velocity    }\\\cline{1-5}
+\endhead
+XXH3\+\_\+64bits()   &{\bfseries{AVX2}}   &\PBS\raggedleft 64   &\PBS\raggedleft 59.\+4 GB/s   &\PBS\raggedleft 133.\+1    \\\cline{1-5}
+Meow\+Hash   &AES-\/\+NI   &\PBS\raggedleft 128   &\PBS\raggedleft 58.\+2 GB/s   &\PBS\raggedleft 52.\+5    \\\cline{1-5}
+XXH3\+\_\+128bits()   &{\bfseries{AVX2}}   &\PBS\raggedleft 128   &\PBS\raggedleft 57.\+9 GB/s   &\PBS\raggedleft 118.\+1    \\\cline{1-5}
+CLHash   &PCLMUL   &\PBS\raggedleft 64   &\PBS\raggedleft 37.\+1 GB/s   &\PBS\raggedleft 58.\+1    \\\cline{1-5}
+XXH3\+\_\+64bits()   &{\bfseries{SSE2}}   &\PBS\raggedleft 64   &\PBS\raggedleft 31.\+5 GB/s   &\PBS\raggedleft 133.\+1    \\\cline{1-5}
+XXH3\+\_\+128bits()   &{\bfseries{SSE2}}   &\PBS\raggedleft 128   &\PBS\raggedleft 29.\+6 GB/s   &\PBS\raggedleft 118.\+1    \\\cline{1-5}
+RAM sequential read   &&\PBS\raggedleft N/A   &\PBS\raggedleft 28.\+0 GB/s   &\PBS\raggedleft N/A    \\\cline{1-5}
+ahash   &AES-\/\+NI   &\PBS\raggedleft 64   &\PBS\raggedleft 22.\+5 GB/s   &\PBS\raggedleft 107.\+2    \\\cline{1-5}
+City64   &&\PBS\raggedleft 64   &\PBS\raggedleft 22.\+0 GB/s   &\PBS\raggedleft 76.\+6    \\\cline{1-5}
+T1ha2   &&\PBS\raggedleft 64   &\PBS\raggedleft 22.\+0 GB/s   &\PBS\raggedleft 99.\+0    \\\cline{1-5}
+City128   &&\PBS\raggedleft 128   &\PBS\raggedleft 21.\+7 GB/s   &\PBS\raggedleft 57.\+7    \\\cline{1-5}
+Farm\+Hash   &AES-\/\+NI   &\PBS\raggedleft 64   &\PBS\raggedleft 21.\+3 GB/s   &\PBS\raggedleft 71.\+9    \\\cline{1-5}
+\mbox{\hyperlink{group__XXH64__family_ga1e9837cb71877781b9d5c9f942fcf923}{XXH64()}}   &&\PBS\raggedleft 64   &\PBS\raggedleft 19.\+4 GB/s   &\PBS\raggedleft 71.\+0    \\\cline{1-5}
+Spooky\+Hash   &&\PBS\raggedleft 64   &\PBS\raggedleft 19.\+3 GB/s   &\PBS\raggedleft 53.\+2    \\\cline{1-5}
+Mum   &&\PBS\raggedleft 64   &\PBS\raggedleft 18.\+0 GB/s   &\PBS\raggedleft 67.\+0    \\\cline{1-5}
+CRC32C   &SSE4.\+2   &\PBS\raggedleft 32   &\PBS\raggedleft 13.\+0 GB/s   &\PBS\raggedleft 57.\+9    \\\cline{1-5}
+\mbox{\hyperlink{group__XXH32__family_ga015574d10965c31792507a6446bddd0f}{XXH32()}}   &&\PBS\raggedleft 32   &\PBS\raggedleft 9.\+7 GB/s   &\PBS\raggedleft 71.\+9    \\\cline{1-5}
+City32   &&\PBS\raggedleft 32   &\PBS\raggedleft 9.\+1 GB/s   &\PBS\raggedleft 66.\+0    \\\cline{1-5}
+Blake3$\ast$   &{\bfseries{AVX2}}   &\PBS\raggedleft 256   &\PBS\raggedleft 4.\+4 GB/s   &\PBS\raggedleft 8.\+1    \\\cline{1-5}
+Murmur3   &&\PBS\raggedleft 32   &\PBS\raggedleft 3.\+9 GB/s   &\PBS\raggedleft 56.\+1    \\\cline{1-5}
+Sip\+Hash$\ast$   &&\PBS\raggedleft 64   &\PBS\raggedleft 3.\+0 GB/s   &\PBS\raggedleft 43.\+2    \\\cline{1-5}
+Blake3$\ast$   &{\bfseries{SSE2}}   &\PBS\raggedleft 256   &\PBS\raggedleft 2.\+4 GB/s   &\PBS\raggedleft 8.\+1    \\\cline{1-5}
+Highway\+Hash   &&\PBS\raggedleft 64   &\PBS\raggedleft 1.\+4 GB/s   &\PBS\raggedleft 6.\+0    \\\cline{1-5}
+FNV64   &&\PBS\raggedleft 64   &\PBS\raggedleft 1.\+2 GB/s   &\PBS\raggedleft 62.\+7    \\\cline{1-5}
+Blake2$\ast$   &&\PBS\raggedleft 256   &\PBS\raggedleft 1.\+1 GB/s   &\PBS\raggedleft 5.\+1    \\\cline{1-5}
+SHA1$\ast$   &&\PBS\raggedleft 160   &\PBS\raggedleft 0.\+8 GB/s   &\PBS\raggedleft 5.\+6    \\\cline{1-5}
+MD5$\ast$   &&\PBS\raggedleft 128   &\PBS\raggedleft 0.\+6 GB/s   &\PBS\raggedleft 7.\+8   \\\cline{1-5}
+\end{longtabu}
+\begin{DoxyNote}{Note}
+
+\begin{DoxyItemize}
+\item Hashes which require a specific ISA extension are noted. SSE2 is also noted, even though it is mandatory on x64.
+\item Hashes with an asterisk are cryptographic. Note that MD5 is non-\/cryptographic by modern standards.
+\item Small data velocity is a rough average of algorithm\textquotesingle{}s efficiency for small data. For more accurate information, see the wiki.
+\item More benchmarks and strength tests are found on the wiki\+: \href{https://github.com/Cyan4973/xxHash/wiki}{\texttt{ https\+://github.\+com/\+Cyan4973/xx\+Hash/wiki}}
+\end{DoxyItemize}
+\end{DoxyNote}
+\hypertarget{index_autotoc_md8}{}\doxysubsection{Usage}\label{index_autotoc_md8}
+All xx\+Hash variants use a similar API. Changing the algorithm is a trivial substitution.
+
+\begin{DoxyPrecond}{Precondition}
+For functions which take an input and length parameter, the following requirements are assumed\+:
+\begin{DoxyItemize}
+\item The range from \mbox{[}{\ttfamily input}, {\ttfamily input + length}) is valid, readable memory.
+\begin{DoxyItemize}
+\item The only exception is if the {\ttfamily length} is {\ttfamily 0}, {\ttfamily input} may be {\ttfamily NULL}.
+\end{DoxyItemize}
+\item For C++, the objects must have the {\itshape Trivially\+Copyable} property, as the functions access bytes directly as if it was an array of {\ttfamily unsigned char}.
+\end{DoxyItemize}
+\end{DoxyPrecond}
+\label{index_single_shot_example}%
+\Hypertarget{index_single_shot_example}%
+{\bfseries{Single Shot}}
+
+These functions are stateless functions which hash a contiguous block of memory, immediately returning the result. They are the easiest and usually the fastest option.
+
+\mbox{\hyperlink{group__XXH32__family_ga015574d10965c31792507a6446bddd0f}{XXH32()}}, \mbox{\hyperlink{group__XXH64__family_ga1e9837cb71877781b9d5c9f942fcf923}{XXH64()}}, XXH3\+\_\+64bits(), XXH3\+\_\+128bits()
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <string.h>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}xxhash.h"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Example for a function which hashes a null terminated string with XXH32().}}
+\DoxyCodeLine{XXH32\_hash\_t hash\_string(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* \textcolor{keywordtype}{string}, XXH32\_hash\_t seed)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \textcolor{comment}{// NULL pointers are only valid if the length is zero}}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} length = (\textcolor{keywordtype}{string} == NULL) ? 0 : strlen(\textcolor{keywordtype}{string});}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} \mbox{\hyperlink{group__XXH32__family_ga015574d10965c31792507a6446bddd0f}{XXH32}}(\textcolor{keywordtype}{string}, length, seed);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\label{index_streaming_example}%
+\Hypertarget{index_streaming_example}%
+{\bfseries{Streaming}}
+
+These groups of functions allow incremental hashing of unknown size, even more than what would fit in a size\+\_\+t.
+
+\mbox{\hyperlink{group__XXH32__family_ga817d5e6ae49b78747e5af15e5cc88b2b}{XXH32\+\_\+reset()}}, \mbox{\hyperlink{group__XXH64__family_ga3d9aebe63b2d4687808385c70460de1a}{XXH64\+\_\+reset()}}, XXH3\+\_\+64bits\+\_\+reset(), XXH3\+\_\+128bits\+\_\+reset()
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <stdio.h>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <assert.h>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}xxhash.h"{}}}
+\DoxyCodeLine{\textcolor{comment}{// Example for a function which hashes a FILE incrementally with XXH3\_64bits().}}
+\DoxyCodeLine{XXH64\_hash\_t hashFile(FILE* f)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \textcolor{comment}{// Allocate a state struct. Do not just use malloc() or new.}}
+\DoxyCodeLine{    XXH3\_state\_t* state = XXH3\_createState();}
+\DoxyCodeLine{    assert(state != NULL \&\& \textcolor{stringliteral}{"{}Out of memory!"{}});}
+\DoxyCodeLine{    \textcolor{comment}{// Reset the state to start a new hashing session.}}
+\DoxyCodeLine{    XXH3\_64bits\_reset(state);}
+\DoxyCodeLine{    \textcolor{keywordtype}{char} buffer[4096];}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} count;}
+\DoxyCodeLine{    \textcolor{comment}{// Read the file in chunks}}
+\DoxyCodeLine{    \textcolor{keywordflow}{while} ((count = fread(buffer, 1, \textcolor{keyword}{sizeof}(buffer), f)) != 0) \{}
+\DoxyCodeLine{        \textcolor{comment}{// Run update() as many times as necessary to process the data}}
+\DoxyCodeLine{        XXH3\_64bits\_update(state, buffer, count);}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    \textcolor{comment}{// Retrieve the finalized hash. This will not change the state.}}
+\DoxyCodeLine{    XXH64\_hash\_t result = XXH3\_64bits\_digest(state);}
+\DoxyCodeLine{    \textcolor{comment}{// Free the state. Do not use free().}}
+\DoxyCodeLine{    XXH3\_freeState(state);}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} result;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Streaming functions generate the xx\+Hash value from an incremental input. This method is slower than single-\/call functions, due to state management. For small inputs, prefer {\ttfamily \mbox{\hyperlink{group__XXH32__family_ga015574d10965c31792507a6446bddd0f}{XXH32()}}} and {\ttfamily \mbox{\hyperlink{group__XXH64__family_ga1e9837cb71877781b9d5c9f942fcf923}{XXH64()}}}, which are better optimized.
+
+An XXH state must first be allocated using {\ttfamily XXH$\ast$\+\_\+create\+State()}.
+
+Start a new hash by initializing the state with a seed using {\ttfamily XXH$\ast$\+\_\+reset()}.
+
+Then, feed the hash state by calling {\ttfamily XXH$\ast$\+\_\+update()} as many times as necessary.
+
+The function returns an error code, with 0 meaning OK, and any other value meaning there is an error.
+
+Finally, a hash value can be produced anytime, by using {\ttfamily XXH$\ast$\+\_\+digest()}. This function returns the nn-\/bits hash as an int or long long.
+
+It\textquotesingle{}s still possible to continue inserting input into the hash state after a digest, and generate new hash values later on by invoking {\ttfamily XXH$\ast$\+\_\+digest()}.
+
+When done, release the state using {\ttfamily XXH$\ast$\+\_\+free\+State()}.
+
+\label{index_canonical_representation_example}%
+\Hypertarget{index_canonical_representation_example}%
+{\bfseries{Canonical Representation}}
+
+The default return values from XXH functions are unsigned 32, 64 and 128 bit integers. This the simplest and fastest format for further post-\/processing.
+
+However, this leaves open the question of what is the order on the byte level, since little and big endian conventions will store the same number differently.
+
+The canonical representation settles this issue by mandating big-\/endian convention, the same convention as human-\/readable numbers (large digits first).
+
+When writing hash values to storage, sending them over a network, or printing them, it\textquotesingle{}s highly recommended to use the canonical representation to ensure portability across a wider range of systems, present and future.
+
+The following functions allow transformation of hash values to and from canonical format.
+
+\mbox{\hyperlink{group__XXH32__family_gade47204bc3908fdc401a68e9c295e233}{XXH32\+\_\+canonical\+From\+Hash()}}, \mbox{\hyperlink{group__XXH32__family_ga206cac74a0c149b244d3532186a4930f}{XXH32\+\_\+hash\+From\+Canonical()}}, \mbox{\hyperlink{group__XXH64__family_ga5ad28aa4810c34a5e439077feb4fd32b}{XXH64\+\_\+canonical\+From\+Hash()}}, \mbox{\hyperlink{group__XXH64__family_ga22cd9a932467a6ea2396a8496f57ddf9}{XXH64\+\_\+hash\+From\+Canonical()}}, XXH128\+\_\+canonical\+From\+Hash(), XXH128\+\_\+hash\+From\+Canonical(),
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <stdio.h>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}xxhash.h"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Example for a function which prints XXH32\_hash\_t in human readable format}}
+\DoxyCodeLine{\textcolor{keywordtype}{void} printXxh32(XXH32\_hash\_t hash)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \mbox{\hyperlink{structXXH32__canonical__t}{XXH32\_canonical\_t}} cano;}
+\DoxyCodeLine{    \mbox{\hyperlink{group__XXH32__family_gade47204bc3908fdc401a68e9c295e233}{XXH32\_canonicalFromHash}}(\&cano, hash);}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} i;}
+\DoxyCodeLine{    \textcolor{keywordflow}{for}(i = 0; i < \textcolor{keyword}{sizeof}(cano.\mbox{\hyperlink{structXXH32__canonical__t_a85a83578344a5dd1c7a6cc0472230f30}{digest}}); ++i) \{}
+\DoxyCodeLine{        printf(\textcolor{stringliteral}{"{}\%02x"{}}, cano.\mbox{\hyperlink{structXXH32__canonical__t_a85a83578344a5dd1c7a6cc0472230f30}{digest}}[i]);}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Example for a function which converts XXH32\_canonical\_t to XXH32\_hash\_t}}
+\DoxyCodeLine{XXH32\_hash\_t convertCanonicalToXxh32(\mbox{\hyperlink{structXXH32__canonical__t}{XXH32\_canonical\_t}} cano)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    XXH32\_hash\_t hash = \mbox{\hyperlink{group__XXH32__family_ga206cac74a0c149b244d3532186a4930f}{XXH32\_hashFromCanonical}}(\&cano);}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} hash;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 

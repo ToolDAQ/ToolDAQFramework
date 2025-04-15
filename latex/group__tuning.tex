@@ -1,0 +1,46 @@
+\hypertarget{group__tuning}{}\doxysection{Tuning parameters}
+\label{group__tuning}\index{Tuning parameters@{Tuning parameters}}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{group__tuning_ga574ceb8ab088243cb0dc833b28320eb5}{XXH\+\_\+\+DEBUGLEVEL}}~DEBUGLEVEL
+\begin{DoxyCompactList}\small\item\em Sets the debugging level. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{group__tuning_ga408fac02658eb4a81f7a1877f1ca3b3f}{XXH\+\_\+\+CPU\+\_\+\+LITTLE\+\_\+\+ENDIAN}}~XXH\+\_\+is\+Little\+Endian()
+\begin{DoxyCompactList}\small\item\em Whether the target is little endian. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Various macros to control xx\+Hash\textquotesingle{}s behavior. 
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{group__tuning_ga408fac02658eb4a81f7a1877f1ca3b3f}\label{group__tuning_ga408fac02658eb4a81f7a1877f1ca3b3f}} 
+\index{Tuning parameters@{Tuning parameters}!XXH\_CPU\_LITTLE\_ENDIAN@{XXH\_CPU\_LITTLE\_ENDIAN}}
+\index{XXH\_CPU\_LITTLE\_ENDIAN@{XXH\_CPU\_LITTLE\_ENDIAN}!Tuning parameters@{Tuning parameters}}
+\doxysubsubsection{\texorpdfstring{XXH\_CPU\_LITTLE\_ENDIAN}{XXH\_CPU\_LITTLE\_ENDIAN}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+CPU\+\_\+\+LITTLE\+\_\+\+ENDIAN~XXH\+\_\+is\+Little\+Endian()}
+
+
+
+Whether the target is little endian. 
+
+Defined to 1 if the target is little endian, or 0 if it is big endian. It can be defined externally, for example on the compiler command line.
+
+If it is not defined, a runtime check (which is usually constant folded) is used instead.
+
+\begin{DoxyNote}{Note}
+This is not necessarily defined to an integer constant.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+XXH\+\_\+is\+Little\+Endian() for the runtime check. 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__tuning_ga574ceb8ab088243cb0dc833b28320eb5}\label{group__tuning_ga574ceb8ab088243cb0dc833b28320eb5}} 
+\index{Tuning parameters@{Tuning parameters}!XXH\_DEBUGLEVEL@{XXH\_DEBUGLEVEL}}
+\index{XXH\_DEBUGLEVEL@{XXH\_DEBUGLEVEL}!Tuning parameters@{Tuning parameters}}
+\doxysubsubsection{\texorpdfstring{XXH\_DEBUGLEVEL}{XXH\_DEBUGLEVEL}}
+{\footnotesize\ttfamily \#define XXH\+\_\+\+DEBUGLEVEL~DEBUGLEVEL}
+
+
+
+Sets the debugging level. 
+
+XXH\+\_\+\+DEBUGLEVEL is expected to be defined externally, typically via the compiler\textquotesingle{}s command line options. The value must be a number. 

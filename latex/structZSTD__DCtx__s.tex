@@ -1,0 +1,184 @@
+\hypertarget{structZSTD__DCtx__s}{}\doxysection{ZSTD\+\_\+\+DCtx\+\_\+s Struct Reference}
+\label{structZSTD__DCtx__s}\index{ZSTD\_DCtx\_s@{ZSTD\_DCtx\_s}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_ae937eb4fe1b8af2fdc475bf5938a0f58}\label{structZSTD__DCtx__s_ae937eb4fe1b8af2fdc475bf5938a0f58}} 
+const \mbox{\hyperlink{structZSTD__seqSymbol}{ZSTD\+\_\+seq\+Symbol}} $\ast$ {\bfseries LLTptr}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a82b421fe9631d6c1f28b11b5c768e40a}\label{structZSTD__DCtx__s_a82b421fe9631d6c1f28b11b5c768e40a}} 
+const \mbox{\hyperlink{structZSTD__seqSymbol}{ZSTD\+\_\+seq\+Symbol}} $\ast$ {\bfseries MLTptr}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a9fd0f438cf6f7ba021796e42e5303c91}\label{structZSTD__DCtx__s_a9fd0f438cf6f7ba021796e42e5303c91}} 
+const \mbox{\hyperlink{structZSTD__seqSymbol}{ZSTD\+\_\+seq\+Symbol}} $\ast$ {\bfseries OFTptr}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a1115b689e40a05a54ceb32053606c97e}\label{structZSTD__DCtx__s_a1115b689e40a05a54ceb32053606c97e}} 
+const HUF\+\_\+\+DTable $\ast$ {\bfseries HUFptr}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_aa435d61b40927373a124eca2ff3b44c5}\label{structZSTD__DCtx__s_aa435d61b40927373a124eca2ff3b44c5}} 
+\mbox{\hyperlink{structZSTD__entropyDTables__t}{ZSTD\+\_\+entropy\+DTables\+\_\+t}} {\bfseries entropy}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a71a9e35715a77e8dc56a0d0c56e04559}\label{structZSTD__DCtx__s_a71a9e35715a77e8dc56a0d0c56e04559}} 
+U32 {\bfseries workspace} \mbox{[}HUF\+\_\+\+DECOMPRESS\+\_\+\+WORKSPACE\+\_\+\+SIZE\+\_\+\+U32\mbox{]}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_ac008c5f336a4c34352093f06d4fd8ed4}\label{structZSTD__DCtx__s_ac008c5f336a4c34352093f06d4fd8ed4}} 
+const void $\ast$ {\bfseries previous\+Dst\+End}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_aa310aea1286df0c399635338dd0ed56e}\label{structZSTD__DCtx__s_aa310aea1286df0c399635338dd0ed56e}} 
+const void $\ast$ {\bfseries prefix\+Start}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a9f34e6512bdd10d67bf2d9c608d2e05d}\label{structZSTD__DCtx__s_a9f34e6512bdd10d67bf2d9c608d2e05d}} 
+const void $\ast$ {\bfseries virtual\+Start}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a936d8dca89313f0ed32746f67c9f741d}\label{structZSTD__DCtx__s_a936d8dca89313f0ed32746f67c9f741d}} 
+const void $\ast$ {\bfseries dict\+End}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a75d498877e641bc89aa07949813bf43f}\label{structZSTD__DCtx__s_a75d498877e641bc89aa07949813bf43f}} 
+size\+\_\+t {\bfseries expected}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a9d1bbc57db56ed115a04d96cc934b037}\label{structZSTD__DCtx__s_a9d1bbc57db56ed115a04d96cc934b037}} 
+\mbox{\hyperlink{structZSTD__FrameHeader}{ZSTD\+\_\+\+Frame\+Header}} {\bfseries f\+Params}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a42d9750277a1a94ff85589eeea9142f3}\label{structZSTD__DCtx__s_a42d9750277a1a94ff85589eeea9142f3}} 
+U64 {\bfseries processed\+CSize}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a9048b5bc78d31f6bb0601af9b6d97297}\label{structZSTD__DCtx__s_a9048b5bc78d31f6bb0601af9b6d97297}} 
+U64 {\bfseries decoded\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a4f6aa6168a65f99b54135ce2c6de2a7a}\label{structZSTD__DCtx__s_a4f6aa6168a65f99b54135ce2c6de2a7a}} 
+block\+Type\+\_\+e {\bfseries b\+Type}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a5aa837de70150924189eddb21d296790}\label{structZSTD__DCtx__s_a5aa837de70150924189eddb21d296790}} 
+ZSTD\+\_\+d\+Stage {\bfseries stage}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a8a9509fae4f907088203c48966a44808}\label{structZSTD__DCtx__s_a8a9509fae4f907088203c48966a44808}} 
+U32 {\bfseries lit\+Entropy}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_af9e57a409287687202f70598555da32e}\label{structZSTD__DCtx__s_af9e57a409287687202f70598555da32e}} 
+U32 {\bfseries fse\+Entropy}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a8a3c0f90dfbb5e5285d206743566b8de}\label{structZSTD__DCtx__s_a8a3c0f90dfbb5e5285d206743566b8de}} 
+\mbox{\hyperlink{group__XXH64__family_ga0702bdbc80b0cf9e94f2379f7d839b8c}{XXH64\+\_\+state\+\_\+t}} {\bfseries xxh\+State}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_ad58897f11c884246dea49ee1e7fe8aee}\label{structZSTD__DCtx__s_ad58897f11c884246dea49ee1e7fe8aee}} 
+size\+\_\+t {\bfseries header\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_ababfbe0d8347c132ba1cdab1361cff55}\label{structZSTD__DCtx__s_ababfbe0d8347c132ba1cdab1361cff55}} 
+ZSTD\+\_\+format\+\_\+e {\bfseries format}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_afc89ea133d9efb6e962bb6ad6098af72}\label{structZSTD__DCtx__s_afc89ea133d9efb6e962bb6ad6098af72}} 
+ZSTD\+\_\+force\+Ignore\+Checksum\+\_\+e {\bfseries force\+Ignore\+Checksum}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_aadf1858e27d5becd13bd5e104619cc04}\label{structZSTD__DCtx__s_aadf1858e27d5becd13bd5e104619cc04}} 
+U32 {\bfseries validate\+Checksum}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_ad0cf2316fc102ab473d1ffe46392f3bd}\label{structZSTD__DCtx__s_ad0cf2316fc102ab473d1ffe46392f3bd}} 
+const BYTE $\ast$ {\bfseries lit\+Ptr}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a8ecd67f512efa5e5ad8d9afb2994cfa3}\label{structZSTD__DCtx__s_a8ecd67f512efa5e5ad8d9afb2994cfa3}} 
+\mbox{\hyperlink{structZSTD__customMem}{ZSTD\+\_\+custom\+Mem}} {\bfseries custom\+Mem}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a840acd1d251a2c6bac01f9f862dd3ffd}\label{structZSTD__DCtx__s_a840acd1d251a2c6bac01f9f862dd3ffd}} 
+size\+\_\+t {\bfseries lit\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a8da3a850f2d073cef78bdee67a846ece}\label{structZSTD__DCtx__s_a8da3a850f2d073cef78bdee67a846ece}} 
+size\+\_\+t {\bfseries rle\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a42a5ebe3f94dfdc66920102ec95fba83}\label{structZSTD__DCtx__s_a42a5ebe3f94dfdc66920102ec95fba83}} 
+size\+\_\+t {\bfseries static\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_aa88530d6efe3bec8a4831831a033468e}\label{structZSTD__DCtx__s_aa88530d6efe3bec8a4831831a033468e}} 
+int {\bfseries is\+Frame\+Decompression}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a0b0f3d6e8a1705e35d0ec82b3563cadc}\label{structZSTD__DCtx__s_a0b0f3d6e8a1705e35d0ec82b3563cadc}} 
+\mbox{\hyperlink{structZSTD__DDict__s}{ZSTD\+\_\+\+DDict}} $\ast$ {\bfseries ddict\+Local}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a8760a0c9be2b8d5f36e7158acd30c937}\label{structZSTD__DCtx__s_a8760a0c9be2b8d5f36e7158acd30c937}} 
+const \mbox{\hyperlink{structZSTD__DDict__s}{ZSTD\+\_\+\+DDict}} $\ast$ {\bfseries ddict}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_ab7e522ec9b8f45a631d81e2e2bbcc596}\label{structZSTD__DCtx__s_ab7e522ec9b8f45a631d81e2e2bbcc596}} 
+U32 {\bfseries dict\+ID}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_aa8a41764b97f2f83c2736b2ab9766e8a}\label{structZSTD__DCtx__s_aa8a41764b97f2f83c2736b2ab9766e8a}} 
+int {\bfseries ddict\+Is\+Cold}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a96246734118cb32368fb1d46dda7396d}\label{structZSTD__DCtx__s_a96246734118cb32368fb1d46dda7396d}} 
+ZSTD\+\_\+dict\+Uses\+\_\+e {\bfseries dict\+Uses}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a2019f93aba9e1d71391f23f5b3f5b352}\label{structZSTD__DCtx__s_a2019f93aba9e1d71391f23f5b3f5b352}} 
+\mbox{\hyperlink{structZSTD__DDictHashSet}{ZSTD\+\_\+\+DDict\+Hash\+Set}} $\ast$ {\bfseries ddict\+Set}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a0f011607e65c6cd33ada92a661399ee2}\label{structZSTD__DCtx__s_a0f011607e65c6cd33ada92a661399ee2}} 
+ZSTD\+\_\+ref\+Multiple\+DDicts\+\_\+e {\bfseries ref\+Multiple\+DDicts}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a19446a28d6c60cdd7be42b256093f1e4}\label{structZSTD__DCtx__s_a19446a28d6c60cdd7be42b256093f1e4}} 
+int {\bfseries disable\+Huf\+Asm}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a2d4308fa9b18fb2df6a2fb5773ab2a9f}\label{structZSTD__DCtx__s_a2d4308fa9b18fb2df6a2fb5773ab2a9f}} 
+int {\bfseries max\+Block\+Size\+Param}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a17d65e99dc87bae7ed46aacb823f1e4d}\label{structZSTD__DCtx__s_a17d65e99dc87bae7ed46aacb823f1e4d}} 
+ZSTD\+\_\+d\+Stream\+Stage {\bfseries stream\+Stage}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a25e8de46fa280fc21e854545f4e48cba}\label{structZSTD__DCtx__s_a25e8de46fa280fc21e854545f4e48cba}} 
+char $\ast$ {\bfseries in\+Buff}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a35c771c6adabe08d0c798bd25f156c4b}\label{structZSTD__DCtx__s_a35c771c6adabe08d0c798bd25f156c4b}} 
+size\+\_\+t {\bfseries in\+Buff\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a3e8e95b2b8d649f1254e64f722bc95b5}\label{structZSTD__DCtx__s_a3e8e95b2b8d649f1254e64f722bc95b5}} 
+size\+\_\+t {\bfseries in\+Pos}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a073ffb8b5e22f890fb56de58233c70a9}\label{structZSTD__DCtx__s_a073ffb8b5e22f890fb56de58233c70a9}} 
+size\+\_\+t {\bfseries max\+Window\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a555c0dfce2630d47827e65399993c29e}\label{structZSTD__DCtx__s_a555c0dfce2630d47827e65399993c29e}} 
+char $\ast$ {\bfseries out\+Buff}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a169389add9d94610ee473e4d372c93cb}\label{structZSTD__DCtx__s_a169389add9d94610ee473e4d372c93cb}} 
+size\+\_\+t {\bfseries out\+Buff\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a7cb085ca57516b4c6b1ed0f66342658d}\label{structZSTD__DCtx__s_a7cb085ca57516b4c6b1ed0f66342658d}} 
+size\+\_\+t {\bfseries out\+Start}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a45fc9493ca211b2361e0df7b25f86c2e}\label{structZSTD__DCtx__s_a45fc9493ca211b2361e0df7b25f86c2e}} 
+size\+\_\+t {\bfseries out\+End}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a21272d81a13ccfe0f24c2c95eb3c258e}\label{structZSTD__DCtx__s_a21272d81a13ccfe0f24c2c95eb3c258e}} 
+size\+\_\+t {\bfseries lh\+Size}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a5816d05296b0dce3eaf5d45031d80104}\label{structZSTD__DCtx__s_a5816d05296b0dce3eaf5d45031d80104}} 
+U32 {\bfseries hostage\+Byte}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a9e9599c79fd2c07118df425c124952c9}\label{structZSTD__DCtx__s_a9e9599c79fd2c07118df425c124952c9}} 
+int {\bfseries no\+Forward\+Progress}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_aab386e498a4f1ae88cabdc8351ca4806}\label{structZSTD__DCtx__s_aab386e498a4f1ae88cabdc8351ca4806}} 
+ZSTD\+\_\+buffer\+Mode\+\_\+e {\bfseries out\+Buffer\+Mode}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_ab5020c2e35ec492da46c85227d04549c}\label{structZSTD__DCtx__s_ab5020c2e35ec492da46c85227d04549c}} 
+\mbox{\hyperlink{structZSTD__outBuffer__s}{ZSTD\+\_\+out\+Buffer}} {\bfseries expected\+Out\+Buffer}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_aed18f68624d0091ac71f845acaaafef9}\label{structZSTD__DCtx__s_aed18f68624d0091ac71f845acaaafef9}} 
+BYTE $\ast$ {\bfseries lit\+Buffer}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a0c4308225c7bee47a5d88926f1c8a9fe}\label{structZSTD__DCtx__s_a0c4308225c7bee47a5d88926f1c8a9fe}} 
+const BYTE $\ast$ {\bfseries lit\+Buffer\+End}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a8101dcb068f0b00fd3ade7543f8a9243}\label{structZSTD__DCtx__s_a8101dcb068f0b00fd3ade7543f8a9243}} 
+ZSTD\+\_\+lit\+Location\+\_\+e {\bfseries lit\+Buffer\+Location}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_a0dae77a1c6c15ee19a318b22d4c8b1d1}\label{structZSTD__DCtx__s_a0dae77a1c6c15ee19a318b22d4c8b1d1}} 
+BYTE {\bfseries lit\+Extra\+Buffer} \mbox{[}ZSTD\+\_\+\+LITBUFFEREXTRASIZE+WILDCOPY\+\_\+\+OVERLENGTH\mbox{]}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_abec141a8dcc6812bd61e929c369d2224}\label{structZSTD__DCtx__s_abec141a8dcc6812bd61e929c369d2224}} 
+BYTE {\bfseries header\+Buffer} \mbox{[}ZSTD\+\_\+\+FRAMEHEADERSIZE\+\_\+\+MAX\mbox{]}
+\item 
+\mbox{\Hypertarget{structZSTD__DCtx__s_ad97d94a8ebda2f35f5e85b5515d3dfe5}\label{structZSTD__DCtx__s_ad97d94a8ebda2f35f5e85b5515d3dfe5}} 
+size\+\_\+t {\bfseries oversized\+Duration}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/\mbox{\hyperlink{zstd_8c}{zstd.\+c}}\end{DoxyCompactItemize}
