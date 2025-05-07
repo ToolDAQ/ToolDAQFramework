@@ -123,7 +123,13 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   
   while(running){
   
-    zmq::poll(&items [0], 2, 1000);
+    try{
+      zmq::poll(&items [0], 2, 1000);
+    } catch(zmq::error_t& err){
+      // ignore poll aborting due to signals
+      if(zmq_errno()==EINTR) continue;
+      throw;
+    }
 
     if ((items [0].revents & ZMQ_POLLIN) && running) {
       
@@ -252,15 +258,27 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  
 	  zmq::message_t Esend(command.length()+1);
 	  snprintf ((char *) Esend.data(), command.length()+1 , "%s" ,command.c_str()) ;
-	 
-	  zmq::poll(out,1,1000);
-	 
+	  
+	  try{
+	    zmq::poll(out,1,1000);
+	  } catch(zmq::error_t& err){
+	    // ignore poll aborting due to signals
+	    if(zmq_errno()==EINTR) continue;
+	    throw;
+	  }
+	  
 	  if(out[0].revents & ZMQ_POLLOUT){
 	    StatusCheck.send(Esend);
 	    
-	    
 	    //std::cout<<"waiting for message "<<std::endl;
-	    zmq::poll(in,1,1000);
+	    try{
+	      zmq::poll(in,1,1000);
+	    } catch(zmq::error_t& err){
+	      // ignore poll aborting due to signals
+	      if(zmq_errno()==EINTR) continue;
+	      throw;
+	    }
+	    
 	    if(in[0].revents & ZMQ_POLLIN){
 	      zmq::message_t Ereceive;
 	      StatusCheck.recv (&Ereceive);
@@ -468,7 +486,13 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   
   while(running){
     
-    zmq::poll (&items [0], 2, 1000);
+    try {
+      zmq::poll (&items [0], 2, 1000);
+    } catch(zmq::error_t& e){
+      // ignore poll aborting due to signals
+      if(zmq_errno()==EINTR) continue;
+      throw;
+    }
     
     if ((items [0].revents & ZMQ_POLLIN) && running) {
       
@@ -642,8 +666,14 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	      *(it->second)>>service;
 	      zmq::message_t send(service.length()+1);
 	      snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
-
-	      zmq::poll(out,1,1000);
+	
+	      try{
+	        zmq::poll(out,1,1000);
+	      } catch(zmq::error_t& err){
+	        // ignore poll aborting due to signals
+	        if(zmq_errno()==EINTR) continue;
+	        throw;
+	      }
 	      
 	      if(out[0].revents & ZMQ_POLLOUT) Ireceive.send(send);	    
 	    }
@@ -669,9 +699,15 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	      *(it->second)>>service;
 	      zmq::message_t send(service.length()+1);
 	      snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
-
-	      zmq::poll(out,1,1000);
-
+	
+	      try{
+	        zmq::poll(out,1,1000);
+	      } catch(zmq::error_t& err){
+	        // ignore poll aborting due to signals
+	        if(zmq_errno()==EINTR) continue;
+	        throw;
+	      }
+	      
 	      if(out[0].revents & ZMQ_POLLOUT) Ireceive.send(send);	    
 	    }
 	  }
