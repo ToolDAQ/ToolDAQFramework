@@ -604,8 +604,8 @@ bool Services::SendPersistentROOTplot(const std::string& plot_name, const std::s
   }
   
   // response is json with the version number of the created plot entry
-  // e.g. '{"version":"3"}'. check this is what we got, as validation.
-  if(response.length()>14){
+  // e.g. '{"version":3}'. check this is what we got, as validation.
+  if(response.length()>12){
     // FIXME change to Store parsing so we can check this is the right key
     response.replace(0,response.find_first_of(':')+1,"");
     response.replace(response.find_last_of('}'),std::string::npos,"");
