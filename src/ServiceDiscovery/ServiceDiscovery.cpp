@@ -159,7 +159,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
        	std::vector<Store>::iterator it;
 	for (it = PubServices.begin() ; it != PubServices.end(); ++it){
 	  //std::cout<<"d3.5 "<<*((*it)["msg_value"])<<std::endl;
-	  
+	 
 	  if((*it).Get<std::string>("msg_value")==service)break;
 	  
 	  
@@ -348,7 +348,8 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  // *bb["msg_type"]="Service Discovery";
 	  // bb.Set("msg_value",m_service);
 	  //bb.Set("remote_port",m_remoteport);
-	  if(statusquery) PubServices.at(i).Set("status",mm.Get<std::string>("msg_value")); 
+	  
+	  if(statusquery && mm.Has("msg_value")) PubServices.at(i).Set("status",mm.Get<std::string>("msg_value")); 
 	  else PubServices.at(i).Set("status","N/A");
 	  std::string pubmessage;
 	  PubServices.at(i)>>pubmessage;
