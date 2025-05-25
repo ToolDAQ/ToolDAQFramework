@@ -78,10 +78,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a48150ad5b800ec50eedda374da224aed"><td class="memItemLeft" align="right" valign="top"><a id="a48150ad5b800ec50eedda374da224aed"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structToolFramework_1_1thread__args.html#a48150ad5b800ec50eedda374da224aed">thread_args</a> (boost::uuids::uuid inUUID, zmq::context_t *incontext, std::string inmulticastaddress, int inmulticastport, std::string inservice, int inremoteport, int inpubsec=5, int inkicksec=5)</td></tr>
-<tr class="memdesc:a48150ad5b800ec50eedda374da224aed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple construtor to assign thread variables. <br /></td></tr>
-<tr class="separator:a48150ad5b800ec50eedda374da224aed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3da7826b1250c875a792c2c3e26c95ff"><td class="memItemLeft" align="right" valign="top"><a id="a3da7826b1250c875a792c2c3e26c95ff"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structToolFramework_1_1thread__args.html#a3da7826b1250c875a792c2c3e26c95ff">thread_args</a> (boost::uuids::uuid inUUID, zmq::context_t *incontext, std::vector&lt; std::string &gt; inmulticastaddress, std::vector&lt; int &gt; inmulticastport, std::string inservice, int inremoteport, int inpubsec=5, int inkicksec=5)</td></tr>
+<tr class="memdesc:a3da7826b1250c875a792c2c3e26c95ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple construtor to assign thread variables. <br /></td></tr>
+<tr class="separator:a3da7826b1250c875a792c2c3e26c95ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -93,14 +93,14 @@ boost::uuids::uuid&#160;</td><td class="memItemRight" valign="bottom"><a class="
 zmq::context_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structToolFramework_1_1thread__args.html#ad7628f03861b544569022de757dfc40f">context</a></td></tr>
 <tr class="memdesc:ad7628f03861b544569022de757dfc40f"><td class="mdescLeft">&#160;</td><td class="mdescRight">ZMQ context pointer requred for creating sockets. <br /></td></tr>
 <tr class="separator:ad7628f03861b544569022de757dfc40f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7433dc4e60508949f82a069700690b89"><td class="memItemLeft" align="right" valign="top"><a id="a7433dc4e60508949f82a069700690b89"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structToolFramework_1_1thread__args.html#a7433dc4e60508949f82a069700690b89">multicastaddress</a></td></tr>
-<tr class="memdesc:a7433dc4e60508949f82a069700690b89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multicast address to send beacons. <br /></td></tr>
-<tr class="separator:a7433dc4e60508949f82a069700690b89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab160b05d548256bf74e78b43509bcbce"><td class="memItemLeft" align="right" valign="top"><a id="ab160b05d548256bf74e78b43509bcbce"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structToolFramework_1_1thread__args.html#ab160b05d548256bf74e78b43509bcbce">multicastport</a></td></tr>
-<tr class="memdesc:ab160b05d548256bf74e78b43509bcbce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Port to use for multicast beacons. <br /></td></tr>
-<tr class="separator:ab160b05d548256bf74e78b43509bcbce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82ade318d3d718515abfd7ce9f7d7306"><td class="memItemLeft" align="right" valign="top"><a id="a82ade318d3d718515abfd7ce9f7d7306"></a>
+std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structToolFramework_1_1thread__args.html#a82ade318d3d718515abfd7ce9f7d7306">multicastaddress</a></td></tr>
+<tr class="memdesc:a82ade318d3d718515abfd7ce9f7d7306"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multicast address to send beacons. <br /></td></tr>
+<tr class="separator:a82ade318d3d718515abfd7ce9f7d7306"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac655564054abeba76b117b2b0b2615a8"><td class="memItemLeft" align="right" valign="top"><a id="ac655564054abeba76b117b2b0b2615a8"></a>
+std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structToolFramework_1_1thread__args.html#ac655564054abeba76b117b2b0b2615a8">multicastport</a></td></tr>
+<tr class="memdesc:ac655564054abeba76b117b2b0b2615a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Port to use for multicast beacons. <br /></td></tr>
+<tr class="separator:ac655564054abeba76b117b2b0b2615a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70d5bf3aa7c77400c13146d8caec4a2e"><td class="memItemLeft" align="right" valign="top"><a id="a70d5bf3aa7c77400c13146d8caec4a2e"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structToolFramework_1_1thread__args.html#a70d5bf3aa7c77400c13146d8caec4a2e">service</a></td></tr>
 <tr class="memdesc:a70d5bf3aa7c77400c13146d8caec4a2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name to broadcast to identify the ToolChain type. <br /></td></tr>

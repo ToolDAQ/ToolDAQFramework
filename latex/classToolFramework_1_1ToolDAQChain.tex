@@ -18,7 +18,10 @@ Inheritance diagram for Tool\+Framework\+::Tool\+DAQChain\+:\begin{figure}[H]
 \mbox{\hyperlink{classToolFramework_1_1ToolDAQChain_a92adff6025f16976da59dfe8568985a2}{Tool\+DAQChain}} (int verbose, int errorlevel=0, std\+::string service=\char`\"{}test\char`\"{}, bool interactive=true, bool local=false, std\+::string log\+\_\+local\+\_\+path=\char`\"{}./log\char`\"{}, bool remote=false, std\+::string log\+\_\+address=\char`\"{}239.\+192.\+1.\+1\char`\"{}, int log\+\_\+port=5001, bool split\+\_\+output\+\_\+files=false, int pub\+\_\+sec=5, int kick\+\_\+sec=60, unsigned int IO\+\_\+\+Threads=1, \mbox{\hyperlink{classDataModel}{Data\+Model}} $\ast$in\+\_\+data\+\_\+model=0)
 \item 
 void \mbox{\hyperlink{classToolFramework_1_1ToolDAQChain_a4402df6eea4ccfb10c6849c662bff50c}{Remote}} (int portnum, std\+::string SD\+\_\+address=\char`\"{}239.\+192.\+1.\+1\char`\"{}, int SD\+\_\+port=5000)
-\begin{DoxyCompactList}\small\item\em Run Tool\+Chain in remote mode, where connands are received fomr network connections. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Run Tool\+Chain in remote mode, where connands are received fomr network connections. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classToolFramework_1_1ToolDAQChain_a784c337a76d3340ef29a4394e8960462}\label{classToolFramework_1_1ToolDAQChain_a784c337a76d3340ef29a4394e8960462}} 
+void {\bfseries Remote} (int portnum, std\+::vector$<$ std\+::string $>$ SD\+\_\+address, std\+::vector$<$ int $>$ SD\+\_\+port)
+\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
