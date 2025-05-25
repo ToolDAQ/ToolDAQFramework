@@ -2,7 +2,25 @@
 
 using namespace ToolFramework;
 
+
 ServiceDiscovery::ServiceDiscovery(bool Send, bool Receive, int remoteport, std::string address, int multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec, int kicksec){
+
+  std::vector<std::string> in_address;
+  std::vector<int> in_multicastport;
+
+  in_address.push_back(address);
+  in_multicastport.push_back(multicastport);
+
+  Init(Send, Receive, remoteport, in_address, in_multicastport, incontext, UUID, service, pubsec, kicksec);
+
+}
+
+ServiceDiscovery::ServiceDiscovery(bool Send, bool Receive, int remoteport, std::vector<std::string> address, std::vector<int> multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec, int kicksec){
+  Init(Send, Receive, remoteport, address, multicastport, incontext, UUID, service, pubsec, kicksec);
+ 
+}
+
+void ServiceDiscovery::Init(bool Send, bool Receive, int remoteport, std::vector<std::string> address, std::vector<int> multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec, int kicksec){
  
     
   m_UUID=UUID;
@@ -33,6 +51,22 @@ ServiceDiscovery::ServiceDiscovery(bool Send, bool Receive, int remoteport, std:
 }
 
 ServiceDiscovery::ServiceDiscovery( std::string address, int multicastport, zmq::context_t * incontext, int kicksec){
+
+  std::vector<std::string> in_address;
+  std::vector<int> in_multicastport;
+
+  in_address.push_back(address);
+  in_multicastport.push_back(multicastport);
+
+  Init(in_address, in_multicastport, incontext, kicksec);
+
+}
+
+ServiceDiscovery::ServiceDiscovery( std::vector<std::string> address, std::vector<int> multicastport, zmq::context_t * incontext, int kicksec){
+  Init(address, multicastport, incontext, kicksec);
+}
+
+void ServiceDiscovery::Init( std::vector<std::string> address, std::vector<int> multicastport, zmq::context_t * incontext, int kicksec){
   
   context=incontext;
   m_multicastport=multicastport;
@@ -59,8 +93,8 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
   thread_args* args= static_cast<thread_args*>(arg);
   zmq::context_t * context = args->context;
   boost::uuids::uuid m_UUID=args->UUID;
-  std::string m_multicastaddress=args->multicastaddress;
-  int m_multicastport=args->multicastport;
+  std::string m_multicastaddress=args->multicastaddress.at(0);
+  int m_multicastport=args->multicastport.at(0);
   std::string m_service=args->service;
   int m_remoteport=args->remoteport;
 
@@ -363,13 +397,13 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  //    snprintf (message, 512 , "%s" , buffer.GetString()) ;
 	  //snprintf (message, pubmessage.length()+1 , "%s" , pubmessage.c_str() ) ;
 	  
-	  //printf("sending: %s\n", message);
+	  //printf("sending: %s\n", pubmessage.c_str());
 	  //std::cout<<sizeof(*message)<<":"<<sizeof(message2)<<":"<<pubmessage.length()+1<<std::endl;
 	  //  cnt = sendto(sock, message, sizeof(message), 0,(struct sockaddr *) &addr, addrlen);
 	  //cnt = sendto(sock, message, sizeof(char)*pubmessage.length()+1, 0,(struct sockaddr *) &addr, addrlen);
 	  cnt = sendto(sock, pubmessage.c_str(), pubmessage.length()+1, 0,(struct sockaddr *) &addr, addrlen);
 	 
-	  
+	  //printf("sent\n");
 	    if (cnt < 0) {
 	    perror("sendto");
 	    }
@@ -377,13 +411,14 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
 	  
  
       }
-      
+      //printf("b1\n");
       sleep(args->pubsec);
-      
+      //printf("b2\n");
     }
     
     
   }
+  //  printf("b3\n");
   close(sock);
   Ireceive.close();
   //  printf("publish out of runnin \n");
@@ -400,8 +435,8 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   thread_args* args= static_cast<thread_args*>(arg);
   zmq::context_t * context = args->context;
  // boost::uuids::uuid m_UUID=args->UUID;
-  std::string m_multicastaddress=args->multicastaddress;
-  int m_multicastport=args->multicastport;
+  std::vector<std::string> m_multicastaddress=args->multicastaddress;
+  std::vector<int> m_multicastport=args->multicastport;
   std::string m_service=args->service;
   
   zmq::socket_t Ireceive (*context, ZMQ_ROUTER);
@@ -421,53 +456,75 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 
   ///// multi cast /////
   
- 
-  
-  struct sockaddr_in addr;
-  int addrlen, sock, cnt;
-  struct ip_mreq mreq;
+  std::vector<int> sock;
   char message[512];
+  std::vector<struct sockaddr_in> addr;
+  std::vector<int> addrlen;
+
+  std::vector<zmq::pollitem_t> items;
+
+  items.resize(m_multicastaddress.size()+1);
   
-  // set up socket //
-  sock = socket(AF_INET, SOCK_DGRAM, 0);
-  int a =1;
-  setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &a, sizeof(int));
-  //fcntl(sock, F_SETFL, O_NONBLOCK); 
-  if (sock < 0) {
-    perror("socket");
-    exit(1);
-  }
-  bzero((char *)&addr, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  addr.sin_port = htons(m_multicastport);
-  addrlen = sizeof(addr);
+  //zmq::pollitem_t items[m_multicastaddress.size()+1];
+ 
+  items.at(0).socket = Ireceive;
+  items.at(0).fd = 0;
+  items.at(0).events = ZMQ_POLLIN;
+  items.at(0).revents = 0;
   
-  // receive //
-  if (bind(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {        
-    perror("bind");
-    printf("Failed to bind to multicast listen socket");
-    exit(1);
-  }    
-  mreq.imr_multiaddr.s_addr = inet_addr(m_multicastaddress.c_str());         
-  mreq.imr_interface.s_addr = htonl(INADDR_ANY);         
-  if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,&mreq, sizeof(mreq)) < 0) {
-    perror("setsockopt mreq");
-    printf("Failed to goin multicast group listen thread");
-    exit(1);
-  }         
-  
-  
-  //////////////////////////////
-  
-  zmq::pollitem_t items [] = {
-    { NULL, sock, ZMQ_POLLIN, 0 },
-    { Ireceive, 0, ZMQ_POLLIN, 0 }
-  };
 
   zmq::pollitem_t out[] = {
     {Ireceive, 0, ZMQ_POLLOUT, 0}
   };
+  
+  int cnt;
+  
+  for (size_t i =0 ; i < m_multicastaddress.size(); i++){
+    
+    struct ip_mreq mreq;
+    
+    // set up socket //
+    sock.emplace_back(socket(AF_INET, SOCK_DGRAM, 0));
+    addrlen.emplace_back();
+    addr.emplace_back();
+
+    int a =1;
+    setsockopt(sock.at(i), SOL_SOCKET, SO_REUSEADDR, &a, sizeof(int));
+    //fcntl(sock, F_SETFL, O_NONBLOCK); 
+    if (sock.at(i) < 0) {
+      perror("socket");
+      exit(1);
+    }
+    bzero((char *)&addr.at(i), sizeof(addr.at(i)));
+    addr.at(i).sin_family = AF_INET;
+    addr.at(i).sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.at(i).sin_port = htons(m_multicastport.at(i));
+    addrlen.at(i) = sizeof(addr.at(i));
+    
+    // receive //
+    if (bind(sock.at(i), (struct sockaddr *) &addr.at(i), sizeof(addr.at(i))) < 0) {        
+      perror("bind");
+      printf("Failed to bind to multicast listen socket");
+      exit(1);
+    }    
+    mreq.imr_multiaddr.s_addr = inet_addr(m_multicastaddress.at(i).c_str());         
+    mreq.imr_interface.s_addr = htonl(INADDR_ANY);         
+    if (setsockopt(sock.at(i), IPPROTO_IP, IP_ADD_MEMBERSHIP,&mreq, sizeof(mreq)) < 0) {
+      perror("setsockopt mreq");
+      printf("Failed to goin multicast group listen thread");
+      exit(1);
+    }         
+  
+    
+    items.at(i+1).socket = 0;
+    items.at(i+1).fd = sock.at(i);
+    items.at(i+1).events = ZMQ_POLLIN;
+    items.at(i+1).revents = 0;
+    
+  
+  }
+  //////////////////////////////
+  
   
   std::map<std::string,Store*> RemoteServices;
   
@@ -475,162 +532,165 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   
   while(running){
     
-    zmq::poll (&items [0], 2, 1000);
+    //    zmq::poll (&items[0], sock.size()+1, 1000);
+    zmq::poll (items.data(), items.size(), 1000);
     
-    if ((items [0].revents & ZMQ_POLLIN) && running) {
-      
-      
-      cnt = recvfrom(sock, message, sizeof(message), 0, (struct sockaddr *) &addr, (socklen_t*) &addrlen);
-      if ((cnt > 0) && (message[0]=='{') ) {
-	//perror("recvfrom");
-	// exit(1);
-	//	break;
-	//} 
-	//else if (cnt > 0){
-        //printf("%s: message = \"%s\"\n", inet_ntoa(addr.sin_addr), message);
-	
-	//if(message[0]!='[') break;
-	
-	Store* newservice= new Store();
-	newservice->Set("ip",inet_ntoa(addr.sin_addr));
-	newservice->JsonParser(message);
-	
-	std::string uuid;
-	newservice->Get("uuid",uuid);
-	if(RemoteServices.count(uuid)) delete RemoteServices[uuid];
-	//std::cout<<uuid<<std::endl;
-	RemoteServices[uuid]=newservice;
+    for(size_t i =0; i < sock.size(); i++){    
+      if ((items.at(i+1).revents & ZMQ_POLLIN) && running) {
 	
 	
-	//	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
-	
-	// }
-	
-      
-	
-      }
-    }
-    
-    //	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
-    
-    std::vector<std::string> erase_list;
-    
-    for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){ 
-      //  if(*(it->second)[msg_time]==) delete;
-      
-      //std::string date_1 = "2014-08-15 10:12:10";
-      //std::string now = "2014-08-15 16:40:02";
-      
-      std::string msg_time_orig;
-      std::string msg_time_after;
-      it->second->Get("msg_time",msg_time_orig);
-      
-      //std::cout<<" time orig ="<<msg_time_orig<<std::endl;
-      
-      for(std::string::size_type i = 0; i < msg_time_orig.size(); ++i) {
-	if(msg_time_orig[i]!='-' && msg_time_orig[i]!=':') msg_time_after+=msg_time_orig[i];
-      }
-      //std::cout<<" time after ="<<msg_time_after<<std::endl;
-      
-      boost::posix_time::ptime t1 = boost::posix_time::microsec_clock::universal_time();
-      
-      //std::stringstream isot;
-      //isot<<boost::posix_time::to_iso_extended_string(t) << "Z";
-      
-      boost::posix_time::ptime t2(boost::posix_time::from_iso_string(msg_time_after));
-      
-      //std::cout << "t1: " << t1 << std::endl;
-      //std::cout << "t2: " << t2 << std::endl;
-      
-      boost::posix_time::time_duration td = t2 - t1;
+	cnt = recvfrom(sock.at(i), message, sizeof(message), 0, (struct sockaddr *) &addr.at(i), (socklen_t*) &addrlen.at(i));
+	if ((cnt > 0) && (message[0]=='{') ) {
+	  //perror("recvfrom");
+	  // exit(1);
+	  //	break;
+	  //} 
+	  //else if (cnt > 0){
+	  //printf("%s: message = \"%s\"\n", inet_ntoa(addr.at(i).sin_addr), message);
 	  
-      tm td_tm = to_tm(td);
-      //std::cout << boost::posix_time::to_iso_string(td) << std::endl;
-      // std::cout<<"seconds = "<<td_tm.tm_sec<<std::endl; 
-      // std::cout<<"mins = "<<td_tm.tm_min<<std::endl; 
-       if(((td_tm.tm_min*60)+td_tm.tm_sec)>args->kicksec){
-	 erase_list.push_back(it->first);
-	 //	delete it->second;
-	 //it->second=0;
-	 //RemoteServices.erase(it->first);
-	
+	  //if(message[0]!='[') break;
+	  
+	  Store* newservice= new Store();
+	  newservice->Set("ip",inet_ntoa(addr.at(i).sin_addr));
+	  newservice->JsonParser(message);
+	  
+	  std::string uuid;
+	  newservice->Get("uuid",uuid);
+	  if(RemoteServices.count(uuid)) delete RemoteServices[uuid];
+	//std::cout<<uuid<<std::endl;
+	  RemoteServices[uuid]=newservice;
+	  
+	  
+	  //	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
+	  
+	  // }
+	  
+	  
+	  
+	}
       }
-      //std::cout<< "uuid = "<<it->first<<std::endl;
+      
+      //	std::cout<<" SD RemoteServices size = " << RemoteServices.size()<<std::endl;
+      
+      std::vector<std::string> erase_list;
+      
+      for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){ 
+	//  if(*(it->second)[msg_time]==) delete;
+	
+	//std::string date_1 = "2014-08-15 10:12:10";
+	//std::string now = "2014-08-15 16:40:02";
+	
+	std::string msg_time_orig;
+	std::string msg_time_after;
+	it->second->Get("msg_time",msg_time_orig);
+	
+	//std::cout<<" time orig ="<<msg_time_orig<<std::endl;
+	
+	for(std::string::size_type i = 0; i < msg_time_orig.size(); ++i) {
+	  if(msg_time_orig[i]!='-' && msg_time_orig[i]!=':') msg_time_after+=msg_time_orig[i];
+	}
+	//std::cout<<" time after ="<<msg_time_after<<std::endl;
+	
+	boost::posix_time::ptime t1 = boost::posix_time::microsec_clock::universal_time();
+	
+	//std::stringstream isot;
+	//isot<<boost::posix_time::to_iso_extended_string(t) << "Z";
+	
+	boost::posix_time::ptime t2(boost::posix_time::from_iso_string(msg_time_after));
+	
+	//std::cout << "t1: " << t1 << std::endl;
+	//std::cout << "t2: " << t2 << std::endl;
+	
+	boost::posix_time::time_duration td = t2 - t1;
+	
+	tm td_tm = to_tm(td);
+	//std::cout << boost::posix_time::to_iso_string(td) << std::endl;
+	// std::cout<<"seconds = "<<td_tm.tm_sec<<std::endl; 
+	// std::cout<<"mins = "<<td_tm.tm_min<<std::endl; 
+	if(((td_tm.tm_min*60)+td_tm.tm_sec)>args->kicksec){
+	  erase_list.push_back(it->first);
+	  //	delete it->second;
+	  //it->second=0;
+	  //RemoteServices.erase(it->first);
+	  
+	}
+	//std::cout<< "uuid = "<<it->first<<std::endl;
+      }
+      
+      for(unsigned int i=0;i<erase_list.size();i++){
+	delete RemoteServices[erase_list.at(i)];
+	RemoteServices[erase_list.at(i)]=0;
+	RemoteServices.erase(erase_list.at(i));
+      }
+      erase_list.clear();
+      
     }
     
-    for(unsigned int i=0;i<erase_list.size();i++){
-      delete RemoteServices[erase_list.at(i)];
-      RemoteServices[erase_list.at(i)]=0;
-      RemoteServices.erase(erase_list.at(i));
-    }
-    erase_list.clear();
-
-   
-    if ((items [1].revents & ZMQ_POLLIN) && running) {
-      
+    if ((items.at(0).revents & ZMQ_POLLIN) && running) {
+      //printf("d1\n");
       zmq::message_t Identity;
       Ireceive.recv(&Identity);
       
       Ireceive.send(Identity,ZMQ_SNDMORE);
-
+      
       zmq::message_t comm;
- 
+      
       if(Ireceive.recv(&comm)){
-
+	
 	std::istringstream iss(static_cast<char*>(comm.data()));
 	std::string arg1="";
 	std::string arg2="";
-
-	iss>>arg1;
-
-	if(arg1=="All"){
 	
+	iss>>arg1;
+	
+	if(arg1=="All"){
 	  
+	  //printf("d2\n");
 	  //zmq::message_t sizem(512);
-	   int size= RemoteServices.size();
-	   zmq::message_t sizem(sizeof size);
-
-	   snprintf ((char *) sizem.data(), sizeof size , "%d" ,size) ;
+	  int size= RemoteServices.size();
+	  zmq::message_t sizem(sizeof size);
 	  
-	   //	   zmq::poll(out,1,1000);
-	   
-	   // if (out[0].revents & ZMQ_POLLOUT){ 
-	     //std::cout<<"SD sent size="<<size<<std::endl;
-	     //std::cout<<"SD sent message size="<<sizeof(sizem.data())<<std::endl;
-
-	     if(size==0) Ireceive.send(sizem);
-	     else Ireceive.send(sizem,ZMQ_SNDMORE);	    
+	  snprintf ((char *) sizem.data(), sizeof size , "%d" ,size) ;
+	  
+	  //	   zmq::poll(out,1,1000);
+	  
+	  // if (out[0].revents & ZMQ_POLLOUT){ 
+	  //std::cout<<"SD sent size="<<size<<std::endl;
+	  //std::cout<<"SD sent message size="<<sizeof(sizem.data())<<std::endl;
+	  
+	  if(size==0) Ireceive.send(sizem);
+	  else Ireceive.send(sizem,ZMQ_SNDMORE);	    
+	  
+	  
+	  for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ){
 	    
-	     
-	     for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ){
+	    std::string service;
+	    *(it->second)>>service;
+	    zmq::message_t send(service.length()+1);
+	    snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
 	    
-	       std::string service;
-	       *(it->second)>>service;
-	       zmq::message_t send(service.length()+1);
-	       snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
+	    //	       zmq::poll(out,1,1000);
 	    
-	       //	       zmq::poll(out,1,1000);
+	    //	       if (out[0].revents & ZMQ_POLLOUT){
+	    it++;
+	    if(it!=RemoteServices.end()){
+	      Ireceive.send(send,ZMQ_SNDMORE);
+	      //std::cout<<"SD sent a message"<<std::endl;
+	      
+	    }
+	    else {
+	      Ireceive.send(send);
+	      //std::cout<<"SD sent final message"<<std::endl;
+	    }
 	    
-	       //	       if (out[0].revents & ZMQ_POLLOUT){
-	       it++;
-	       if(it!=RemoteServices.end()){
-		 Ireceive.send(send,ZMQ_SNDMORE);
-		 //std::cout<<"SD sent a message"<<std::endl;
-
-	       }
-	       else {
-		 Ireceive.send(send);
-		 //std::cout<<"SD sent final message"<<std::endl;
-	       }
-
-		 // }
-	       // else {
-	       // break;
-	       // }
-	       
-	     }
-	     // }
-	   
+	    // }
+	    // else {
+	    // break;
+	    // }
+	    
+	  }
+	  // }
+	  
 	}
 	
 	
@@ -649,7 +709,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	      *(it->second)>>service;
 	      zmq::message_t send(service.length()+1);
 	      snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
-
+	      
 	      zmq::poll(out,1,1000);
 	      
 	      if(out[0].revents & ZMQ_POLLOUT) Ireceive.send(send);	    
@@ -657,16 +717,16 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	  }
 	  
 	}
-
-
+	
+	
 	
 	if(arg1=="UUID"){
-
+	  
 	  iss>>arg1>>arg2;
 	  
 	  for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
 	    
-	   
+	    
 	    std::string test;
 	    it->second->Get("uuid",test);
 	    
@@ -676,9 +736,9 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
 	      *(it->second)>>service;
 	      zmq::message_t send(service.length()+1);
 	      snprintf ((char *) send.data(), service.length()+1 , "%s" ,service.c_str()) ;
-
+	      
 	      zmq::poll(out,1,1000);
-
+	      
 	      if(out[0].revents & ZMQ_POLLOUT) Ireceive.send(send);	    
 	    }
 	  }
@@ -695,37 +755,37 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
         
 	
 	/*
-	std::string tmp="0";
-	zmq::message_t send(tmp.length()+1);
-	snprintf ((char *) send.data(), tmp.length()+1 , "%s" ,tmp.c_str()) ;
-	Ireceive.send(send);
-	//printf("sent \n");
-	*/
+	  std::string tmp="0";
+	  zmq::message_t send(tmp.length()+1);
+	  snprintf ((char *) send.data(), tmp.length()+1 , "%s" ,tmp.c_str()) ;
+	  Ireceive.send(send);
+	  //printf("sent \n");
+	  */
       }
       
     }
-
-	  
-  }
-
-for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
-    delete it->second;
-    it->second=0;
+    
     
   }
-  RemoteServices.clear();
-  //printf("exiting sd listen thread \n");
-  pthread_exit(NULL);
-  //return (NULL);
   
-  }
+for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ++it){
+  delete it->second;
+  it->second=0;
+  
+ }
+ RemoteServices.clear();
+ //printf("exiting sd listen thread \n");
+ pthread_exit(NULL);
+ //return (NULL);
+ 
+}
 
-   
+
 
 ServiceDiscovery::~ServiceDiscovery(){
   
-   //printf("in sd destructor \n");
-    sleep(1);  
+  //printf("in sd destructor \n");
+  sleep(1);  
   //printf("finnish sleep \n");
   
   // kill publish thread
@@ -738,7 +798,7 @@ ServiceDiscovery::~ServiceDiscovery(){
     //ServicePublish.setsockopt(ZMQ_RCVTIMEO, a);
     //ServicePublish.setsockopt(ZMQ_SNDTIMEO, a);
     ServicePublish.connect("inproc://ServicePublish");
-
+    
     
     
     zmq::message_t command(5);
@@ -750,40 +810,40 @@ ServiceDiscovery::~ServiceDiscovery(){
     //printf("send joint \n");
   }
   
-    //  zmq::socket_t ServiceDiscovery (*context, ZMQ_REQ);
-    //ServiceDiscovery.connect("inproc://ServiceDiscovery");
+  //  zmq::socket_t ServiceDiscovery (*context, ZMQ_REQ);
+  //ServiceDiscovery.connect("inproc://ServiceDiscovery");
   
-
-    //zmq::socket_t ServicePublish (*context, ZMQ_PUSH);
-    //ServicePublish.connect("inproc://ServicePublish");
-
-    //kill listener //zmq::socket_t Ireceive (*context, ZMQ_DEALER);
+  
+  //zmq::socket_t ServicePublish (*context, ZMQ_PUSH);
+  //ServicePublish.connect("inproc://ServicePublish");
+  
+  //kill listener //zmq::socket_t Ireceive (*context, ZMQ_DEALER);
     //Ireceive.bind("inproc://ServiceDiscovery");
   //printf("checking receive \n");
   if(m_receive){
-  //printf("in sd receive kill \n");
+    //printf("in sd receive kill \n");
     zmq::socket_t ServiceDiscovery (*context, ZMQ_DEALER);
     //  int a=60000;
     //ServiceDiscovery.setsockopt(ZMQ_RCVTIMEO, a);
     //ServiceDiscovery.setsockopt(ZMQ_SNDTIMEO, a);    
     ServiceDiscovery.connect("inproc://ServiceDiscovery");
-  
-
+    
+    
     zmq::message_t command(5);
     snprintf ((char *) command.data(), 5 , "%s" ,"Quit") ;
     ServiceDiscovery.send(command);
-  
+    
     //printf("sent waiting for receive \n");
     //zmq::message_t ret;
     //ServiceDiscovery.recv(&ret);
-      //std::istringstream tmp(static_cast<char*>(ret.data()));
-
+    //std::istringstream tmp(static_cast<char*>(ret.data()));
+    
     //printf("received waiting fir join \n");
     pthread_join(thread[0], NULL);
     //printf("received joint \n");
-
+    
   }
-
+  
   if(args!=0){
     //printf("in arg if \n");
     delete args;
