@@ -73,7 +73,7 @@ bool Services::SendAlarm(const std::string& message, unsigned int level, const s
              + ",\"severity\":0"
              + ",\"message\":\"" + message + "\"}";
   
-  ok = ok && m_backend_client.SendMulticast(cmd_string, &err);
+  ok = ok && m_backend_client.SendMulticast(0,cmd_string, &err);
   
   if(!ok){
     std::clog<<"SendAlarm (log) error: "<<err<<std::endl;
@@ -546,7 +546,7 @@ bool Services::SendLog(const std::string& message, unsigned int severity, const 
   
   std::string err="";
   
-  if(!m_backend_client.SendMulticast(cmd_string, &err)){
+  if(!m_backend_client.SendMulticast(0,cmd_string, &err)){
     std::clog<<"SendLog error: "<<err<<std::endl;
     return false;
   }
@@ -556,13 +556,14 @@ bool Services::SendLog(const std::string& message, unsigned int severity, const 
 }
 
 
-bool Services::SendMonitoringData(const std::string& json_data, const std::string& device, unsigned int timestamp){
+bool Services::SendMonitoringData(const std::string& subject, const std::string& json_data, const std::string& device, unsigned int timestamp){
   
   const std::string& name = (device=="") ? m_name : device;
   
   std::string cmd_string = std::string{"{ \"topic\":\"monitoring\""}
                          + ", \"time\":"+std::to_string(timestamp)
                          + ", \"device\":\""+ name +"\""
+                         + ", \"subject\":\""+ subject +"\""
                          + ", \"data\":\""+ json_data +"\" }";
   
   if(cmd_string.length()>655355){
@@ -572,7 +573,7 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   
   std::string err="";
   
-  if(!m_backend_client.SendMulticast(cmd_string, &err)){
+  if(!m_backend_client.SendMulticast(1,cmd_string, &err)){
     std::clog<<"SendMonitoringData error: "<<err<<std::endl;
     return false;
   }
@@ -640,7 +641,7 @@ bool Services::SendTemporaryROOTplot(const std::string& plot_name, const std::st
   
   std::string err="";
   
-  if(!m_backend_client.SendMulticast(cmd_string, &err)){
+  if(!m_backend_client.SendMulticast(0,cmd_string, &err)){
     std::clog<<"SendROOTplot error: "<<err<<std::endl;
     return false;
   }

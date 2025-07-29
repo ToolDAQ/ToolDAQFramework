@@ -270,16 +270,19 @@ bool ServicesBackend::InitMulticast(){
 	/*              Multicast Setup              */
 	/* ----------------------------------------- */
 	
-	int multicast_port = 55554;
+	int log_port = 55554;
+	int mon_port = 55553;
 	std::string multicast_address = "239.192.1.1"; // FIXME suitable default?
 	
 	// FIXME add to config file
-	m_variables.Get("multicast_port",multicast_port);
+	m_variables.Get("log_port",log_port);
+	m_variables.Get("mon_port",mon_port);
 	m_variables.Get("multicast_address",multicast_address);
 	
 	// set up multicast socket for sending logging & monitoring data
-	multicast_socket = socket(AF_INET, SOCK_DGRAM, 0);
-	if(multicast_socket<=0){
+	log_socket = socket(AF_INET, SOCK_DGRAM, 0);
+	mon_socket = socket(AF_INET, SOCK_DGRAM, 0);
+	if(log_socket<=0 || mon_socket<=0){
 		Log(std::string{"Failed to open multicast socket with error "}+strerror(errno),v_error,verbosity);
 		return false;
 	}
@@ -288,14 +291,16 @@ bool ServicesBackend::InitMulticast(){
 	struct linger l;
 	l.l_onoff  = 0;  // whether to linger
 	l.l_linger = 0;  // seconds to linger for
-	get_ok = setsockopt(multicast_socket, SOL_SOCKET, SO_LINGER,(char*) &l, sizeof(l));
+	get_ok =           setsockopt(log_socket, SOL_SOCKET, SO_LINGER,(char*) &l, sizeof(l));
+	get_ok = get_ok || setsockopt(mon_socket, SOL_SOCKET, SO_LINGER,(char*) &l, sizeof(l));
 	if(get_ok!=0){
 		Log(std::string{"Failed to set multicast socket linger with error "}+strerror(errno),v_error,verbosity);
 		return false;
 	}
 	
 	// set the socket to non-blocking mode - seems like a good idea...? XXX
-	get_ok = fcntl(multicast_socket, F_SETFL, O_NONBLOCK);
+	get_ok =           fcntl(log_socket, F_SETFL, O_NONBLOCK);
+	get_ok = get_ok || fcntl(mon_socket, F_SETFL, O_NONBLOCK);
 	if(get_ok!=0){
 		Log(std::string{"Failed to set multicast socket to non-blocking with error "}
 		   +strerror(errno),v_error,verbosity);
@@ -303,19 +308,22 @@ bool ServicesBackend::InitMulticast(){
 	}
 	
 	// format destination address from IP string
-	bzero((char *)&multicast_addr, sizeof(multicast_addr)); // init to 0
-	multicast_addr.sin_family = AF_INET;
-	multicast_addr.sin_port = htons(multicast_port);
+	bzero((char *)&log_addr, sizeof(log_addr)); // init to 0
+	log_addr.sin_family = AF_INET;
+	log_addr.sin_port = htons(log_port);
+	mon_addr = log_addr;
+	mon_addr.sin_port = htons(mon_port);
 	// convert destination address string to binary
-	get_ok = inet_aton(multicast_address.c_str(), &multicast_addr.sin_addr);
-	if(get_ok==0){
+	get_ok =           inet_aton(multicast_address.c_str(), &log_addr.sin_addr);
+	get_ok = get_ok && inet_aton(multicast_address.c_str(), &mon_addr.sin_addr);
+	if(get_ok==0){ // returns 0 on failure, not success
 		Log("Bad multicast address '"+multicast_address+"'",v_error,verbosity);
 		return false;
 	}
-	multicast_addrlen = sizeof(multicast_addr);
+	multicast_addrlen = sizeof(log_addr);
 	
 	// apparently we can poll with zmq?
-	multicast_poller = zmq::pollitem_t{ NULL, multicast_socket, ZMQ_POLLOUT, 0 };
+	//multicast_poller = zmq::pollitem_t{ NULL, multicast_socket, ZMQ_POLLOUT, 0 };
 	
 	return true;
 }
@@ -364,17 +372,22 @@ bool ServicesBackend::BackgroundThread(std::future<void> signaller){
 	return true;
 }
 
-bool ServicesBackend::SendMulticast(std::string command, std::string* err){
+bool ServicesBackend::SendMulticast(int type, std::string command, std::string* err){
 	// multicast send. These do not wait for a response, so no timeout.
 	// only immediately evident errors are reported. receipt is not confirmed.
 	if(verbosity>10) std::cout<<"ServicesBackend::SendMulticast invoked with command '"<<command<<"'"<<std::endl;
+	// type: 0=logging, 1=monitoring
+	int multicast_socket = (type==0) ? log_socket : mon_socket;
+	struct sockaddr_in* multicast_addr = (type==0) ? &log_addr : &mon_addr; 
 	
-	// check for listeners...?
-	zmq::poll(&multicast_poller,1, 0);   // timeout 0 = return immediately... XXX
+	/*
+	// check for listeners...? - seems redundant, multicast can always send
+	zmq::poll(&multicast_poller,1, 0);   // timeout 0 = return immediately...
 	if(multicast_poller.revents & ZMQ_POLLOUT){
+	*/
 		
 		// got a listener - ship it
-		int cnt = sendto(multicast_socket, command.c_str(), command.length()+1, 0, (struct sockaddr*)&multicast_addr, multicast_addrlen);
+		int cnt = sendto(multicast_socket, command.c_str(), command.length()+1, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
 		if(cnt < 0){
 			std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
 			Log(errmsg,v_error,verbosity);
@@ -382,7 +395,7 @@ bool ServicesBackend::SendMulticast(std::string command, std::string* err){
 			return false;
 		}
 		
-	}
+	//}
 	
 	return true;
 }
@@ -770,7 +783,8 @@ bool ServicesBackend::Finalise(){
 	if(utilities) utilities->RemoveService("slowcontrol_read");
 	
 	Log("ServicesBackend Closing multicast socket",v_debug,verbosity);
-	close(multicast_socket);
+	close(log_socket);
+	close(mon_socket);
 	
 	Log("ServicesBackend Deleting Utilities class",v_debug,verbosity);
 	if(utilities){
