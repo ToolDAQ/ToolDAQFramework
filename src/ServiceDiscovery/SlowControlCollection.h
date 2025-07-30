@@ -53,6 +53,7 @@ namespace ToolFramework{
     
     
     template<typename T> T GetValue(std::string name){
+      if(!SC_vars.count(name)) return T{};
       return SC_vars[name]->GetValue<T>();
     }
     

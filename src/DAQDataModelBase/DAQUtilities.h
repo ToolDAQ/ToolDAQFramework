@@ -91,7 +91,9 @@ namespace ToolFramework{
     DAQUtilities(zmq::context_t* zmqcontext); ///< Simple constructor
     bool AddService(std::string ServiceName, unsigned int port, bool StatusQuery=false); ///< Broadcasts an available service (only in remote mode)
     bool RemoveService(std::string ServiceName); ///< Removes service broadcasts for a service
-    int UpdateConnections(std::string ServiceName, zmq::socket_t* sock, std::map<std::string,Store*> &connections, std::string port=""); ///< Dynamically connects a socket tp services broadcast with a specific name
+    bool AddPort(std::string ServiceName, unsigned int port); ///< Broadcasts an available port (only in remote mode)
+    bool RemovePort(std::string ServiceName); ///< Removes port broadcasts for a service
+    int UpdateConnections(std::string ServiceName, zmq::socket_t* sock, std::map<std::string,Store*> &connections, std::string port="", std::string port_name=""); ///< Dynamically connects a socket tp services broadcast with a specific name
     DAQThread_args* CreateThread(std::string ThreadName,  void (*func)(std::string));  //func = &my_int_func; ///< Create a simple thread that has string exchange with main thread
     bool MessageThread(DAQThread_args* args, std::string Message, bool block=true); ///< Send simple string to String thread
     bool MessageThread(std::string ThreadName, std::string Message, bool block=true); ///< Send simple string to String thread

@@ -278,8 +278,9 @@ int main(int argc, char** argv){
 	  
 	  std::string service;
 	  (*(RemoteServices.at(i))).Get("msg_value", service);
-	  
-	  if(service==ServiceName){
+
+	  if (service.find(ServiceName) != std::string::npos) {
+	    // if(service==ServiceName){
 	    
 	    zmq::socket_t ServiceSend (context, ZMQ_REQ);
 	    int a=GROUP_COMMAND_REPLY_WAIT;

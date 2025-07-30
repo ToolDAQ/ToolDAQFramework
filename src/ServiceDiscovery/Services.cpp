@@ -683,7 +683,7 @@ bool Services::GetPlotlyPlot(
   if (timestamp) *timestamp = plot.Get<int>("time");
 
   return true;
-};
+}
 
 bool Services::SendPlotlyPlot(
     const std::string& name,

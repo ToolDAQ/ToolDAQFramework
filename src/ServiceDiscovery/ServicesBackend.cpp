@@ -230,7 +230,9 @@ bool ServicesBackend::InitZMQ(){
 	// -------------------------------
 	clt_pub_socket = new zmq::socket_t(*context, ZMQ_PUB);
 	clt_pub_socket->setsockopt(ZMQ_SNDTIMEO, clt_pub_socket_timeout);
+	clt_pub_socket->setsockopt(ZMQ_LINGER, 10);
 	clt_pub_socket->bind(std::string("tcp://*:")+std::to_string(clt_pub_port));
+	
 	
 	// socket to deal read commands and receive responses
 	// -------------------------------------------------
@@ -239,6 +241,7 @@ bool ServicesBackend::InitZMQ(){
 	clt_dlr_socket->setsockopt(ZMQ_RCVTIMEO, clt_dlr_socket_timeout);
 	clt_dlr_socket->setsockopt(ZMQ_IDENTITY, clt_ID.c_str(), clt_ID.length());
 	clt_dlr_socket->setsockopt(ZMQ_IMMEDIATE,1);
+	clt_dlr_socket->setsockopt(ZMQ_LINGER, 10);
 	clt_dlr_socket->bind(std::string("tcp://*:")+std::to_string(clt_dlr_port));
 	
 	/*
