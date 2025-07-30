@@ -27,7 +27,7 @@
 namespace ToolFramework {
 
 struct Command {
-	Command(std::string command_in, char cmd_type_in, std::string topic_in);
+	Command(std::string command_in, char cmd_type_in, std::string topic_in, const unsigned int timeout_ms_in);
 	
 	Command(const Command& cmd_in);  // copy constructor
 	Command(Command&& cmd_in);       // move constructor
@@ -41,6 +41,7 @@ struct Command {
 	uint32_t success;            // middleman treats this as BOOL: 1=success, 0=fail
 	std::string err;
 	uint32_t msg_id;
+	uint32_t timeout_ms;
 };
 
 
@@ -51,6 +52,7 @@ class ServicesBackend {
 	ServicesBackend(){};
 	~ServicesBackend(){};
 	void SetUp(zmq::context_t* in_context, std::function<void(std::string msg, int msg_verb, int verbosity)> log=nullptr); // possibly move to constructor
+	bool Ready(int timeout); // check if zmq sockets have connections
 	bool Initialise(std::string configfile);
 	bool Initialise(Store &varaibles_in);
 	bool Finalise();
@@ -101,7 +103,7 @@ class ServicesBackend {
 	bool InitMulticast(); // private
 	bool RegisterServices(); //private
 	// wrapper funtion; add command to outgoing queue, receive response. ~30s timeout.
-	bool DoCommand(Command cmd, std::promise<Command>); //private
+	bool DoCommand(Command& cmd, int timeout_ms); //private
 	// actual send/receive functions
 	bool SendNextCommand(); //private
 	bool GetNextResponse(); //priavte
@@ -206,6 +208,9 @@ class ServicesBackend {
 		if(ret<0){
 			// error polling - is the socket closed?
 			send_ok = -3;
+		} else if(ret==0){
+			// 'resource temporarily unavailable'...? no connections on this socket?
+			send_ok = -4;
 		} else if(poll.revents & ZMQ_POLLOUT){
 			bool success = Send(sock, false, std::forward<T>(message));
 			send_ok = success ? 0 : -1;
@@ -234,6 +239,9 @@ class ServicesBackend {
 		if(ret<0){
 			// error polling - is the socket closed?
 			send_ok = -3;
+		} else if(ret==0){
+			// 'resource temporarily unavailable'...? no connections on this socket?
+			send_ok = -4;
 		} else if(poll.revents & ZMQ_POLLOUT){
 			bool success = Send(sock, false, std::forward<T>(message), std::forward<Rest>(rest)...);
 			send_ok = success ? 0 : -1;
