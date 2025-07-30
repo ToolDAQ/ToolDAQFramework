@@ -34,7 +34,7 @@ namespace ToolFramework{
   
   struct thread_args{
     
-    thread_args(boost::uuids::uuid inUUID, zmq::context_t *incontext,std::string inmulticastaddress, int inmulticastport, std::string inservice, int inremoteport, int  inpubsec=5, int inkicksec=5){
+    thread_args(boost::uuids::uuid inUUID, zmq::context_t *incontext, std::vector<std::string> inmulticastaddress, std::vector<int> inmulticastport, std::string inservice, int inremoteport, int  inpubsec=5, int inkicksec=5){
       UUID=inUUID;
       context=incontext;
       multicastaddress=inmulticastaddress;
@@ -47,8 +47,8 @@ namespace ToolFramework{
     
     boost::uuids::uuid UUID; ///< Unique UUID identifier for the ToolChain to be used is service beacons.
     zmq::context_t *context; ///< ZMQ context pointer requred for creating sockets
-    std::string multicastaddress; ///< Multicast address to send beacons
-    int multicastport; ///< Port to use for multicast beacons
+    std::vector<std::string> multicastaddress; ///< Multicast address to send beacons
+    std::vector<int> multicastport; ///< Port to use for multicast beacons
     std::string service; ///< Name to broadcast to identify the ToolChain type
     int remoteport; ///< Port for remote connections to control the ToolChain
     int pubsec; ///< The number of seconds between sending multicast beacons
@@ -85,6 +85,7 @@ namespace ToolFramework{
        
     */
     ServiceDiscovery(bool Send, bool Receive, int remoteport, std::string address, int multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec=5, int kicksec=60);
+    ServiceDiscovery(bool Send, bool Receive, int remoteport, std::vector<std::string> address, std::vector<int> multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec=5, int kicksec=60);
     
     /**
        Simpler constructor for only receiving multicast beacons and not sending. This therefor doesnt require the UUID and plublish variables, so can be used for passive listener.
@@ -92,10 +93,14 @@ namespace ToolFramework{
        variables are the same as above.
     */
     ServiceDiscovery( std::string address, int multicastport, zmq::context_t * incontext, int kicksec=60);  
+    ServiceDiscovery(std::vector<std::string> address, std::vector<int> multicastport, zmq::context_t * incontext, int kicksec=60);  
     ~ServiceDiscovery(); ///< Simple destructor
     
     
   private:
+
+    void Init(bool Send, bool Receive, int remoteport, std::vector<std::string> address, std::vector<int> multicastport, zmq::context_t * incontext, boost::uuids::uuid UUID, std::string service, int pubsec=5, int kicksec=60);
+    void Init(std::vector<std::string> address, std::vector<int> multicastport, zmq::context_t * incontext, int kicksec=60);  
     
     /**
        Thread function for publishing multicast beacons
@@ -114,8 +119,8 @@ namespace ToolFramework{
     pthread_t thread[2]; ///< Array to hold thread identifiers
     thread_args *args; ///< Pointer to hold thread arguments
     
-    int m_multicastport; ///< Port to use for multicast beacons
-    std::string m_multicastaddress; ///< Multicast address to send beacons
+    std::vector<int> m_multicastport; ///< Port to use for multicast beacons
+    std::vector<std::string> m_multicastaddress; ///< Multicast address to send beacons
     std::string m_service; ///< Name to broadcast to identify the ToolChain type
     int m_remoteport; ///< Port for remote connections to control the ToolChain
     

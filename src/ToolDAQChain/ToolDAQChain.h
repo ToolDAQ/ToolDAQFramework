@@ -78,7 +78,10 @@ namespace ToolFramework{
     //verbosity: true= print out status messages , false= print only error messages;
     //errorlevels: 0= do not exit; error 1= exit if unhandeled error ; exit 2= exit on handeled and unhandeled errors; 
     ~ToolDAQChain(); 
+
     void Remote(int portnum, std::string SD_address="239.192.1.1", int SD_port=5000); ///< Run ToolChain in remote mode, where connands are received fomr network connections. @param portnum The port number to listen for remote connections on. @param SD_address The service discovery address to publish availability beacons for remote connections on. @param SD_port the multicast port to used for service discovery beacons
+    void Remote(int portnum, std::vector<std::string> SD_address, std::vector<int> SD_port);
+
     
   private:
     
@@ -105,8 +108,8 @@ namespace ToolFramework{
     pthread_t DAQthread[2];
     zmq::context_t *context;
     int m_remoteport;
-    int m_multicastport;
-    std::string m_multicastaddress;
+    std::vector<int> m_multicastport;
+    std::vector<std::string> m_multicastaddress;
     long msg_id;
     int m_pub_sec;
     int m_kick_sec;

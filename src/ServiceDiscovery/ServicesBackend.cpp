@@ -238,7 +238,9 @@ bool ServicesBackend::InitZMQ(){
 	// -------------------------------
 	clt_pub_socket = new zmq::socket_t(*context, ZMQ_PUB);
 	clt_pub_socket->setsockopt(ZMQ_SNDTIMEO, clt_pub_socket_timeout);
+	clt_pub_socket->setsockopt(ZMQ_LINGER, 10);
 	clt_pub_socket->bind(std::string("tcp://*:")+std::to_string(clt_pub_port));
+	
 	
 	// socket to deal read commands and receive responses
 	// -------------------------------------------------
@@ -247,6 +249,7 @@ bool ServicesBackend::InitZMQ(){
 	clt_dlr_socket->setsockopt(ZMQ_RCVTIMEO, clt_dlr_socket_timeout);
 	clt_dlr_socket->setsockopt(ZMQ_IDENTITY, clt_ID.c_str(), clt_ID.length());
 	clt_dlr_socket->setsockopt(ZMQ_IMMEDIATE,1);
+	clt_dlr_socket->setsockopt(ZMQ_LINGER, 10);
 	clt_dlr_socket->bind(std::string("tcp://*:")+std::to_string(clt_dlr_port));
 	
 	/*
@@ -354,7 +357,7 @@ bool ServicesBackend::BackgroundThread(std::future<void> signaller){
 	Log("ServicesBackend BackgroundThread starting!",v_debug,verbosity);
 	while(true){
 		// check if we've been signalled to terminate
-		std::chrono::milliseconds span(10);
+		std::chrono::microseconds span(100);
 		if(signaller.wait_for(span)!=std::future_status::timeout){
 			// terminate has been set
 			Log("ServicesBackend background thread received terminate signal",v_debug,verbosity);
