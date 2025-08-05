@@ -9,11 +9,11 @@
 #include <chrono>
 #include <functional>
 #include <SlowControlCollection.h>
-#include <boost/uuid/uuid.hpp>            // uuid class
-#include <boost/uuid/uuid_generators.hpp> // generators
-#include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/progress.hpp>
+//#include <boost/uuid/uuid.hpp>            // uuid class
+//#include <boost/uuid/uuid_generators.hpp> // generators
+//#include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
+//#include <boost/date_time/posix_time/posix_time.hpp>
+//#include <boost/progress.hpp>
 #include <ServicesBackend.h>
 
 #define SERVICES_DEFAULT_TIMEOUT 1800
