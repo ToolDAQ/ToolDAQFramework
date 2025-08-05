@@ -46,6 +46,8 @@ struct Command {
 
 enum class SlowControlMsg { Query, Log, Alarm, Monitoring, Calibration, Config };
 
+enum class MulticastType { Log, Monitoring };
+
 class ServicesBackend {
 	public:
 	ServicesBackend(){};
@@ -60,7 +62,7 @@ class ServicesBackend {
 	bool SendCommand(const std::string& topic, const std::string& command, std::string* results=nullptr, const unsigned int* timeout_ms=nullptr, std::string* err=nullptr);
 	
 	// multicasts
-	bool SendMulticast(int type, std::string command, std::string* err=nullptr);
+	bool SendMulticast(MulticastType type, std::string command, std::string* err=nullptr);
 	
 	
 	private:

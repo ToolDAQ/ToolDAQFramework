@@ -272,9 +272,8 @@ bool ServicesBackend::InitMulticast(){
 	
 	int log_port = 55554;
 	int mon_port = 55553;
-	std::string multicast_address = "239.192.1.1"; // FIXME suitable default?
+	std::string multicast_address = "239.192.1.1";
 	
-	// FIXME add to config file
 	m_variables.Get("log_port",log_port);
 	m_variables.Get("mon_port",mon_port);
 	m_variables.Get("multicast_address",multicast_address);
@@ -372,13 +371,13 @@ bool ServicesBackend::BackgroundThread(std::future<void> signaller){
 	return true;
 }
 
-bool ServicesBackend::SendMulticast(int type, std::string command, std::string* err){
+bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std::string* err){
 	// multicast send. These do not wait for a response, so no timeout.
 	// only immediately evident errors are reported. receipt is not confirmed.
 	if(verbosity>10) std::cout<<"ServicesBackend::SendMulticast invoked with command '"<<command<<"'"<<std::endl;
 	// type: 0=logging, 1=monitoring
-	int multicast_socket = (type==0) ? log_socket : mon_socket;
-	struct sockaddr_in* multicast_addr = (type==0) ? &log_addr : &mon_addr; 
+	int multicast_socket = (type==MulticastType::Log) ? log_socket : mon_socket;
+	struct sockaddr_in* multicast_addr = (type==MulticastType::Log) ? &log_addr : &mon_addr; 
 	
 	/*
 	// check for listeners...? - seems redundant, multicast can always send
