@@ -47,6 +47,8 @@ struct Command {
 
 enum class SlowControlMsg { Query, Log, Alarm, Monitoring, Calibration, Config };
 
+enum class MulticastType { Log, Monitoring };
+
 class ServicesBackend {
 	public:
 	ServicesBackend(){};
@@ -62,7 +64,7 @@ class ServicesBackend {
 	bool SendCommand(const std::string& topic, const std::string& command, std::string* results=nullptr, const unsigned int* timeout_ms=nullptr, std::string* err=nullptr);
 	
 	// multicasts
-	bool SendMulticast(std::string command, std::string* err=nullptr);
+	bool SendMulticast(MulticastType type, std::string command, std::string* err=nullptr);
 	
 	
 	private:
@@ -87,10 +89,12 @@ class ServicesBackend {
 	std::vector<zmq::pollitem_t> in_polls;
 	std::vector<zmq::pollitem_t> out_polls;
 	
-	// multicast socket file descriptor
-	int multicast_socket=-1;
+	// multicast socket file descriptors
+	int log_socket=-1;
+	int mon_socket=-1;
 	// multicast destination address structure
-	struct sockaddr_in multicast_addr;
+	struct sockaddr_in log_addr;
+	struct sockaddr_in mon_addr;
 	socklen_t multicast_addrlen;
 	// apparently works with zmq poller?
 	zmq::pollitem_t multicast_poller;
