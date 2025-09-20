@@ -105,6 +105,9 @@ RemoteControl: src/RemoteControl/RemoteControl.o $(LIBRARIES) $(HEADERS) | $(SOU
 	@echo -e "\e[38;5;11m\n*************** Making " $@ " ****************\e[0m"
 	g++  $(CXXFLAGS) $< -o $@ $(Includes) $(Libs)  
 
+MCDebug: src/RemoteControl/MCDebug.o $(LIBRARIES) $(HEADERS) | $(SOURCEFILES)
+	 @echo -e "\e[38;5;11m\n*************** Making " $@ " ****************\e[0m"
+	 g++  $(CXXFLAGS) $< -o $@ $(Includes) $(Libs)
 clean:
 	@echo -e "\e[38;5;201m\n*************** Cleaning up ****************\e[0m"
 	rm -f */*/*.o

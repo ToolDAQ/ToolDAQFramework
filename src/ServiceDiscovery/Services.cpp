@@ -21,11 +21,26 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
 
   m_context = context_in;
   sc_vars = sc_vars_in;
-  sc_vars->InitThreadedReceiver(m_context, 60000, 100, new_service);
+
+  bool alerts_send = 0;
+  int alert_send_port = 12242;
+  bool alerts_receive = 1; 
+  int alert_receive_port = 12243;
+  bool slow_controls = 1;
+  int sc_port = 60000;
+
+  m_variables.Get("alerts_send", alerts_send);
+  m_variables.Get("alert_send_port", alert_send_port);
+  m_variables.Get("alerts_receive", alerts_receive);
+  m_variables.Get("alert_receive_port", alert_receive_port);
+  m_variables.Get("sc_port", sc_port);
+    
+  sc_vars->InitThreadedReceiver(m_context, sc_port, 100, new_service, alert_receive_port, alerts_receive, alert_send_port, alerts_send);
   m_backend_client.SetUp(m_context);
   
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";
   if(!m_variables.Get("db_name",m_dbname)) m_dbname="daq";
+
   
   if(!m_backend_client.Initialise(m_variables)){
     std::clog<<"error initialising slowcontrol client"<<std::endl;
