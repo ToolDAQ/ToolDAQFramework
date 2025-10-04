@@ -26,7 +26,6 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   int alert_send_port = 12242;
   bool alerts_receive = 1; 
   int alert_receive_port = 12243;
-  bool slow_controls = 1;
   int sc_port = 60000;
 
   m_variables.Get("alerts_send", alerts_send);

@@ -66,9 +66,9 @@ namespace ToolFramework{
     
     zmq::socket_t* from_sock;
     zmq::socket_t* to_sock;
-    zmq::socket_t* control;
-    bool started;
-    zmq::pollitem_t items[2];
+    //zmq::socket_t* control;
+    //bool started;
+    zmq::pollitem_t items[1];
     
   };
   
@@ -98,6 +98,7 @@ namespace ToolFramework{
     bool MessageThread(DAQThread_args* args, std::string Message, bool block=true); ///< Send simple string to String thread
     bool MessageThread(std::string ThreadName, std::string Message, bool block=true); ///< Send simple string to String thread
     Thread_args* ZMQProxy(std::string name, zmq::socket_t* sock_1, zmq::socket_t* sock_2);
+    bool KillZMQProxy(std::string name);
     bool KillZMQProxy(Thread_args* args);
     
     template <typename T>  bool SendPointer(zmq::socket_t* sock, T* pointer){

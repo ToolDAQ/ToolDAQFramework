@@ -261,6 +261,13 @@ Thread_args* DAQUtilities::ZMQProxy(std::string name, zmq::socket_t* from_sock, 
   
 }
 
+bool DAQUtilities::KillZMQProxy(std::string name){
+
+  if(!Threads.count(name)) return false;
+  return KillZMQProxy(Threads[name]);
+
+}
+
 bool DAQUtilities::KillZMQProxy(Thread_args* arg){
   
   if(!arg) return false;
@@ -277,8 +284,8 @@ bool DAQUtilities::KillZMQProxy(Thread_args* arg){
   
   args->from_sock=0;
   args->to_sock=0;
-  delete args->control;
-  args->control=0;
+  //delete args->control;
+  //args->control=0;
   
   delete args;
   args=0;
