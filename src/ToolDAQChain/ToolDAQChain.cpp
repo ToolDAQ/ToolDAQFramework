@@ -172,6 +172,13 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
   if(m_backend_services){
     m_DAQdata->services= new Services();
     m_DAQdata->services->Init(m_data->vars, m_DAQdata->context, &m_DAQdata->sc_vars, true);
+    DAQLogging* tmp = reinterpret_cast<DAQLogging*>(m_log);
+    using std::placeholders::_1;
+    using std::placeholders::_2;
+    using std::placeholders::_3;
+    using std::placeholders::_4;
+    tmp->SetSendLog(std::bind(&Services::SendLog, m_DAQdata->services, _1, _2, _3, _4));
+    // tmp->SetSendLog(m_DAQdata->services->SendLog);
   }
   
 }

@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <functional>
 
 #include <zmq.hpp>
 
@@ -82,7 +83,8 @@ namespace ToolFramework{
     virtual ~TDAQStreamBuf();
     
     int sync ( );
-    
+      std::function<bool(const std::string&, unsigned int, const std::string&, const unsigned int)> SendLog;
+      //bool (*SendLog)(const std::string&, unsigned int, const std::string&, const unsigned int);    
     
   private:
     
@@ -117,7 +119,10 @@ namespace ToolFramework{
   DAQLogging(zmq::context_t *context,  boost::uuids::uuid UUID, std::string service, bool interactive=true, bool local=false, std::string localpath="./log",  bool remote=false, std::string logservice="", int logport=0, bool split_output_files=false);
   
   
-  virtual ~DAQLogging();
+    virtual ~DAQLogging();
+    //void SetSendLog( bool (*funptr)(const std::string&, unsigned int, const std::string&, const unsigned int));
+    void SetSendLog(std::function<bool(const std::string&, unsigned int, const std::string&, const unsigned int)> funptr);
+    
   
   
   private:

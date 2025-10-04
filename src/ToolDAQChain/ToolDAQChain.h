@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include <time.h> 
 #include <sys/stat.h>
+#include <functional>
 
 #include <boost/uuid/uuid.hpp>            // uuid class
 #include <boost/uuid/uuid_generators.hpp> // generators

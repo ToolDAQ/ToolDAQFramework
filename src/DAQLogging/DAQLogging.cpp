@@ -28,6 +28,7 @@ DAQLogging::TDAQStreamBuf::TDAQStreamBuf(zmq::context_t *context, boost::uuids::
   
   output=0;
   fileoutput=0;
+  SendLog = 0;
   
   m_context =context;
   
@@ -140,31 +141,34 @@ int DAQLogging::TDAQStreamBuf::sync (){
     }
 
     if (m_remote){
-
-      zmq::pollitem_t items[] = {
-        { *LogSender, 0, ZMQ_POLLOUT, 0 }
-      };
-
-      // printf("starting poll \n");   
-      zmq::poll(&items[0], 1, 1000);
-      // printf("finnished poll \n");
-
-      if (items[0].revents & ZMQ_POLLOUT) {
-	std::stringstream tmp;
-        //printf("in sync send \n");
-	tmp << "{"<<m_service<<":"<<t<<"} ["<<m_messagelevel<<"]: "<< str();
-	std::string line=tmp.str();
-	zmq::message_t Send(line.length()+1);
-        snprintf ((char *) Send.data(), line.length()+1 , "%s" ,line.c_str());
-        //printf(" sync sending %s\n",line.c_str());
-	LogSender->send(Send);
-        //printf("sync sent \n");
+      if(SendLog !=0){
+	SendLog(t, m_messagelevel, m_service, 0);
+      }
+      else{
+	zmq::pollitem_t items[] = {
+	  { *LogSender, 0, ZMQ_POLLOUT, 0 }
+	};
+	
+	// printf("starting poll \n");   
+	zmq::poll(&items[0], 1, 1000);
+	// printf("finnished poll \n");
+	
+	if (items[0].revents & ZMQ_POLLOUT) {
+	  std::stringstream tmp;
+	  //printf("in sync send \n");
+	  tmp << "{"<<m_service<<":"<<t<<"} ["<<m_messagelevel<<"]: "<< str();
+	  std::string line=tmp.str();
+	  zmq::message_t Send(line.length()+1);
+	  snprintf ((char *) Send.data(), line.length()+1 , "%s" ,line.c_str());
+	  //printf(" sync sending %s\n",line.c_str());
+	  LogSender->send(Send);
+	  //printf("sync sent \n");
+	}
+	
       }
       
     }
-    
   }
-  
   str("");
   
   return 0;
@@ -667,5 +671,14 @@ DAQLogging::~DAQLogging(){
  
   delete errbuffer;
   errbuffer=0;
+
+}
+
+//void DAQLogging::SetSendLog( bool (*funptr)(const std::string&, unsigned int, const std::string&, const unsigned int)){
+void DAQLogging::SetSendLog(std::function<bool(const std::string&, unsigned int, const std::string&, const unsigned int)> funptr){
+  TDAQStreamBuf* tmp = reinterpret_cast<TDAQStreamBuf*>(buffer);
+  tmp->SendLog=funptr;
+  tmp = reinterpret_cast<TDAQStreamBuf*>(errbuffer);
+  tmp->SendLog=funptr;
 
 }
