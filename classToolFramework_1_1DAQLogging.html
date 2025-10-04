@@ -91,6 +91,9 @@ Classes</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae0adb3ad0eec50d81515ca33b9c28db4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1DAQLogging.html#ae0adb3ad0eec50d81515ca33b9c28db4">DAQLogging</a> (zmq::context_t *context, boost::uuids::uuid UUID, std::string service, bool interactive=true, bool local=false, std::string localpath=&quot;./log&quot;, bool remote=false, std::string logservice=&quot;&quot;, int logport=0, bool split_output_files=false)</td></tr>
 <tr class="separator:ae0adb3ad0eec50d81515ca33b9c28db4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7b1f2215681a664a5521ee539f2bf8a"><td class="memItemLeft" align="right" valign="top"><a id="ae7b1f2215681a664a5521ee539f2bf8a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSendLog</b> (std::function&lt; bool(const std::string &amp;, unsigned int, const std::string &amp;, const unsigned int)&gt; funptr)</td></tr>
+<tr class="separator:ae7b1f2215681a664a5521ee539f2bf8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class handels the logging, which can be directed to screen or file or over the via the ToolChain Config file</p>
