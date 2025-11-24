@@ -92,6 +92,9 @@ class ServicesBackend {
 	// multicast socket file descriptors
 	int log_socket=-1;
 	int mon_socket=-1;
+	// mutexes to lock them
+	std::mutex log_socket_mtx;
+	std::mutex mon_socket_mtx;
 	// multicast destination address structure
 	struct sockaddr_in log_addr;
 	struct sockaddr_in mon_addr;
@@ -103,7 +106,7 @@ class ServicesBackend {
 	std::map<uint32_t, std::promise<Command>> waiting_recipients;
 	
 	void Log(std::string msg, int msg_verb, int verbosity); //??  generalise private
-        bool InitZMQ(); //private
+	bool InitZMQ(); //private
 	bool InitMulticast(); // private
 	bool RegisterServices(); //private
 	// wrapper funtion; add command to outgoing queue, receive response. ~30s timeout.

@@ -386,8 +386,18 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	// only immediately evident errors are reported. receipt is not confirmed.
 	if(verbosity>10) std::cout<<"ServicesBackend::SendMulticast invoked with command '"<<command<<"'"<<std::endl;
 	// type: 0=logging, 1=monitoring
-	int multicast_socket = (type==MulticastType::Log) ? log_socket : mon_socket;
-	struct sockaddr_in* multicast_addr = (type==MulticastType::Log) ? &log_addr : &mon_addr; 
+	int multicast_socket;
+	std::mutex* socket_mtx;
+	struct sockaddr_in* multicast_addr;
+	if(type==MulticastType::Log){
+		multicast_socket = log_socket;
+		socket_mtx = &log_socket_mtx;
+		multicast_addr = &log_addr;
+	} else {
+		multicast_socket = mon_socket;
+		socket_mtx = &mon_socket_mtx;
+		multicast_addr = &mon_addr;
+	}
 	
 	/*
 	// check for listeners...? - seems redundant, multicast can always send
@@ -396,7 +406,9 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	*/
 		
 		// got a listener - ship it
+		socket_mtx->lock();
 		int cnt = sendto(multicast_socket, command.c_str(), command.length()+1, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
+		socket_mtx->unlock();
 		if(cnt < 0){
 			std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
 			Log(errmsg,v_error,verbosity);
