@@ -255,9 +255,14 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     //tmp.Print();
     //printf("key=%s\n",key.c_str());
+
     
-    std::string reply="error: " + key;
+    //    std::string reply="error: " + key;
+    std::string reply="";
     bool strip=false;
+
+    Update(args->SCC, key, value, reply, strip);
+    /*
     
     if(key == "?"){
       //printf("args->SCC->Print()=%s\n", args->SCC->Print().c_str());
@@ -301,7 +306,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
 	}
       }
     }
-    
+    */
     
     Store rr;
     
@@ -547,4 +552,67 @@ void SlowControlCollection::Unpack(std::string in, std::map<std::string, std::st
     }
   }
 
+}
+
+bool SlowControlCollection::Update(std::string key, std::string value, std::string &reply, bool &strip){
+
+  return Update(this, key, value, reply, strip);
+}
+
+bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, std::string value, std::string &reply, bool &strip){
+
+  reply="error: " + key;
+  strip=false;
+  
+  if(key == "?"){
+    //printf("SCC->Print()=%s\n", SCC->Print().c_str());
+    if(value=="JSON"){
+      reply=SCC->PrintJSON();
+      strip=true;
+      return true;
+    }
+    else{
+      reply=SCC->Print();   
+      //printf("reply=%s\n", reply.c_str());
+      return true;
+    }  
+  }
+  else if((*SCC)[key]){
+    //std::cout<<"variable exists"<<std::endl;
+    if((*SCC)[key]->GetType() == SlowControlElementType(INFO)){
+      (*SCC)[key]->GetValue(value);
+      reply=value;
+      return true;
+    }
+    
+    else{
+      reply=key;
+      if((*SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
+	value="1";
+      }
+      //std::stringstream input;
+      //input<<tmp.Get<std::string>("msg_value");
+      //        std::string key="";
+      // std::string value="";
+      //input>>key>>value;
+      //printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
+      if(value!=""){
+	(*SCC)[key]->SetValue(value);
+	//(*SCC)[key]->Print();
+	SCFunction tmp_func= (*SCC)[key]->GetChangeFunction();
+	if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+	
+      }
+      else{
+	SCFunction tmp_func= (*SCC)[key]->GetReadFunction();
+	if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+	else (*SCC)[key]->GetValue(reply);
+	
+      }
+    }
+    return true;
+  }
+  
+  return false;
+  
 }

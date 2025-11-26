@@ -347,6 +347,8 @@ ToolDAQChain::~ToolDAQChain(){
   */ 
 
   //  m_DAQdata->sc_vars.Stop();
+  DAQLogging* tmp = reinterpret_cast<DAQLogging*>(m_log);
+  tmp->SetSendLog(0);
   delete m_DAQdata->services;
   m_DAQdata->services=0;
   

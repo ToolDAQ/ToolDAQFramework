@@ -75,6 +75,8 @@ namespace ToolFramework{
     
     static void Thread(Thread_args* arg);
     void Unpack(std::string in, std::map<std::string,std::string> &out, std::string header="");
+    bool Update(std::string key, std::string value, std::string &reply, bool &strip);
+    static bool Update( SlowControlCollection* SCC, std::string key, std::string value, std::string &reply, bool &strip);
     
   };
   
