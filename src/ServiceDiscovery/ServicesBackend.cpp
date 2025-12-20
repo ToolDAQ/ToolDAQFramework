@@ -2,9 +2,9 @@
 
 using namespace ToolFramework;
 
-Command::Command(std::string command_in, char type_in, std::string topic_in, const unsigned int timeout_ms_in){
+Command::Command(std::string command_in, char type_in, std::string topic_in, const uint32_t timeout_ms_in){
 	command = command_in;
-	type = type_in;
+	type = type_in; // TODO type is unnecessary, could just use topic[0]
 	topic=topic_in;
 	success=0;
 	response=std::vector<std::string>{};
@@ -421,12 +421,12 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	return true;
 }
 
-bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results, const unsigned int* timeout_ms, std::string* err){
+bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results, const uint32_t* timeout_ms, std::string* err){
 	// send a command and receive response.
 	// This is a wrapper that ensures we always return within the requested timeout.
 	if(verbosity>10) std::cout<<"ServicesBackend::SendCommand invoked with command '"<<command<<"'"<<std::endl;
 	
-	int timeout=command_timeout;            // default timeout for submission of command and receipt of response
+	uint32_t timeout=command_timeout;            // default timeout for submission of command and receipt of response
 	if(timeout_ms) timeout=*timeout_ms;     // override by user if a custom timeout is given
 	
 	// encapsulate the command in an object.
@@ -458,7 +458,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	// In fact it's useful to indicate a topic in all cases, even when the actual message will
 	// (for now) go over a dealer/router combination that cannot filter on the topic.
 	// forward the timeout to the Command (and thus zmq::poll in PollAndSend...) ... is this sensible? HMMMMM FIXME
-	Command cmd{command, type, topic.substr(2,std::string::npos),timeout};
+	Command cmd{command, type, topic,timeout};
 	
 	// wrap our attempt to get the response in try/catch, just in case?
 	try {
@@ -478,7 +478,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	return false;
 }
 
-bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::string* results, const unsigned int* timeout_ms, std::string* err){
+bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::string* results, const uint32_t* timeout_ms, std::string* err){
 	// wrapper for when user expects only one returned response part
 	if(err) *err="";
 	std::vector<std::string> resultsvec;
@@ -492,7 +492,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	return ret;
 }
 
-bool ServicesBackend::DoCommand(Command& cmd, int timeout_ms){
+bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand received command"<<std::endl;
 	// submit a command, wait for the response and return it
 	
@@ -549,10 +549,10 @@ bool ServicesBackend::DoCommand(Command& cmd, int timeout_ms){
 		// See how long that took to send, and subtract that from our total time allotment
 		// to see how long we have to wait for the response to arrive.
 		auto send_end = std::chrono::high_resolution_clock::now();
-		int send_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(send_end - send_start).count();
-		timeout_ms -= send_time_ms;
-		// juuuust in case, ensure our remaining time is not negative. :)
-		if(timeout_ms<0) timedout=true;
+		auto send_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(send_end - send_start).count();
+		// juuuust in case, make sure we actually still have time left to wait for the response
+		if(send_time_ms > timeout_ms) timedout=true; // shouldn't be possible really
+		else timeout_ms -= send_time_ms;
 	}
 	
 	// did we get a response in time?
@@ -898,7 +898,7 @@ bool ServicesBackend::Send(zmq::socket_t* sock, bool more, std::vector<std::stri
 	return send_ok;
 }
 
-int ServicesBackend::PollAndReceive(zmq::socket_t* sock, zmq::pollitem_t poll, int timeout, std::vector<zmq::message_t>& outputs){
+int ServicesBackend::PollAndReceive(zmq::socket_t* sock, zmq::pollitem_t poll, uint32_t timeout, std::vector<zmq::message_t>& outputs){
 	
 	// poll the input socket for messages
 	try {

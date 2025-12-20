@@ -63,7 +63,7 @@ bool Services::Ready(const unsigned int timeout){
 // Write Functions
 // ---------------
 
-bool Services::SendAlarm(const std::string& message, unsigned int level, const std::string& device, unsigned int timestamp, const unsigned int timeout){
+bool Services::SendAlarm(const std::string& message, unsigned int level, const std::string& device, const uint64_t timestamp, const unsigned int timeout){
   
   const std::string& name = (device=="") ? m_name : device;
   
@@ -82,9 +82,10 @@ bool Services::SendAlarm(const std::string& message, unsigned int level, const s
   if(!ok){
     std::clog<<"SendAlarm error: "<<err<<std::endl;
   }
+  // SendAlarm returns nothing
   
   // also record it to the logging socket
-  cmd_string = std::string{"{ \"topic\":\"logging\""}
+  cmd_string = std::string{"{ \"topic\":\"LOGGING\""}
              + ",\"time\":"+std::to_string(timestamp)
              + ",\"device\":\""+name+"\""
              + ",\"severity\":0"
@@ -100,12 +101,14 @@ bool Services::SendAlarm(const std::string& message, unsigned int level, const s
   
 }
 
-bool Services::SendCalibrationData(const std::string& json_data, const std::string& description, const std::string& device, unsigned int timestamp, int* version, const unsigned int timeout){
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+bool Services::SendCalibrationData(const std::string& json_data, const std::string& description, const std::string& name, const uint64_t timestamp, int* version, const unsigned int timeout){
   
-  const std::string& name = (device=="") ? m_name : device;
+  const std::string& c_name = (name=="") ? m_name : name;
   
   std::string cmd_string = "{ \"time\":"+std::to_string(timestamp)
-                         + ", \"device\":\""+ name +"\""
+                         + ", \"name\":\""+ c_name +"\""
                          + ", \"description\":\""+ description+"\""
                          + ", \"data\":\""+ json_data +"\" }";
   
@@ -114,6 +117,11 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   
   if(!m_backend_client.SendCommand("W_CALIBRATION", cmd_string, &response, &timeout, &err)){
     std::clog<<"SendCalibrationData error: "<<err<<std::endl;
+    return false;
+  }
+  
+  if(response.empty()){
+    std::clog<<"SendCalibrationData error: empty response"<<std::endl;
     return false;
   }
   
@@ -135,7 +143,9 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   
 }
 
-bool Services::SendDeviceConfig(const std::string& json_data, const std::string& author, const std::string& description, const std::string& device, unsigned int timestamp, int* version, const unsigned int timeout){
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+bool Services::SendDeviceConfig(const std::string& json_data, const std::string& author, const std::string& description, const std::string& device, const uint64_t timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
@@ -152,6 +162,11 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
   
   if(!m_backend_client.SendCommand("W_DEVCONFIG", cmd_string, &response, &timeout, &err)){
     std::clog<<"SendDeviceConfig error: "<<err<<std::endl;
+    return false;
+  }
+  
+  if(response.empty()){
+    std::clog<<"SendDeviceConfig error: empty response"<<std::endl;
     return false;
   }
   
@@ -173,7 +188,9 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
   
 }
 
-bool Services::SendRunConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, unsigned int timestamp, int* version, const unsigned int timeout){
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+bool Services::SendRunConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, const uint64_t timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
@@ -188,6 +205,11 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
   
   if(!m_backend_client.SendCommand("W_RUNCONFIG", cmd_string, &response, &timeout, &err)){
     std::clog<<"SendRunConfig error: "<<err<<std::endl;
+    return false;
+  }
+  
+  if(response.empty()){
+    std::clog<<"SendRunConfig error: empty response"<<std::endl;
     return false;
   }
   
@@ -209,18 +231,196 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
   
 }
 
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+bool Services::SendROOTplotZmq(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const unsigned int keep_until, int* version, const uint64_t timestamp, const unsigned int timeout){
+  
+  std::string cmd_string = "{ \"time\":"+std::to_string(timestamp)
+                         + ", \"name\":\""+ plot_name +"\""
+                         + ", \"draw_options\":\""+ draw_options +"\""
+                         + ", \"data\":\""+ json_data+"\""
+                         + ", \"keep_until\":"+std::to_string(keep_until)+" }"; // FIXME modify DB as per retention
+  
+  std::string err="";
+  std::string response="";
+  
+  if(!m_backend_client.SendCommand("W_TROOTPLOT", cmd_string, &response, &timeout, &err)){
+    std::clog<<"SendROOTplot error: "<<err<<std::endl;
+    return false;
+  }
+  
+  if(response.empty()){
+    std::clog<<"SendROOTplot error: empty response"<<std::endl;
+    return false;
+  }
+  
+  // response is json with the version number of the created plot entry
+  // e.g. '{"version":3}'. check this is what we got, as validation.
+  Store tmp;
+  tmp.JsonParser(response);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok && version){
+    *version = tmp_version;
+  }
+  if(!ok){
+    std::clog<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
+    return false;
+  }
+  
+  return true;
+  
+}
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+// single trace version
+bool Services::SendPlotlyPlot(
+    const std::string& name,
+    const std::string& trace,
+    const std::string& layout,
+    int*               version,
+    const uint64_t     timestamp,
+    const unsigned int timeout
+) {
+  return SendPlotlyPlot(
+      name,
+      std::vector<std::string> { trace },
+      layout,
+      version,
+      timestamp,
+      timeout
+  );
+}
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+// multiple traces version
+bool Services::SendPlotlyPlot(
+    const std::string&              name,
+    const std::vector<std::string>& traces,
+    const std::string&              layout,
+    int*                            version,
+    const uint64_t                  timestamp,
+    const unsigned int              timeout
+) {
+  std::stringstream ss;
+  ss << "{\"name\":\"" << name << "\",\"layout\":" << layout;
+  if (timestamp) ss << ",\"time\":" << timestamp;
+  ss << ",\"data\":[";
+  bool first = true;
+  for (auto& trace : traces) {
+    if (first)
+      first = false;
+    else
+      ss << ',';
+    ss << trace;
+  };
+  ss << "]}";
+  
+  std::string response="";
+  
+  std::string err;
+  if (!m_backend_client.SendCommand("W_PLOTLYPLOT", ss.str(), &response, &timeout, &err)){
+    std::clog << "SendPlotlyPlot error: " << err << std::endl;
+    return false;
+  };
+  
+  if(response.empty()){
+    std::clog<<"SendPlotlyPlot error: empty response"<<std::endl;
+    return false;
+  }
+  
+  // response is json with the version number of the created plot entry
+  // e.g. '{"version":3}'. check this is what we got, as validation.
+  Store tmp;
+  tmp.JsonParser(response);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok && version){
+    *version = tmp_version;
+  }
+  if(!ok){
+    std::clog<<"SendPlotlyPlot error: invalid response: '"<<response<<"'"<<std::endl;
+    return false;
+  }
+  
+  return true;
+}
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+// Since we don't know if a generic SQL query is read or write, call it a write-query for safety
+// version that expects multiple returned rows
+bool Services::SQLQuery(/*const std::string& database,*/ const std::string& query, std::vector<std::string>& responses, const unsigned int timeout){
+  
+  responses.clear();
+  
+  //const std::string& db = (database=="") ? m_dbname : database;
+  
+  std::string err="";
+  
+  if(!m_backend_client.SendCommand("W_QUERY", query, &responses, &timeout, &err)){
+    std::clog<<"SQLQuery error: "<<err<<std::endl;
+    responses.resize(1);
+    responses.front() = err;
+    return false;
+  }
+  
+  return true;
+  
+}
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+// version when expecting just one row
+bool Services::SQLQuery(/*const std::string& database,*/ const std::string& query, std::string& response, const unsigned int timeout){
+  
+  response="";
+  
+  std::vector<std::string> responses;
+  
+  bool ok = SQLQuery(/*db,*/ query, responses, timeout);
+  
+  if(responses.size()!=0){
+    response = responses.front();
+    if(responses.size()>1){
+      std::clog<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
+    }
+  }
+  
+  return ok;
+}
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+// versions that don't expect any return (e.g. insertions)
+bool Services::SQLQuery(/*const std::string& database,*/ const std::string& query, const unsigned int timeout){
+  
+  std::string tmp;
+  return SQLQuery(/*database,*/ query, tmp, timeout);
+
+}
+
 // ===========================================================================
 // Read Functions
 // --------------
+// we need to ensure any escaping needed is already done, but probably none needed
 
-bool Services::GetCalibrationData(std::string& json_data, int version, const std::string& device, const unsigned int timeout){
+bool Services::GetCalibrationData(std::string& json_data, int& version, const std::string& device, const unsigned int timeout){
   
   json_data = "";
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = "{ \"device\":\""+ name +"\""
-                         + ", \"version\":\""+std::to_string(version)+"\" }";
+  std::string cmd_string;
+  
+  if(version<0){
+    // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
+    cmd_string = "SELECT row_to_json(data, version) FROM calibration WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+  } else {
+    cmd_string = "SELECT row_to_json(data, version) FROM calibration WHERE device='"+name+"' AND version="+std::to_string(version);
+  }
   
   std::string err="";
   
@@ -230,18 +430,45 @@ bool Services::GetCalibrationData(std::string& json_data, int version, const std
     return false;
   }
   
+  if(json_data.empty()){
+    // if we got an empty response but the command succeeded,
+    // the query worked but matched no records - run config not found
+    err = "GetCalibrationData error: data for device "+name+" version "+std::to_string(version)+" not found";
+    std::clog<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  
+  Store tmp;
+  tmp.JsonParser(json_data);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok && version<0){
+    version = tmp_version;
+  }
+  ok = ok && tmp.Get("data",json_data);
+  
+  if(!ok){
+    err = "GetCalibrationData error: invalid response: '"+response+"'";
+    std::clog<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  
+  
   return true;
   
 }
 
-bool Services::GetDeviceConfig(std::string& json_data, const int version, const std::string& device, const unsigned int timeout){
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+bool Services::GetDeviceConfig(std::string& json_data, int& version, const std::string& device, const unsigned int timeout){
 
   json_data="";
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = "{ \"device\":\""+ name +"\""
-                         + ", \"version\":"+std::to_string(version) + "}";
+  std::string cmd_string = "SELECT row_to_json(data) FROM device_config WHERE name='"+name+"' AND version="+std::to_string(version);
   
   std::string err="";
   
@@ -251,8 +478,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
     return false;
   }
   
-  // response format '{"version":X, "data":"<contents>"}' - strip out contents
-  if(json_data.length()==0){
+  if(json_data.empty()){
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetDeviceConfig error: config for device "+name+" version "+std::to_string(version)+" not found";
@@ -260,16 +486,15 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
     json_data = err;
     return false;
   }
+  
+  // response format '{"data":"<contents>"}' - strip out contents
   Store tmp;
   tmp.JsonParser(json_data);
-  int tmp_version;
-  bool ok = tmp.Get("version",tmp_version);
-  if(ok){
-    //version = tmp_version;  // cannot pass back... without a more complex signature
-    ok = tmp.Get("data", json_data);
-  }
+  bool ok = tmp.Get("data", json_data);
   if(!ok){
-    std::clog<<"GetDeviceConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
+    err = "GetDeviceConfig error: invalid response: '"+json_data+"'";
+    std::clog<<err<<std::endl;
+    json_data = err;
     return false;
   }
   
@@ -277,17 +502,28 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
   
 }
 
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
 // get a run configuration via configuration ID
 bool Services::GetRunConfig(std::string& json_data, const int config_id, const unsigned int timeout){
 
   json_data="";
   
-  std::string cmd_string = "{ \"config_id\":"+std::to_string(config_id) + "}";
+  std::string cmd_string = "SELECT row_to_json(data) FROM run_config WHERE config_id="+std::to_string(config_id);
   
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
     std::clog<<"GetRunConfig error: "<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  
+  if(json_data.empty()){
+    // if we got an empty response but the command succeeded,
+    // the query worked but matched no records - run config not found
+    err = "GetRunConfig error: config_id "+std::to_string(config_id)+" not found";
+    std::clog<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -296,46 +532,6 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
   Store tmp;
   tmp.JsonParser(json_data);
   bool ok = tmp.Get("data", json_data);
-  if(!ok){
-    std::clog<<"GetRunConfig error: invalid response: '"<<json_data<<"'"<<std::endl;
-    return false;
-  }
-  
-  return true;
-  
-}
-
-// get a run configuration by name and version (e.g. name: AmBe, version: 3)
-bool Services::GetRunConfig(std::string& json_data, const std::string& name, const int version, const unsigned int timeout){
-
-  json_data="";
-  
-  std::string cmd_string = "{ \"name\":\""+ name +"\""
-                         + ", \"version\":"+std::to_string(version) + "}";
-  
-  std::string err="";
-  
-  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::clog<<"GetRunConfig error: "<<err<<std::endl;
-    json_data = err;
-    return false;
-  }
-  
-  // response format '{"version":X, "data":"<contents>"}' - strip out contents
-  if(json_data.length()==0){
-    // if we got an empty response but the command succeeded,
-    // the query worked but matched no records - run config not found
-    std::clog<<"GetRunConfig error: config "<<name<<" version "<<version<<" not found"<<std::endl;
-    return false;
-  }
-  Store tmp;
-  tmp.JsonParser(json_data);
-  int tmp_version;
-  bool ok = tmp.Get("version",tmp_version);
-  if(ok){
-    //version = tmp_version;  // cannot pass back
-    ok = tmp.Get("data", json_data);
-  }
   if(!ok){
     err="GetRunConfig error: invalid response: '"+json_data+"'";
     std::clog<<err<<std::endl;
@@ -347,138 +543,183 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
   
 }
 
-// quick aside for a couple of convenience wrappers.
-// For a device to get its configuration from a *run* configuration ID, it needs to:
-// 1. get the run configuration JSON from that ID (this represents a map of devices to device config IDs)
-// 2. extract its device configuration ID from this map
-// 3. get its device configuration from the database via this device configuration ID.
-// to make things easy for end users, provide a wrapper that does this.
-// technically we have two wrappers as there are two ways to specify a run configuration (by id or by name+version)
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
+// get a run configuration by name and version (e.g. name: AmBe, version: 3)
+bool Services::GetRunConfig(std::string& json_data, const std::string& name, const int version, const unsigned int timeout){
+
+  json_data="";
+  
+  std::string cmd_string = "SELECT row_to_json(data) FROM run_config WHERE name='"+name+"' AND version="+std::to_string(version);
+  
+  std::string err="";
+  
+  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
+    std::clog<<"GetRunConfig error: "<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  
+  if(json_data.empty()){
+    // if we got an empty response but the command succeeded,
+    // the query worked but matched no records - run config not found
+    err = "GetRunConfig error: config "+name+" version "+std::to_string(version)+" not found";
+    std::clog<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  
+  // response format '{"data":"<contents>"}' - strip out contents
+  Store tmp;
+  tmp.JsonParser(json_data);
+  bool ok = tmp.Get("data", json_data);
+  if(!ok){
+    err="GetRunConfig error: invalid response: '"+json_data+"'";
+    std::clog<<err<<std::endl;
+    json_data=err;
+    return false;
+  }
+  
+  return true;
+  
+}
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+// Get a device configuration from a *run* configuration ID
 bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id, const std::string& device, int* version, unsigned int timeout){
   
   json_data="";
   
   const std::string& name = (device=="") ? m_name : device;
   
-  // 1. get the run configuration
-  std::string run_config="";
-  bool get_ok = GetRunConfig(run_config, runconfig_id, timeout/2);
+  std::string cmd_string = "SELECT row_to_json(data, version) FROM device_config WHERE name='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE config_id="+std::to_string(runconfig_id)+")";
   
-  if(!get_ok){
-    // redundant as GetRunConfig prints the error - but is this still useful as calling context?
-    // TODO we should be using exceptions, of course
-    //std::clog<<"GetRunDeviceConfig error getting run config id "<<runconfig_id<<": '"<<run_config<<"'"<<std::endl;
-    json_data=run_config;
+  std::string err="";
+  
+  if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
+    std::clog<<"GetRunDeviceConfig error: "<<err<<std::endl;
+    json_data = err;
     return false;
   }
   
-  // 2. extract the device's configuration id
-  Store tmp;
-  tmp.JsonParser(run_config);
-  int device_config_id;
-  get_ok = tmp.Get(name, device_config_id);
-  
-  if(!get_ok){
-    std::string err= "GetRunDeviceConfig error getting device config; device '"+name
-                   +"' not found in run configuration '"+run_config+"'";
+  if(json_data.empty()){
+    // if we got an empty response but the command succeeded,
+    // the query worked but matched no records - run config not found
+    err = "GetRunDeviceConfig error: config "+name+" for runconfig "+std::to_string(runconfig_id)+" not found"
     std::clog<<err<<std::endl;
     json_data = err;
     return false;
   }
-  if(version!=nullptr) *version=device_config_id;
   
-  // 3. use the device config id to get the device configuration
-  return GetDeviceConfig(json_data, device_config_id, name, timeout/2);
+  // response format '{"version": X, "data":"<contents>"}' - strip out contents
+  Store tmp;
+  tmp.JsonParser(json_data);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok && version){
+    *version = tmp_version;
+  }
+  ok = ok && tmp.Get("data", json_data);
+  if(!ok){
+    err="GetRunDeviceConfig error: invalid response: '"+json_data+"'";
+    std::clog<<err<<std::endl;
+    json_data=err;
+    return false;
+  }
+  
+  return true;
   
 }
 
-// second convenience wrapper
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+// Get a device configuration from a *run* type name and version number
 bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& runconfig_name, const int runconfig_version, const std::string& device, int* version, unsigned int timeout){
   
   json_data="";
   
   const std::string& name = (device=="") ? m_name : device;
   
-  // 1. get the run configuration
-  std::string run_config="";
-  bool get_ok = GetRunConfig(run_config, runconfig_name, runconfig_version, timeout/2);
+    std::string cmd_string = "SELECT row_to_json(data, version) FROM device_config WHERE name='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")";
   
-  if(!get_ok){
-    // redundant as GetRunConfig prints the error - but is this still useful as calling context?
-    // TODO we should be using exceptions, of course
-    //std::clog<<"GetRunDeviceConfig error getting run config '"<<runconfig_name<<"' version "
-    //         <<runconfig_version<<": '"<<run_config<<"'"<<std::endl;
-    json_data = run_config;
+  std::string err="";
+  
+  if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
+    std::clog<<"GetRunDeviceConfig error: "<<err<<std::endl;
+    json_data = err;
     return false;
   }
   
-  // 2. extract the device's configuration id
-  Store tmp;
-  tmp.JsonParser(run_config);
-  int device_config_id;
-  get_ok = tmp.Get(name, device_config_id);
-  
-  if(!get_ok){
-    std::string err= "GetRunDeviceConfig error getting device config; device '"+name
-                   +"' not found in run configuration '"+run_config+"'";
+  if(json_data.empty()){
+    // if we got an empty response but the command succeeded,
+    // the query worked but matched no records - run config not found
+    err = "GetRunDeviceConfig error: config "+name+" for runconfig "+runconfig_name+" version "+std::to_string(runconfig_version)+" not found";
     std::clog<<err<<std::endl;
     json_data = err;
     return false;
   }
-  if(version!=nullptr) *version=device_config_id;
   
-  // 3. use the device config id to get the device configuration
-  return GetDeviceConfig(json_data, device_config_id, name, timeout/2);
+  // response format '{"version":X, "data":"<contents>"}' - strip out contents
+  Store tmp;
+  tmp.JsonParser(json_data);
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok && version){
+    *version = tmp_version;
+  }
+  ok = ok && tmp.Get("data", json_data);
+  if(!ok){
+    err="GetRunDeviceConfig error: invalid response: '"+json_data+"'";
+    std::clog<<err<<std::endl;
+    json_data=err;
+    return false;
+  }
+  
+  return true;
   
 }
 
-// end convenience wrappers
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
 bool Services::GetROOTplot(const std::string& plot_name, int& version, std::string& draw_options, std::string& json_data, std::string* timestamp, const unsigned int timeout){
   
-  std::string cmd_string = "{ \"plot_name\":\""+ plot_name + "\""
-                         + ", \"version\":" + std::to_string(version)+ "}";
+  std::string cmd_string;
+  
+  if(version<0){
+    cmd_string = "SELECT row_to_json(version, time, data, draw_options), FROM rootplots WHERE name='"+plot_name+"' AND version="+std::to_string(version);
+  } else {
+    // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
+    cmd_string = "SELECT row_to_json(version, time, data, draw_options) FROM rootplots WHERE name='"+plot_name+"' ORDER BY version DESC LIMIT 1";
+  }
   
   std::string err="";
   std::string response="";
-  if(!m_backend_client.SendCommand("R_ROOTPLOT", cmd_string, &response, &timeout, &err)){
+  
+  if(!m_backend_client.SendCommand("R_TROOTPLOT", cmd_string, &response, &timeout, &err)){
     std::clog<<"GetROOTplot error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
   
   if(response.empty()){
-    std::clog<<"GetROOTplot error: empty response, "<<err<<std::endl;
+    err = "GetROOTplot error: ROOTplot "+plot_name+" version "+std::to_string(version)+" not found";
     json_data = err;
     return false;
   }
   
-  // response format '{"draw_options":"<options>", "timestamp":<value>, "version": <value>, "data":"<contents>"}'
-  size_t pos1=0, pos2=0;
-  std::string key;
-  std::map<std::string,std::string> vals;
-  while(true){
-    pos1=response.find('"',pos2);
-    if(pos1==std::string::npos) break;
-    pos2=response.find('"',++pos1);
-    if(pos2==std::string::npos) break;
-    std::string str = response.substr(pos1,(pos2-pos1));
-    ++pos2;
-    if(key.empty()){ key = str; }
-    else if(key=="data"){ break; }
-    else { vals[key] = str; key=""; }
-  }
-  vals[key] = response.substr(pos1,response.find_last_of('"')-pos1);
+  Store plot;
+  plot.JsonParser(response);
   
-  try{
-    draw_options = vals["draw_options"];
-    if(timestamp) *timestamp = vals["timestamp"];
-    version = std::stoi(vals["version"]);
-    json_data = vals["data"];
-  } catch(...){
-    std::clog<<"GetROOTplot error: failed to parse response '"<<response<<"'"<<std::endl;
-    json_data = "Parse error";
+  bool ok = plot.Get("data", json_data);
+  ok = ok && plot.Get("draw_options", draw_options);
+  ok = ok && plot.Get("version", version);
+  if(timestamp && ok) ok = ok && plot.Get("time", *timestamp);
+  
+  if(!ok){
+    err="GetROOTplot error: invalid response: '"+response+"'";
+    std::clog<<err<<std::endl;
+    json_data=err;
     return false;
   }
   
@@ -492,65 +733,71 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   
 }
 
-bool Services::SQLQuery(const std::string& database, const std::string& query, std::vector<std::string>& responses, const unsigned int timeout){
+// Get a device configuration from a *run* configuration ID
+
+bool Services::GetPlotlyPlot(
+    const std::string& name,
+    int&               version,
+    std::string&       trace,
+    std::string&       layout,
+    std::string*       timestamp,
+    unsigned int       timeout
+) {
   
-  responses.clear();
+  std::string cmd_string;
+  if(version<0){
+    cmd_string = "SELECT row_to_json(version, time, data, layout), FROM plotlyplots WHERE name='"+name+"' AND version="+std::to_string(version);
+  } else {
+    // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
+    cmd_string = "SELECT row_to_json(version, time, data, layout) FROM plotlyplots WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+  }
   
-  const std::string& db = (database=="") ? m_dbname : database;
+  std::string err;
+  std::string response;
+  if (!m_backend_client.SendCommand("R_PLOTLYPLOT", cmd_string, &response, &timeout, &err)){
+    std::clog << "GetPlotlyPlot error: " << err << std::endl;
+    json_data = err;
+    return false;
+  };
   
-  const std::string command = "{ \"database\":\""+db+"\""
-                            + ", \"query\":\""+ query+"\" }";
+  if(response.empty()){
+    err = "GetPlotlyPlot error: PlotlyPlot "+name+" version "+std::to_string(version)+" not found";
+    json_data = err;
+    return false;
+  }
   
-  std::string err="";
+  Store plot;
+  plot.JsonParser(response);
   
-  if(!m_backend_client.SendCommand("R_QUERY", command, &responses, &timeout, &err)){
-    std::clog<<"SQLQuery error: "<<err<<std::endl;
-    responses.resize(1);
-    responses.front() = err;
+  trace   = plot.Get<std::string>("data");
+  layout  = plot.Get<std::string>("layout");
+  version = plot.Get<int>("version");
+  
+  bool ok = plot.Get("data", trace);
+  ok = ok && plot.Get("layout", layout);
+  ok = ok && plot.Get("version", version);
+  if(timestamp && ok) ok = ok && plot.Get("time", *timestamp);
+  
+  if(!ok){
+    err="GetPlotlyPlot error: invalid response: '"+response+"'";
+    std::clog<<err<<std::endl;
+    json_data=err;
     return false;
   }
   
   return true;
-  
 }
 
-bool Services::SQLQuery(const std::string& database, const std::string& query, std::string& response, const unsigned int timeout){
-  
-  response="";
-  
-  const std::string& db = (database=="") ? m_dbname : database;
-  
-  std::vector<std::string> responses;
-  
-  bool ok = SQLQuery(db, query, responses, timeout);
-  
-  if(responses.size()!=0){
-    response = responses.front();
-    if(responses.size()>1){
-      std::clog<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
-    }
-  }
-  
-  return ok;
-}
-
-// for things like insertions, the user may not have any return they care about
-bool Services::SQLQuery(const std::string& database, const std::string& query, const unsigned int timeout){
-  
-  std::string tmp;
-  return SQLQuery(database, query, tmp, timeout);
-
-}
 
 // ===========================================================================
 // Multicast Senders
 // -----------------
 
-bool Services::SendLog(const std::string& message, unsigned int severity, const std::string& device, unsigned int timestamp){
+bool Services::SendLog(const std::string& message, unsigned int severity, const std::string& device, const uint64_t timestamp){
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = std::string{"{ \"topic\":\"logging\""}
+  std::string cmd_string = std::string{"{ \"topic\":\"LOGGING\""}
                          + ",\"time\":"+std::to_string(timestamp)
                          + ",\"device\":\""+ name +"\""
                          + ",\"severity\":"+std::to_string(severity)
@@ -573,11 +820,11 @@ bool Services::SendLog(const std::string& message, unsigned int severity, const 
 }
 
 
-bool Services::SendMonitoringData(const std::string& json_data, const std::string& subject, const std::string& device, unsigned int timestamp){
+bool Services::SendMonitoringData(const std::string& json_data, const std::string& subject, const std::string& device, const uint64_t timestamp){
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = std::string{"{ \"topic\":\"monitoring\""}
+  std::string cmd_string = std::string{"{ \"topic\":\"MONITORING\""}
                          + ", \"time\":"+std::to_string(timestamp)
                          + ", \"device\":\""+ name +"\""
                          + ", \"subject\":\""+ subject +"\""
@@ -599,55 +846,12 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   
 }
 
-// wrapper to send a root plot either to a temporary table or a persistent one
-bool Services::SendROOTplot(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, bool persistent, int* version, const unsigned int timestamp, const unsigned int timeout){
-  if(!persistent) return SendTemporaryROOTplot(plot_name, draw_options, json_data, version, timestamp);
-  return SendPersistentROOTplot(plot_name, draw_options, json_data, version, timestamp, timeout);
-}
-
-// send to persistent table over TCP
-bool Services::SendPersistentROOTplot(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version, const unsigned int timestamp, const unsigned int timeout){
+// send ROOT plot over multicast
+bool Services::SendROOTplotMulticast(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const uint64_t timestamp){
   
-  std::string cmd_string = "{ \"time\":"+std::to_string(timestamp)
-                         + ", \"plot_name\":\""+ plot_name +"\""
-                         + ", \"draw_options\":\""+ draw_options +"\""
-                         + ", \"data\":\""+ json_data+"\" }";
-  
-  std::string err="";
-  std::string response="";
-  
-  if(!m_backend_client.SendCommand("W_ROOTPLOT", cmd_string, &response, &timeout, &err)){
-    std::clog<<"SendROOTplot error: "<<err<<std::endl;
-    return false;
-  }
-  
-  // response is json with the version number of the created plot entry
-  // e.g. '{"version":3}'. check this is what we got, as validation.
-  if(response.length()>12){
-    // FIXME change to Store parsing so we can check this is the right key
-    response.replace(0,response.find_first_of(':')+1,"");
-    response.replace(response.find_last_of('}'),std::string::npos,"");
-    try {
-      if(version) *version = std::stoi(response);
-    } catch (...){
-      std::clog<<"SendROOTplot error: invalid response '"<<response<<"'"<<std::endl;
-      return false;
-    }
-  } else {
-    std::clog<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
-    return false;
-  }
-  
-  return true;
-  
-}
-
-// send to temporary table over multicast
-bool Services::SendTemporaryROOTplot(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version, const unsigned int timestamp){
-  
-  std::string cmd_string = std::string{"{ \"topic\":\"rootplot\""}
+  std::string cmd_string = std::string{"{ \"topic\":\"TROOTPLOT\""}
                          + ", \"time\":"+std::to_string(timestamp)
-                         + ", \"plot_name\":\""+ plot_name +"\""
+                         + ", \"name\":\""+ plot_name +"\""
                          + ", \"draw_options\":\""+ draw_options +"\""
                          + ", \"data\":\""+ json_data+"\" }";
   
@@ -665,97 +869,6 @@ bool Services::SendTemporaryROOTplot(const std::string& plot_name, const std::st
   
   return true;
   
-}
-
-bool Services::GetPlotlyPlot(
-    const std::string& name,
-    int&               version,
-    std::string&       trace,
-    std::string&       layout,
-    unsigned int*      timestamp,
-    unsigned int       timeout
-) {
-  Store cmd;
-  cmd.Set("name", name);
-  if (version >= 0) cmd.Set("version", version);
-
-  std::string cmd_string;
-  cmd >> cmd_string;
-
-  std::string err;
-  std::string response;
-  if (!m_backend_client.SendCommand(
-        "R_PLOTLYPLOT", cmd_string, &response, &timeout, &err
-      ))
-  {
-    std::clog << "GetPlotlyPlot error: " << err << std::endl;
-    return false;
-  };
-
-  Store plot;
-  plot.JsonParser(response);
-
-  trace   = plot.Get<std::string>("trace");
-  layout  = plot.Get<std::string>("layout");
-  version = plot.Get<int>("version");
-  if (timestamp) *timestamp = plot.Get<int>("time");
-
-  return true;
-}
-
-bool Services::SendPlotlyPlot(
-    const std::string& name,
-    const std::string& trace,
-    const std::string& layout,
-    int*               version,
-    unsigned int       timestamp,
-    unsigned int       timeout
-) {
-  return SendPlotlyPlot(
-      name,
-      std::vector<std::string> { trace },
-      layout,
-      version,
-      timestamp,
-      timeout
-  );
-}
-
-bool Services::SendPlotlyPlot(
-    const std::string&              name,
-    const std::vector<std::string>& traces,
-    const std::string&              layout,
-    int*                            version,
-    unsigned int                    timestamp,
-    unsigned int                    timeout
-) {
-  std::stringstream ss;
-  ss
-    << "{\"name\":\"" << name
-    << "\",\"layout\":" << layout;
-  if (version) ss << ",\"version\":" << *version;
-  if (timestamp) ss << ",\"timestamp\":" << timestamp;
-  ss << ",\"traces\":[";
-  bool first = true;
-  for (auto& trace : traces) {
-    if (first)
-      first = false;
-    else
-      ss << ',';
-    ss << trace;
-  };
-  ss << "]}";
-
-  std::string err;
-  if (!m_backend_client.SendCommand(
-        "W_PLOTLYPLOT", ss.str(), static_cast<std::string*>(nullptr), &timeout, &err
-     ))
-  {
-    std::clog << "SendPlotlyPlot error: " << err << std::endl;
-    return false;
-  };
-
-  return true;
 }
 
 // ===========================================================================
