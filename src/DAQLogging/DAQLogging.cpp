@@ -342,7 +342,6 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
   
   bzero((char *)&addr, sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = htonl(INADDR_ANY);
   addr.sin_port = htons(log_port);
   addrlen = sizeof(addr);
   
