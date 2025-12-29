@@ -280,13 +280,15 @@ bool ServicesBackend::InitMulticast(){
 	/*              Multicast Setup              */
 	/* ----------------------------------------- */
 	
-	int log_port = 55554;
-	int mon_port = 55553;
-	std::string multicast_address = "239.192.1.1";
+	int log_port = 5000;
+	int mon_port = 5000;
+	std::string log_address = "239.192.1.2";
+	std::string mon_address = "239.192.1.3";
 	
 	m_variables.Get("log_port",log_port);
 	m_variables.Get("mon_port",mon_port);
-	m_variables.Get("multicast_address",multicast_address);
+	m_variables.Get("log_address",log_address);
+	m_variables.Get("mon_address",mon_address);
 	
 	// set up multicast socket for sending logging & monitoring data
 	log_socket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -323,10 +325,10 @@ bool ServicesBackend::InitMulticast(){
 	mon_addr = log_addr;
 	mon_addr.sin_port = htons(mon_port);
 	// convert destination address string to binary
-	get_ok =           inet_aton(multicast_address.c_str(), &log_addr.sin_addr);
-	get_ok = get_ok && inet_aton(multicast_address.c_str(), &mon_addr.sin_addr);
+	get_ok =           inet_aton(log_address.c_str(), &log_addr.sin_addr);
+	get_ok = get_ok && inet_aton(mon_address.c_str(), &mon_addr.sin_addr);
 	if(get_ok==0){ // returns 0 on failure, not success
-		Log("Bad multicast address '"+multicast_address+"'",v_error,verbosity);
+		Log("Bad multicast address '"+log_address+"' or '"+mon_address+"'",v_error,verbosity);
 		return false;
 	}
 	multicast_addrlen = sizeof(log_addr);
