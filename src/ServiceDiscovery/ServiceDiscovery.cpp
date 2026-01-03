@@ -177,8 +177,8 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
       bool statusquery;
       
       tmp>>command>>service>>uuid>>port>>statusquery;
-     
-     
+      
+      //printf("SD publish thread got request command %s\n",command.c_str());
       if(command=="Quit"){
         //printf("publish quitting \n");
         running=false;
@@ -192,6 +192,7 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
         bb.Set("status_query",statusquery);
         bb.Set("uuid",boost::uuids::to_string(uuid));
         PubServices.push_back(bb);
+        //printf("SD publish thread Adding service %s\n", service.c_str());
 
       }
       else if(command=="Delete"){
@@ -209,11 +210,13 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
       }
       else if(command=="PortAdd"){
         if(PubServices.size()) PubServices.at(0).Set(service, port);
+        //printf("SD publish thread %s adding port %d for service %s (# services: %d)\n",(PubServices.empty() ? "not" : "\b"), port, service.c_str(), PubServices.size());
       }
       else if(command =="PortDelete"){
         if(PubServices.size()) PubServices.at(0).Erase(service);
       }
       
+      continue;
     }
     
     if ((items [1].revents & ZMQ_POLLOUT) && running){
@@ -571,7 +574,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
           //        break;
           //} 
           //else if (cnt > 0){
-          //printf("%s: message = \"%s\"\n", inet_ntoa(addr.at(i).sin_addr), message);
+          //printf("SD receive from %s: message = \"%s\"\n", inet_ntoa(addr.at(i).sin_addr), message);
           
           //if(message[0]!='[') break;
           

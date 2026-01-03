@@ -119,10 +119,11 @@ int DAQUtilities::UpdateConnections(std::string ServiceName, zmq::socket_t* sock
     if(port=="" && port_name=="") service->Get("remote_port",remote_port);
     else if(port_name!="") service->Get(port_name, remote_port);
     if(remote_port==""){
-     delete service;
-     service=0;
-     continue;	  
+      delete service;
+      service=0;
+      continue;
     }
+    //printf("updateconnections checking if service '%s' is interested in client '%s' on port '%s'\n",ServiceName.c_str(), type.c_str(),remote_port.c_str());
   
     std::string tmp=ip + ":" + remote_port;
     
@@ -162,7 +163,7 @@ DAQThread_args* DAQUtilities::CreateThread(std::string ThreadName,  void (*func)
   }
   
   return args;
-}                    
+}
 
 void *DAQUtilities::String_Thread(void *arg){
   
@@ -189,11 +190,11 @@ void *DAQUtilities::String_Thread(void *arg){
       zmq::poll(&initems[0], 1, 0);
       
       if ((initems[0].revents & ZMQ_POLLIN)){
-	
-	zmq::message_t message;
-	IThread.recv(&message);
-	command=std::string(static_cast<char *>(message.data()));
-  	
+        
+        zmq::message_t message;
+        IThread.recv(&message);
+        command=std::string(static_cast<char *>(message.data()));
+          
       }
       
       args->func_with_string(command);

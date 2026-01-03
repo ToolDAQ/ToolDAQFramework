@@ -44,14 +44,19 @@ namespace ToolFramework {
     bool GetDeviceConfig(std::string& json_data, const int version=-1, const std::string& device="", const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetRunConfig(std::string& json_data, const int config_id, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetRunConfig(std::string& json_data, const std::string& name, const int version=-1, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool GetRunDeviceConfig(std::string& json_data, const int runconfig_id, const std::string& device="", /*int* version=nullptr,*/ const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool GetRunDeviceConfig(std::string& json_data, const std::string& runconfig_name, const int runconfig_version=-1, const std::string& device="", /*int* version=nullptr, */ const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool SendROOTplotZmq(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const unsigned int keep_until=0, int* version=nullptr, const uint64_t timestamp=0, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool SendROOTplotMulticast(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const uint64_t timestamp=SERVICES_DEFAULT_TIMEOUT);
-    bool GetROOTplot(const std::string& plot_name, int& version, std::string& draw_option, std::string& json_data, std::string* timestamp=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool SendPlotlyPlot(const std::string& name, const std::string& json_trace, const std::string& json_layout="{}", int* version=nullptr, uint64_t timestamp=0, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool SendPlotlyPlot(const std::string& name, const std::vector<std::string>& json_traces, const std::string& json_layout="{}", int* version=nullptr, uint64_t timestamp=0, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool GetPlotlyPlot(const std::string& name, int& version, std::string& json_trace, std::string& json_layout, std::string* timestamp=nullptr, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    bool GetRunDeviceConfig(std::string& json_data, const int runconfig_id, const std::string& device="", int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    bool GetRunDeviceConfig(std::string& json_data, const std::string& runconfig_name, const int runconfig_version=-1, const std::string& device="", int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    // FIXME is default lifetime 5 ok?
+    bool SendROOTplotZmq(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version=nullptr, const uint64_t timestamp=0, const unsigned int lifetime=5, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    // FIXME is default lifetime 5 ok?
+    bool SendROOTplotMulticast(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const unsigned int lifetime=5, const uint64_t timestamp=SERVICES_DEFAULT_TIMEOUT);
+    bool GetROOTplot(const std::string& plot_name, int& version, std::string& draw_option, std::string& json_data, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    // FIXME is default lifetime 5 ok?
+    bool SendPlotlyPlot(const std::string& name, const std::string& json_trace, const std::string& json_layout="{}", int* version=nullptr, uint64_t timestamp=0, const unsigned int lifetime=5, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    // FIXME is default lifetime 5 ok?
+    bool SendPlotlyPlot(const std::string& name, const std::vector<std::string>& json_traces, const std::string& json_layout="{}", int* version=nullptr, uint64_t timestamp=0, const unsigned int lifetime=5, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    bool GetPlotlyPlot(const std::string& name, int& version, std::string& json_trace, std::string& json_layout, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    std::string TimeStringFromUnixMs(const uint64_t time);
     
     SlowControlCollection* GetSlowControlCollection();
     SlowControlElement* GetSlowControlVariable(std::string key);

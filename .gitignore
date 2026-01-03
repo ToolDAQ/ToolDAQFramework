@@ -11,6 +11,8 @@
 *.pcm
 # python pre-compiled modules
 *.pyc
+# core dumps
+core
 
 # lib folder is populated during build
 lib/
@@ -23,3 +25,4 @@ tempinclude/
 main
 NodeDaemon
 RemoteControl
+MCDebug

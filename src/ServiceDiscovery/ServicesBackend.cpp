@@ -96,22 +96,22 @@ void ServicesBackend::SetUp(zmq::context_t* in_context, std::function<void(std::
 }
 
 bool ServicesBackend::Initialise(std::string configfile){
-
-  /*               Retrieve Configs            */
-  /* ----------------------------------------- */
-  
-  // configuration options can be parsed via a Store class
-  if(configfile!="") m_variables.Initialise(configfile);
-
-  return Initialise(m_variables);
-
+	
+	/*               Retrieve Configs            */
+	/* ----------------------------------------- */
+	
+	// configuration options can be parsed via a Store class
+	if(configfile!="") m_variables.Initialise(configfile);
+	
+	return Initialise(m_variables);
+	
 }
-  
-bool ServicesBackend::Initialise(Store &variables_in){
 
-  std::string tmp="";
-  variables_in>>tmp;
-  m_variables.JsonParser(tmp);
+bool ServicesBackend::Initialise(Store &variables_in){
+	
+	std::string tmp="";
+	variables_in>>tmp;
+	m_variables.JsonParser(tmp);
 	
 	/*            General Variables              */
 	/* ----------------------------------------- */
@@ -348,9 +348,13 @@ bool ServicesBackend::RegisterServices(){
 	// we can make our lives a little easier by using a Utilities class
 	utilities = new DAQUtilities(context);
 	
-	// we can now register the client sockets with the following:
-	utilities->AddService("slowcontrol_write", clt_pub_port);
-	utilities->AddService("slowcontrol_read",  clt_dlr_port);
+	// register our ports for advertisement
+	get_ok = utilities->AddPort("db_write", clt_pub_port);
+	get_ok = get_ok && utilities->AddPort("db_read",  clt_dlr_port);
+	if(!get_ok){
+		Log("Error advertising ports!",v_error,verbosity);
+		return false;
+	}
 	
 	return true;
 }
@@ -533,8 +537,8 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 	// submit a request to send our command.
 	std::promise<int> send_ticket;
 	std::future<int> send_receipt = send_ticket.get_future();
-	send_queue_mutex.lock();
 	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand putting command into waiting-to-send list"<<std::endl;
+	send_queue_mutex.lock();
 	waiting_senders.emplace(cmd, std::move(send_ticket));
 	send_queue_mutex.unlock();
 	
@@ -787,8 +791,9 @@ bool ServicesBackend::Finalise(){
 	background_thread.join();
 	
 	Log("ServicesBackend Removing services",v_debug,verbosity);
-	if(utilities) utilities->RemoveService("slowcontrol_write");
-	if(utilities) utilities->RemoveService("slowcontrol_read");
+	//if(utilities) utilities->RemoveService("slowcontrol_write");
+	if(utilities) utilities->RemovePort("db_read");
+	if(utilities) utilities->RemovePort("db_write");
 	
 	Log("ServicesBackend Closing multicast socket",v_debug,verbosity);
 	close(log_socket);
@@ -964,6 +969,9 @@ bool ServicesBackend::Ready(int timeout){
 	// only poll dealer socket, pub sockets always return true immediately so ignore the timeout
 	// polling the input socket checks for a message, so don't do that.
 	int ret;
+//	printf("ServicesBackend waiting for up to %d ms for connection on read/rep socket\n",timeout);
+//	auto timeout_ms = std::chrono::milliseconds(timeout);
+//	std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
 	try {
 		dlr_socket_mutex.lock();
 		ret = zmq::poll(&out_polls.at(1), 1, timeout);
@@ -978,9 +986,12 @@ bool ServicesBackend::Ready(int timeout){
 		return false;
 	} else if(ret==0){
 		// 'resource temoprarily unavailable' - no-one connected.
+//		printf("ServicesBackend::Ready - no one connected (%s)\n", zmq_strerror(errno));
 	} else if(out_polls.at(1).revents & ZMQ_POLLOUT){
+//		printf("Connected!\n");
 		return true;
 	}
+//	printf("returning after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
 	
 	return false;
 	

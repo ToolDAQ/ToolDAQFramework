@@ -202,10 +202,8 @@ bool SlowControlElement::SetDefault(std::string value){
 
 
 bool SlowControlElement::SetValue(const char value[]){
-  bool ret=false;
   std::string tmp_value=value;
-  ret=SetValue(tmp_value);
-  return ret;
+  return SetValue(tmp_value);
 }
 
 

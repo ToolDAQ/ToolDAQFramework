@@ -14,6 +14,9 @@
 #include <queue>
 #include <future>
 #include <mutex>
+#include <atomic>
+#include <chrono>        // sleep_for / sleep_until
+#include <thread>        // this_thread
 #include <unistd.h>      // gethostname
 #include <locale>        // toupper/tolower
 #include <functional>    // std::function, std::negate
@@ -132,8 +135,8 @@ class ServicesBackend {
 	boost::posix_time::ptime last_read;                  // when we last sent a read command
 	boost::posix_time::ptime last_printout;              // when we last printed out stats about what we're doing
 	
-	int read_commands_failed;
-	int write_commands_failed;
+	std::atomic<int> read_commands_failed{0};
+	std::atomic<int> write_commands_failed{0};
 	
 	// general
 	int verbosity;
@@ -151,7 +154,7 @@ class ServicesBackend {
 	// since that's the one the middleman needs to know to send replies back
 	std::string clt_ID;
 	
-	uint32_t msg_id = 0;
+	std::atomic<uint32_t> msg_id{0};
 	
 	// =======================================================
 	

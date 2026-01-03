@@ -2,6 +2,10 @@
 
 using namespace ToolFramework;
 
+namespace {
+  const uint32_t MAX_UDP_PACKET_SIZE = 655355;
+}
+
 Services::Services(){
   m_context=0;
   m_dbname="";
@@ -33,7 +37,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   m_variables.Get("alerts_receive", alerts_receive);
   m_variables.Get("alert_receive_port", alert_receive_port);
   m_variables.Get("sc_port", sc_port);
-    
+  
   sc_vars->InitThreadedReceiver(m_context, sc_port, 100, new_service, alert_receive_port, alerts_receive, alert_send_port, alerts_send);
   m_backend_client.SetUp(m_context);
   
@@ -50,7 +54,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   // so we need to wait for the middleman to receive one & connect before we can communicate with it.
   int pub_period=5;
   m_variables.Get("service_publish_sec",pub_period);
-  Ready(pub_period*1000);
+  Ready(pub_period*3000); // wait for 3x SD publish period. Trial and error: Why so long needed?
   
   return true;
 }
@@ -70,23 +74,23 @@ bool Services::SendAlarm(const std::string& message, unsigned int level, const s
   // we only handle 2 levels of alarm: critical (level 0) and normal (level!=0).
   if(level>0) level=1;
   
-  std::string cmd_string = "{\"time\":"+std::to_string(timestamp)
+  std::string cmd_string = "{\"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ",\"device\":\""+name+"\""
                          + ",\"level\":"+std::to_string(level)
-                         + ",\"message\":\"" + message + "\"}";
+                         + ",\"alarm\":\"" + message + "\"}";
   
   std::string err="";
   
   // send the alarm on the pub socket
-  bool ok = m_backend_client.SendCommand("W_ALARM", cmd_string, (std::vector<std::string>*)nullptr, &timeout,  &err);
+  bool ok = m_backend_client.SendCommand("W_ALARM", cmd_string, (std::vector<std::string>*)nullptr, &timeout, &err);
   if(!ok){
     std::clog<<"SendAlarm error: "<<err<<std::endl;
   }
   // SendAlarm returns nothing
   
   // also record it to the logging socket
-  cmd_string = std::string{"{ \"topic\":\"LOGGING\""}
-             + ",\"time\":"+std::to_string(timestamp)
+  cmd_string = std::string{"{\"topic\":\"LOGGING\""}
+             + ",\"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
              + ",\"device\":\""+name+"\""
              + ",\"severity\":0"
              + ",\"message\":\"" + message + "\"}";
@@ -107,10 +111,10 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   
   const std::string& c_name = (name=="") ? m_name : name;
   
-  std::string cmd_string = "{ \"time\":"+std::to_string(timestamp)
+  std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"name\":\""+ c_name +"\""
                          + ", \"description\":\""+ description+"\""
-                         + ", \"data\":\""+ json_data +"\" }";
+                         + ", \"data\":"+ json_data +" }";
   
   std::string err="";
   std::string response="";
@@ -125,18 +129,14 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
     return false;
   }
   
-  // response is json with the version number of the created config entry
-  // e.g. '{"version":3}'. check this is what we got, as validation.
-  Store tmp;
-  tmp.JsonParser(response);
-  int tmp_version;
-  bool ok = tmp.Get("version",tmp_version);
+  // response is the version number of the created config entry
   if(version){
-    *version = tmp_version;
-  }
-  if(!ok){
-    std::clog<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
-    return false;
+    try {
+      *version = stoull(response);
+    } catch(std::exception& e){
+      std::clog<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
+      return false;
+    }
   }
   
   return true;
@@ -151,11 +151,11 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = "{ \"time\":"+std::to_string(timestamp)
+  std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"device\":\""+ name+"\""
                          + ", \"author\":\""+ author+"\""
                          + ", \"description\":\""+ description+"\""
-                         + ", \"data\":\""+ json_data +"\" }";
+                         + ", \"data\":"+ json_data +" }";
   
   std::string response="";
   std::string err="";
@@ -170,18 +170,14 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
     return false;
   }
   
-  // response is json with the version number of the created config entry
-  // e.g. '{"version":3}'. check this is what we got, as validation.
-  Store tmp;
-  tmp.JsonParser(response);
-  int tmp_version;
-  bool ok = tmp.Get("version",tmp_version);
+  // response is the version number of the created config entry
   if(version){
-    *version = tmp_version;
-  }
-  if(!ok){
-    std::clog<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
-    return false;
+    try {
+      *version = stoull(response);
+    } catch(std::exception& e){
+      std::clog<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
+      return false;
+    }
   }
   
   return true;
@@ -194,11 +190,11 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
   
   if(version) *version=-1;
   
-  std::string cmd_string = "{ \"time\":"+std::to_string(timestamp)
+  std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"name\":\""+ name+"\""
                          + ", \"author\":\""+ author+"\""
                          + ", \"description\":\""+ description+"\""
-                         + ", \"data\":\""+ json_data +"\" }";
+                         + ", \"data\":"+ json_data +" }";
   
   std::string response="";
   std::string err="";
@@ -213,18 +209,14 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
     return false;
   }
   
-  // response is json with the version number of the created config entry
-  // e.g. '{"version":3}'. check this is what we got, as validation.
-  Store tmp;
-  tmp.JsonParser(response);
-  int tmp_version;
-  bool ok = tmp.Get("version",tmp_version);
+  // response is the version number of the created config entry
   if(version){
-    *version = tmp_version;
-  }
-  if(!ok){
-    std::clog<<"SendRunConfig error: invalid response: '"<<response<<"'"<<std::endl;
-    return false;
+    try {
+      *version = stoull(response);
+    } catch(std::exception& e){
+      std::clog<<"SendRunConfig error: invalid response: '"<<response<<"'"<<std::endl;
+      return false;
+    }
   }
   
   return true;
@@ -233,13 +225,13 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendROOTplotZmq(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const unsigned int keep_until, int* version, const uint64_t timestamp, const unsigned int timeout){
+bool Services::SendROOTplotZmq(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version, const uint64_t timestamp, const unsigned int lifetime, const unsigned int timeout){
   
-  std::string cmd_string = "{ \"time\":"+std::to_string(timestamp)
+  std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"name\":\""+ plot_name +"\""
                          + ", \"draw_options\":\""+ draw_options +"\""
-                         + ", \"data\":\""+ json_data+"\""
-                         + ", \"keep_until\":"+std::to_string(keep_until)+" }"; // FIXME modify DB as per retention
+                         + ", \"lifetime\":"+std::to_string(lifetime)
+                         + ", \"data\":"+ json_data+" }";
   
   std::string err="";
   std::string response="";
@@ -254,18 +246,14 @@ bool Services::SendROOTplotZmq(const std::string& plot_name, const std::string& 
     return false;
   }
   
-  // response is json with the version number of the created plot entry
-  // e.g. '{"version":3}'. check this is what we got, as validation.
-  Store tmp;
-  tmp.JsonParser(response);
-  int tmp_version;
-  bool ok = tmp.Get("version",tmp_version);
-  if(ok && version){
-    *version = tmp_version;
-  }
-  if(!ok){
-    std::clog<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
-    return false;
+  // response is the version number of the created config entry
+  if(version){
+    try {
+      *version = stoull(response);
+    } catch(std::exception& e){
+      std::clog<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
+      return false;
+    }
   }
   
   return true;
@@ -281,6 +269,7 @@ bool Services::SendPlotlyPlot(
     const std::string& layout,
     int*               version,
     const uint64_t     timestamp,
+    const unsigned int lifetime,
     const unsigned int timeout
 ) {
   return SendPlotlyPlot(
@@ -289,6 +278,7 @@ bool Services::SendPlotlyPlot(
       layout,
       version,
       timestamp,
+      lifetime,
       timeout
   );
 }
@@ -302,12 +292,15 @@ bool Services::SendPlotlyPlot(
     const std::string&              layout,
     int*                            version,
     const uint64_t                  timestamp,
+    const unsigned int              lifetime,
     const unsigned int              timeout
 ) {
   std::stringstream ss;
-  ss << "{\"name\":\"" << name << "\",\"layout\":" << layout;
-  if (timestamp) ss << ",\"time\":" << timestamp;
-  ss << ",\"data\":[";
+  ss << "{   \"name\":\"" << name
+     << "\", \"time\":\"" << TimeStringFromUnixMs(timestamp)
+     << "\", \"lifetime\":" << lifetime
+     << ",   \"layout\":" << layout
+     << ",   \"data\":[";
   bool first = true;
   for (auto& trace : traces) {
     if (first)
@@ -331,18 +324,14 @@ bool Services::SendPlotlyPlot(
     return false;
   }
   
-  // response is json with the version number of the created plot entry
-  // e.g. '{"version":3}'. check this is what we got, as validation.
-  Store tmp;
-  tmp.JsonParser(response);
-  int tmp_version;
-  bool ok = tmp.Get("version",tmp_version);
-  if(ok && version){
-    *version = tmp_version;
-  }
-  if(!ok){
-    std::clog<<"SendPlotlyPlot error: invalid response: '"<<response<<"'"<<std::endl;
-    return false;
+  // response is the version number of the created config entry
+  if(version){
+    try {
+      *version = stoull(response);
+    } catch(std::exception& e){
+      std::clog<<"SendPlotlyPlot error: invalid response: '"<<response<<"'"<<std::endl;
+      return false;
+    }
   }
   
   return true;
@@ -407,7 +396,7 @@ bool Services::SQLQuery(/*const std::string& database,*/ const std::string& quer
 // --------------
 // we need to ensure any escaping needed is already done, but probably none needed
 
-bool Services::GetCalibrationData(std::string& json_data, int& version, const std::string& device, const unsigned int timeout){
+bool Services::GetCalibrationData(std::string& json_data, int version, const std::string& device, const unsigned int timeout){
   
   json_data = "";
   
@@ -417,9 +406,9 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
   
   if(version<0){
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
-    cmd_string = "SELECT row_to_json(data, version) FROM calibration WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+    cmd_string = "SELECT jsonb_build_object('data', data) FROM calibration WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
   } else {
-    cmd_string = "SELECT row_to_json(data, version) FROM calibration WHERE device='"+name+"' AND version="+std::to_string(version);
+    cmd_string = "SELECT jsonb_build_object('data', data) FROM calibration WHERE device='"+name+"' AND version="+std::to_string(version);
   }
   
   std::string err="";
@@ -441,15 +430,10 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
   
   Store tmp;
   tmp.JsonParser(json_data);
-  int tmp_version;
-  bool ok = tmp.Get("version",tmp_version);
-  if(ok && version<0){
-    version = tmp_version;
-  }
-  ok = ok && tmp.Get("data",json_data);
+  bool ok = tmp.Get("data",json_data);
   
   if(!ok){
-    err = "GetCalibrationData error: invalid response: '"+response+"'";
+    err = "GetCalibrationData error: invalid response: '"+json_data+"'";
     std::clog<<err<<std::endl;
     json_data = err;
     return false;
@@ -462,13 +446,19 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::GetDeviceConfig(std::string& json_data, int& version, const std::string& device, const unsigned int timeout){
+bool Services::GetDeviceConfig(std::string& json_data, const int version, const std::string& device, const unsigned int timeout){
 
   json_data="";
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = "SELECT row_to_json(data) FROM device_config WHERE name='"+name+"' AND version="+std::to_string(version);
+  std::string cmd_string;
+  if(version<0){
+    // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
+    cmd_string = "SELECT jsonb_build_object('data', data) FROM device_config WHERE device='"+name+"' ORDER BY version DESC LIMIT 1";
+  } else {
+  cmd_string = "SELECT jsonb_build_object('data', data) FROM device_config WHERE device='"+name+"' AND version="+std::to_string(version);
+  }
   
   std::string err="";
   
@@ -509,7 +499,7 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
 
   json_data="";
   
-  std::string cmd_string = "SELECT row_to_json(data) FROM run_config WHERE config_id="+std::to_string(config_id);
+  std::string cmd_string = "SELECT jsonb_build_object('data', data) FROM run_config WHERE config_id="+std::to_string(config_id);
   
   std::string err="";
   
@@ -550,7 +540,7 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
 
   json_data="";
   
-  std::string cmd_string = "SELECT row_to_json(data) FROM run_config WHERE name='"+name+"' AND version="+std::to_string(version);
+  std::string cmd_string = "SELECT jsonb_build_object('data, data) FROM run_config WHERE name='"+name+"' AND version="+std::to_string(version);
   
   std::string err="";
   
@@ -593,7 +583,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = "SELECT row_to_json(data, version) FROM device_config WHERE name='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE config_id="+std::to_string(runconfig_id)+")";
+  std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE name='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE config_id="+std::to_string(runconfig_id)+")";
   
   std::string err="";
   
@@ -606,7 +596,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
   if(json_data.empty()){
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
-    err = "GetRunDeviceConfig error: config "+name+" for runconfig "+std::to_string(runconfig_id)+" not found"
+    err = "GetRunDeviceConfig error: config "+name+" for runconfig "+std::to_string(runconfig_id)+" not found";
     std::clog<<err<<std::endl;
     json_data = err;
     return false;
@@ -641,7 +631,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   
   const std::string& name = (device=="") ? m_name : device;
   
-    std::string cmd_string = "SELECT row_to_json(data, version) FROM device_config WHERE name='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")";
+    std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE name='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")";
   
   std::string err="";
   
@@ -682,15 +672,15 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::GetROOTplot(const std::string& plot_name, int& version, std::string& draw_options, std::string& json_data, std::string* timestamp, const unsigned int timeout){
+bool Services::GetROOTplot(const std::string& plot_name, int& version, std::string& draw_options, std::string& json_data, const unsigned int timeout){
   
   std::string cmd_string;
   
   if(version<0){
-    cmd_string = "SELECT row_to_json(version, time, data, draw_options), FROM rootplots WHERE name='"+plot_name+"' AND version="+std::to_string(version);
+    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options), FROM rootplots WHERE name='"+plot_name+"' AND version="+std::to_string(version);
   } else {
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
-    cmd_string = "SELECT row_to_json(version, time, data, draw_options) FROM rootplots WHERE name='"+plot_name+"' ORDER BY version DESC LIMIT 1";
+    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' ORDER BY version DESC LIMIT 1";
   }
   
   std::string err="";
@@ -714,7 +704,6 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   bool ok = plot.Get("data", json_data);
   ok = ok && plot.Get("draw_options", draw_options);
   ok = ok && plot.Get("version", version);
-  if(timestamp && ok) ok = ok && plot.Get("time", *timestamp);
   
   if(!ok){
     err="GetROOTplot error: invalid response: '"+response+"'";
@@ -724,8 +713,7 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   }
   
   /*
-  std::clog<<"timestamp: "<<timestamp<<"\n"
-           <<"draw opts: "<<draw_options<<"\n"
+  std::clog<<"draw opts: "<<draw_options<<"\n"
            <<"json data: '"<<json_data<<"'"<<std::endl;
   */
   
@@ -740,29 +728,28 @@ bool Services::GetPlotlyPlot(
     int&               version,
     std::string&       trace,
     std::string&       layout,
-    std::string*       timestamp,
     unsigned int       timeout
 ) {
   
   std::string cmd_string;
   if(version<0){
-    cmd_string = "SELECT row_to_json(version, time, data, layout), FROM plotlyplots WHERE name='"+name+"' AND version="+std::to_string(version);
+    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'layout', layout), FROM plotlyplots WHERE name='"+name+"' AND version="+std::to_string(version);
   } else {
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
-    cmd_string = "SELECT row_to_json(version, time, data, layout) FROM plotlyplots WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+    cmd_string = "SELECT jsonb_build_object('vesion', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
   }
   
   std::string err;
   std::string response;
   if (!m_backend_client.SendCommand("R_PLOTLYPLOT", cmd_string, &response, &timeout, &err)){
     std::clog << "GetPlotlyPlot error: " << err << std::endl;
-    json_data = err;
+    trace = err;
     return false;
   };
   
   if(response.empty()){
     err = "GetPlotlyPlot error: PlotlyPlot "+name+" version "+std::to_string(version)+" not found";
-    json_data = err;
+    trace = err;
     return false;
   }
   
@@ -776,12 +763,11 @@ bool Services::GetPlotlyPlot(
   bool ok = plot.Get("data", trace);
   ok = ok && plot.Get("layout", layout);
   ok = ok && plot.Get("version", version);
-  if(timestamp && ok) ok = ok && plot.Get("time", *timestamp);
   
   if(!ok){
     err="GetPlotlyPlot error: invalid response: '"+response+"'";
     std::clog<<err<<std::endl;
-    json_data=err;
+    trace=err;
     return false;
   }
   
@@ -797,14 +783,14 @@ bool Services::SendLog(const std::string& message, unsigned int severity, const 
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = std::string{"{ \"topic\":\"LOGGING\""}
-                         + ",\"time\":"+std::to_string(timestamp)
+  std::string cmd_string = std::string{"{\"topic\":\"LOGGING\""}
+                         + ",\"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ",\"device\":\""+ name +"\""
                          + ",\"severity\":"+std::to_string(severity)
                          + ",\"message\":\"" +  message + "\"}";
   
-  if(cmd_string.length()>655355){
-    std::clog<<"Logging message is too long! Maximum length may be 655355 bytes"<<std::endl;
+  if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
+    std::clog<<"Logging message is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
     return false;
   }
   
@@ -824,14 +810,14 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = std::string{"{ \"topic\":\"MONITORING\""}
-                         + ", \"time\":"+std::to_string(timestamp)
+  std::string cmd_string = std::string{"{\"topic\":\"MONITORING\""}
+                         + ", \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"device\":\""+ name +"\""
                          + ", \"subject\":\""+ subject +"\""
                          + ", \"data\":\""+ json_data +"\" }";
   
-  if(cmd_string.length()>655355){
-    std::clog<<"Monitoring message is too long! Maximum length may be 655355 bytes"<<std::endl;
+  if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
+    std::clog<<"Monitoring message is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
     return false;
   }
   
@@ -847,16 +833,17 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
 }
 
 // send ROOT plot over multicast
-bool Services::SendROOTplotMulticast(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const uint64_t timestamp){
+bool Services::SendROOTplotMulticast(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const unsigned int lifetime, const uint64_t timestamp){
   
-  std::string cmd_string = std::string{"{ \"topic\":\"TROOTPLOT\""}
-                         + ", \"time\":"+std::to_string(timestamp)
+  std::string cmd_string = std::string{"{\"topic\":\"TROOTPLOT\""}
+                         + ", \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"name\":\""+ plot_name +"\""
                          + ", \"draw_options\":\""+ draw_options +"\""
-                         + ", \"data\":\""+ json_data+"\" }";
+                         + ", \"lifetime\":"+std::to_string(lifetime)
+                         + ", \"data\":"+ json_data+"}";
   
-  if(cmd_string.length()>655355){
-    std::clog<<"ROOT plot json is too long! Maximum length may be 655355 bytes"<<std::endl;
+  if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
+    std::clog<<"ROOT plot json is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
     return false;
   }
   
@@ -925,5 +912,37 @@ std::string Services::PrintSlowControlVariables(){
 std::string Services::GetDeviceName(){
   
   return m_name;
+  
+}
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+std::string Services::TimeStringFromUnixMs(const uint64_t timestamp){
+  
+  if(timestamp==0) return "now()";
+  
+  //std::cout<<"converting time "<<timestamp<<" to timestring"<<std::endl;
+  char timestring[24];
+  uint16_t timestamp_ms = timestamp%1000;
+  time_t timestamp_sec = timestamp/1000;  // time_t is equivalent to uint64_t
+  struct tm* timeptr = gmtime(&timestamp_sec);
+  //std::cout<<"timeptr is "<<timeptr<<std::endl;
+  if(timeptr==0){
+    //Log("gmtime error converting unix time '"+std::to_string(timestamp)+"' to time struct",v_error);
+    return "now";
+  }
+  int nchars = strftime(&timestring[0], 20, "%F %T", timeptr);
+  if(nchars==0){
+    //Log("strftime error converting time struct '"+std::to_string(timestamp)+"' to string",v_error);
+    return "now";
+  }
+  // add the milliseconds
+  nchars = snprintf(&timestring[19], 5, ".%03d", timestamp_ms);
+  if(nchars!=4){
+    //Log("snprintf error converting '"+std::to_string(timestamp_ms)+"' to timestamp milliseconds",v_error);
+    //return "now";  // just omit the milliseconds? or fall back to 'now'?
+  }
+  
+  return std::string{timestring};
   
 }
