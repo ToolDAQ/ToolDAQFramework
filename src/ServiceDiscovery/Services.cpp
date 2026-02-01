@@ -95,9 +95,7 @@ bool Services::SendAlarm(const std::string& message, unsigned int level, const s
              + ",\"severity\":0"
              + ",\"message\":\"" + message + "\"}";
   
-  ok = ok && m_backend_client.SendMulticast(MulticastType::Log,cmd_string, &err);
-  
-  if(!ok){
+  if(!m_backend_client.SendMulticast(MulticastType::Log,cmd_string, &err)){
     std::cerr<<"SendAlarm (log) error: "<<err<<std::endl;
   }
   
@@ -587,7 +585,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE config_id="+std::to_string(runconfig_id)+")";
+  std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE config_id="+std::to_string(runconfig_id)+")::integer";
   
   std::string err="";
   
@@ -635,7 +633,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   
   const std::string& name = (device=="") ? m_name : device;
   
-    std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")";
+    std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")::integer";
   
   std::string err="";
   
