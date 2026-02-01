@@ -303,10 +303,8 @@ bool Services::SendPlotlyPlot(
      << ",   \"data\":[";
   bool first = true;
   for (auto& trace : traces) {
-    if (first)
-      first = false;
-    else
-      ss << ',';
+    if (!first) ss << ',';
+    first = false;
     ss << trace;
   };
   ss << "]}";
@@ -546,7 +544,7 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
 
   json_data="";
   
-  std::string cmd_string = "SELECT jsonb_build_object('data, data) FROM run_config WHERE name='"+name+"' AND version="+std::to_string(version);
+  std::string cmd_string = "SELECT jsonb_build_object('data', data) FROM run_config WHERE name='"+name+"' AND version="+std::to_string(version);
   
   std::string err="";
   
@@ -589,7 +587,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE name='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE config_id="+std::to_string(runconfig_id)+")";
+  std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE config_id="+std::to_string(runconfig_id)+")";
   
   std::string err="";
   
@@ -637,7 +635,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   
   const std::string& name = (device=="") ? m_name : device;
   
-    std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE name='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")";
+    std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")";
   
   std::string err="";
   
@@ -683,7 +681,7 @@ bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_optio
   std::string cmd_string;
   
   if(version<0){
-    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options), FROM rootplots WHERE name='"+plot_name+"' AND version="+std::to_string(version);
+    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' AND version="+std::to_string(version);
   } else {
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
     cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' ORDER BY version DESC LIMIT 1";
@@ -745,7 +743,7 @@ bool Services::GetPlotlyPlot(
   
   std::string cmd_string;
   if(version<0){
-    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'layout', layout), FROM plotlyplots WHERE name='"+name+"' AND version="+std::to_string(version);
+    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' AND version="+std::to_string(version);
   } else {
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
     cmd_string = "SELECT jsonb_build_object('vesion', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
@@ -826,7 +824,7 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
                          + ", \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"device\":\""+ name +"\""
                          + ", \"subject\":\""+ subject +"\""
-                         + ", \"data\":\""+ json_data +"\" }";
+                         + ", \"data\":"+ json_data +" }";
   
   if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
     std::cerr<<"Monitoring message is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
@@ -931,28 +929,32 @@ std::string Services::GetDeviceName(){
 
 std::string Services::TimeStringFromUnixMs(const uint64_t timestamp){
   
-  if(timestamp==0) return "now()";
+  if(timestamp==1) return "now()";  // remotely interpret 'now'
   
-  //std::cout<<"converting time "<<timestamp<<" to timestring"<<std::endl;
-  char timestring[24];
-  uint16_t timestamp_ms = timestamp%1000;
-  time_t timestamp_sec = timestamp/1000;  // time_t is equivalent to uint64_t
+  time_t timestamp_sec; // time_t is equivalent to uint64_t
+  uint16_t timestamp_ms = 0;
+  if(timestamp==0){
+    timestamp_sec = time(nullptr)*1000; // locally interpret 'now'
+  } else {
+    timestamp_ms = timestamp%1000;
+    timestamp_sec = timestamp/1000;
+  }
   struct tm* timeptr = gmtime(&timestamp_sec);
-  //std::cout<<"timeptr is "<<timeptr<<std::endl;
   if(timeptr==0){
     //Log("gmtime error converting unix time '"+std::to_string(timestamp)+"' to time struct",v_error);
-    return "now";
+    return "now()";
   }
+  char timestring[24];
   int nchars = strftime(&timestring[0], 20, "%F %T", timeptr);
   if(nchars==0){
     //Log("strftime error converting time struct '"+std::to_string(timestamp)+"' to string",v_error);
-    return "now";
+    return "now()";
   }
   // add the milliseconds
   nchars = snprintf(&timestring[19], 5, ".%03d", timestamp_ms);
   if(nchars!=4){
     //Log("snprintf error converting '"+std::to_string(timestamp_ms)+"' to timestamp milliseconds",v_error);
-    //return "now";  // just omit the milliseconds? or fall back to 'now'?
+    //return "now()";  // just omit the milliseconds? or fall back to 'now'?
   }
   
   return std::string{timestring};
