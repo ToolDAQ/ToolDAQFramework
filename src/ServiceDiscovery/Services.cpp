@@ -54,7 +54,9 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   // so we need to wait for the middleman to receive one & connect before we can communicate with it.
   int pub_period=5;
   m_variables.Get("service_publish_sec",pub_period);
-  Ready(pub_period*1000);
+  if(!Ready(pub_period*3000)){ // Wait up to 3 broadcast periods. It'll return sooner if it connects.
+    std::cerr<<"Warning: service not yet connected..."<<std::endl;
+  }
   
   return true;
 }
@@ -679,10 +681,10 @@ bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_optio
   std::string cmd_string;
   
   if(version<0){
-    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' AND version="+std::to_string(version);
-  } else {
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
     cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' ORDER BY version DESC LIMIT 1";
+  } else {
+    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' AND version="+std::to_string(version);
   }
   
   std::string err="";
@@ -738,13 +740,12 @@ bool Services::GetPlotlyPlot(
     int&               version,
     unsigned int       timeout
 ) {
-  
   std::string cmd_string;
   if(version<0){
-    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' AND version="+std::to_string(version);
-  } else {
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
-    cmd_string = "SELECT jsonb_build_object('vesion', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+  } else {
+    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' AND version="+std::to_string(version);
   }
   
   std::string err;
