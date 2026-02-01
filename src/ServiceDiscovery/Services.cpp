@@ -54,7 +54,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   // so we need to wait for the middleman to receive one & connect before we can communicate with it.
   int pub_period=5;
   m_variables.Get("service_publish_sec",pub_period);
-  Ready(pub_period*3000); // wait for 3x SD publish period. Trial and error: Why so long needed?
+  Ready(pub_period*1000);
   
   return true;
 }
@@ -396,7 +396,7 @@ bool Services::SQLQuery(/*const std::string& database,*/ const std::string& quer
 // --------------
 // we need to ensure any escaping needed is already done, but probably none needed
 
-bool Services::GetCalibrationData(std::string& json_data, int version, const std::string& device, const unsigned int timeout){
+bool Services::GetCalibrationData(std::string& json_data, int& version, const std::string& device, const unsigned int timeout){
   
   json_data = "";
   
@@ -406,9 +406,9 @@ bool Services::GetCalibrationData(std::string& json_data, int version, const std
   
   if(version<0){
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
-    cmd_string = "SELECT jsonb_build_object('data', data) FROM calibration WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+    cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM calibration WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
   } else {
-    cmd_string = "SELECT jsonb_build_object('data', data) FROM calibration WHERE device='"+name+"' AND version="+std::to_string(version);
+    cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM calibration WHERE device='"+name+"' AND version="+std::to_string(version);
   }
   
   std::string err="";
@@ -431,6 +431,7 @@ bool Services::GetCalibrationData(std::string& json_data, int version, const std
   Store tmp;
   tmp.JsonParser(json_data);
   bool ok = tmp.Get("data",json_data);
+  ok = ok && tmp.Get("version",version);
   
   if(!ok){
     err = "GetCalibrationData error: invalid response: '"+json_data+"'";
@@ -442,6 +443,11 @@ bool Services::GetCalibrationData(std::string& json_data, int version, const std
   
   return true;
   
+}
+
+bool Services::GetCalibrationData(std::string& json_data, int&& version, const std::string& device, const unsigned int timeout){
+  int v = version;
+  return GetCalibrationData(json_data, v, device, timeout);
 }
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
@@ -672,7 +678,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::GetROOTplot(const std::string& plot_name, int& version, std::string& draw_options, std::string& json_data, const unsigned int timeout){
+bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_options, std::string& json_data, int& version, const unsigned int timeout){
   
   std::string cmd_string;
   
@@ -721,13 +727,19 @@ bool Services::GetROOTplot(const std::string& plot_name, int& version, std::stri
   
 }
 
-// Get a device configuration from a *run* configuration ID
+// version that accepts values in case user isn't interested in returned version
+bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_options, std::string& json_data, int&& version, const unsigned int timeout){
+  int v = version;
+  return GetROOTplot(plot_name, draw_options, json_data, v, timeout);
+}
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
 bool Services::GetPlotlyPlot(
     const std::string& name,
-    int&               version,
     std::string&       trace,
     std::string&       layout,
+    int&               version,
     unsigned int       timeout
 ) {
   
@@ -756,10 +768,6 @@ bool Services::GetPlotlyPlot(
   Store plot;
   plot.JsonParser(response);
   
-  trace   = plot.Get<std::string>("data");
-  layout  = plot.Get<std::string>("layout");
-  version = plot.Get<int>("version");
-  
   bool ok = plot.Get("data", trace);
   ok = ok && plot.Get("layout", layout);
   ok = ok && plot.Get("version", version);
@@ -774,6 +782,10 @@ bool Services::GetPlotlyPlot(
   return true;
 }
 
+bool Services::GetPlotlyPlot(const std::string& name, std::string& trace, std::string& layout, int&& version, unsigned int timeout){
+  int v = version;
+  return GetPlotlyPlot(name, trace, layout, v, timeout);
+} 
 
 // ===========================================================================
 // Multicast Senders
