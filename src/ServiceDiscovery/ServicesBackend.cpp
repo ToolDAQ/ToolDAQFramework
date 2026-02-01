@@ -567,7 +567,7 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 		// sending timed out
 		if(cmd.type=='w') ++write_commands_failed;
 		else if(cmd.type=='r') ++read_commands_failed;
-		Log("Timed out sending command "+std::to_string(thismsgid),v_warning,verbosity);
+		Log("Timed out sending command "+std::to_string(thismsgid),v_error,verbosity);
 		cmd.success = false;
 		cmd.err = "Timed out sending command";
 		
@@ -618,7 +618,7 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 		// timed out
 		if(cmd.type=='w') ++write_commands_failed;
 		else if(cmd.type=='r') ++read_commands_failed;
-		Log("Timed out waiting for response for command "+std::to_string(thismsgid),v_warning,verbosity);
+		Log("Timed out waiting for response for command "+std::to_string(thismsgid),v_error,verbosity);
 		cmd.success = false;
 		cmd.err = "Timed out waiting for response";
 		return false;

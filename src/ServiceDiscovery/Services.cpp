@@ -46,7 +46,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
 
   
   if(!m_backend_client.Initialise(m_variables)){
-    std::clog<<"error initialising slowcontrol client"<<std::endl;
+    std::cerr<<"error initialising slowcontrol client"<<std::endl;
     return false;
   }
    
@@ -84,7 +84,7 @@ bool Services::SendAlarm(const std::string& message, unsigned int level, const s
   // send the alarm on the pub socket
   bool ok = m_backend_client.SendCommand("W_ALARM", cmd_string, (std::vector<std::string>*)nullptr, &timeout, &err);
   if(!ok){
-    std::clog<<"SendAlarm error: "<<err<<std::endl;
+    std::cerr<<"SendAlarm error: "<<err<<std::endl;
   }
   // SendAlarm returns nothing
   
@@ -98,7 +98,7 @@ bool Services::SendAlarm(const std::string& message, unsigned int level, const s
   ok = ok && m_backend_client.SendMulticast(MulticastType::Log,cmd_string, &err);
   
   if(!ok){
-    std::clog<<"SendAlarm (log) error: "<<err<<std::endl;
+    std::cerr<<"SendAlarm (log) error: "<<err<<std::endl;
   }
   
   return ok;
@@ -120,12 +120,12 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   std::string response="";
   
   if(!m_backend_client.SendCommand("W_CALIBRATION", cmd_string, &response, &timeout, &err)){
-    std::clog<<"SendCalibrationData error: "<<err<<std::endl;
+    std::cerr<<"SendCalibrationData error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::clog<<"SendCalibrationData error: empty response"<<std::endl;
+    std::cerr<<"SendCalibrationData error: empty response"<<std::endl;
     return false;
   }
   
@@ -134,7 +134,7 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::clog<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
+      std::cerr<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -161,12 +161,12 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
   std::string err="";
   
   if(!m_backend_client.SendCommand("W_DEVCONFIG", cmd_string, &response, &timeout, &err)){
-    std::clog<<"SendDeviceConfig error: "<<err<<std::endl;
+    std::cerr<<"SendDeviceConfig error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::clog<<"SendDeviceConfig error: empty response"<<std::endl;
+    std::cerr<<"SendDeviceConfig error: empty response"<<std::endl;
     return false;
   }
   
@@ -175,7 +175,7 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::clog<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
+      std::cerr<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -200,12 +200,12 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
   std::string err="";
   
   if(!m_backend_client.SendCommand("W_RUNCONFIG", cmd_string, &response, &timeout, &err)){
-    std::clog<<"SendRunConfig error: "<<err<<std::endl;
+    std::cerr<<"SendRunConfig error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::clog<<"SendRunConfig error: empty response"<<std::endl;
+    std::cerr<<"SendRunConfig error: empty response"<<std::endl;
     return false;
   }
   
@@ -214,7 +214,7 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::clog<<"SendRunConfig error: invalid response: '"<<response<<"'"<<std::endl;
+      std::cerr<<"SendRunConfig error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -237,12 +237,12 @@ bool Services::SendROOTplotZmq(const std::string& plot_name, const std::string& 
   std::string response="";
   
   if(!m_backend_client.SendCommand("W_TROOTPLOT", cmd_string, &response, &timeout, &err)){
-    std::clog<<"SendROOTplot error: "<<err<<std::endl;
+    std::cerr<<"SendROOTplot error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::clog<<"SendROOTplot error: empty response"<<std::endl;
+    std::cerr<<"SendROOTplot error: empty response"<<std::endl;
     return false;
   }
   
@@ -251,7 +251,7 @@ bool Services::SendROOTplotZmq(const std::string& plot_name, const std::string& 
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::clog<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
+      std::cerr<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -315,12 +315,12 @@ bool Services::SendPlotlyPlot(
   
   std::string err;
   if (!m_backend_client.SendCommand("W_PLOTLYPLOT", ss.str(), &response, &timeout, &err)){
-    std::clog << "SendPlotlyPlot error: " << err << std::endl;
+    std::cerr << "SendPlotlyPlot error: " << err << std::endl;
     return false;
   };
   
   if(response.empty()){
-    std::clog<<"SendPlotlyPlot error: empty response"<<std::endl;
+    std::cerr<<"SendPlotlyPlot error: empty response"<<std::endl;
     return false;
   }
   
@@ -329,7 +329,7 @@ bool Services::SendPlotlyPlot(
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::clog<<"SendPlotlyPlot error: invalid response: '"<<response<<"'"<<std::endl;
+      std::cerr<<"SendPlotlyPlot error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -350,7 +350,7 @@ bool Services::SQLQuery(/*const std::string& database,*/ const std::string& quer
   std::string err="";
   
   if(!m_backend_client.SendCommand("W_QUERY", query, &responses, &timeout, &err)){
-    std::clog<<"SQLQuery error: "<<err<<std::endl;
+    std::cerr<<"SQLQuery error: "<<err<<std::endl;
     responses.resize(1);
     responses.front() = err;
     return false;
@@ -374,7 +374,7 @@ bool Services::SQLQuery(/*const std::string& database,*/ const std::string& quer
   if(responses.size()!=0){
     response = responses.front();
     if(responses.size()>1){
-      std::clog<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
+      std::cout<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
     }
   }
   
@@ -414,7 +414,7 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_CALIBRATION", cmd_string, &json_data, &timeout, &err)){
-    std::clog<<"GetCalibrationData error: "<<err<<std::endl;
+    std::cerr<<"GetCalibrationData error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -423,7 +423,7 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetCalibrationData error: data for device "+name+" version "+std::to_string(version)+" not found";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -435,7 +435,7 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
   
   if(!ok){
     err = "GetCalibrationData error: invalid response: '"+json_data+"'";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -469,7 +469,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::clog<<"GetDeviceConfig error: "<<err<<std::endl;
+    std::cerr<<"GetDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -478,7 +478,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetDeviceConfig error: config for device "+name+" version "+std::to_string(version)+" not found";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -489,7 +489,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
   bool ok = tmp.Get("data", json_data);
   if(!ok){
     err = "GetDeviceConfig error: invalid response: '"+json_data+"'";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -510,7 +510,7 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::clog<<"GetRunConfig error: "<<err<<std::endl;
+    std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -519,7 +519,7 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetRunConfig error: config_id "+std::to_string(config_id)+" not found";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -530,7 +530,7 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
   bool ok = tmp.Get("data", json_data);
   if(!ok){
     err="GetRunConfig error: invalid response: '"+json_data+"'";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -551,7 +551,7 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::clog<<"GetRunConfig error: "<<err<<std::endl;
+    std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -560,7 +560,7 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetRunConfig error: config "+name+" version "+std::to_string(version)+" not found";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -571,7 +571,7 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
   bool ok = tmp.Get("data", json_data);
   if(!ok){
     err="GetRunConfig error: invalid response: '"+json_data+"'";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -594,7 +594,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::clog<<"GetRunDeviceConfig error: "<<err<<std::endl;
+    std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -603,7 +603,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetRunDeviceConfig error: config "+name+" for runconfig "+std::to_string(runconfig_id)+" not found";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -619,7 +619,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
   ok = ok && tmp.Get("data", json_data);
   if(!ok){
     err="GetRunDeviceConfig error: invalid response: '"+json_data+"'";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -642,7 +642,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::clog<<"GetRunDeviceConfig error: "<<err<<std::endl;
+    std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -651,7 +651,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetRunDeviceConfig error: config "+name+" for runconfig "+runconfig_name+" version "+std::to_string(runconfig_version)+" not found";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -667,7 +667,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   ok = ok && tmp.Get("data", json_data);
   if(!ok){
     err="GetRunDeviceConfig error: invalid response: '"+json_data+"'";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -693,7 +693,7 @@ bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_optio
   std::string response="";
   
   if(!m_backend_client.SendCommand("R_TROOTPLOT", cmd_string, &response, &timeout, &err)){
-    std::clog<<"GetROOTplot error: "<<err<<std::endl;
+    std::cerr<<"GetROOTplot error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -713,7 +713,7 @@ bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_optio
   
   if(!ok){
     err="GetROOTplot error: invalid response: '"+response+"'";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -754,7 +754,7 @@ bool Services::GetPlotlyPlot(
   std::string err;
   std::string response;
   if (!m_backend_client.SendCommand("R_PLOTLYPLOT", cmd_string, &response, &timeout, &err)){
-    std::clog << "GetPlotlyPlot error: " << err << std::endl;
+    std::cerr << "GetPlotlyPlot error: " << err << std::endl;
     trace = err;
     return false;
   };
@@ -774,7 +774,7 @@ bool Services::GetPlotlyPlot(
   
   if(!ok){
     err="GetPlotlyPlot error: invalid response: '"+response+"'";
-    std::clog<<err<<std::endl;
+    std::cerr<<err<<std::endl;
     trace=err;
     return false;
   }
@@ -802,14 +802,14 @@ bool Services::SendLog(const std::string& message, unsigned int severity, const 
                          + ",\"message\":\"" +  message + "\"}";
   
   if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
-    std::clog<<"Logging message is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
+    std::cerr<<"Logging message is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
     return false;
   }
   
   std::string err="";
   
   if(!m_backend_client.SendMulticast(MulticastType::Log,cmd_string, &err)){
-    std::clog<<"SendLog error: "<<err<<std::endl;
+    std::cerr<<"SendLog error: "<<err<<std::endl;
     return false;
   }
   
@@ -829,14 +829,14 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
                          + ", \"data\":\""+ json_data +"\" }";
   
   if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
-    std::clog<<"Monitoring message is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
+    std::cerr<<"Monitoring message is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
     return false;
   }
   
   std::string err="";
   
   if(!m_backend_client.SendMulticast(MulticastType::Monitoring,cmd_string, &err)){
-    std::clog<<"SendMonitoringData error: "<<err<<std::endl;
+    std::cerr<<"SendMonitoringData error: "<<err<<std::endl;
     return false;
   }
   
@@ -855,14 +855,14 @@ bool Services::SendROOTplotMulticast(const std::string& plot_name, const std::st
                          + ", \"data\":"+ json_data+"}";
   
   if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
-    std::clog<<"ROOT plot json is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
+    std::cerr<<"ROOT plot json is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
     return false;
   }
   
   std::string err="";
   
   if(!m_backend_client.SendMulticast(MulticastType::Log,cmd_string, &err)){
-    std::clog<<"SendROOTplot error: "<<err<<std::endl;
+    std::cerr<<"SendROOTplot error: "<<err<<std::endl;
     return false;
   }
   
