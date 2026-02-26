@@ -9,8 +9,8 @@ else
 CXXFLAGS+= -O3
 endif
 
-ZMQLib= -L ../zeromq-4.0.7/lib -lzmq 
-ZMQInclude= -I ../zeromq-4.0.7/include/ 
+ZMQLib= -L ../zeromq-4.0.7/lib -lzmq
+ZMQInclude= -I ../zeromq-4.0.7/include/
 
 BoostLib= -L ../boost_1_66_0/install/lib -lboost_date_time -lboost_serialization  -lboost_iostreams
 BoostInclude= -isystem ../boost_1_66_0/install/include/
@@ -21,14 +21,13 @@ TempDataModelLib =
 TempToolsInclude =
 TempToolsLib =
 
-
 Includes=  -I $(ToolFrameworkDIR)/include/ -I $(SOURCEDIR)/include/  -I $(SOURCEDIR)/tempinclude/ $(ZMQInclude) $(BoostInclude) 
 Libs=-L $(SOURCEDIR)/lib/ -lTempDAQDataModel -lTempDAQTools -lToolDAQChain -lServiceDiscovery -lDAQDataModelBase -lDAQStore -lDAQLogging  $(BoostLib) $(ZMQLib) -L $(ToolFrameworkDIR)/lib/  -lToolChain -lTempDAQTools -lDataModelBase  -lpthread -lLogging -lStore
 LIBRARIES=lib/libDAQStore.so lib/libDAQLogging.so lib/libToolDAQChain.so lib/libDAQDataModelBase.so lib/libTempDAQDataModel.so lib/libTempDAQTools.so lib/libServiceDiscovery.so
 HEADERS:=$(patsubst %.h, include/%.h, $(filter %.h, $(subst /, ,$(wildcard src/*/*.h) )))
 TempDataModelHEADERS:=$(patsubst %.h, tempinclude/%.h, $(filter %.h, $(subst /, , $(wildcard DataModel/*.h))))
 TempToolHEADERS:=$(patsubst %.h, tempinclude/%.h, $(filter %.h, $(subst /, , $(wildcard UserTools/*/*.h) $(wildcard UserTools/*.h))))
-SOURCEFILES:=$(patsubst %.cpp, %.o, $(wildcard */*.cpp) $(wildcard */*/*.cpp))
+SOURCEFILES:=$(patsubst %.cpp, %.o, $(wildcard */*.cpp) $(wildcard */*/*.cpp)) $(patsubst %.c, %.o, $(wildcard */*.c) $(wildcard */*/*.c))
 
 #.SECONDARY: $(%.o)
 
@@ -49,11 +48,15 @@ tempinclude/%.h:
 	@echo -e "\e[38;5;87m\n*************** sym linking headers ****************\e[0m"
 	ln -s  $(SOURCEDIR)/$(filter %$(strip $(patsubst tempinclude/%.h, /%.h, $@)), $(wildcard DataModel/*.h) $(wildcard UserTools/*/*.h) $(wildcard UserTools/*.h)) $@
 
-src/%.o :  src/%.cpp $(HEADERS)  
+src/%.o :  src/%.cpp $(HEADERS)
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) -c $< -o $@ $(Includes)
 
-UnitTests/%.o : UnitTests/%.cpp $(HEADERS) 
+src/%.o :  src/%.c $(HEADERS)
+	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
+	g++ $(CXXFLAGS) -c $< -o $@ $(Includes)
+
+UnitTests/%.o : UnitTests/%.cpp $(HEADERS)
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) -c $< -o $@ $(Includes)
 
@@ -61,7 +64,7 @@ UserTools/%.o :  UserTools/%.cpp $(HEADERS) $(TempDataModelHEADERS) UserTools/%.
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) -c $< -o $@ $(Includes) $(TempDataModelInclude) $(TempToolsInclude)
 
-UserTools/Factory/Factory.o :  UserTools/Factory/Factory.cpp $(HEADERS) $(TempDataModelHEADERS) 
+UserTools/Factory/Factory.o :  UserTools/Factory/Factory.cpp $(HEADERS) $(TempDataModelHEADERS)
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) -c $< -o $@ $(Includes) $(TempDataModelInclude) $(TempToolsInclude)
 
@@ -69,15 +72,15 @@ DataModel/%.o : DataModel/%.cpp DataModel/%.h $(HEADERS) $(TempDataModelHEADERS)
 	@echo -e "\e[38;5;214m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) -c $< -o $@ $(Includes) $(TempDataModelInclude)
 
-lib/libDAQStore.so: $(patsubst %.cpp, %.o , $(wildcard src/Store/*.cpp)) | $(HEADERS) 
+lib/libDAQStore.so: $(patsubst %.cpp, %.o , $(wildcard src/Store/*.cpp)) | $(HEADERS)
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes)
 
-lib/libDAQLogging.so: $(patsubst %.cpp, %.o , $(wildcard src/DAQLogging/*.cpp)) | $(HEADERS) 
+lib/libDAQLogging.so: $(patsubst %.cpp, %.o , $(wildcard src/DAQLogging/*.cpp)) | $(HEADERS)
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes)
 
-lib/libServiceDiscovery.so: $(patsubst %.cpp, %.o , $(wildcard src/ServiceDiscovery/*.cpp)) | $(HEADERS)
+lib/libServiceDiscovery.so: $(patsubst %.cpp, %.o , $(wildcard src/ServiceDiscovery/*.cpp)) $(patsubst %.c, %.o , $(wildcard src/ServiceDiscovery/*.c)) | $(HEADERS)
 	@echo -e "\e[38;5;201m\n*************** Making " $@ "****************\e[0m"
 	g++ $(CXXFLAGS) --shared $^ -o $@ $(Includes)
 

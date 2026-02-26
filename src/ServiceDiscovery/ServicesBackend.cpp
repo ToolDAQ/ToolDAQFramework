@@ -1,5 +1,9 @@
 #include "ServicesBackend.h"
 
+namespace {
+	const uint32_t MAX_UDP_PACKET_SIZE = 655355;
+}
+
 using namespace ToolFramework;
 
 Command::Command(std::string command_in, char type_in, std::string topic_in, const uint32_t timeout_ms_in){
@@ -119,6 +123,9 @@ bool ServicesBackend::Initialise(Store &variables_in){
 	if(!m_variables.Get("max_retries",max_retries)) max_retries = 3;
 	int advertise_endpoints = 1;
 	m_variables.Get("advertise_endpoints",advertise_endpoints);
+	int msg_compression=1;
+	m_variables.Get("msg_compression",msg_compression);
+	m_variables.Get("compression_level",compression_level);
 	
 	get_ok = InitZMQ();
 	if(not get_ok) return false;
@@ -132,36 +139,10 @@ bool ServicesBackend::Initialise(Store &variables_in){
 		if(not get_ok) return false;
 	}
 	
-	/*                Time Tracking              */
-	/* ----------------------------------------- */
-	
-	// time to wait between resend attempts if not ack'd
-	int resend_period_ms = 1000;
-	// how often to print out stats on what we're sending
-	int print_stats_period_ms = 5000;
-	
-	// Update with user-specified values.
-	m_variables.Get("resend_period_ms",resend_period_ms);
-	m_variables.Get("print_stats_period_ms",print_stats_period_ms);
-	
-	// convert times to boost for easy handling
-	resend_period = boost::posix_time::milliseconds(resend_period_ms);
-	print_stats_period = boost::posix_time::milliseconds(print_stats_period_ms);
-	
-	// initialise 'last send' times
-	last_write = boost::posix_time::microsec_clock::universal_time();
-	last_read = boost::posix_time::microsec_clock::universal_time();
-	last_printout = boost::posix_time::microsec_clock::universal_time();
-	
-	// get the hostname of this machine for monitoring stats
-	char buf[255];
-	get_ok = gethostname(buf, 255);
-	if(get_ok!=0){
-		std::cerr<<"Error getting hostname!"<<std::endl;
-		perror("gethostname: ");
-		hostname = "unknown";
-	} else {
-		hostname = std::string(buf);
+	if(msg_compression){
+		zstd_ctx = ZSTD_createCCtx();
+		compressed_msg_buf = new char[ZSTD_compressBound(MAX_UDP_PACKET_SIZE)+1];
+		compressed_msg_buf[0]='z'; // indicator that this message is compressed
 	}
 	
 	// initialise the message IDs based on the current time in unix seconds
@@ -405,6 +386,27 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 		multicast_addr = &mon_addr;
 	}
 	
+	// compress the message if applicable
+	msg_to_send=nullptr;
+	std::unique_lock<std::mutex> locker(msg_buf_mtx, std::defer_lock);
+	if(zstd_ctx){
+		locker.lock();
+		bytes_to_send = ZSTD_compressCCtx(zstd_ctx, &compressed_msg_buf[1], MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
+		if(ZSTD_isError(bytes_to_send)){
+			locker.unlock();
+			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
+			Log(errmsg,v_error,verbosity);  // XXX should send to MM uncompressed, along with other errors
+			if(err) *err= errmsg;
+		} else {
+			msg_to_send = compressed_msg_buf;
+			++bytes_to_send; // account for leading 'z' to indicate compression
+		}
+	}
+	if(!msg_to_send){
+		msg_to_send = const_cast<char*>(command.c_str());
+		bytes_to_send = command.length();
+	}
+	
 	/*
 	// check for listeners...? - seems redundant, multicast can always send
 	zmq::poll(&multicast_poller,1, 0);   // timeout 0 = return immediately...
@@ -413,7 +415,7 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 		
 		// got a listener - ship it
 		socket_mtx->lock();
-		int cnt = sendto(multicast_socket, command.c_str(), command.length()+1, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
+		int cnt = sendto(multicast_socket, msg_to_send, bytes_to_send+1, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
 		socket_mtx->unlock();
 		if(cnt < 0){
 			std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
@@ -459,12 +461,34 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 		return false;
 	}
 	
-	// In the case of pub sockets, we may also want to specify a 'topic' that the recipient
-	// can use with ZMQ_SUBSCRIBE to filter out particular messages.
+	// compress the message if applicable
+	msg_to_send=nullptr;
+	std::unique_lock<std::mutex> locker(msg_buf_mtx, std::defer_lock);
+	if(zstd_ctx){
+		locker.lock();
+		bytes_to_send = ZSTD_compressCCtx(zstd_ctx, &compressed_msg_buf[1], MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
+		if(ZSTD_isError(bytes_to_send)){
+			locker.unlock();
+			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
+			Log(errmsg,v_error,verbosity);  // XXX should send to MM uncompressed, along with other errors
+			if(err) *err= errmsg;
+		} else {
+			msg_to_send = compressed_msg_buf;
+			++bytes_to_send; // account for leading 'z' to indicate compression
+		}
+	}
+	if(!msg_to_send){
+		msg_to_send = const_cast<char*>(command.c_str());
+		bytes_to_send = command.length();
+	}
+	
+	// In the case of pub sockets, we specify a 'topic' that the recipient can use with ZMQ_SUBSCRIBE
+	// to filter out particular messages.
 	// In fact it's useful to indicate a topic in all cases, even when the actual message will
 	// (for now) go over a dealer/router combination that cannot filter on the topic.
 	// forward the timeout to the Command (and thus zmq::poll in PollAndSend...) ... is this sensible? HMMMMM FIXME
-	Command cmd{command, type, topic,timeout};
+	Command cmd{std::string{msg_to_send}.substr(0,bytes_to_send), type, topic,timeout};
+	if(locker.owns_lock()) locker.unlock(); // must check or it throws an exception
 	
 	// wrap our attempt to get the response in try/catch, just in case?
 	try {
@@ -820,6 +844,9 @@ bool ServicesBackend::Finalise(){
 	// clear old commands and responses
 	waiting_senders = std::queue<std::pair<Command, std::promise<int>>>{};
 	waiting_recipients.clear();
+	
+	// cleanup zmq compression context
+	if(zstd_ctx) ZSTD_freeCCtx(zstd_ctx);
 	
 	// can't use 'Log' since we may have deleted the Logging class
 	if(verbosity>3) std::cout<<"ServicesBackend finalise done"<<std::endl;

@@ -3,12 +3,12 @@
 using namespace ToolFramework;
 
 namespace {
-  const uint32_t MAX_UDP_PACKET_SIZE = 655355;
+  constexpr uint32_t MAX_UDP_PACKET_SIZE = 655355;
+  constexpr size_t MAX_MSG_SIZE = MAX_UDP_PACKET_SIZE-100; // 100 chars for JSON keys, timestamp string and quotes/commas
 }
 
 Services::Services(){
   m_context=0;
-  m_dbname="";
   m_name="";
 
 }
@@ -17,6 +17,7 @@ Services::~Services(){
   
   m_backend_client.Finalise();
   sc_vars->Stop();
+  m_utils.KillThread(&thread_args);
   m_context=nullptr;
   
 }
@@ -31,12 +32,16 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   bool alerts_receive = 1; 
   int alert_receive_port = 12243;
   int sc_port = 60000;
+  mon_merge_period_ms = 1000;
+  multicast_send_period_ms = 5000;
 
   m_variables.Get("alerts_send", alerts_send);
   m_variables.Get("alert_send_port", alert_send_port);
   m_variables.Get("alerts_receive", alerts_receive);
   m_variables.Get("alert_receive_port", alert_receive_port);
   m_variables.Get("sc_port", sc_port);
+  m_variables.Get("mon_merge_period_ms",mon_merge_period_ms);
+  m_variables.Get("multicast_send_period_ms",multicast_send_period_ms);
   
   sc_vars->InitThreadedReceiver(m_context, sc_port, 100, new_service, alert_receive_port, alerts_receive, alert_send_port, alerts_send);
   m_backend_client.SetUp(m_context);
@@ -50,7 +55,6 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   AlertSubscribe("LoadConfig", std::bind(&Services::LoadConfig2, this,  std::placeholders::_1, std::placeholders::_2));  
   
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";
-  if(!m_variables.Get("db_name",m_dbname)) m_dbname="daq";
 
   
   if(!m_backend_client.Initialise(m_variables)){
@@ -66,6 +70,19 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
     std::cerr<<"Warning: service not yet connected..."<<std::endl;
   }
   
+  // start background thread to handle sending batches of buffered logging/monitoring messages
+  thread_args.services = this;
+  thread_args.logging_buf = &logging_buf;
+  thread_args.monitoring_buf = &monitoring_buf;
+  thread_args.logging_buf_mtx = &logging_buf_mtx;
+  thread_args.monitoring_buf_mtx = &monitoring_buf_mtx;
+  thread_args.multicast_send_period_ms = std::chrono::milliseconds{multicast_send_period_ms};
+  thread_args.last_send = std::chrono::steady_clock::now();
+  if(!m_utils.CreateThread("Services", &BufferThread, &thread_args)){
+    std::cerr<<"failed to spawn background thread"<<std::endl;
+    return false;
+  }
+  
   return true;
 }
 
@@ -77,16 +94,13 @@ bool Services::Ready(const unsigned int timeout){
 // Write Functions
 // ---------------
 
-bool Services::SendAlarm(const std::string& message, unsigned int level, const std::string& device, const uint64_t timestamp, const unsigned int timeout){
+bool Services::SendAlarm(const std::string& message, bool critical, const std::string& device, const uint64_t timestamp, const unsigned int timeout){
   
   const std::string& name = (device=="") ? m_name : device;
   
-  // we only handle 2 levels of alarm: critical (level 0) and normal (level!=0).
-  if(level>0) level=1;
-  
   std::string cmd_string = "{\"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ",\"device\":\""+name+"\""
-                         + ",\"level\":"+std::to_string(level)
+                         + ",\"critical\":"+std::to_string(critical)
                          + ",\"alarm\":\"" + message + "\"}";
   
   std::string err="";
@@ -194,7 +208,7 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendRunConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, const uint64_t timestamp, int* version, const unsigned int timeout){
+bool Services::SendBaseConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, const uint64_t timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
@@ -207,13 +221,13 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
   std::string response="";
   std::string err="";
   
-  if(!m_backend_client.SendCommand("W_RUNCONFIG", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendRunConfig error: "<<err<<std::endl;
+  if(!m_backend_client.SendCommand("W_BASECONFIG", cmd_string, &response, &timeout, &err)){
+    std::cerr<<"SendBaseConfig error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::cerr<<"SendRunConfig error: empty response"<<std::endl;
+    std::cerr<<"SendBaseConfig error: empty response"<<std::endl;
     return false;
   }
   
@@ -222,7 +236,47 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::cerr<<"SendRunConfig error: invalid response: '"<<response<<"'"<<std::endl;
+      std::cerr<<"SendBaseConfig error: invalid response: '"<<response<<"'"<<std::endl;
+      return false;
+    }
+  }
+  
+  return true;
+  
+}
+
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+bool Services::SendRunModeConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, const uint64_t timestamp, int* version, const unsigned int timeout){
+  
+  if(version) *version=-1;
+  
+  std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
+                         + ", \"name\":\""+ name+"\""
+                         + ", \"author\":\""+ author+"\""
+                         + ", \"description\":\""+ description+"\""
+                         + ", \"data\":"+ json_data +" }";
+  
+  std::string response="";
+  std::string err="";
+  
+  if(!m_backend_client.SendCommand("W_RUNMODECONFIG", cmd_string, &response, &timeout, &err)){
+    std::cerr<<"SendRunModeConfig error: "<<err<<std::endl;
+    return false;
+  }
+  
+  if(response.empty()){
+    std::cerr<<"SendRunModeConfig error: empty response"<<std::endl;
+    return false;
+  }
+  
+  // response is the version number of the created config entry
+  if(version){
+    try {
+      *version = stoull(response);
+    } catch(std::exception& e){
+      std::cerr<<"SendRunModeConfig error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -233,7 +287,7 @@ bool Services::SendRunConfig(const std::string& json_data, const std::string& na
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendROOTplotZmq(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version, const uint64_t timestamp, const unsigned int lifetime, const unsigned int timeout){
+bool Services::SendROOTplot(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version, const uint64_t timestamp, const unsigned int lifetime, const unsigned int timeout){
   
   std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"name\":\""+ plot_name +"\""
@@ -347,11 +401,9 @@ bool Services::SendPlotlyPlot(
 
 // Since we don't know if a generic SQL query is read or write, call it a write-query for safety
 // version that expects multiple returned rows
-bool Services::SQLQuery(/*const std::string& database,*/ const std::string& query, std::vector<std::string>& responses, const unsigned int timeout){
+bool Services::SQLQuery(const std::string& query, std::vector<std::string>& responses, const unsigned int timeout){
   
   responses.clear();
-  
-  //const std::string& db = (database=="") ? m_dbname : database;
   
   std::string err="";
   
@@ -369,13 +421,13 @@ bool Services::SQLQuery(/*const std::string& database,*/ const std::string& quer
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
 // version when expecting just one row
-bool Services::SQLQuery(/*const std::string& database,*/ const std::string& query, std::string& response, const unsigned int timeout){
+bool Services::SQLQuery(const std::string& query, std::string& response, const unsigned int timeout){
   
   response="";
   
   std::vector<std::string> responses;
   
-  bool ok = SQLQuery(/*db,*/ query, responses, timeout);
+  bool ok = SQLQuery(query, responses, timeout);
   
   if(responses.size()!=0){
     response = responses.front();
@@ -390,10 +442,10 @@ bool Services::SQLQuery(/*const std::string& database,*/ const std::string& quer
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
 // versions that don't expect any return (e.g. insertions)
-bool Services::SQLQuery(/*const std::string& database,*/ const std::string& query, const unsigned int timeout){
+bool Services::SQLQuery(const std::string& query, const unsigned int timeout){
   
   std::string tmp;
-  return SQLQuery(/*database,*/ query, tmp, timeout);
+  return SQLQuery(query, tmp, timeout);
 
 }
 
@@ -412,9 +464,9 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
   
   if(version<0){
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
-    cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM calibration WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+    cmd_string = "SELECT json_build_object('data', data, 'version', version) FROM calibration WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
   } else {
-    cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM calibration WHERE device='"+name+"' AND version="+std::to_string(version);
+    cmd_string = "SELECT json_build_object('data', data, 'version', version) FROM calibration WHERE device='"+name+"' AND version="+std::to_string(version);
   }
   
   std::string err="";
@@ -467,9 +519,9 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
   std::string cmd_string;
   if(version<0){
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
-    cmd_string = "SELECT jsonb_build_object('data', data) FROM device_config WHERE device='"+name+"' ORDER BY version DESC LIMIT 1";
+    cmd_string = "SELECT json_build_object('data', data) FROM device_config WHERE device='"+name+"' ORDER BY version DESC LIMIT 1";
   } else {
-  cmd_string = "SELECT jsonb_build_object('data', data) FROM device_config WHERE device='"+name+"' AND version="+std::to_string(version);
+  cmd_string = "SELECT json_build_object('data', data) FROM device_config WHERE device='"+name+"' AND version="+std::to_string(version);
   }
   
   std::string err="";
@@ -506,12 +558,13 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-// get a run configuration via configuration ID
-bool Services::GetRunConfig(std::string& json_data, const int config_id, const unsigned int timeout){
-
+// get a run configuration via configuration ID pair
+bool Services::GetRunConfig(std::string& json_data, const int runmode_config_id, const int base_config_id, const unsigned int timeout){
+  
   json_data="";
   
-  std::string cmd_string = "SELECT jsonb_build_object('data', data) FROM run_config WHERE config_id="+std::to_string(config_id);
+  std::string cmd_string = "{ \"base_config_id\":"+std::to_string(base_config_id)
+                         + ", \"runmode_config_id\":"+std::to_string(runmode_config_id)+"}";
   
   std::string err="";
   
@@ -524,7 +577,7 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
   if(json_data.empty()){
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
-    err = "GetRunConfig error: config_id "+std::to_string(config_id)+" not found";
+    err = "GetRunConfig error: no config matching "+cmd_string;
     std::cerr<<err<<std::endl;
     json_data = err;
     return false;
@@ -547,12 +600,14 @@ bool Services::GetRunConfig(std::string& json_data, const int config_id, const u
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
+/*
 // get a run configuration by name and version (e.g. name: AmBe, version: 3)
 bool Services::GetRunConfig(std::string& json_data, const std::string& name, const int version, const unsigned int timeout){
 
   json_data="";
   
-  std::string cmd_string = "SELECT jsonb_build_object('data', data) FROM run_config WHERE name='"+name+"' AND version="+std::to_string(version);
+  std::string cmd_string = "{ \"runmode_name\":"+std::to_string(name)
+                         + ", \"runmode_version\":"+std::to_string(version)+"}";
   
   std::string err="";
   
@@ -585,21 +640,24 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
   return true;
   
 }
+*/
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
 // Get a device configuration from a *run* configuration ID
-bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id, const std::string& device, int* version, unsigned int timeout){
+bool Services::GetRunDeviceConfig(std::string& json_data, const int runmode_config_id, const int base_config_id, const std::string& device, int* version, unsigned int timeout){
   
   json_data="";
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE config_id="+std::to_string(runconfig_id)+")::integer";
+  std::string cmd_string = "{ \"base_config_id\":"+std::to_string(base_config_id)
+                         + ", \"runmode_config_id\":"+std::to_string(runmode_config_id)
+                         + ", \"device\":\""+name+"\"}";
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_RUNDEVICECONFIG", cmd_string, &json_data, &timeout, &err)){
     std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -608,7 +666,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
   if(json_data.empty()){
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
-    err = "GetRunDeviceConfig error: config "+name+" for runconfig "+std::to_string(runconfig_id)+" not found";
+    err = "GetRunDeviceConfig error: config "+name+" for base config "+std::to_string(base_config_id)+" and runmode config "+std::to_string(runmode_config_id)+" not found";
     std::cerr<<err<<std::endl;
     json_data = err;
     return false;
@@ -636,6 +694,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runconfig_id
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
+/*
 // Get a device configuration from a *run* type name and version number
 bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& runconfig_name, const int runconfig_version, const std::string& device, int* version, unsigned int timeout){
   
@@ -643,7 +702,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   
   const std::string& name = (device=="") ? m_name : device;
   
-    std::string cmd_string = "SELECT jsonb_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")::integer";
+    std::string cmd_string = "SELECT json_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")::integer";
   
   std::string err="";
   
@@ -681,6 +740,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   return true;
   
 }
+*/
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
@@ -690,9 +750,9 @@ bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_optio
   
   if(version<0){
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
-    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' ORDER BY version DESC LIMIT 1";
+    cmd_string = "SELECT json_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' ORDER BY version DESC LIMIT 1";
   } else {
-    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' AND version="+std::to_string(version);
+    cmd_string = "SELECT json_build_object('version', version, 'data', data, 'draw_options', draw_options) FROM rootplots WHERE name='"+plot_name+"' AND version="+std::to_string(version);
   }
   
   std::string err="";
@@ -751,9 +811,9 @@ bool Services::GetPlotlyPlot(
   std::string cmd_string;
   if(version<0){
     // https://stackoverflow.com/questions/tagged/greatest-n-per-group for faster
-    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+    cmd_string = "SELECT json_build_object('version', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
   } else {
-    cmd_string = "SELECT jsonb_build_object('version', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' AND version="+std::to_string(version);
+    cmd_string = "SELECT json_build_object('version', version, 'data', data, 'layout', layout) FROM plotlyplots WHERE name='"+name+"' AND version="+std::to_string(version);
   }
   
   std::string err;
@@ -796,24 +856,36 @@ bool Services::GetPlotlyPlot(const std::string& name, std::string& trace, std::s
 // Multicast Senders
 // -----------------
 
-bool Services::SendLog(const std::string& message, unsigned int severity, const std::string& device, const uint64_t timestamp){
+bool Services::SendLog(const std::string& message, LogLevel severity, const std::string& device, const uint64_t timestamp){
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = std::string{"{\"topic\":\"LOGGING\""}
-                         + ",\"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
-                         + ",\"device\":\""+ name +"\""
-                         + ",\"severity\":"+std::to_string(severity)
-                         + ",\"message\":\"" +  message + "\"}";
-  
-  if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
-    std::cerr<<"Logging message is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
+  // FIXME we should be able to relax this check if compression is enabled...
+  if((message.length()+name.length())>MAX_MSG_SIZE){
+    std::cerr<<"Logging message is too long!"<<std::endl;
     return false;
   }
   
+  std::unique_lock<std::mutex> locker(logging_buf_mtx);
+  
+  if(logging_buf.size() && name==logging_buf.back().device && message==logging_buf.back().message){
+    ++logging_buf.back().repeats;
+    return true;
+  }
+  
+  // grab timestamp at time of call if 0
+  time_t ts = (timestamp!=0) ? timestamp : time(nullptr)*1000;
+  
+  logging_buf.emplace_back(message, severity, name, ts);
+  
+  return true;
+}
+
+bool Services::SendLog(std::string& msg){
+  
   std::string err="";
   
-  if(!m_backend_client.SendMulticast(MulticastType::Log,cmd_string, &err)){
+  if(!m_backend_client.SendMulticast(MulticastType::Log, msg, &err)){
     std::cerr<<"SendLog error: "<<err<<std::endl;
     return false;
   }
@@ -827,20 +899,33 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   
   const std::string& name = (device=="") ? m_name : device;
   
-  std::string cmd_string = std::string{"{\"topic\":\"MONITORING\""}
-                         + ", \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
-                         + ", \"device\":\""+ name +"\""
-                         + ", \"subject\":\""+ subject +"\""
-                         + ", \"data\":"+ json_data +" }";
-  
-  if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
-    std::cerr<<"Monitoring message is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
+  if((json_data.length()+name.length()+subject.length())>MAX_MSG_SIZE){
+    std::cerr<<"Monitoring message is too long!"<<std::endl;
     return false;
   }
   
+  // grab timestamp at time of call if 0
+  time_t ts = (timestamp!=0) ? timestamp : time(nullptr)*1000;
+  
+  std::unique_lock<std::mutex> locker(monitoring_buf_mtx);
+  
+  // take first of repeated monitoring sends within buffer period
+  auto it = monitoring_buf.find(name+subject);
+  if(it!=monitoring_buf.end() && (ts - it->second.timestamp)<mon_merge_period_ms) return true;
+  
+  monitoring_buf.emplace(std::piecewise_construct,
+                         std::forward_as_tuple(name+subject),
+                         std::forward_as_tuple(json_data, subject, name, ts));
+  
+  return true;
+}
+
+// cmd_string represents a batch of messages
+bool Services::SendMonitoringData(std::string& msg){
+  
   std::string err="";
   
-  if(!m_backend_client.SendMulticast(MulticastType::Monitoring,cmd_string, &err)){
+  if(!m_backend_client.SendMulticast(MulticastType::Monitoring, msg, &err)){
     std::cerr<<"SendMonitoringData error: "<<err<<std::endl;
     return false;
   }
@@ -946,7 +1031,7 @@ std::string Services::TimeStringFromUnixMs(const uint64_t timestamp){
     timestamp_ms = timestamp%1000;
     timestamp_sec = timestamp/1000;
   }
-  struct tm* timeptr = gmtime(&timestamp_sec);
+  struct tm* timeptr = gmtime(&timestamp_sec); // FIXME check thread safety of these time things
   if(timeptr==0){
     //Log("gmtime error converting unix time '"+std::to_string(timestamp)+"' to time struct",v_error);
     return "now()";
@@ -997,4 +1082,58 @@ if(run_mode_config_id!=m_run_mode_config_id || base_config_id!=m_base_config_id)
 
  return "";
 
+}
+
+// ========================
+
+void Services::BufferThread(Thread_args* args){
+  
+  BufferThreadArgs* m_args = dynamic_cast<BufferThreadArgs*>(args);
+  
+  m_args->last_send = std::chrono::steady_clock::now();
+  
+  m_args->local_merge_buf.clear();
+  std::unique_lock<std::mutex> locker(*m_args->logging_buf_mtx);
+  
+  // merge into a batch
+  bool first=true;
+  for(LogMsg& msg : *m_args->logging_buf){
+    m_args->local_merge_buf += std::string(first ? "," : "")
+                            + "{\"topic\":\"LOGGING\""
+                            + ",\"time\":\""+TimeStringFromUnixMs(msg.timestamp)+"\""
+                            + ",\"device\":\""+ msg.device +"\""
+                            + ",\"severity\":"+std::to_string(int(msg.severity))
+                            + ",\"message\":\"" + msg. message + "\""
+                            + ",\"repeats\":"+std::to_string(msg.repeats)+"}";
+    first=false;
+  }
+  
+  // send
+  if(m_args->services->SendLog(m_args->local_merge_buf)){
+    m_args->logging_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
+  }
+  
+  // repeat for monitoring messages
+  m_args->local_merge_buf.clear();
+  locker = std::unique_lock<std::mutex>(*m_args->monitoring_buf_mtx);
+  
+  first=true;
+  for(std::pair<const std::string, MonitoringMsg>& msg : *m_args->monitoring_buf){
+    m_args->local_merge_buf += std::string(first ? "," : "")
+                            + "{\"topic\":\"MONITORING\""
+                            + ",\"time\":\""+TimeStringFromUnixMs(msg.second.timestamp)+"\""
+                            + ",\"device\":\""+ msg.second.device +"\""
+                            + ",\"subject\":\""+ msg.second.subject +"\""
+                            + ",\"data\":"+ msg.second.json_data +"}";
+    first=false;
+  }
+  
+  // send
+  if(m_args->services->SendMonitoringData(m_args->local_merge_buf)){
+    m_args->monitoring_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
+  }
+  
+  std::this_thread::sleep_until(m_args->last_send+m_args->multicast_send_period_ms);
+  
+  return;
 }
