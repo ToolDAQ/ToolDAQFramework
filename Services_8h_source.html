@@ -151,21 +151,26 @@ $(function() {
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="classToolFramework_1_1SlowControlCollection.html">SlowControlCollection</a>* sc_vars;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    </div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    zmq::context_t* m_context;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <a class="code" href="classToolFramework_1_1ServicesBackend.html">ServicesBackend</a> m_backend_client;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    std::string m_dbname;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    std::string m_name;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  };</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;}</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">void</span> LoadConfig2(<span class="keyword">const</span> <span class="keywordtype">char</span>* alert, <span class="keyword">const</span> <span class="keywordtype">char</span>* payload);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    std::string LoadConfig1(<span class="keyword">const</span> <span class="keywordtype">char</span>* payload);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    zmq::context_t* m_context;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <a class="code" href="classToolFramework_1_1ServicesBackend.html">ServicesBackend</a> m_backend_client;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    std::string m_dbname;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    std::string m_name;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    std::string m_local_config;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    uint64_t m_base_config_id;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    uint64_t m_run_mode_config_id;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  };</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassToolFramework_1_1ServicesBackend_html"><div class="ttname"><a href="classToolFramework_1_1ServicesBackend.html">ToolFramework::ServicesBackend</a></div><div class="ttdef"><b>Definition:</b> ServicesBackend.h:55</div></div>
 <div class="ttc" id="aclassToolFramework_1_1Services_html"><div class="ttname"><a href="classToolFramework_1_1Services.html">ToolFramework::Services</a></div><div class="ttdef"><b>Definition:</b> Services.h:23</div></div>
-<div class="ttc" id="aclassToolFramework_1_1SlowControlCollection_html"><div class="ttname"><a href="classToolFramework_1_1SlowControlCollection.html">ToolFramework::SlowControlCollection</a></div><div class="ttdef"><b>Definition:</b> SlowControlCollection.h:33</div></div>
+<div class="ttc" id="aclassToolFramework_1_1SlowControlCollection_html"><div class="ttname"><a href="classToolFramework_1_1SlowControlCollection.html">ToolFramework::SlowControlCollection</a></div><div class="ttdef"><b>Definition:</b> SlowControlCollection.h:35</div></div>
 <div class="ttc" id="aclassToolFramework_1_1SlowControlElement_html"><div class="ttname"><a href="classToolFramework_1_1SlowControlElement.html">ToolFramework::SlowControlElement</a></div><div class="ttdef"><b>Definition:</b> SlowControlElement.h:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

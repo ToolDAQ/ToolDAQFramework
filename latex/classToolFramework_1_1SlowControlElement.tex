@@ -3,8 +3,8 @@
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1SlowControlElement_ab200cd682161babd9310c36eae1cd273}\label{classToolFramework_1_1SlowControlElement_ab200cd682161babd9310c36eae1cd273}} 
-{\bfseries Slow\+Control\+Element} (std\+::string name, Slow\+Control\+Element\+Type type, SCFunction change\+\_\+function=0, SCFunction read\+\_\+function=0)
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlElement_add4d7dce3d4b09add53ce349ee97c197}\label{classToolFramework_1_1SlowControlElement_add4d7dce3d4b09add53ce349ee97c197}} 
+{\bfseries Slow\+Control\+Element} (std\+::string name, Slow\+Control\+Element\+Type type, SCFunction change\+\_\+function=0, SCFunction read\+\_\+function=0, bool lockable=true, bool hidden=false)
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlElement_a82b1da8b295d771e8799ec33f79f94c0}\label{classToolFramework_1_1SlowControlElement_a82b1da8b295d771e8799ec33f79f94c0}} 
 std\+::string {\bfseries Get\+Name} ()
@@ -41,6 +41,12 @@ bool {\bfseries Set\+Value} (std\+::string value)
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlElement_adf2f71a2531892e9eaac4dc103724fd2}\label{classToolFramework_1_1SlowControlElement_adf2f71a2531892e9eaac4dc103724fd2}} 
 bool {\bfseries Get\+Value} (std\+::string \&value)
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlElement_a107423f7736a37c8ff0b81449194deec}\label{classToolFramework_1_1SlowControlElement_a107423f7736a37c8ff0b81449194deec}} 
+bool {\bfseries Lockable} ()
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlElement_a18f2b13230fddf99263513d9c1a61140}\label{classToolFramework_1_1SlowControlElement_a18f2b13230fddf99263513d9c1a61140}} 
+bool {\bfseries Hidden} ()
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlElement_acae55ba2d94f85db232b6581e4e563c9}\label{classToolFramework_1_1SlowControlElement_acae55ba2d94f85db232b6581e4e563c9}} 
 {\footnotesize template$<$typename T $>$ }\\bool {\bfseries Set\+Min} (T value)

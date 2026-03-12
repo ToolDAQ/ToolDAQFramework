@@ -15,8 +15,8 @@ bool {\bfseries Init\+Threaded\+Receiver} (zmq\+::context\+\_\+t $\ast$context, 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a8a335148054d1f139c3de8f93b625e1c}\label{classToolFramework_1_1SlowControlCollection_a8a335148054d1f139c3de8f93b625e1c}} 
 \mbox{\hyperlink{classToolFramework_1_1SlowControlElement}{Slow\+Control\+Element}} $\ast$ {\bfseries operator\mbox{[}$\,$\mbox{]}} (std\+::string key)
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a6ef6e4bc431635272b31b9a06fa43b27}\label{classToolFramework_1_1SlowControlCollection_a6ef6e4bc431635272b31b9a06fa43b27}} 
-bool {\bfseries Add} (std\+::string name, Slow\+Control\+Element\+Type type, SCFunction change\+\_\+function=0, SCFunction read\+\_\+function=0)
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_ab952fe696e4211321b9800345b6c9a34}\label{classToolFramework_1_1SlowControlCollection_ab952fe696e4211321b9800345b6c9a34}} 
+bool {\bfseries Add} (std\+::string name, Slow\+Control\+Element\+Type type, SCFunction change\+\_\+function=0, SCFunction read\+\_\+function=0, bool testing\+\_\+lock=true, bool hidded=false)
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a25f82ef2bb236bdac8c8986d8e41b188}\label{classToolFramework_1_1SlowControlCollection_a25f82ef2bb236bdac8c8986d8e41b188}} 
 bool {\bfseries Remove} (std\+::string name)
@@ -41,6 +41,12 @@ void {\bfseries Stop} ()
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a2a6ec133b73896d550ff57ca970cead2}\label{classToolFramework_1_1SlowControlCollection_a2a6ec133b73896d550ff57ca970cead2}} 
 void {\bfseries Json\+Parser} (std\+::string json)
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_ae654bda0e21c8ce8e4a0ce70edfb6fb6}\label{classToolFramework_1_1SlowControlCollection_ae654bda0e21c8ce8e4a0ce70edfb6fb6}} 
+void {\bfseries Testing\+Enable} ()
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_ae5f0374d539ae8bb270da634833203cf}\label{classToolFramework_1_1SlowControlCollection_ae5f0374d539ae8bb270da634833203cf}} 
+void {\bfseries Testing\+Disable} ()
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_acd2408dd7bf2d90ae34e17c9dc6e934c}\label{classToolFramework_1_1SlowControlCollection_acd2408dd7bf2d90ae34e17c9dc6e934c}} 
 {\footnotesize template$<$typename T $>$ }\\T {\bfseries Get\+Value} (std\+::string name)

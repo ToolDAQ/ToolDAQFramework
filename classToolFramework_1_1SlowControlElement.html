@@ -75,9 +75,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab200cd682161babd9310c36eae1cd273"><td class="memItemLeft" align="right" valign="top"><a id="ab200cd682161babd9310c36eae1cd273"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SlowControlElement</b> (std::string name, SlowControlElementType type, SCFunction change_function=0, SCFunction read_function=0)</td></tr>
-<tr class="separator:ab200cd682161babd9310c36eae1cd273"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add4d7dce3d4b09add53ce349ee97c197"><td class="memItemLeft" align="right" valign="top"><a id="add4d7dce3d4b09add53ce349ee97c197"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SlowControlElement</b> (std::string name, SlowControlElementType type, SCFunction change_function=0, SCFunction read_function=0, bool lockable=true, bool hidden=false)</td></tr>
+<tr class="separator:add4d7dce3d4b09add53ce349ee97c197"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82b1da8b295d771e8799ec33f79f94c0"><td class="memItemLeft" align="right" valign="top"><a id="a82b1da8b295d771e8799ec33f79f94c0"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetName</b> ()</td></tr>
 <tr class="separator:a82b1da8b295d771e8799ec33f79f94c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -114,6 +114,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>SetValue</b> (std::st
 <tr class="memitem:adf2f71a2531892e9eaac4dc103724fd2"><td class="memItemLeft" align="right" valign="top"><a id="adf2f71a2531892e9eaac4dc103724fd2"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetValue</b> (std::string &amp;value)</td></tr>
 <tr class="separator:adf2f71a2531892e9eaac4dc103724fd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a107423f7736a37c8ff0b81449194deec"><td class="memItemLeft" align="right" valign="top"><a id="a107423f7736a37c8ff0b81449194deec"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>Lockable</b> ()</td></tr>
+<tr class="separator:a107423f7736a37c8ff0b81449194deec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18f2b13230fddf99263513d9c1a61140"><td class="memItemLeft" align="right" valign="top"><a id="a18f2b13230fddf99263513d9c1a61140"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>Hidden</b> ()</td></tr>
+<tr class="separator:a18f2b13230fddf99263513d9c1a61140"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acae55ba2d94f85db232b6581e4e563c9"><td class="memTemplParams" colspan="2"><a id="acae55ba2d94f85db232b6581e4e563c9"></a>
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:acae55ba2d94f85db232b6581e4e563c9"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>SetMin</b> (T value)</td></tr>
