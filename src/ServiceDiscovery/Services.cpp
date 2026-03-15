@@ -1031,13 +1031,10 @@ std::string Services::TimeStringFromUnixMs(const uint64_t timestamp){
     timestamp_ms = timestamp%1000;
     timestamp_sec = timestamp/1000;
   }
-  struct tm* timeptr = gmtime(&timestamp_sec); // FIXME check thread safety of these time things
-  if(timeptr==0){
-    //Log("gmtime error converting unix time '"+std::to_string(timestamp)+"' to time struct",v_error);
-    return "now()";
-  }
+  struct tm timestruct;
+  gmtime_r(&timestamp_sec, &timestruct); // FIXME error checking?
   char timestring[24];
-  int nchars = strftime(&timestring[0], 20, "%F %T", timeptr);
+  int nchars = strftime(&timestring[0], 20, "%F %T", &timestruct);
   if(nchars==0){
     //Log("strftime error converting time struct '"+std::to_string(timestamp)+"' to string",v_error);
     return "now()";
