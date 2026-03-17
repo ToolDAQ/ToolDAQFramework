@@ -51,7 +51,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   sc_vars->Add("NewConfig",SlowControlElementType(INFO),0,0,false,false);
   (*sc_vars)["NewConfig"]->SetValue(0);
   
-  sc_vars->Add("LoadConfig",SlowControlElementType(BUTTON),std::bind(&Services::LoadConfig1, this,  std::placeholders::_1),0,false,false);
+  sc_vars->Add("LoadConfig",SlowControlElementType(VARIABLE),std::bind(&Services::LoadConfig1, this, std::placeholders::_1),0,false,false);
   AlertSubscribe("LoadConfig", std::bind(&Services::LoadConfig2, this,  std::placeholders::_1, std::placeholders::_2));
   
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";
@@ -563,8 +563,9 @@ bool Services::GetRunConfig(std::string& json_data, const int runmode_config_id,
   
   json_data="";
   
-  std::string cmd_string = "{ \"base_config_id\":"+std::to_string(base_config_id)
-                         + ", \"runmode_config_id\":"+std::to_string(runmode_config_id)+"}";
+  std::string cmd_string = "SELECT json_build_object('data', base.data || runmode.data) FROM ( SELECT data FROM base_config WHERE config_id="
+                         + std::to_string(base_config_id) + ") base CROSS JOIN (SELECT data FROM runmode_config WHERE config_id="
+                         + std::to_string(runmode_config_id) + ") runmode";
   
   std::string err="";
   
@@ -577,7 +578,7 @@ bool Services::GetRunConfig(std::string& json_data, const int runmode_config_id,
   if(json_data.empty()){
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
-    err = "GetRunConfig error: no config matching "+cmd_string;
+    err = "GetRunConfig error: no config matching base config "+std::to_string(base_config_id)+", runmode config "+std::to_string(runmode_config_id);
     std::cerr<<err<<std::endl;
     json_data = err;
     return false;
@@ -600,14 +601,18 @@ bool Services::GetRunConfig(std::string& json_data, const int runmode_config_id,
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-/*
 // get a run configuration by name and version (e.g. name: AmBe, version: 3)
-bool Services::GetRunConfig(std::string& json_data, const std::string& name, const int version, const unsigned int timeout){
+bool Services::GetRunModeConfig(std::string& json_data, const std::string& name, const int version, const unsigned int timeout){
 
   json_data="";
   
-  std::string cmd_string = "{ \"runmode_name\":"+std::to_string(name)
-                         + ", \"runmode_version\":"+std::to_string(version)+"}";
+  std::string cmd_string;
+  
+  if(version<0){
+    cmd_string = "SELECT json_build_object('data', data, 'version', version) FROM runmode_config WHERE name='"+name+"' ORDER BY version DESC LIMIT 1";
+  } else {
+    cmd_string = "SELECT json_build_object('data', data, 'version', version) FROM runmode_config WHERE name='"+name+"' AND version="+std::to_string(version);
+  }
   
   std::string err="";
   
@@ -640,7 +645,6 @@ bool Services::GetRunConfig(std::string& json_data, const std::string& name, con
   return true;
   
 }
-*/
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
@@ -651,9 +655,16 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runmode_conf
   
   const std::string& name = (device=="") ? m_name : device;
   
+  /*
   std::string cmd_string = "{ \"base_config_id\":"+std::to_string(base_config_id)
                          + ", \"runmode_config_id\":"+std::to_string(runmode_config_id)
                          + ", \"device\":\""+name+"\"}";
+  */
+  
+  std::string cmd_string = "WITH base AS ( SELECT data FROM base_config WHERE config_id="+std::to_string(base_config_id)+"), "
+                           "  runmode AS ( SELECT data FROM runmode_config WHERE config_id="+std::to_string(runmode_config_id)+") "
+                           "SELECT json_build_object('version', version, 'data', data) FROM device_config WHERE device='"+name+"' "
+                           "AND version=(SELECT ((base.data || runmode.data)->'"+name+"')::integer FROM base CROSS JOIN runmode)";
   
   std::string err="";
   
@@ -694,7 +705,63 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runmode_conf
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-/*
+// Get a device configuration from a *run* configuration ID
+bool Services::GetCachedDeviceConfig(std::string& json_data, int base_config_id, int runmode_config_id, const std::string& device, int* version, unsigned int timeout){
+  
+  json_data="";
+  
+  const std::string& name = (device=="") ? m_name : device;
+  
+  std::string err="";
+  
+  if(!m_backend_client.SendCommand("R_KACHEDDEVICECONFIG", name, &json_data, &timeout, &err)){
+    std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  
+  if(json_data.empty()){
+    // if we got an empty response but the command succeeded, device name was not found in map
+    err = "GetCachedDeviceConfig error: config for device "+name+" not found";
+    std::cerr<<err<<std::endl;
+    json_data = err;
+    return false;
+  }
+  
+  // response format '{"base_config_id":N, "runmode_config_id":M, version": X, "data":"<contents>"}' - strip out contents
+  Store tmp;
+  tmp.JsonParser(json_data);
+  int base=-1, runmode=-1;
+  tmp.Get("base_config_id",base);
+  tmp.Get("runmode_config_id",runmode);
+  if(base!=base_config_id || runmode!=runmode_config_id){
+    err="GetCachedDeviceConfig returned unexpected configuration ids: {"+std::to_string(base)+","+std::to_string(runmode)
+       +"}, expected {"+std::to_string(base_config_id)+","+std::to_string(runmode_config_id)+"}";
+    std::cerr<<err<<std::endl;
+    json_data=err;
+    return false;
+  }
+  
+  int tmp_version;
+  bool ok = tmp.Get("version",tmp_version);
+  if(ok && version){
+    *version = tmp_version;
+  }
+  ok = ok && tmp.Get("data", json_data);
+  if(!ok){
+    err="GetRunDeviceConfig error: invalid response: '"+json_data+"'";
+    std::cerr<<err<<std::endl;
+    json_data=err;
+    return false;
+  }
+  
+  return true;
+  
+}
+
+// ««-------------- ≪ °◇◆◇° ≫ --------------»»
+
+/* doesn't make sense any more as we need to also specify a base config number to guarantee it returns a configuration
 // Get a device configuration from a *run* type name and version number
 bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& runconfig_name, const int runconfig_version, const std::string& device, int* version, unsigned int timeout){
   
@@ -702,7 +769,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   
   const std::string& name = (device=="") ? m_name : device;
   
-    std::string cmd_string = "SELECT json_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")::integer";
+  std::string cmd_string = "SELECT json_build_object('data', data, 'version', version) FROM device_config WHERE device='"+name+"' AND version=(SELECT data->>'"+name+"' FROM run_config WHERE name='"+runconfig_name+"' AND version="+std::to_string(runconfig_version)+")::integer";
   
   std::string err="";
   
@@ -1041,23 +1108,43 @@ std::string Services::TimeStringFromUnixMs(const uint64_t timestamp){
   }
   // add the milliseconds
   nchars = snprintf(&timestring[19], 5, ".%03d", timestamp_ms);
+  /*
   if(nchars!=4){
-    //Log("snprintf error converting '"+std::to_string(timestamp_ms)+"' to timestamp milliseconds",v_error);
-    //return "now()";  // just omit the milliseconds? or fall back to 'now'?
+    Log("snprintf error converting '"+std::to_string(timestamp_ms)+"' to timestamp milliseconds",v_error);
+    return "now()";  // just omit the milliseconds? or fall back to 'now'?
   }
+  */
   
   return std::string{timestring};
   
 }
 
 void Services::LoadConfig2(const char* alert, const char* payload){
-
-  LoadConfig1(payload);
+  
+  Store tmp;
+  tmp.JsonParser(payload);
+  uint64_t base_config_id=0;
+  uint64_t run_mode_config_id=0;
+  
+  tmp.Get("Base",base_config_id);
+  tmp.Get("RunMode",run_mode_config_id);
+  
+  if(run_mode_config_id!=m_run_mode_config_id || base_config_id!=m_base_config_id){
+    
+    if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id)){
+      usleep(100000);
+    }
+    (*sc_vars)["NewConfig"]->SetValue(1);
+    m_base_config_id = base_config_id;
+    m_run_mode_config_id = run_mode_config_id;
+    
+  }
 
 }
 
-std::string Services::LoadConfig1(const char* payload){
+std::string Services::LoadConfig1(const char* control){
   
+  std::string payload = (*sc_vars)[control]->GetValue<std::string>();
   Store tmp;
   tmp.JsonParser(payload);
   uint64_t base_config_id=0;
