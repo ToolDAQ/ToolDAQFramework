@@ -31,7 +31,7 @@
 namespace ToolFramework {
 
 struct Command {
-	Command(std::string command_in, char cmd_type_in, std::string topic_in, const uint32_t timeout_ms_in);
+	Command(const std::string& command_in, char cmd_type_in, const std::string& topic_in, const uint32_t timeout_ms_in);
 	
 	Command(const Command& cmd_in);  // copy constructor
 	Command(Command&& cmd_in);       // move constructor

@@ -6,7 +6,7 @@ namespace {
 
 using namespace ToolFramework;
 
-Command::Command(std::string command_in, char type_in, std::string topic_in, const uint32_t timeout_ms_in){
+Command::Command(const std::string& command_in, char type_in, const std::string& topic_in, const uint32_t timeout_ms_in){
 	command = command_in;
 	type = type_in; // TODO type is unnecessary, could just use topic[0]
 	topic=topic_in;
@@ -484,7 +484,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	// In fact it's useful to indicate a topic in all cases, even when the actual message will
 	// (for now) go over a dealer/router combination that cannot filter on the topic.
 	// forward the timeout to the Command (and thus zmq::poll in PollAndSend...) ... is this sensible? HMMMMM FIXME
-	Command cmd{std::string{msg_to_send}.substr(0,bytes_to_send), type, topic,timeout};
+	Command cmd{std::string(msg_to_send,bytes_to_send), type, topic,timeout};
 	if(locker.owns_lock()) locker.unlock(); // must check or it throws an exception
 	
 	// wrap our attempt to get the response in try/catch, just in case?

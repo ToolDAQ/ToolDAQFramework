@@ -106,6 +106,7 @@ namespace ToolFramework {
     
     std::string PrintSlowControlVariables();
     std::string GetDeviceName();
+    void SetVerbose(bool in);
     
     template<typename T> T GetSlowControlValue(std::string name){
       return (*sc_vars)[name]->GetValue<T>();
@@ -123,6 +124,7 @@ namespace ToolFramework {
     static void BufferThread(Thread_args* args);
     
     std::string m_name;
+    bool m_verbose;
     zmq::context_t* m_context;
     ServicesBackend m_backend_client;
     std::string m_local_config;

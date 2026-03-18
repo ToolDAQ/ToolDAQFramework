@@ -10,6 +10,7 @@ namespace {
 Services::Services(){
   m_context=0;
   m_name="";
+  m_verbose=false;
 
 }
  
@@ -20,6 +21,10 @@ Services::~Services(){
   m_utils.KillThread(&thread_args);
   m_context=nullptr;
   
+}
+
+void Services::SetVerbose(bool in){
+  m_verbose=in;
 }
 
 bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlCollection* sc_vars_in, bool new_service){
@@ -55,10 +60,14 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   AlertSubscribe("LoadConfig", std::bind(&Services::LoadConfig2, this,  std::placeholders::_1, std::placeholders::_2));
   
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";
+  if(m_name[0]=='('){
+    if(m_verbose) std::cerr<<"device names cannot start with '('"<<std::endl;
+    return false;
+  }
 
   
   if(!m_backend_client.Initialise(m_variables)){
-    std::cerr<<"error initialising slowcontrol client"<<std::endl;
+    if(m_verbose) std::cerr<<"error initialising slowcontrol client"<<std::endl;
     return false;
   }
    
@@ -67,7 +76,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   int pub_period=5;
   m_variables.Get("service_publish_sec",pub_period);
   if(!Ready(pub_period*3000)){ // Wait up to 3 broadcast periods. It'll return sooner if it connects.
-    std::cerr<<"Warning: service not yet connected..."<<std::endl;
+    if(m_verbose) std::cerr<<"Warning: service not yet connected..."<<std::endl;
   }
   
   // start background thread to handle sending batches of buffered logging/monitoring messages
@@ -79,7 +88,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   thread_args.multicast_send_period_ms = std::chrono::milliseconds{multicast_send_period_ms};
   thread_args.last_send = std::chrono::steady_clock::now();
   if(!m_utils.CreateThread("Services", &BufferThread, &thread_args)){
-    std::cerr<<"failed to spawn background thread"<<std::endl;
+    if(m_verbose) std::cerr<<"failed to spawn background thread"<<std::endl;
     return false;
   }
   
@@ -108,7 +117,7 @@ bool Services::SendAlarm(const std::string& message, bool critical, const std::s
   // send the alarm on the pub socket
   bool ok = m_backend_client.SendCommand("W_ALARM", cmd_string, (std::vector<std::string>*)nullptr, &timeout, &err);
   if(!ok){
-    std::cerr<<"SendAlarm error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendAlarm error: "<<err<<std::endl;
   }
   // SendAlarm returns nothing
   
@@ -120,7 +129,7 @@ bool Services::SendAlarm(const std::string& message, bool critical, const std::s
              + ",\"message\":\"" + message + "\"}";
   
   if(!m_backend_client.SendMulticast(MulticastType::Log,cmd_string, &err)){
-    std::cerr<<"SendAlarm (log) error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendAlarm (log) error: "<<err<<std::endl;
   }
   
   return ok;
@@ -142,12 +151,12 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   std::string response="";
   
   if(!m_backend_client.SendCommand("W_CALIBRATION", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendCalibrationData error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendCalibrationData error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::cerr<<"SendCalibrationData error: empty response"<<std::endl;
+    if(m_verbose) std::cerr<<"SendCalibrationData error: empty response"<<std::endl;
     return false;
   }
   
@@ -156,7 +165,7 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::cerr<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
+      if(m_verbose) std::cerr<<"SendCalibrationData error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -183,12 +192,12 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
   std::string err="";
   
   if(!m_backend_client.SendCommand("W_DEVCONFIG", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendDeviceConfig error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendDeviceConfig error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::cerr<<"SendDeviceConfig error: empty response"<<std::endl;
+    if(m_verbose) std::cerr<<"SendDeviceConfig error: empty response"<<std::endl;
     return false;
   }
   
@@ -197,7 +206,7 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::cerr<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
+      if(m_verbose) std::cerr<<"SendDeviceConfig error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -222,12 +231,12 @@ bool Services::SendBaseConfig(const std::string& json_data, const std::string& n
   std::string err="";
   
   if(!m_backend_client.SendCommand("W_BASECONFIG", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendBaseConfig error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendBaseConfig error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::cerr<<"SendBaseConfig error: empty response"<<std::endl;
+    if(m_verbose) std::cerr<<"SendBaseConfig error: empty response"<<std::endl;
     return false;
   }
   
@@ -236,7 +245,7 @@ bool Services::SendBaseConfig(const std::string& json_data, const std::string& n
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::cerr<<"SendBaseConfig error: invalid response: '"<<response<<"'"<<std::endl;
+      if(m_verbose) std::cerr<<"SendBaseConfig error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -262,12 +271,12 @@ bool Services::SendRunModeConfig(const std::string& json_data, const std::string
   std::string err="";
   
   if(!m_backend_client.SendCommand("W_RUNMODECONFIG", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendRunModeConfig error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendRunModeConfig error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::cerr<<"SendRunModeConfig error: empty response"<<std::endl;
+    if(m_verbose) std::cerr<<"SendRunModeConfig error: empty response"<<std::endl;
     return false;
   }
   
@@ -276,7 +285,7 @@ bool Services::SendRunModeConfig(const std::string& json_data, const std::string
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::cerr<<"SendRunModeConfig error: invalid response: '"<<response<<"'"<<std::endl;
+      if(m_verbose) std::cerr<<"SendRunModeConfig error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -299,12 +308,12 @@ bool Services::SendROOTplot(const std::string& plot_name, const std::string& dra
   std::string response="";
   
   if(!m_backend_client.SendCommand("W_TROOTPLOT", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"SendROOTplot error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendROOTplot error: "<<err<<std::endl;
     return false;
   }
   
   if(response.empty()){
-    std::cerr<<"SendROOTplot error: empty response"<<std::endl;
+    if(m_verbose) std::cerr<<"SendROOTplot error: empty response"<<std::endl;
     return false;
   }
   
@@ -313,7 +322,7 @@ bool Services::SendROOTplot(const std::string& plot_name, const std::string& dra
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::cerr<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
+      if(m_verbose) std::cerr<<"SendROOTplot error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -375,12 +384,12 @@ bool Services::SendPlotlyPlot(
   
   std::string err;
   if (!m_backend_client.SendCommand("W_PLOTLYPLOT", ss.str(), &response, &timeout, &err)){
-    std::cerr << "SendPlotlyPlot error: " << err << std::endl;
+    if(m_verbose) std::cerr << "SendPlotlyPlot error: " << err << std::endl;
     return false;
   };
   
   if(response.empty()){
-    std::cerr<<"SendPlotlyPlot error: empty response"<<std::endl;
+    if(m_verbose) std::cerr<<"SendPlotlyPlot error: empty response"<<std::endl;
     return false;
   }
   
@@ -389,7 +398,7 @@ bool Services::SendPlotlyPlot(
     try {
       *version = stoull(response);
     } catch(std::exception& e){
-      std::cerr<<"SendPlotlyPlot error: invalid response: '"<<response<<"'"<<std::endl;
+      if(m_verbose) std::cerr<<"SendPlotlyPlot error: invalid response: '"<<response<<"'"<<std::endl;
       return false;
     }
   }
@@ -407,8 +416,12 @@ bool Services::SQLQuery(const std::string& query, std::vector<std::string>& resp
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("W_QUERY", query, &responses, &timeout, &err)){
-    std::cerr<<"SQLQuery error: "<<err<<std::endl;
+  // for now, commands must not begin with '(' as this is used to identify compressed messages.
+  // Since we don't know what a user-provided query string may be, prepend with a space to ensure this.
+  std::string sanitized_query = std::string{" "}+query;
+  
+  if(!m_backend_client.SendCommand("W_QUERY", sanitized_query, &responses, &timeout, &err)){
+    if(m_verbose) std::cerr<<"SQLQuery error: "<<err<<std::endl;
     responses.resize(1);
     responses.front() = err;
     return false;
@@ -432,7 +445,7 @@ bool Services::SQLQuery(const std::string& query, std::string& response, const u
   if(responses.size()!=0){
     response = responses.front();
     if(responses.size()>1){
-      std::cout<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
+      if(m_verbose) std::cout<<"Warning: SQLQuery returned multiple rows, only first returned"<<std::endl;
     }
   }
   
@@ -472,7 +485,7 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_CALIBRATION", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetCalibrationData error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"GetCalibrationData error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -481,7 +494,7 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetCalibrationData error: data for device "+name+" version "+std::to_string(version)+" not found";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -493,7 +506,7 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
   
   if(!ok){
     err = "GetCalibrationData error: invalid response: '"+json_data+"'";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -527,7 +540,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetDeviceConfig error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"GetDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -536,7 +549,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetDeviceConfig error: config for device "+name+" version "+std::to_string(version)+" not found";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -547,7 +560,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
   bool ok = tmp.Get("data", json_data);
   if(!ok){
     err = "GetDeviceConfig error: invalid response: '"+json_data+"'";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -570,7 +583,7 @@ bool Services::GetRunConfig(std::string& json_data, const int runmode_config_id,
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetRunConfig error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -579,7 +592,7 @@ bool Services::GetRunConfig(std::string& json_data, const int runmode_config_id,
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetRunConfig error: no config matching base config "+std::to_string(base_config_id)+", runmode config "+std::to_string(runmode_config_id);
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -590,7 +603,7 @@ bool Services::GetRunConfig(std::string& json_data, const int runmode_config_id,
   bool ok = tmp.Get("data", json_data);
   if(!ok){
     err="GetRunConfig error: invalid response: '"+json_data+"'";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -617,7 +630,7 @@ bool Services::GetRunModeConfig(std::string& json_data, const std::string& name,
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetRunConfig error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -626,7 +639,7 @@ bool Services::GetRunModeConfig(std::string& json_data, const std::string& name,
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetRunConfig error: config "+name+" version "+std::to_string(version)+" not found";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -637,7 +650,7 @@ bool Services::GetRunModeConfig(std::string& json_data, const std::string& name,
   bool ok = tmp.Get("data", json_data);
   if(!ok){
     err="GetRunConfig error: invalid response: '"+json_data+"'";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -669,7 +682,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runmode_conf
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_RUNDEVICECONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -678,7 +691,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runmode_conf
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetRunDeviceConfig error: config "+name+" for base config "+std::to_string(base_config_id)+" and runmode config "+std::to_string(runmode_config_id)+" not found";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -694,7 +707,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int runmode_conf
   ok = ok && tmp.Get("data", json_data);
   if(!ok){
     err="GetRunDeviceConfig error: invalid response: '"+json_data+"'";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -715,7 +728,7 @@ bool Services::GetCachedDeviceConfig(std::string& json_data, int base_config_id,
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_KACHEDDEVICECONFIG", name, &json_data, &timeout, &err)){
-    std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -723,7 +736,7 @@ bool Services::GetCachedDeviceConfig(std::string& json_data, int base_config_id,
   if(json_data.empty()){
     // if we got an empty response but the command succeeded, device name was not found in map
     err = "GetCachedDeviceConfig error: config for device "+name+" not found";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -737,7 +750,7 @@ bool Services::GetCachedDeviceConfig(std::string& json_data, int base_config_id,
   if(base!=base_config_id || runmode!=runmode_config_id){
     err="GetCachedDeviceConfig returned unexpected configuration ids: {"+std::to_string(base)+","+std::to_string(runmode)
        +"}, expected {"+std::to_string(base_config_id)+","+std::to_string(runmode_config_id)+"}";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -750,7 +763,7 @@ bool Services::GetCachedDeviceConfig(std::string& json_data, int base_config_id,
   ok = ok && tmp.Get("data", json_data);
   if(!ok){
     err="GetRunDeviceConfig error: invalid response: '"+json_data+"'";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -774,7 +787,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   std::string err="";
   
   if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
-    std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -783,7 +796,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
     // if we got an empty response but the command succeeded,
     // the query worked but matched no records - run config not found
     err = "GetRunDeviceConfig error: config "+name+" for runconfig "+runconfig_name+" version "+std::to_string(runconfig_version)+" not found";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -799,7 +812,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   ok = ok && tmp.Get("data", json_data);
   if(!ok){
     err="GetRunDeviceConfig error: invalid response: '"+json_data+"'";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -826,7 +839,7 @@ bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_optio
   std::string response="";
   
   if(!m_backend_client.SendCommand("R_TROOTPLOT", cmd_string, &response, &timeout, &err)){
-    std::cerr<<"GetROOTplot error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"GetROOTplot error: "<<err<<std::endl;
     json_data = err;
     return false;
   }
@@ -846,7 +859,7 @@ bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_optio
   
   if(!ok){
     err="GetROOTplot error: invalid response: '"+response+"'";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     json_data=err;
     return false;
   }
@@ -886,7 +899,7 @@ bool Services::GetPlotlyPlot(
   std::string err;
   std::string response;
   if (!m_backend_client.SendCommand("R_PLOTLYPLOT", cmd_string, &response, &timeout, &err)){
-    std::cerr << "GetPlotlyPlot error: " << err << std::endl;
+    if(m_verbose) std::cerr << "GetPlotlyPlot error: " << err << std::endl;
     trace = err;
     return false;
   };
@@ -906,7 +919,7 @@ bool Services::GetPlotlyPlot(
   
   if(!ok){
     err="GetPlotlyPlot error: invalid response: '"+response+"'";
-    std::cerr<<err<<std::endl;
+    if(m_verbose) std::cerr<<err<<std::endl;
     trace=err;
     return false;
   }
@@ -929,7 +942,7 @@ bool Services::SendLog(const std::string& message, LogLevel severity, const std:
   
   // FIXME we should be able to relax this check if compression is enabled...
   if((message.length()+name.length())>MAX_MSG_SIZE){
-    std::cerr<<"Logging message is too long!"<<std::endl;
+    if(m_verbose) std::cerr<<"Logging message is too long!"<<std::endl;
     return false;
   }
   
@@ -953,7 +966,7 @@ bool Services::SendLog(std::string& msg){
   std::string err="";
   
   if(!m_backend_client.SendMulticast(MulticastType::Log, msg, &err)){
-    std::cerr<<"SendLog error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendLog error: "<<err<<std::endl;
     return false;
   }
   
@@ -967,7 +980,7 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   const std::string& name = (device=="") ? m_name : device;
   
   if((json_data.length()+name.length()+subject.length())>MAX_MSG_SIZE){
-    std::cerr<<"Monitoring message is too long!"<<std::endl;
+    if(m_verbose) std::cerr<<"Monitoring message is too long!"<<std::endl;
     return false;
   }
   
@@ -993,7 +1006,7 @@ bool Services::SendMonitoringData(std::string& msg){
   std::string err="";
   
   if(!m_backend_client.SendMulticast(MulticastType::Monitoring, msg, &err)){
-    std::cerr<<"SendMonitoringData error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendMonitoringData error: "<<err<<std::endl;
     return false;
   }
   
@@ -1012,14 +1025,14 @@ bool Services::SendROOTplotMulticast(const std::string& plot_name, const std::st
                          + ", \"data\":"+ json_data+"}";
   
   if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
-    std::cerr<<"ROOT plot json is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
+    if(m_verbose) std::cerr<<"ROOT plot json is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
     return false;
   }
   
   std::string err="";
   
   if(!m_backend_client.SendMulticast(MulticastType::Log,cmd_string, &err)){
-    std::cerr<<"SendROOTplot error: "<<err<<std::endl;
+    if(m_verbose) std::cerr<<"SendROOTplot error: "<<err<<std::endl;
     return false;
   }
   
