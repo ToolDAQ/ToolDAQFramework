@@ -141,8 +141,7 @@ bool ServicesBackend::Initialise(Store &variables_in){
 	
 	if(msg_compression){
 		zstd_ctx = ZSTD_createCCtx();
-		compressed_msg_buf = new char[ZSTD_compressBound(MAX_UDP_PACKET_SIZE)+1];
-		compressed_msg_buf[0]='z'; // indicator that this message is compressed
+		compressed_msg_buf = new char[ZSTD_compressBound(MAX_UDP_PACKET_SIZE)];
 	}
 	
 	// initialise the message IDs based on the current time in unix seconds
@@ -391,7 +390,7 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	std::unique_lock<std::mutex> locker(msg_buf_mtx, std::defer_lock);
 	if(zstd_ctx){
 		locker.lock();
-		bytes_to_send = ZSTD_compressCCtx(zstd_ctx, &compressed_msg_buf[1], MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
+		bytes_to_send = ZSTD_compressCCtx(zstd_ctx, compressed_msg_buf, MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
 		if(ZSTD_isError(bytes_to_send)){
 			locker.unlock();
 			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
@@ -399,7 +398,6 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 			if(err) *err= errmsg;
 		} else {
 			msg_to_send = compressed_msg_buf;
-			++bytes_to_send; // account for leading 'z' to indicate compression
 		}
 	}
 	if(!msg_to_send){
@@ -466,7 +464,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	std::unique_lock<std::mutex> locker(msg_buf_mtx, std::defer_lock);
 	if(zstd_ctx){
 		locker.lock();
-		bytes_to_send = ZSTD_compressCCtx(zstd_ctx, &compressed_msg_buf[1], MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
+		bytes_to_send = ZSTD_compressCCtx(zstd_ctx, compressed_msg_buf, MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
 		if(ZSTD_isError(bytes_to_send)){
 			locker.unlock();
 			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
@@ -474,7 +472,6 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 			if(err) *err= errmsg;
 		} else {
 			msg_to_send = compressed_msg_buf;
-			++bytes_to_send; // account for leading 'z' to indicate compression
 		}
 	}
 	if(!msg_to_send){
