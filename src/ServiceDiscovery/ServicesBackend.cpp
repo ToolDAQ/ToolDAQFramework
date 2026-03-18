@@ -413,7 +413,7 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 		
 		// got a listener - ship it
 		socket_mtx->lock();
-		int cnt = sendto(multicast_socket, msg_to_send, bytes_to_send+1, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
+		int cnt = sendto(multicast_socket, msg_to_send, bytes_to_send, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
 		socket_mtx->unlock();
 		if(cnt < 0){
 			std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
