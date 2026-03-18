@@ -1182,7 +1182,7 @@ void Services::BufferThread(Thread_args* args){
   // merge into a batch
   bool first=true;
   for(LogMsg& msg : *m_args->logging_buf){
-    m_args->local_merge_buf += std::string(first ? "," : "")
+    m_args->local_merge_buf += std::string(first ? "" : ",")
                             + "{\"topic\":\"LOGGING\""
                             + ",\"time\":\""+TimeStringFromUnixMs(msg.timestamp)+"\""
                             + ",\"device\":\""+ msg.device +"\""
@@ -1203,7 +1203,7 @@ void Services::BufferThread(Thread_args* args){
   
   first=true;
   for(std::pair<const std::string, MonitoringMsg>& msg : *m_args->monitoring_buf){
-    m_args->local_merge_buf += std::string(first ? "," : "")
+    m_args->local_merge_buf += std::string(first ? "" : ",")
                             + "{\"topic\":\"MONITORING\""
                             + ",\"time\":\""+TimeStringFromUnixMs(msg.second.timestamp)+"\""
                             + ",\"device\":\""+ msg.second.device +"\""
