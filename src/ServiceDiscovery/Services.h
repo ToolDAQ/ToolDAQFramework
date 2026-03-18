@@ -81,10 +81,10 @@ namespace ToolFramework {
     bool SendBaseConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, uint64_t timestamp=0, int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool SendRunModeConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, uint64_t timestamp=0, int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetDeviceConfig(std::string& json_data, const int version=-1, const std::string& device="", const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool GetRunConfig(std::string& json_data, const int runmode_config_id, const int base_config_id=-1, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    bool GetRunConfig(std::string& json_data, const int base_config_id, const int runmode_config_id, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetRunModeConfig(std::string& json_data, const std::string& runmode_name, const int version=-1, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool GetRunDeviceConfig(std::string& json_data, const int runmode_config_id=-1, const int base_config_id=-1, const std::string& device="", int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool GetCachedDeviceConfig(std::string& json_data, const int runmode_config_id, const int base_config_id, const std::string& device="", int* version=nullptr, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    bool GetRunDeviceConfig(std::string& json_data, const int base_config_id, const int runmode_config_id, const std::string& device="", int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    bool GetCachedDeviceConfig(std::string& json_data, const int base_config_id, const int runmode_config_id, const std::string& device="", int* version=nullptr, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool SendROOTplot(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version=nullptr, const uint64_t timestamp=0, const unsigned int lifetime=5, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool SendROOTplotMulticast(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const unsigned int lifetime=5, const uint64_t timestamp=0);
     bool GetROOTplot(const std::string& plot_name, std::string& draw_option, std::string& json_data, int& version, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);

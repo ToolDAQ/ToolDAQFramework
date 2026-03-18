@@ -572,7 +572,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
 // get a run configuration via configuration ID pair
-bool Services::GetRunConfig(std::string& json_data, const int runmode_config_id, const int base_config_id, const unsigned int timeout){
+bool Services::GetRunConfig(std::string& json_data, const int base_config_id, const int runmode_config_id, const unsigned int timeout){
   
   json_data="";
   
@@ -662,7 +662,7 @@ bool Services::GetRunModeConfig(std::string& json_data, const std::string& name,
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
 // Get a device configuration from a *run* configuration ID
-bool Services::GetRunDeviceConfig(std::string& json_data, const int runmode_config_id, const int base_config_id, const std::string& device, int* version, unsigned int timeout){
+bool Services::GetRunDeviceConfig(std::string& json_data, const int base_config_id, const int runmode_config_id, const std::string& device, int* version, unsigned int timeout){
   
   json_data="";
   
