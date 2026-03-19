@@ -1,0 +1,40 @@
+\hypertarget{structToolFramework_1_1BufferThreadArgs}{}\doxysection{Tool\+Framework\+::Buffer\+Thread\+Args Struct Reference}
+\label{structToolFramework_1_1BufferThreadArgs}\index{ToolFramework::BufferThreadArgs@{ToolFramework::BufferThreadArgs}}
+Inheritance diagram for Tool\+Framework\+::Buffer\+Thread\+Args\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{structToolFramework_1_1BufferThreadArgs}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_a3d490b8607a411df38af2c1a05de102f}\label{structToolFramework_1_1BufferThreadArgs_a3d490b8607a411df38af2c1a05de102f}} 
+\mbox{\hyperlink{classToolFramework_1_1Services}{Services}} $\ast$ {\bfseries services}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_a726871fdb76bbd736618d56891433c1b}\label{structToolFramework_1_1BufferThreadArgs_a726871fdb76bbd736618d56891433c1b}} 
+std\+::vector$<$ \mbox{\hyperlink{structToolFramework_1_1LogMsg}{Log\+Msg}} $>$ $\ast$ {\bfseries logging\+\_\+buf}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_ad1f9d7457ea729ff48b64b8b2fe186c9}\label{structToolFramework_1_1BufferThreadArgs_ad1f9d7457ea729ff48b64b8b2fe186c9}} 
+std\+::unordered\+\_\+map$<$ std\+::string, \mbox{\hyperlink{structToolFramework_1_1MonitoringMsg}{Monitoring\+Msg}} $>$ $\ast$ {\bfseries monitoring\+\_\+buf}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_af91d9e24fc5622a985b55f6bff848c84}\label{structToolFramework_1_1BufferThreadArgs_af91d9e24fc5622a985b55f6bff848c84}} 
+std\+::mutex $\ast$ {\bfseries logging\+\_\+buf\+\_\+mtx}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_adc13804d1df8820676962103d19fa6ed}\label{structToolFramework_1_1BufferThreadArgs_adc13804d1df8820676962103d19fa6ed}} 
+std\+::mutex $\ast$ {\bfseries monitoring\+\_\+buf\+\_\+mtx}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_afa7e4acf5e647863264479c44d154ba9}\label{structToolFramework_1_1BufferThreadArgs_afa7e4acf5e647863264479c44d154ba9}} 
+std\+::chrono\+::milliseconds {\bfseries multicast\+\_\+send\+\_\+period\+\_\+ms}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_a45cee383ea56e8f03d2d48de5befd90d}\label{structToolFramework_1_1BufferThreadArgs_a45cee383ea56e8f03d2d48de5befd90d}} 
+std\+::chrono\+::steady\+\_\+clock\+::time\+\_\+point {\bfseries last\+\_\+send}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_ac4d0f5d3fc0213b94b81374c27426b39}\label{structToolFramework_1_1BufferThreadArgs_ac4d0f5d3fc0213b94b81374c27426b39}} 
+std\+::string {\bfseries local\+\_\+merge\+\_\+buf}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Service\+Discovery/Services.\+h\end{DoxyCompactItemize}
