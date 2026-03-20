@@ -161,9 +161,13 @@ class ServicesBackend {
 	size_t bytes_to_send;
 	char* msg_to_send=nullptr;
 	
-	ZSTD_CCtx* zstd_ctx=nullptr;
+	ZSTD_CCtx* zstd_cctx=nullptr;
+	ZSTD_DCtx* zstd_dctx=nullptr;
 	int compression_level=1;
 	char* compressed_msg_buf=nullptr;
+	std::string decompress_buffer;
+	size_t next_bytes;
+	const char* next_part;
 	std::mutex msg_buf_mtx; // we'll share this buffer, since it's kind of a large buffer to keep allocating for every call
 	// and we shouldn't be spamming the Send calls so fast mutex contention becomes a problem
 	
