@@ -176,6 +176,10 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
     Add("Status",SlowControlElementType(INFO),0,0,false,false);
     Add("?",SlowControlElementType(BUTTON),0,0,false,true);
     SC_vars["Status"]->SetValue("N/A");
+    Add("State",SlowControlElementType(INFO),0,0,false,false);
+    SC_vars["State"]->SetValue((int)State::Inactive);
+    Add("Config",SlowControlElementType(INFO),0,0,false,false);
+    SC_vars["Config"]->SetValue((int)ConfigState::Unconfigured);
     
     return true;
 }
@@ -362,24 +366,42 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     //std::cout<<iss.str()<<std::endl;
     args->alert_functions_mutex->lock();
-    if(iss.str() == "LoadConfig") (*args->SC_vars)["State"]->SetValue(1);
+    if(iss.str() == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
     else if(iss.str() == "ChangeConfig"){
       if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0) return;
-      (*args->SC_vars)["State"]->SetValue(3);
+      (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
     }
     
+
+    bool error = false;
     
     if(args->alert_functions->count(iss.str())){
       if(has_data){
-	(*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str());
-	if(iss.str() == "LoadConfig") (*args->SC_vars)["State"]->SetValue(2);
+	try{
+	  (*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str());
+	}
+	catch(...){
+	  std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+	  error = true;  
+	}
+	if(iss.str() == "LoadConfig"){
+	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
+	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
+	}
 	else if(iss.str() == "ChangeConfig"){
-	  (*args->SC_vars)["State"]->SetValue(4);
+	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeFail);
+	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeEnd);
 	  (*args->SC_vars)["NewConfig"]->SetValue(0);
 	}
    	
       }
-      else         (*(args->alert_functions))[iss.str()](iss.str().c_str(), 0);
+      else         
+	try{
+	  (*(args->alert_functions))[iss.str()](iss.str().c_str(), 0);
+	}
+	catch(...){
+	  std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+	}
     }
     args->alert_functions_mutex->unlock();
     
@@ -620,14 +642,28 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
 	  (*SCC)[key]->SetValue(value);
 	  //(*SCC)[key]->Print();
 	  SCFunction tmp_func= (*SCC)[key]->GetChangeFunction();
-	  if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
-	  
+	  if (tmp_func!=nullptr){
+	    try{ 
+	      reply=tmp_func(key.c_str());
+	      
+	    }
+	    catch(...){
+	      reply= "change function failed";
+	    }
+	  }	  
 	}
 	else reply = key + " locked";
       }
       else{
 	SCFunction tmp_func= (*SCC)[key]->GetReadFunction();
-	if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+	if (tmp_func!=nullptr){
+	  try{
+	    reply=tmp_func(key.c_str());
+	  }
+	  catch(...){
+	    reply="read function failed";
+	  }
+	}
 	else (*SCC)[key]->GetValue(reply);
 	
 	

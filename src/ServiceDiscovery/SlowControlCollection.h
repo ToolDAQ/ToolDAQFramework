@@ -10,6 +10,9 @@ namespace ToolFramework{
 
   //typedef void (*AlertFunction)(const char*, const char*);
   typedef std::function<void(const char*, const char*)> AlertFunction;
+
+  enum class ConfigState { Unconfigured=0, LoadStart=1, LoadEnd=2, LoadFail=3, ChangeStart=4, ChangeEnd=5, ChangeFail=6};
+  enum class State { Active=0, Inactive=1, Warning=2, Error=3};
   
   class SlowControlCollection;
   

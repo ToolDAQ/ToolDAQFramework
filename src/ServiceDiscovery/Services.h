@@ -116,8 +116,8 @@ namespace ToolFramework {
     
   private:
 
-    std::string LoadConfig1(const char* sc_name);
-    void LoadConfig2(const char* alert, const char* payload);
+    std::string LoadConfigSlowControlFunc(const char* sc_name);
+    void LoadConfigAlertFunc(const char* alert, const char* payload);
     // private methods for sending from buffer
     bool SendLog(std::string& msg);
     bool SendMonitoringData(std::string& msg);

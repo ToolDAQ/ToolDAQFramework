@@ -56,8 +56,8 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   sc_vars->Add("NewConfig",SlowControlElementType(INFO),0,0,false,false);
   (*sc_vars)["NewConfig"]->SetValue(0);
   
-  sc_vars->Add("LoadConfig",SlowControlElementType(VARIABLE),std::bind(&Services::LoadConfig1, this, std::placeholders::_1),0,false,false);
-  AlertSubscribe("LoadConfig", std::bind(&Services::LoadConfig2, this,  std::placeholders::_1, std::placeholders::_2));
+  sc_vars->Add("LoadConfig",SlowControlElementType(VARIABLE),std::bind(&Services::LoadConfigSlowControlFunc, this, std::placeholders::_1),0,false,false);
+  AlertSubscribe("LoadConfig", std::bind(&Services::LoadConfigAlertFunc, this,  std::placeholders::_1, std::placeholders::_2));
   
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";
   if(m_name[0]=='('){
@@ -1132,7 +1132,7 @@ std::string Services::TimeStringFromUnixMs(const uint64_t timestamp){
   
 }
 
-void Services::LoadConfig2(const char* alert, const char* payload){
+void Services::LoadConfigAlertFunc(const char* alert, const char* payload){
   
   Store tmp;
   tmp.JsonParser(payload);
@@ -1155,7 +1155,7 @@ void Services::LoadConfig2(const char* alert, const char* payload){
 
 }
 
-std::string Services::LoadConfig1(const char* control){
+std::string Services::LoadConfigSlowControlFunc(const char* control){
   
   std::string payload = (*sc_vars)[control]->GetValue<std::string>();
   Store tmp;
