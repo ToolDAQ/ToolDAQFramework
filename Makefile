@@ -27,7 +27,7 @@ LIBRARIES=lib/libDAQStore.so lib/libDAQLogging.so lib/libToolDAQChain.so lib/lib
 HEADERS:=$(patsubst %.h, include/%.h, $(filter %.h, $(subst /, ,$(wildcard src/*/*.h) )))
 TempDataModelHEADERS:=$(patsubst %.h, tempinclude/%.h, $(filter %.h, $(subst /, , $(wildcard DataModel/*.h))))
 TempToolHEADERS:=$(patsubst %.h, tempinclude/%.h, $(filter %.h, $(subst /, , $(wildcard UserTools/*/*.h) $(wildcard UserTools/*.h))))
-SOURCEFILES:=$(patsubst %.cpp, %.o, $(wildcard */*.cpp) $(wildcard */*/*.cpp)) $(patsubst %.c, %.o, $(wildcard */*.c) $(wildcard */*/*.c))
+SOURCEFILES:=$(patsubst %.cpp, %.o, $(wildcard src/*.cpp) $(wildcard DataModel/*.cpp) $(wildcard UserTools/*.cpp) $(wildcard UserTools/*/*.cpp)) $(patsubst %.c, %.o,  $(wildcard src/*.c) $(wildcard DataModel/*.c) $(wildcard UserTools/*.c) $(wildcard UserTools/*/*.c))
 
 #.SECONDARY: $(%.o)
 
