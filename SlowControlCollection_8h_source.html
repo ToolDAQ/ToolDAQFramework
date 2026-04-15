@@ -80,7 +80,7 @@ $(function() {
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span>ToolFramework{</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;  <span class="comment">//typedef void (*AlertFunction)(const char*, const char*);</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  <span class="keyword">typedef</span> std::function&lt;void(<span class="keyword">const</span> <span class="keywordtype">char</span>*, <span class="keyword">const</span> <span class="keywordtype">char</span>*)&gt; AlertFunction;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  <span class="keyword">typedef</span> std::function&lt;bool(<span class="keyword">const</span> <span class="keywordtype">char</span>*, <span class="keyword">const</span> <span class="keywordtype">char</span>*)&gt; AlertFunction;</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="keyword">enum class</span> ConfigState { Unconfigured=0, LoadStart=1, LoadEnd=2, LoadFail=3, ChangeStart=4, ChangeEnd=5, ChangeFail=6};</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keyword">enum class</span> State { Active=0, Inactive=1, Warning=2, Error=3};</div>
@@ -149,7 +149,7 @@ $(function() {
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">bool</span> m_thread;</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">bool</span> m_alerts_receive;</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">bool</span> m_alerts_send;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">bool</span> m_testing;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">bool</span> m_testing = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    </div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> Thread(Thread_args* arg);</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">void</span> Unpack(std::string in, std::map&lt;std::string,std::string&gt; &amp;out, std::string header=<span class="stringliteral">&quot;&quot;</span>);</div>
