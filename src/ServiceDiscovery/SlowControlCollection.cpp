@@ -35,6 +35,10 @@ SlowControlCollection::SlowControlCollection(){
   m_pub=0;
   m_new_service=false;
   m_thread=false;
+  Add("Config",SlowControlElementType(INFO),0,0,false,false);
+  SC_vars["Config"]->SetValue(0);
+  Add("NewConfig",SlowControlElementType(INFO),0,0,false,false);
+  SC_vars["NewConfig"]->SetValue(0);
   
 }
 
@@ -378,10 +382,9 @@ void SlowControlCollection::Thread(Thread_args* arg){
     if(args->alert_functions->count(iss.str())){
       if(has_data){
 	try{
-	  (*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str());
+	  error = !((*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str()));
 	}
 	catch(...){
-	  std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
 	  error = true;  
 	}
 	if(iss.str() == "LoadConfig"){
@@ -397,12 +400,16 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
       else         
 	try{
-	  (*(args->alert_functions))[iss.str()](iss.str().c_str(), 0);
+	  error=!((*(args->alert_functions))[iss.str()](iss.str().c_str(), 0));
 	}
 	catch(...){
-	  std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+	  error = true;
 	}
-    }
+   
+      if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+	
+
+ }
     args->alert_functions_mutex->unlock();
     
     //if(payload!=nullptr) free(payload);

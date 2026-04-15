@@ -9,7 +9,7 @@
 namespace ToolFramework{
 
   //typedef void (*AlertFunction)(const char*, const char*);
-  typedef std::function<void(const char*, const char*)> AlertFunction;
+  typedef std::function<bool(const char*, const char*)> AlertFunction;
 
   enum class ConfigState { Unconfigured=0, LoadStart=1, LoadEnd=2, LoadFail=3, ChangeStart=4, ChangeEnd=5, ChangeFail=6};
   enum class State { Active=0, Inactive=1, Warning=2, Error=3};
@@ -78,7 +78,7 @@ namespace ToolFramework{
     bool m_thread;
     bool m_alerts_receive;
     bool m_alerts_send;
-    bool m_testing;
+    bool m_testing = false;
     
     static void Thread(Thread_args* arg);
     void Unpack(std::string in, std::map<std::string,std::string> &out, std::string header="");

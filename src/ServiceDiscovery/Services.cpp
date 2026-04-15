@@ -53,8 +53,6 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
 
   sc_vars->Add("State",SlowControlElementType(INFO),0,0,false,false);
   (*sc_vars)["State"]->SetValue(0);
-  sc_vars->Add("NewConfig",SlowControlElementType(INFO),0,0,false,false);
-  (*sc_vars)["NewConfig"]->SetValue(0);
   
   sc_vars->Add("LoadConfig",SlowControlElementType(VARIABLE),std::bind(&Services::LoadConfigSlowControlFunc, this, std::placeholders::_1),0,false,false);
   AlertSubscribe("LoadConfig", std::bind(&Services::LoadConfigAlertFunc, this,  std::placeholders::_1, std::placeholders::_2));
@@ -1074,7 +1072,7 @@ void Services::ClearSlowControlVariables(){
 
 }
 
-bool Services::AlertSubscribe(std::string alert, std::function<void(const char*, const char*)> function){
+bool Services::AlertSubscribe(std::string alert, std::function<bool(const char*, const char*)> function){
   
   return sc_vars->AlertSubscribe(alert, function);
   
@@ -1132,26 +1130,36 @@ std::string Services::TimeStringFromUnixMs(const uint64_t timestamp){
   
 }
 
-void Services::LoadConfigAlertFunc(const char* alert, const char* payload){
+bool Services::LoadConfigAlertFunc(const char* alert, const char* payload){
   
   Store tmp;
   tmp.JsonParser(payload);
   uint64_t base_config_id=0;
   uint64_t run_mode_config_id=0;
+  short count = 0;
   
   tmp.Get("Base",base_config_id);
   tmp.Get("RunMode",run_mode_config_id);
   
   if(run_mode_config_id!=m_run_mode_config_id || base_config_id!=m_base_config_id){
     
-    if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id)){
-      usleep(100000);
+    while(count<5){
+      if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id)){
+	usleep(100000);
+	count++;
+      }
+      else count=99;
     }
-    (*sc_vars)["NewConfig"]->SetValue(1);
-    m_base_config_id = base_config_id;
-    m_run_mode_config_id = run_mode_config_id;
-    
-  }
+    if(count==5) return false;
+      
+      (*sc_vars)["NewConfig"]->SetValue(1);
+      m_base_config_id = base_config_id;
+      m_run_mode_config_id = run_mode_config_id;
+    }      
+
+
+
+  return true;
 
 }
 
@@ -1162,22 +1170,37 @@ std::string Services::LoadConfigSlowControlFunc(const char* control){
   tmp.JsonParser(payload);
   uint64_t base_config_id=0;
   uint64_t run_mode_config_id=0;
+
+  short count = 0;
+  std::stringstream ret;
+
   
   tmp.Get("Base",base_config_id);
   tmp.Get("RunMode",run_mode_config_id);
   
   if(run_mode_config_id!=m_run_mode_config_id || base_config_id!=m_base_config_id){
     
-    if(!GetRunDeviceConfig(m_local_config, base_config_id, run_mode_config_id)){
-      usleep(100000);
+    while(count<5){
+      if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id)){
+	usleep(100000);
+	count++;
+      }
+      else count=99;
     }
+
+    if(count==5){
+      ret <<"Failed to load config "<<base_config_id<<":"<<run_mode_config_id;
+      return ret.str();;
+    }
+    
     (*sc_vars)["NewConfig"]->SetValue(1);
     m_base_config_id = base_config_id;
     m_run_mode_config_id = run_mode_config_id;
-    
+    ret <<"Loaded config "<<base_config_id<<":"<<run_mode_config_id;
   }
   
-  return "";
+
+    return ret.str();
   
 }
 

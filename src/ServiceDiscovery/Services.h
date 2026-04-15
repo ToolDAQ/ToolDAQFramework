@@ -101,7 +101,7 @@ namespace ToolFramework {
     bool RemoveSlowControlVariable(std::string name);
     void ClearSlowControlVariables();
     
-    bool AlertSubscribe(std::string alert, std::function<void(const char*, const char*)> function);
+    bool AlertSubscribe(std::string alert, std::function<bool(const char*, const char*)> function);
     bool AlertSend(std::string alert, std::string payload);
     
     std::string PrintSlowControlVariables();
@@ -117,7 +117,7 @@ namespace ToolFramework {
   private:
 
     std::string LoadConfigSlowControlFunc(const char* sc_name);
-    void LoadConfigAlertFunc(const char* alert, const char* payload);
+    bool LoadConfigAlertFunc(const char* alert, const char* payload);
     // private methods for sending from buffer
     bool SendLog(std::string& msg);
     bool SendMonitoringData(std::string& msg);
