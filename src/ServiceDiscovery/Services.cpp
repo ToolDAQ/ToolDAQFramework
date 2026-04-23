@@ -1257,3 +1257,16 @@ void Services::BufferThread(Thread_args* args){
   
   return;
 }
+
+std::string Services::GetLocalConfig(){
+
+  return m_local_config;
+
+}
+
+bool Services::SetLocalConfig(std::string json){
+
+  m_local_config = json; // TODO: probably add a json test to make sure its correct json.
+  return true;
+
+}

@@ -94,6 +94,8 @@ namespace ToolFramework {
     bool GetPlotlyPlot(const std::string& name, std::string& json_trace, std::string& json_layout, int& version, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetPlotlyPlot(const std::string& name, std::string& json_trace, std::string& json_layout, int&& version=-1, unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     static std::string TimeStringFromUnixMs(const uint64_t time);
+    std::string GetLocalConfig();
+    bool SetLocalConfig(std::string json);
     
     SlowControlCollection* GetSlowControlCollection();
     SlowControlElement* GetSlowControlVariable(std::string key);
@@ -127,9 +129,9 @@ namespace ToolFramework {
     bool m_verbose;
     zmq::context_t* m_context;
     ServicesBackend m_backend_client;
-    std::string m_local_config;
     uint64_t m_base_config_id;
     uint64_t m_run_mode_config_id;
+    std::string m_local_config;
 
     Utilities m_utils;
     BufferThreadArgs thread_args;
