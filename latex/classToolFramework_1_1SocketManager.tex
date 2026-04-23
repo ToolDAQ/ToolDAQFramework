@@ -1,0 +1,38 @@
+\hypertarget{classToolFramework_1_1SocketManager}{}\doxysection{Tool\+Framework\+::Socket\+Manager Class Reference}
+\label{classToolFramework_1_1SocketManager}\index{ToolFramework::SocketManager@{ToolFramework::SocketManager}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SocketManager_ac4a6483c35eb97e1cff9eb50c7df8c1a}\label{classToolFramework_1_1SocketManager_ac4a6483c35eb97e1cff9eb50c7df8c1a}} 
+bool {\bfseries Init} (\mbox{\hyperlink{classDataModel}{Data\+Model}} $\ast$data\+\_\+model, zmq\+::socket\+\_\+t $\ast$in\+\_\+sock, \mbox{\hyperlink{structbuffer__s}{Buffer}}$<$ \mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $\ast$ $>$ $\ast$receive\+\_\+buffer, \mbox{\hyperlink{structbuffer__s}{Buffer}}$<$ \mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $\ast$ $>$ $\ast$send\+\_\+buffer, \mbox{\hyperlink{structbuffer__s}{Buffer}}$<$ \mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $\ast$ $>$ $\ast$error\+\_\+buffer, Pool$<$ \mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $>$ $\ast$message\+\_\+pool, uint16\+\_\+t expected\+\_\+number\+\_\+messages=0)
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SocketManager_a7d9433ff3e68679cd65b5aa3c9f4651a}\label{classToolFramework_1_1SocketManager_a7d9433ff3e68679cd65b5aa3c9f4651a}} 
+uint32\+\_\+t {\bfseries Update} (std\+::string Service\+Name, std\+::string port=\char`\"{}\char`\"{}, std\+::string port\+\_\+name=\char`\"{}\char`\"{})
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SocketManager_a35156bb8a621ef6790ab41cc5af39d21}\label{classToolFramework_1_1SocketManager_a35156bb8a621ef6790ab41cc5af39d21}} 
+void {\bfseries Close} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SocketManager_a20d944a6a4a55d616c255e6a92857541}\label{classToolFramework_1_1SocketManager_a20d944a6a4a55d616c255e6a92857541}} 
+std\+::atomic$<$ uint64\+\_\+t $>$ \mbox{\hyperlink{classToolFramework_1_1SocketManager_a20d944a6a4a55d616c255e6a92857541}{num\+\_\+messages\+\_\+received}}
+\begin{DoxyCompactList}\small\item\em counter for messages received \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classToolFramework_1_1SocketManager_af26ef16597eaf5e1eb5994675c443f82}\label{classToolFramework_1_1SocketManager_af26ef16597eaf5e1eb5994675c443f82}} 
+std\+::atomic$<$ uint64\+\_\+t $>$ \mbox{\hyperlink{classToolFramework_1_1SocketManager_af26ef16597eaf5e1eb5994675c443f82}{num\+\_\+replies\+\_\+sent}}
+\begin{DoxyCompactList}\small\item\em counter for replies sent \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classToolFramework_1_1SocketManager_a5e07ec3c761a01725b6bcbf3c5eadf6c}\label{classToolFramework_1_1SocketManager_a5e07ec3c761a01725b6bcbf3c5eadf6c}} 
+std\+::atomic$<$ uint64\+\_\+t $>$ {\bfseries num\+\_\+receive\+\_\+errors}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SocketManager_a67dd3367a147ba978afaf32651aa61b1}\label{classToolFramework_1_1SocketManager_a67dd3367a147ba978afaf32651aa61b1}} 
+std\+::atomic$<$ uint64\+\_\+t $>$ {\bfseries num\+\_\+send\+\_\+errors}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SocketManager_a9f9f69726d52945cfdaeb8e5d58e060a}\label{classToolFramework_1_1SocketManager_a9f9f69726d52945cfdaeb8e5d58e060a}} 
+std\+::map$<$ std\+::string, Store $\ast$ $>$ {\bfseries connections}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\+DAQData\+Model\+Base/Socket\+Manager.\+h\item 
+src/\+DAQData\+Model\+Base/Socket\+Manager.\+cpp\end{DoxyCompactItemize}

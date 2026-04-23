@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['kicksec_1150',['kicksec',['../structToolFramework_1_1thread__args.html#ac4dc02dd61b3d2a80808a7614f24d403',1,'ToolFramework::thread_args']]]
+  ['items_1163',['items',['../structToolFramework_1_1SocketManager__args.html#a2dea802707408b7ae1ea5c10aab03a76',1,'ToolFramework::SocketManager_args']]]
 ];

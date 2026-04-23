@@ -1,0 +1,71 @@
+\hypertarget{structToolFramework_1_1SocketManager__args}{}\doxysection{Tool\+Framework\+::Socket\+Manager\+\_\+args Struct Reference}
+\label{structToolFramework_1_1SocketManager__args}\index{ToolFramework::SocketManager\_args@{ToolFramework::SocketManager\_args}}
+Inheritance diagram for Tool\+Framework\+::Socket\+Manager\+\_\+args\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{structToolFramework_1_1SocketManager__args}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a0f253af1c2c4434a224534c97ced76a4}\label{structToolFramework_1_1SocketManager__args_a0f253af1c2c4434a224534c97ced76a4}} 
+\mbox{\hyperlink{classDataModel}{Data\+Model}} $\ast$ {\bfseries m\+\_\+data}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a1758c5d9e06a6817de116a3252fa7eff}\label{structToolFramework_1_1SocketManager__args_a1758c5d9e06a6817de116a3252fa7eff}} 
+zmq\+::socket\+\_\+t $\ast$ \mbox{\hyperlink{structToolFramework_1_1SocketManager__args_a1758c5d9e06a6817de116a3252fa7eff}{sock}} = 0
+\begin{DoxyCompactList}\small\item\em socket pointer for receiving data form electronics \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a8c6ab662b7c3724095a1a2e9ef0ba6ab}\label{structToolFramework_1_1SocketManager__args_a8c6ab662b7c3724095a1a2e9ef0ba6ab}} 
+std\+::mutex $\ast$ {\bfseries sock\+\_\+mtx} = 0
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a2dea802707408b7ae1ea5c10aab03a76}\label{structToolFramework_1_1SocketManager__args_a2dea802707408b7ae1ea5c10aab03a76}} 
+zmq\+::pollitem\+\_\+t \mbox{\hyperlink{structToolFramework_1_1SocketManager__args_a2dea802707408b7ae1ea5c10aab03a76}{items}} \mbox{[}2\mbox{]}
+\begin{DoxyCompactList}\small\item\em poll list to avoid blocking \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_ac94935fea3859d4ed255df1cdc2f08db}\label{structToolFramework_1_1SocketManager__args_ac94935fea3859d4ed255df1cdc2f08db}} 
+Pool$<$ \mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $>$ $\ast$ {\bfseries message\+\_\+pool}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_ac2e3fdd45324caf25764551238387114}\label{structToolFramework_1_1SocketManager__args_ac2e3fdd45324caf25764551238387114}} 
+\mbox{\hyperlink{structbuffer__s}{Buffer}}$<$ \mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $\ast$ $>$ $\ast$ {\bfseries received\+\_\+messages} = 0
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a904420caaac256cb8b3aed1ac95217b8}\label{structToolFramework_1_1SocketManager__args_a904420caaac256cb8b3aed1ac95217b8}} 
+\mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $\ast$ \mbox{\hyperlink{structToolFramework_1_1SocketManager__args_a904420caaac256cb8b3aed1ac95217b8}{local\+\_\+received\+\_\+messages}}
+\begin{DoxyCompactList}\small\item\em temporary pointer for received messages \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_ae2561848772580144a513b2563f272ed}\label{structToolFramework_1_1SocketManager__args_ae2561848772580144a513b2563f272ed}} 
+\mbox{\hyperlink{structbuffer__s}{Buffer}}$<$ \mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $\ast$ $>$ $\ast$ {\bfseries messages\+\_\+to\+\_\+send} = 0
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a4f32a0770fb8ed7a887994ec6a16791c}\label{structToolFramework_1_1SocketManager__args_a4f32a0770fb8ed7a887994ec6a16791c}} 
+std\+::vector$<$ \mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $\ast$ $>$ {\bfseries local\+\_\+messages\+\_\+to\+\_\+send}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a6d1d4b500e8f61ed2ed048cb570265f3}\label{structToolFramework_1_1SocketManager__args_a6d1d4b500e8f61ed2ed048cb570265f3}} 
+\mbox{\hyperlink{structbuffer__s}{Buffer}}$<$ \mbox{\hyperlink{classToolFramework_1_1ZMQMessages}{ZMQMessages}} $\ast$ $>$ $\ast$ {\bfseries bad\+\_\+messages} = 0
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a511f0da918c3fd98137f57dd7a98fa21}\label{structToolFramework_1_1SocketManager__args_a511f0da918c3fd98137f57dd7a98fa21}} 
+uint16\+\_\+t {\bfseries expected\+\_\+number\+\_\+messages} = 0
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a30fcd198805235b6ed451964f6415f9e}\label{structToolFramework_1_1SocketManager__args_a30fcd198805235b6ed451964f6415f9e}} 
+std\+::atomic$<$ uint64\+\_\+t $>$ $\ast$ \mbox{\hyperlink{structToolFramework_1_1SocketManager__args_a30fcd198805235b6ed451964f6415f9e}{num\+\_\+messages\+\_\+received}}
+\begin{DoxyCompactList}\small\item\em counter for messages received \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_aca5b516913134d25aef8a39fb87944ac}\label{structToolFramework_1_1SocketManager__args_aca5b516913134d25aef8a39fb87944ac}} 
+std\+::atomic$<$ uint64\+\_\+t $>$ $\ast$ \mbox{\hyperlink{structToolFramework_1_1SocketManager__args_aca5b516913134d25aef8a39fb87944ac}{num\+\_\+replies\+\_\+sent}}
+\begin{DoxyCompactList}\small\item\em counter for replies sent \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a3ce31945d8fc16c9a3541fceaacdfaec}\label{structToolFramework_1_1SocketManager__args_a3ce31945d8fc16c9a3541fceaacdfaec}} 
+std\+::atomic$<$ uint64\+\_\+t $>$ $\ast$ {\bfseries num\+\_\+receive\+\_\+errors}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a4ae9c13bbe56f3349dd1c34f0fa8d845}\label{structToolFramework_1_1SocketManager__args_a4ae9c13bbe56f3349dd1c34f0fa8d845}} 
+std\+::atomic$<$ uint64\+\_\+t $>$ $\ast$ {\bfseries num\+\_\+send\+\_\+errors}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_aec10c51930a75155f257631f5a47ecf6}\label{structToolFramework_1_1SocketManager__args_aec10c51930a75155f257631f5a47ecf6}} 
+bool \mbox{\hyperlink{structToolFramework_1_1SocketManager__args_aec10c51930a75155f257631f5a47ecf6}{return\+\_\+check}} = true
+\begin{DoxyCompactList}\small\item\em variable for checking retuns values \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_afb90b94823f79b0008cf8a9eb4495538}\label{structToolFramework_1_1SocketManager__args_afb90b94823f79b0008cf8a9eb4495538}} 
+bool $\ast$ {\bfseries paused} = 0
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1SocketManager__args_a4371a38930d90aee9a3c2bb3fa0240ed}\label{structToolFramework_1_1SocketManager__args_a4371a38930d90aee9a3c2bb3fa0240ed}} 
+int {\bfseries poll\+\_\+return} = 0
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\+DAQData\+Model\+Base/Socket\+Manager.\+h\item 
+src/\+DAQData\+Model\+Base/Socket\+Manager.\+cpp\end{DoxyCompactItemize}

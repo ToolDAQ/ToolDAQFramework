@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['windowlog_1184',['windowLog',['../structZSTD__compressionParameters.html#a58dbc174de9ad1f4a5eacbbfc034d0a8',1,'ZSTD_compressionParameters']]]
+  ['v_1201',['v',['../structXXH32__state__s.html#a944125849e55eaa1a61175eebe2e3b7e',1,'XXH32_state_s::v()'],['../structXXH64__state__s.html#a12e49560b44a992dca09b7b46a90b58b',1,'XXH64_state_s::v()']]]
 ];
