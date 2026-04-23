@@ -13,8 +13,8 @@
  * This is a struct to place data you want your thread to acess or exchange with it. The idea is the datainside is only used by the threa\
 d and so will be thread safe
 *
-* $Author: B.Richards $
-* $Date: 2019/05/28 10:44:00 $
+* $Author:  $
+* $Date:  $
 */
 
 

@@ -14,6 +14,7 @@
 #include "SlowControlCollection.h"
 #include "DataModelBase.h"
 #include "Services.h"
+#include "ZMQMessages.h"
 
 
 #include <zmq.hpp>

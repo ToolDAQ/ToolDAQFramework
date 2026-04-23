@@ -12,8 +12,8 @@
  *
  * This is a template for a Tool to publish a service via ToolDAQ dynamic service discovery. Please fill out the descripton and author information.
 *
-* $Author: B.Richards $
-* $Date: 2019/05/28 10:44:00 $
+* $Author:  $
+* $Date:  $
 */
 class MyToolServiceAdd: public Tool {
 
