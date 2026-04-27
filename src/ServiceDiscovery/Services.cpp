@@ -1253,6 +1253,9 @@ void Services::BufferThread(Thread_args* args){
     m_args->monitoring_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
   }
   
+  // release monitoring buffer mtx
+  locker.unlock();
+  
   std::this_thread::sleep_until(m_args->last_send+m_args->multicast_send_period_ms);
   
   return;
