@@ -120,8 +120,7 @@ bool ServicesBackend::Initialise(Store &variables_in){
 	
 	/*            General Variables              */
 	/* ----------------------------------------- */
-	if(!m_variables.Get("verbosity",verbosity)) verbosity = 1;
-	if(!m_variables.Get("max_retries",max_retries)) max_retries = 3;
+	if(!m_variables.Get("services_backend_verbosity",m_verbosity)) m_verbosity = 1;
 	int advertise_endpoints = 1;
 	m_variables.Get("advertise_endpoints",advertise_endpoints);
 	int msg_compression=1;
@@ -150,7 +149,7 @@ bool ServicesBackend::Initialise(Store &variables_in){
 	//msg_id = (int)time(NULL); -> not unique enough
 	uint64_t nanoseconds_since_epoch = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 	msg_id = static_cast<uint32_t>(nanoseconds_since_epoch);
-	if(verbosity>3) std::cout<<"initialising message ID to "<<msg_id<<std::endl;
+	if(m_verbosity>3) std::cout<<"initialising message ID to "<<msg_id<<std::endl;
 	
 	// kick off a thread to do actual send and receive of messages
 	terminator = std::promise<void>{};
@@ -178,7 +177,6 @@ bool ServicesBackend::InitZMQ(){
 	
 	// poll timeouts - units are milliseconds
 	inpoll_timeout=500;
-	outpoll_timeout=500;
 	
 	// total timeout on how long we wait for response from a command
 	command_timeout=2000;
@@ -189,7 +187,6 @@ bool ServicesBackend::InitZMQ(){
 	m_variables.Get("clt_pub_socket_timeout",clt_pub_socket_timeout);
 	m_variables.Get("clt_dlr_socket_timeout",clt_dlr_socket_timeout);
 	m_variables.Get("inpoll_timeout",inpoll_timeout);
-	m_variables.Get("outpoll_timeout",outpoll_timeout);
 	m_variables.Get("command_timeout",command_timeout);
 	
 	// to send replies the middleman must know who to send them to.
@@ -276,7 +273,7 @@ bool ServicesBackend::InitMulticast(){
 	log_socket = socket(AF_INET, SOCK_DGRAM, 0);
 	mon_socket = socket(AF_INET, SOCK_DGRAM, 0);
 	if(log_socket<=0 || mon_socket<=0){
-		Log(std::string{"Failed to open multicast socket with error "}+strerror(errno),v_error,verbosity);
+		Log(std::string{"Failed to open multicast socket with error "}+strerror(errno),v_error,m_verbosity);
 		return false;
 	}
 	
@@ -287,7 +284,7 @@ bool ServicesBackend::InitMulticast(){
 	get_ok =           setsockopt(log_socket, SOL_SOCKET, SO_LINGER,(char*) &l, sizeof(l));
 	get_ok = get_ok || setsockopt(mon_socket, SOL_SOCKET, SO_LINGER,(char*) &l, sizeof(l));
 	if(get_ok!=0){
-		Log(std::string{"Failed to set multicast socket linger with error "}+strerror(errno),v_error,verbosity);
+		Log(std::string{"Failed to set multicast socket linger with error "}+strerror(errno),v_error,m_verbosity);
 		return false;
 	}
 	
@@ -296,7 +293,7 @@ bool ServicesBackend::InitMulticast(){
 	get_ok = get_ok || fcntl(mon_socket, F_SETFL, O_NONBLOCK);
 	if(get_ok!=0){
 		Log(std::string{"Failed to set multicast socket to non-blocking with error "}
-		   +strerror(errno),v_error,verbosity);
+		   +strerror(errno),v_error,m_verbosity);
 		//return false;
 	}
 	
@@ -310,7 +307,7 @@ bool ServicesBackend::InitMulticast(){
 	get_ok =           inet_aton(log_address.c_str(), &log_addr.sin_addr);
 	get_ok = get_ok && inet_aton(mon_address.c_str(), &mon_addr.sin_addr);
 	if(get_ok==0){ // returns 0 on failure, not success
-		Log("Bad multicast address '"+log_address+"' or '"+mon_address+"'",v_error,verbosity);
+		Log("Bad multicast address '"+log_address+"' or '"+mon_address+"'",v_error,m_verbosity);
 		return false;
 	}
 	multicast_addrlen = sizeof(log_addr);
@@ -334,7 +331,7 @@ bool ServicesBackend::RegisterServices(){
 	get_ok = utilities->AddPort("db_write", clt_pub_port);
 	get_ok = get_ok && utilities->AddPort("db_read",  clt_dlr_port);
 	if(!get_ok){
-		Log("Error advertising ports!",v_error,verbosity);
+		Log("Error advertising ports!",v_error,m_verbosity);
 		return false;
 	}
 	
@@ -351,13 +348,13 @@ void ServicesBackend::Log(std::string msg, int msg_verb, int verbosity){
 
 bool ServicesBackend::BackgroundThread(std::future<void> signaller){
 	
-	Log("ServicesBackend BackgroundThread starting!",v_debug,verbosity);
+	Log("ServicesBackend BackgroundThread starting!",v_debug,m_verbosity);
 	while(true){
 		// check if we've been signalled to terminate
 		std::chrono::microseconds span(100);
 		if(signaller.wait_for(span)!=std::future_status::timeout){
 			// terminate has been set
-			Log("ServicesBackend background thread received terminate signal",v_debug,verbosity);
+			Log("ServicesBackend background thread received terminate signal",v_debug,m_verbosity);
 			break;
 		}
 		
@@ -372,7 +369,7 @@ bool ServicesBackend::BackgroundThread(std::future<void> signaller){
 bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std::string* err){
 	// multicast send. These do not wait for a response, so no timeout.
 	// only immediately evident errors are reported. receipt is not confirmed.
-	if(verbosity>10) std::cout<<"ServicesBackend::SendMulticast invoked with command '"<<command<<"'"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::SendMulticast invoked with command '"<<command<<"'"<<std::endl;
 	// type: 0=logging, 1=monitoring
 	int multicast_socket;
 	std::mutex* socket_mtx;
@@ -396,7 +393,7 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 		if(ZSTD_isError(bytes_to_send)){
 			locker.unlock();
 			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
-			Log(errmsg,v_error,verbosity);  // XXX should send to MM uncompressed, along with other errors
+			Log(errmsg,v_error,m_verbosity);  // XXX should send to MM uncompressed, along with other errors
 			if(err) *err= errmsg;
 		} else {
 			msg_to_send = compressed_msg_buf;
@@ -419,7 +416,7 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 		socket_mtx->unlock();
 		if(cnt < 0){
 			std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
-			Log(errmsg,v_error,verbosity);
+			Log(errmsg,v_error,m_verbosity);
 			if(err) *err= errmsg; //zmq_strerror(errno);
 			return false;
 		}
@@ -432,7 +429,7 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results, const uint32_t* timeout_ms, std::string* err){
 	// send a command and receive response.
 	// This is a wrapper that ensures we always return within the requested timeout.
-	if(verbosity>10) std::cout<<"ServicesBackend::SendCommand invoked with command '"<<command<<"'"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::SendCommand invoked with command '"<<command<<"'"<<std::endl;
 	
 	uint32_t timeout=command_timeout;            // default timeout for submission of command and receipt of response
 	if(timeout_ms) timeout=*timeout_ms;     // override by user if a custom timeout is given
@@ -440,7 +437,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	// encapsulate the command in an object.
 	// We need this since we can only get one return value from an asynchronous function call,
 	// and we want both a response string and error flag.
-	if(verbosity>10) std::cout<<"ServicesBackend::SendCommand constructing Command"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::SendCommand constructing Command"<<std::endl;
 	
 	// for now, different message types need to go out on different sockets:
 	// writes go over pub sockets and reads over dealer sockets. (This may change soon...)
@@ -448,7 +445,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	if(topic.length()==0){
 		std::string errmsg = "ServicesBackend::SendCommand received empty topic for command '"
 		                   + command + "'";
-		Log(errmsg,v_error,verbosity);
+		Log(errmsg,v_error,m_verbosity);
 		if(err) *err= errmsg;
 		return false;
 	}
@@ -456,7 +453,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	if(type!='r' && type!='w'){
 		std::string errmsg = "ServicesBackend::SendCommand received invalid topic for command '"
 		                   + command + "'; please prefix with 'r_' or 'w_' to indicate socket type to use";
-		Log(errmsg,v_error,verbosity);
+		Log(errmsg,v_error,m_verbosity);
 		if(err) *err= errmsg;
 		return false;
 	}
@@ -470,7 +467,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 		if(ZSTD_isError(bytes_to_send)){
 			locker.unlock();
 			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
-			Log(errmsg,v_error,verbosity);  // XXX should send to MM uncompressed, along with other errors
+			Log(errmsg,v_error,m_verbosity);  // XXX should send to MM uncompressed, along with other errors
 			if(err) *err= errmsg;
 		} else {
 			msg_to_send = compressed_msg_buf;
@@ -491,10 +488,10 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	
 	// wrap our attempt to get the response in try/catch, just in case?
 	try {
-		if(verbosity>10) std::cout<<"ServicesBackend::SendCommand calling DoCommand"<<std::endl;
+		if(m_verbosity>10) std::cout<<"ServicesBackend::SendCommand calling DoCommand"<<std::endl;
 		DoCommand(cmd, timeout);
-		if(verbosity>10) std::cout<<"ServicesBackend::SendCommand response is "<<cmd.response.size()
-		                          <<" parts"<<std::endl;
+		if(m_verbosity>10) std::cout<<"ServicesBackend::SendCommand response is "<<cmd.response.size()
+		                            <<" parts"<<std::endl;
 		if(results) *results = cmd.response;
 		if(err) *err = cmd.err;
 		return cmd.success;
@@ -502,7 +499,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 		// one thing that can cause an exception is if we terminate the application
 		// before the promise is fulfilled (i.e. the response came, or zmq timed out)
 		// so long as we catch it's fine.
-		Log(std::string{"ServicesBackend caught "}+e.what()+" waiting for command "+command,v_error,verbosity);
+		Log(std::string{"ServicesBackend caught "}+e.what()+" waiting for command "+command,v_error,m_verbosity);
 	}
 	return false;
 }
@@ -522,7 +519,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 }
 
 bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
-	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand received command"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand received command"<<std::endl;
 	// submit a command, wait for the response and return it
 	
 	// capture a unique id for this message
@@ -550,7 +547,7 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 	// as a recipient for a response before we even send the request, to ensure that
 	// we can be identified as a the recipient as soon as we submit our command.
 	// It's a little odd, but that's how it is.
-	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand pre-emptively submitting ticket for response"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand pre-emptively submitting ticket for response"<<std::endl;
 	std::promise<Command> response_ticket;
 	std::future<Command> response_reciept = response_ticket.get_future();
 	send_queue_mutex.lock();
@@ -560,12 +557,12 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 	// submit a request to send our command.
 	std::promise<int> send_ticket;
 	std::future<int> send_receipt = send_ticket.get_future();
-	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand putting command into waiting-to-send list"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand putting command into waiting-to-send list"<<std::endl;
 	send_queue_mutex.lock();
 	waiting_senders.emplace(cmd, std::move(send_ticket));
 	send_queue_mutex.unlock();
 	
-	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand waiting for send confirmation"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand waiting for send confirmation"<<std::endl;
 	// make a note of the time
 	auto send_start = std::chrono::high_resolution_clock::now();
 	// wait for confirmation of sending
@@ -586,17 +583,17 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 	
 	// did we get a response in time?
 	if(timedout){
-		if(verbosity>10) std::cerr<<"ServicesBackend::DoCommand timeout"<<std::endl;
+		if(m_verbosity>10) std::cerr<<"ServicesBackend::DoCommand timeout"<<std::endl;
 		// sending timed out
 		if(cmd.type=='w') ++write_commands_failed;
 		else if(cmd.type=='r') ++read_commands_failed;
-		Log("Timed out sending command "+std::to_string(thismsgid),v_error,verbosity);
+		Log("Timed out sending command "+std::to_string(thismsgid),v_error,m_verbosity);
 		cmd.success = false;
 		cmd.err = "Timed out sending command";
 		
 		// since we are giving up waiting for the response, remove ourselves
 		// from the list of recipients awaiting response
-		if(verbosity>10) std::cout<<"ServicesBackend::DoCommand de-registering for response on id "<<thismsgid<<std::endl;
+		if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand de-registering for response on id "<<thismsgid<<std::endl;
 		send_queue_mutex.lock();
 		waiting_recipients.erase(thismsgid);
 		send_queue_mutex.unlock();
@@ -606,7 +603,7 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 	
 	// so we got response about our send request, but did it go through?
 	// check for errors in sending
-	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand got send confirmation"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand got send confirmation"<<std::endl;
 	int ret = send_receipt.get();
 	std::string errmsg;
 	if(ret==-4) errmsg="No connection on out socket in PollAndSend!";
@@ -614,45 +611,45 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 	if(ret==-2) errmsg="No listener on out socket in PollAndSend!";
 	if(ret==-1) errmsg="Error sending in PollAndSend!";
 	if(ret!=0){
-		if(verbosity>10) std::cout<<"ServicesBackend::DoCommand got response "<<ret
-		                          <<" from PollAndSend: sending failed"<<std::endl;
+		if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand got response "<<ret
+		                            <<" from PollAndSend: sending failed"<<std::endl;
 		if(cmd.type=='w') ++write_commands_failed;
 		else if(cmd.type=='r') ++read_commands_failed;
-		Log(errmsg,v_debug,verbosity);
+		Log(errmsg,v_debug,m_verbosity);
 		cmd.success = false;
 		cmd.err = errmsg;
 		
 		// since the send failed we don't expect a response, so remove ourselves
 		// from the list of recipients awaiting response
 		send_queue_mutex.lock();
-		if(verbosity>10) std::cout<<"ServicesBackend::DoCommand de-registering for response on command "<<thismsgid<<std::endl;
+		if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand de-registering for response on command "<<thismsgid<<std::endl;
 		waiting_recipients.erase(thismsgid);
 		send_queue_mutex.unlock();
 		
 		return false;
 	} else {
-		if(verbosity>10) std::cout<<"ServicesBackend::DoCommand message sent successfully"<<std::endl;
+		if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand message sent successfully"<<std::endl;
 	}
 	
 	// if we succeeded in sending the message, we now need to wait for a repsonse.
-	if(verbosity>10) std::cout<<"ServicesBackend::DoCommand waiting for response"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand waiting for response"<<std::endl;
 	if(response_reciept.wait_for(std::chrono::milliseconds(timeout_ms))==std::future_status::timeout){
-		if(verbosity>10) std::cout<<"ServicesBackend::DoCommand response timeout"<<std::endl;
+		if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand response timeout"<<std::endl;
 		// timed out
 		if(cmd.type=='w') ++write_commands_failed;
 		else if(cmd.type=='r') ++read_commands_failed;
-		Log("Timed out waiting for response for command "+std::to_string(thismsgid),v_error,verbosity);
+		Log("Timed out waiting for response for command "+std::to_string(thismsgid),v_error,m_verbosity);
 		cmd.success = false;
 		cmd.err = "Timed out waiting for response";
 		return false;
 	} else {
 		// got a response!
-		if(verbosity>10) std::cout<<"ServicesBackend::DoCommand got a response for command "<<cmd.msg_id
-		                          <<", passing back to caller"<<std::endl;
+		if(m_verbosity>10) std::cout<<"ServicesBackend::DoCommand got a response for command "<<cmd.msg_id
+		                            <<", passing back to caller"<<std::endl;
 		try{
 			cmd = response_reciept.get();
 		} catch(std::exception& e){
-			Log("ServicesBackend response for command "+std::to_string(cmd.msg_id)+" was exception "+e.what(),v_error,verbosity);
+			Log("ServicesBackend response for command "+std::to_string(cmd.msg_id)+" was exception "+e.what(),v_error,m_verbosity);
 			cmd.err=e.what();
 			cmd.success=false;
 			return false;
@@ -667,23 +664,27 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 bool ServicesBackend::GetNextResponse(){
 	// get any new messages from middleman, and notify the client of the outcome
 	
+	// if we have messages to send, just see if there's anything to receive, but don't wait.
+	// if we have nothing to send, wait on it for inpoll_timeout
+	int poll_timeout = (waiting_senders.empty()) ? inpoll_timeout : 0;
+	
 	std::vector<zmq::message_t> response;
 	dlr_socket_mutex.lock();
-	int ret = PollAndReceive(clt_dlr_socket, in_polls.at(0), inpoll_timeout, response);
+	int ret = PollAndReceive(clt_dlr_socket, in_polls.at(0), poll_timeout, response);
 	dlr_socket_mutex.unlock();
 	//std::cout<<"ServicesBackend: GNR returned "<<ret<<std::endl;
 	
 	// check return status
 	if(ret==-2) return true;      // no messages waiting to be received
 	
-	if(verbosity>10) std::cout<<"ServicesBackend::GetNextResponse had response in socket"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::GetNextResponse had response in socket"<<std::endl;
 	if(ret==-3){
-		Log("PollAndReceive Error polling in socket! Is socket closed?",v_error,verbosity);
+		Log("PollAndReceive Error polling in socket! Is socket closed?",v_error,m_verbosity);
 		return false;
 	}
 	
 	if(response.size()==0){
-		Log("PollAndReceive received empty response!",v_error,verbosity);
+		Log("PollAndReceive received empty response!",v_error,m_verbosity);
 		return false;
 	}
 	
@@ -698,9 +699,9 @@ bool ServicesBackend::GetNextResponse(){
 		// suggesting there should have been more parts, but they never came.
 		cmd.success = false;
 		cmd.err="Received incomplete zmq response";
-		Log(cmd.err,v_warning,verbosity);
-		if(ret==-1) Log("Last message had zmq more flag set",v_warning,verbosity);
-		if(response.size()<2) Log("Only received "+std::to_string(response.size())+" parts",v_warning,verbosity);
+		Log(cmd.err,v_warning,m_verbosity);
+		if(ret==-1) Log("Last message had zmq more flag set",v_warning,m_verbosity);
+		if(response.size()<2) Log("Only received "+std::to_string(response.size())+" parts",v_warning,m_verbosity);
 		// continue to parse as much as we can - the first part identifies the command,
 		// so we can at least inform the client of the failure
 	}
@@ -725,13 +726,13 @@ bool ServicesBackend::GetNextResponse(){
 				// bad response
 				cmd.success = false;
 				cmd.err="Received corrupt zstd response size";
-				Log(cmd.err,v_warning,verbosity);
+				Log(cmd.err,v_warning,m_verbosity);
 				break;
 			}
 			if(next_bytes > MAX_DECOMPRESSED_MSG_SIZE){
 				cmd.success = false;
 				cmd.err="Received oversized zstd response: "+std::to_string(next_bytes)+" bytes";
-				Log(cmd.err,v_warning,verbosity);
+				Log(cmd.err,v_warning,m_verbosity);
 				break;
 			}
 			decompress_buffer.resize(next_bytes);
@@ -739,7 +740,7 @@ bool ServicesBackend::GetNextResponse(){
 			if(ZSTD_isError(next_bytes)){
 				cmd.success = false;
 				cmd.err=std::string{"zstd error decompressing response: "}+ZSTD_getErrorName(next_bytes);
-				Log(cmd.err,v_warning,verbosity);
+				Log(cmd.err,v_warning,m_verbosity);
 				break;
 			}
 			
@@ -757,7 +758,7 @@ bool ServicesBackend::GetNextResponse(){
 	}
 	
 	
-	if(verbosity>3){
+	if(m_verbosity>3){
 		std::stringstream logmsg;
 		logmsg << "ServicesBackend::GetNextResponse received response to command "<<message_id_rcvd
 		       <<"; status "<<cmd.success<<", response '";
@@ -765,7 +766,7 @@ bool ServicesBackend::GetNextResponse(){
 			logmsg<<"["<<apart<<"]";
 		}
 		logmsg<<"'"<<std::endl;
-		Log(logmsg.str(),v_debug,verbosity);
+		Log(logmsg.str(),v_debug,m_verbosity);
 	}
 	
 	// get the ticket associated with this message id
@@ -778,7 +779,7 @@ bool ServicesBackend::GetNextResponse(){
 		send_queue_mutex.unlock();
 	} else {
 		// unknown message id?
-		Log("Unknown message id "+std::to_string(message_id_rcvd)+" with no client",v_error,verbosity);
+		Log("Unknown message id "+std::to_string(message_id_rcvd)+" with no client",v_error,m_verbosity);
 		return false;
 	}
 	
@@ -792,7 +793,7 @@ bool ServicesBackend::SendNextCommand(){
 		// nothing to send
 		return true;
 	}
-	if(verbosity>10) std::cout<<"ServicesBackend::SendNextCommand got outgoing command to send"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::SendNextCommand got outgoing command to send"<<std::endl;
 	
 	// get the next command to send
 	send_queue_mutex.lock();
@@ -800,11 +801,11 @@ bool ServicesBackend::SendNextCommand(){
 	waiting_senders.pop();
 	send_queue_mutex.unlock();
 	Command& cmd = next_cmd.first;
-	if(verbosity>10) std::cout<<"ServicesBackend::SendNextCommand sending command "<<cmd.msg_id<<std::endl;
-	if(verbosity>3){
+	if(m_verbosity>10) std::cout<<"ServicesBackend::SendNextCommand sending command "<<cmd.msg_id<<std::endl;
+	if(m_verbosity>3){
 		std::stringstream logmsg;
 		logmsg<<"Sending command "<<cmd.msg_id<<", \""<<cmd.command<<"\""<<std::endl;
-		//Log(logmsg.str(),v_debug,verbosity);
+		//Log(logmsg.str(),v_debug,m_verbosity);
 	}
 	
 	// send out the command
@@ -817,8 +818,8 @@ bool ServicesBackend::SendNextCommand(){
 	// the ZMQ identity of the sender. Writes go out via a Pub socket that does not!
 	int ret=-99;
 	dlr_socket_mutex.lock();
-	if(verbosity>10) std::cout<<"ServicesBackend::SendNextCommand calling PollAndSend"
-	                          <<", message type: "<<cmd.type<<", topic '"<<cmd.topic<<"'"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::SendNextCommand calling PollAndSend"
+	                            <<", message type: "<<cmd.type<<", topic '"<<cmd.topic<<"'"<<std::endl;
 	if(cmd.type=='w'){
 		// write commands go to the pub socket, read commands to the dealer
 		ret = PollAndSend(clt_pub_socket, out_polls.at(0), cmd.timeout_ms, cmd.topic, clt_ID, cmd.msg_id, cmd.command);
@@ -826,7 +827,7 @@ bool ServicesBackend::SendNextCommand(){
 		// clt_ID already added by dealer socket
 		ret = PollAndSend(clt_dlr_socket, out_polls.at(1), cmd.timeout_ms, cmd.topic, cmd.msg_id, cmd.command);
 	}
-	if(verbosity>10) std::cout<<"ServicesBackend::SendNextCommand send returned "<<ret<<", passing to recipient"<<std::endl;
+	if(m_verbosity>10) std::cout<<"ServicesBackend::SendNextCommand send returned "<<ret<<", passing to recipient"<<std::endl;
 	dlr_socket_mutex.unlock();
 	//std::cout<<"ServicesBackend SNC P&S returned "<<ret<<std::endl;
 	
@@ -839,22 +840,22 @@ bool ServicesBackend::SendNextCommand(){
 
 bool ServicesBackend::Finalise(){
 	// terminate our background thread
-	Log("ServicesBackend sending background thread term signal",v_debug,verbosity);
+	Log("ServicesBackend sending background thread term signal",v_debug,m_verbosity);
 	terminator.set_value();
 	// wait for it to finish up and return
-	Log("ServicesBackend waiting for background thread to rejoin",v_debug,verbosity);
+	Log("ServicesBackend waiting for background thread to rejoin",v_debug,m_verbosity);
 	background_thread.join();
 	
-	Log("ServicesBackend Removing services",v_debug,verbosity);
+	Log("ServicesBackend Removing services",v_debug,m_verbosity);
 	//if(utilities) utilities->RemoveService("slowcontrol_write");
 	if(utilities) utilities->RemovePort("db_read");
 	if(utilities) utilities->RemovePort("db_write");
 	
-	Log("ServicesBackend Closing multicast socket",v_debug,verbosity);
+	Log("ServicesBackend Closing multicast socket",v_debug,m_verbosity);
 	close(log_socket);
 	close(mon_socket);
 	
-	Log("ServicesBackend Deleting Utilities class",v_debug,verbosity);
+	Log("ServicesBackend Deleting Utilities class",v_debug,m_verbosity);
 	if(utilities){
 	  delete utilities;
 	  utilities=nullptr;
@@ -864,7 +865,7 @@ bool ServicesBackend::Finalise(){
 	clt_pub_connections.clear();
 	clt_dlr_connections.clear();
 	
-	Log("ServicesBackend deleting sockets",v_debug,verbosity);
+	Log("ServicesBackend deleting sockets",v_debug,m_verbosity);
 	delete clt_pub_socket; clt_pub_socket=nullptr;
 	delete clt_dlr_socket; clt_dlr_socket=nullptr;
 	
@@ -881,7 +882,7 @@ bool ServicesBackend::Finalise(){
 	if(zstd_dctx) ZSTD_freeDCtx(zstd_dctx);
 	
 	// can't use 'Log' since we may have deleted the Logging class
-	if(verbosity>3) std::cout<<"ServicesBackend finalise done"<<std::endl;
+	if(m_verbosity>3) std::cout<<"ServicesBackend finalise done"<<std::endl;
 	
 	return true;
 }
@@ -890,22 +891,22 @@ bool ServicesBackend::Finalise(){
 // ZMQ helper functions; TODO move these to external class? since they're shared by middleman.
 
 bool ServicesBackend::Send(zmq::socket_t* sock, bool more, zmq::message_t& message){
-	if(verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
+	if(m_verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
 	bool send_ok;
 	if(more){
 		send_ok = sock->send(message, ZMQ_SNDMORE);
-		if(verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
 	} else {
 		send_ok = sock->send(message);
-		if(verbosity>10) std::cout<<"zmq send final part: "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"zmq send final part: "<<send_ok<<std::endl;
 	}
 	
-	if(verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
+	if(m_verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
 	return send_ok;
 }
 
 bool ServicesBackend::Send(zmq::socket_t* sock, bool more, std::string messagedata){
-	if(verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
+	if(m_verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
 	// form the zmq::message_t
 	zmq::message_t message(messagedata.size());
 	memcpy(message.data(), messagedata.data(), message.size());
@@ -914,23 +915,23 @@ bool ServicesBackend::Send(zmq::socket_t* sock, bool more, std::string messageda
 	bool send_ok;
 	if(more){
 		send_ok = sock->send(message, ZMQ_SNDMORE);
-		if(verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
 	} else {
 		send_ok = sock->send(message);
-		if(verbosity>10) std::cout<<"zmq send final part: "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"zmq send final part: "<<send_ok<<std::endl;
 	}
 	
-	if(verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
+	if(m_verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
 	return send_ok;
 }
 
 bool ServicesBackend::Send(zmq::socket_t* sock, bool more, std::vector<std::string> messages){
-	if(verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
+	if(m_verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
 	
 	// loop over all but the last part in the input vector,
 	// and send with the SNDMORE flag
 	for(unsigned int i=0; i<(messages.size()-1); ++i){
-		if(verbosity>10) std::cout<<"sending part "<<i<<"/"<<messages.size()<<std::endl;
+		if(m_verbosity>10) std::cout<<"sending part "<<i<<"/"<<messages.size()<<std::endl;
 		
 		// form zmq::message_t
 		zmq::message_t message(messages.at(i).size());
@@ -938,14 +939,14 @@ bool ServicesBackend::Send(zmq::socket_t* sock, bool more, std::vector<std::stri
 		
 		// send this part
 		bool send_ok = sock->send(message, ZMQ_SNDMORE);
-		if(verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
 		
-		if(verbosity>10) std::cout<<"returned "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"returned "<<send_ok<<std::endl;
 		// break on error
 		if(not send_ok) return false;
 	}
 	
-	if(verbosity>10) std::cout<<"sending part "<<(messages.size()-1)<<"/"<<messages.size()<<std::endl;
+	if(m_verbosity>10) std::cout<<"sending part "<<(messages.size()-1)<<"/"<<messages.size()<<std::endl;
 	// form the zmq::message_t for the last part
 	zmq::message_t message(messages.back().size());
 	memcpy(message.data(), messages.back().data(), messages.back().size());
@@ -954,12 +955,12 @@ bool ServicesBackend::Send(zmq::socket_t* sock, bool more, std::vector<std::stri
 	bool send_ok;
 	if(more){
 		send_ok = sock->send(message, ZMQ_SNDMORE);
-		if(verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
 	} else {
 		send_ok = sock->send(message);
-		if(verbosity>10) std::cout<<"zmq send final part: "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"zmq send final part: "<<send_ok<<std::endl;
 	}
-	if(verbosity>10) std::cout<<"returned "<<send_ok<<std::endl;
+	if(m_verbosity>10) std::cout<<"returned "<<send_ok<<std::endl;
 	
 	return send_ok;
 }

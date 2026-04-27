@@ -1,58 +1,56 @@
 #ToolChain dynamic setup file
 
-##### Runtime Paramiters #####
-UUID_path ./UUID 	 # UUID_path for fixed UUID, if doesnt exist file will be generated. Remove option for always random 
-verbose 1     		 # Verbosity level of ToolChain
-error_level 0 		 # 0= do not exit, 1= exit on unhandeled errors only, 2= exit on unhandeled errors and handeled errors
-attempt_recover 1 	 # 1= will attempt to finalise if an execute fails, 0= will not
-remote_port 24002	 # port to open for remote commands if running in remote mode
-IO_Threads 1		 # Number of threads for network traffic (~ 1/Gbps)
+##### Runtime Parameters #####
+UUID_path ./UUID         # UUID_path for fixed UUID; if doesn't exist, file will be generated. Remove option for always random 
+verbose 1                # Verbosity level of ToolChain
+error_level 0            # 0= do not exit, 1= exit on unhandled errors only, 2= exit on unhandled errors and handled errors
+attempt_recover 1        # 1= will attempt to finalise if an execute fails, 0= will not
+remote_port 24002        # port to open for remote commands if running in remote mode
+IO_Threads 1             # Number of threads for network traffic (~ 1/Gbps)
 alerts_send 1            # enable ability to send global alerts
-alert_send_port 12242    # port to send global alerts
+alert_send_port 12242    # local port to send global alerts from
 alerts_receive 1         # enable ability to receive global alerts
-alert_receive_port 12243 # port to receive global alerts
-sc_port 60000              # port for slow control
+alert_receive_port 12243 # local port to receive global alerts on
+sc_port 60000            # local port to use for slow control
 
 ###### Logging #####
-log_interactive 1	 # Interactive=cout; 0=false, 1= true
-log_local 0 		 # Local = local file log; 0=false, 1= true
-log_local_path ./log 	 # file to store logs to if local is active
-log_remote 0   		 # Remote= remote logging system "serservice_name Remote_Logging";  0=false, 1= true
+log_interactive 1        # Interactive=cout; 0=false, 1= true
+log_local 0              # Local = local file log; 0=false, 1= true
+log_local_path ./log     # file to store logs to if local is active
+log_remote 0             # Remote= remote logging system "service_name Remote_Logging";  0=false, 1= true
 log_address 239.192.1.2  # Remote multicast address to send logs
 log_port 5000            # port on remote machine to connect to
-log_append_time 0	 # append seconds since epoch to filename; 0=false, 1= true
-log_split_files 0 	 # seperate output and error log files (named x.o and x.e)
+log_append_time 0        # append seconds since epoch to filename; 0=false, 1= true
+log_split_files 0        # separate output and error log files (named x.o and x.e)
 
 ###### Service discovery ##### Ignore these settings for local analysis
 service_discovery_address 239.192.1.1 # multicast address to use for service discovery
-service_discovery_port 5000 	      # port to use for service discovery
-service_name ToolDAQ_Service 	      # name of Toolchain service to braodcast
-service_publish_sec 5 		      # heartbeat send period
-service_kick_sec 60 		      # remove hosts with no heartbeat after given period
+service_discovery_port 5000           # port to use for service discovery
+service_name ToolDAQ_Service          # name of Toolchain service to broadcast
+service_publish_sec 5                 # heartbeat send period
+service_kick_sec 60                   # remove hosts with no heartbeat after given period
 
 ###### Backend Services #####   NEWLY ADDED NEEDS TO HAVE PROPER DESCRIPTIONS AND SOME PRUNING BEFORE RELEASE
-use_backend_services 1		#
-db_name daq			#
-verbosity 1			#
-max_retries 3			#
-advertise_endpoints 0		#
-resend_period_ms 1000		#
-print_stats_period_ms 1000	#
-clt_pub_port 55556    		#
-clt_dlr_port 55555		#
-clt_pub_socket_timeout 500	#
-clt_dlr_socket_timeout 500	#
-inpoll_timeout 50      		# keep these short!
-outpoll_timeout 50  		# keep these short!
-command_timeout 2000		#
-mon_port 5000		#
-mon_address 239.192.1.3	#
+use_backend_services 1          #
+services_backend_verbosity 1    # 
+advertise_endpoints 0           # 
+clt_pub_port 55556              # local port used for sending DB writes
+clt_dlr_port 55555              # local port used for sending DB reads
+clt_pub_socket_timeout 500      # send timeout on port used for DB writes
+clt_dlr_socket_timeout 500      # send timeout on port used for DB reads
+inpoll_timeout 50               # keep short!
+command_timeout 2000            # default blocking time on Services commands before giving up
+mon_address 239.192.1.3         # multicast address to send multicast messages to
+mon_port 5000                   # remote multicast port to send monitoring messages to
+multicast_send_period 5000      # logging & monitoring messages will be sent as a batch once per this period
+alarm_cooldown_ms 1000          # alarms with the same device and message will be limited to this rate
+mon_merge_period 5000           # monitoring messages with the same device and subject will be limited to this rate
 
 ##### Tools To Add #####
 Tools_File configfiles/ToolsConfig    # list of tools to run and their config files
 
 ##### Run Type #####
-Inline 1		# number of Execute steps in program, -1 infinite loop that is ended by user 
-Interactive 0 		# set to 1 if you want to run the code interactively
-Remote 0    		# set to 1 if you want to run the code remotely
+Inline 1                # number of Execute steps in program, -1 infinite loop that is ended by user 
+Interactive 0           # set to 1 if you want to run the code interactively
+Remote 0                # set to 1 if you want to run the code remotely
 
