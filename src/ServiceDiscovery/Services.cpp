@@ -34,11 +34,12 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
 
   bool alerts_send = 0;
   int alert_send_port = 12242;
-  bool alerts_receive = 1; 
+  bool alerts_receive = 1;
   int alert_receive_port = 12243;
   int sc_port = 60000;
   mon_merge_period_ms = 1000;
   multicast_send_period_ms = 5000;
+  alarm_cooldown_ms = 1000;
 
   m_variables.Get("alerts_send", alerts_send);
   m_variables.Get("alert_send_port", alert_send_port);
@@ -47,6 +48,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   m_variables.Get("sc_port", sc_port);
   m_variables.Get("mon_merge_period_ms",mon_merge_period_ms);
   m_variables.Get("multicast_send_period_ms",multicast_send_period_ms);
+  m_variables.Get("alarm_cooldown_ms",alarm_cooldown_ms);
   
   sc_vars->InitThreadedReceiver(m_context, sc_port, 100, new_service, alert_receive_port, alerts_receive, alert_send_port, alerts_send);
   m_backend_client.SetUp(m_context);
@@ -81,9 +83,12 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   thread_args.services = this;
   thread_args.logging_buf = &logging_buf;
   thread_args.monitoring_buf = &monitoring_buf;
+  thread_args.alarm_buf = &alarm_buf;
   thread_args.logging_buf_mtx = &logging_buf_mtx;
   thread_args.monitoring_buf_mtx = &monitoring_buf_mtx;
+  thread_args.alarm_buf_mtx = &alarm_buf_mtx;
   thread_args.multicast_send_period_ms = std::chrono::milliseconds{multicast_send_period_ms};
+  thread_args.alarm_cooldown_ms = alarm_cooldown_ms;
   thread_args.last_send = std::chrono::steady_clock::now();
   if(!m_utils.CreateThread("Services", &BufferThread, &thread_args)){
     if(m_verbose) std::cerr<<"failed to spawn background thread"<<std::endl;
@@ -101,11 +106,30 @@ bool Services::Ready(const unsigned int timeout){
 // Write Functions
 // ---------------
 
-bool Services::SendAlarm(const std::string& message, bool critical, const std::string& device, const uint64_t timestamp, const unsigned int timeout){
+bool Services::SendAlarm(const std::string& message, bool critical, const std::string& device, uint64_t timestamp, const unsigned int timeout){
   
   const std::string& name = (device=="") ? m_name : device;
+  std::string timestring = TimeStringFromUnixMs(timestamp);
   
-  std::string cmd_string = "{\"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
+  std::unique_lock<std::mutex> locker(alarm_buf_mtx);
+  
+  // check if we sent this alarm already in the last N ms
+  std::vector<AlarmMsg>::iterator it=alarm_buf.begin();
+  while(it!=alarm_buf.end()){
+    if(((timestamp>it->timestamp) ? (timestamp-it->timestamp) : (it->timestamp-timestamp))>alarm_cooldown_ms){
+      it = alarm_buf.erase(it); // discard if no longer relevant
+      continue;
+    }
+    // if same device and message, do not send it again
+    if(it->device==device && it->message==message) return true;
+    ++it;
+  }
+  // otherwise add it
+  alarm_buf.emplace_back(message, device, timestamp);
+  
+  locker.unlock();
+  
+  std::string cmd_string = "{\"time\":\""+timestring+"\""
                          + ",\"device\":\""+name+"\""
                          + ",\"critical\":"+std::to_string(critical)
                          + ",\"description\":\"" + message + "\"}";
@@ -121,7 +145,7 @@ bool Services::SendAlarm(const std::string& message, bool critical, const std::s
   
   // also record it to the logging socket
   cmd_string = std::string{"{\"topic\":\"LOGGING\""}
-             + ",\"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
+             + ",\"time\":\""+timestring+"\""
              + ",\"device\":\""+name+"\""
              + ",\"severity\":0"
              + ",\"message\":\"" + message + "\"}";
@@ -136,7 +160,7 @@ bool Services::SendAlarm(const std::string& message, bool critical, const std::s
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendCalibrationData(const std::string& json_data, const std::string& description, const std::string& name, const uint64_t timestamp, int* version, const unsigned int timeout){
+bool Services::SendCalibrationData(const std::string& json_data, const std::string& description, const std::string& name, uint64_t timestamp, int* version, const unsigned int timeout){
   
   const std::string& c_name = (name=="") ? m_name : name;
   
@@ -174,7 +198,7 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendDeviceConfig(const std::string& json_data, const std::string& author, const std::string& description, const std::string& device, const uint64_t timestamp, int* version, const unsigned int timeout){
+bool Services::SendDeviceConfig(const std::string& json_data, const std::string& author, const std::string& description, const std::string& device, uint64_t timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
@@ -215,7 +239,7 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendBaseConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, const uint64_t timestamp, int* version, const unsigned int timeout){
+bool Services::SendBaseConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, uint64_t timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
@@ -255,7 +279,7 @@ bool Services::SendBaseConfig(const std::string& json_data, const std::string& n
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendRunModeConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, const uint64_t timestamp, int* version, const unsigned int timeout){
+bool Services::SendRunModeConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, uint64_t timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
@@ -294,7 +318,7 @@ bool Services::SendRunModeConfig(const std::string& json_data, const std::string
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendROOTplot(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version, const uint64_t timestamp, const unsigned int lifetime, const unsigned int timeout){
+bool Services::SendROOTplot(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, int* version, uint64_t timestamp, const unsigned int lifetime, const unsigned int timeout){
   
   std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"name\":\""+ plot_name +"\""
@@ -337,7 +361,7 @@ bool Services::SendPlotlyPlot(
     const std::string& trace,
     const std::string& layout,
     int*               version,
-    const uint64_t     timestamp,
+    uint64_t           timestamp,
     const unsigned int lifetime,
     const unsigned int timeout
 ) {
@@ -360,7 +384,7 @@ bool Services::SendPlotlyPlot(
     const std::vector<std::string>& traces,
     const std::string&              layout,
     int*                            version,
-    const uint64_t                  timestamp,
+    uint64_t                        timestamp,
     const unsigned int              lifetime,
     const unsigned int              timeout
 ) {
@@ -934,7 +958,7 @@ bool Services::GetPlotlyPlot(const std::string& name, std::string& trace, std::s
 // Multicast Senders
 // -----------------
 
-bool Services::SendLog(const std::string& message, LogLevel severity, const std::string& device, const uint64_t timestamp){
+bool Services::SendLog(const std::string& message, LogLevel severity, const std::string& device, uint64_t timestamp){
   
   const std::string& name = (device=="") ? m_name : device;
   
@@ -973,7 +997,7 @@ bool Services::SendLog(std::string& msg){
 }
 
 
-bool Services::SendMonitoringData(const std::string& json_data, const std::string& subject, const std::string& device, const uint64_t timestamp){
+bool Services::SendMonitoringData(const std::string& json_data, const std::string& subject, const std::string& device, uint64_t timestamp){
   
   const std::string& name = (device=="") ? m_name : device;
   
@@ -1013,7 +1037,7 @@ bool Services::SendMonitoringData(std::string& msg){
 }
 
 // send ROOT plot over multicast
-bool Services::SendROOTplotMulticast(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const unsigned int lifetime, const uint64_t timestamp){
+bool Services::SendROOTplotMulticast(const std::string& plot_name, const std::string& draw_options, const std::string& json_data, const unsigned int lifetime, uint64_t timestamp){
   
   std::string cmd_string = std::string{"{\"topic\":\"TROOTPLOT\""}
                          + ", \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
@@ -1097,14 +1121,14 @@ std::string Services::GetDeviceName(){
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-std::string Services::TimeStringFromUnixMs(const uint64_t timestamp){
+std::string Services::TimeStringFromUnixMs(uint64_t& timestamp){
   
   if(timestamp==1) return "now()";  // remotely interpret 'now'
   
   time_t timestamp_sec; // time_t is equivalent to uint64_t
   uint16_t timestamp_ms = 0;
   if(timestamp==0){
-    timestamp_sec = time(nullptr)*1000; // locally interpret 'now'
+    timestamp = 1000*time(&timestamp_sec); // locally interpret 'now'
   } else {
     timestamp_ms = timestamp%1000;
     timestamp_sec = timestamp/1000;
@@ -1253,7 +1277,17 @@ void Services::BufferThread(Thread_args* args){
     m_args->monitoring_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
   }
   
-  // release monitoring buffer mtx
+  // our other sevice task: prune the alarm buffer.
+  // we don't actually send these out here, that still happens in SendAlarm
+  locker = std::unique_lock<std::mutex>(*m_args->alarm_buf_mtx);
+  
+  std::vector<AlarmMsg>::iterator it=m_args->alarm_buf->begin();
+  while(it!=m_args->alarm_buf->end()){
+    if(((time(0)*1000)-it->timestamp)>m_args->alarm_cooldown_ms) it = m_args->alarm_buf->erase(it);
+    else ++it;
+  }
+  
+  // release mtx
   locker.unlock();
   
   std::this_thread::sleep_until(m_args->last_send+m_args->multicast_send_period_ms);
