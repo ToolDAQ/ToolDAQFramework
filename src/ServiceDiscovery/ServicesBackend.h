@@ -123,24 +123,14 @@ class ServicesBackend {
 	std::thread background_thread;   // a thread that will perform zmq socket operations in the background
 	std::promise<void> terminator;   // call set_value to signal the background_thread should terminate
 	
-	// TODO add retrying
-	int max_retries;
 	uint32_t inpoll_timeout;
-	uint32_t outpoll_timeout;
 	uint32_t command_timeout;
-	
-	// TODO add stats reporting
-	boost::posix_time::time_duration resend_period;      // time between resends if not acknowledged
-	boost::posix_time::time_duration print_stats_period; // time between printing info about what we're doing
-	boost::posix_time::ptime last_write;                 // when we last sent a write command
-	boost::posix_time::ptime last_read;                  // when we last sent a read command
-	boost::posix_time::ptime last_printout;              // when we last printed out stats about what we're doing
 	
 	std::atomic<int> read_commands_failed{0};
 	std::atomic<int> write_commands_failed{0};
 	
 	// general
-	int verbosity;
+	int m_verbosity;
 	// verbosity levels: if 'verbosity' < this level, the message type will be logged.
 	int v_error=0;
 	int v_warning=1;
@@ -174,7 +164,6 @@ class ServicesBackend {
 	// =======================================================
 	
 	// zmq helper functions
-	// TODO move to separate class as these are shared by middleman
 	
 	int PollAndReceive(zmq::socket_t* sock, zmq::pollitem_t poll, uint32_t timeout, std::vector<zmq::message_t>& outputs);
 	bool Receive(zmq::socket_t* sock, std::vector<zmq::message_t>& outputs);
@@ -190,29 +179,29 @@ class ServicesBackend {
 	template <typename T>
 	typename std::enable_if<std::is_fundamental<T>::value, bool>::type
 	Send(zmq::socket_t* sock, bool more, T messagedata){
-		if(verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
+		if(m_verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
 		zmq::message_t message(sizeof(T));
 		memcpy(message.data(), &messagedata, sizeof(T));
 		bool send_ok;
 		if(more){
 			send_ok = sock->send(message, ZMQ_SNDMORE);
-			if(verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
+			if(m_verbosity>10) std::cout<<"zmq sent next part: "<<send_ok<<std::endl;
 		} else {
 			send_ok = sock->send(message);
-			if(verbosity>10) std::cout<<"zmq sent final part: "<<send_ok<<std::endl;
+			if(m_verbosity>10) std::cout<<"zmq sent final part: "<<send_ok<<std::endl;
 		}
-		if(verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
 		return send_ok;
 	}
 	
 	// recursive case; send the next message part and forward all remaining parts
 	template <typename T1, typename T2, typename... Rest>
 	bool Send(zmq::socket_t* sock, bool more, T1&& msg1, T2&& msg2, Rest&&... rest){
-		if(verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
+		if(m_verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
 		bool send_ok = Send(sock, true, std::forward<T1>(msg1));
 		if(not send_ok) return false;
 		send_ok = Send(sock, more, std::forward<T2>(msg2), std::forward<Rest>(rest)...);
-		if(verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
 		return send_ok;
 	}
 	
@@ -220,7 +209,7 @@ class ServicesBackend {
 	// version if one part
 	template <typename T>
 	int PollAndSend(zmq::socket_t* sock, zmq::pollitem_t poll, uint32_t timeout, T&& message){
-		if(verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
+		if(m_verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
 		int send_ok=0;
 		// check for listener
 		int ret=0;
@@ -243,7 +232,7 @@ class ServicesBackend {
 			// no listener
 			send_ok = -2;
 		}
-		if(verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
 		return send_ok;
 	}
 	
@@ -251,7 +240,7 @@ class ServicesBackend {
 	// version if more than one part
 	template <typename T, typename... Rest>
 	int PollAndSend(zmq::socket_t* sock, zmq::pollitem_t poll, uint32_t timeout, T&& message, Rest&&... rest){
-		if(verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
+		if(m_verbosity>10) std::cout<<__PRETTY_FUNCTION__<<" called"<<std::endl;
 		int send_ok = 0;
 		// check for listener
 		int ret = 0;
@@ -274,7 +263,7 @@ class ServicesBackend {
 			// no listener
 			send_ok = -2;
 		}
-		if(verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
+		if(m_verbosity>10) std::cout<<"returning "<<send_ok<<std::endl;
 		return send_ok;
 	}
 	
