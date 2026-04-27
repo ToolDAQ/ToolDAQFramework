@@ -31,6 +31,7 @@ bool SocketManager::Init(DataModel* data_model, zmq::socket_t* in_sock, Buffer<Z
   args.expected_number_messages = expected_number_messages;
   args.message_pool = message_pool;
 
+  paused=false;
   CreateThread();
 
   return true;
@@ -212,7 +213,7 @@ void SocketManager::Close(){
 
 
   if(sock != 0){
-    
+    paused = true;
     m_util->KillThread(&args);
     
     for(std::map<std::string,Store*>::iterator it = connections.begin(); it!=connections.end(); it++){
