@@ -108,7 +108,7 @@ bool Services::SendAlarm(const std::string& message, bool critical, const std::s
   std::string cmd_string = "{\"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ",\"device\":\""+name+"\""
                          + ",\"critical\":"+std::to_string(critical)
-                         + ",\"alarm\":\"" + message + "\"}";
+                         + ",\"description\":\"" + message + "\"}";
   
   std::string err="";
   
