@@ -40,6 +40,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   mon_merge_period_ms = 1000;
   multicast_send_period_ms = 5000;
   alarm_cooldown_ms = 1000;
+  config_devicename = "";
 
   m_variables.Get("alerts_send", alerts_send);
   m_variables.Get("alert_send_port", alert_send_port);
@@ -64,7 +65,9 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
     if(m_verbose) std::cerr<<"device names cannot start with '('"<<std::endl;
     return false;
   }
-
+  // if you wish to use a different name when looking up configurations from the database,
+  // such as if sharing a configuration across multiple devices, specify that here
+  m_variables.Get("config_name",config_devicename);
   
   if(!m_backend_client.Initialise(m_variables)){
     if(m_verbose) std::cerr<<"error initialising slowcontrol client"<<std::endl;
@@ -137,7 +140,7 @@ bool Services::SendAlarm(const std::string& message, bool critical, const std::s
   std::string err="";
   
   // send the alarm on the pub socket
-  bool ok = m_backend_client.SendCommand("W_ALARM", cmd_string, (std::vector<std::string>*)nullptr, &timeout, &err);
+  bool ok = m_backend_client.SendCommand("W_ALARM", cmd_string, (std::vector<std::string>*)nullptr, timeout, &err);
   if(!ok){
     if(m_verbose) std::cerr<<"SendAlarm error: "<<err<<std::endl;
   }
@@ -172,7 +175,7 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
   std::string err="";
   std::string response="";
   
-  if(!m_backend_client.SendCommand("W_CALIBRATION", cmd_string, &response, &timeout, &err)){
+  if(!m_backend_client.SendCommand("W_CALIBRATION", cmd_string, &response, timeout, &err)){
     if(m_verbose) std::cerr<<"SendCalibrationData error: "<<err<<std::endl;
     return false;
   }
@@ -213,7 +216,7 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
   std::string response="";
   std::string err="";
   
-  if(!m_backend_client.SendCommand("W_DEVCONFIG", cmd_string, &response, &timeout, &err)){
+  if(!m_backend_client.SendCommand("W_DEVCONFIG", cmd_string, &response, timeout, &err)){
     if(m_verbose) std::cerr<<"SendDeviceConfig error: "<<err<<std::endl;
     return false;
   }
@@ -252,7 +255,7 @@ bool Services::SendBaseConfig(const std::string& json_data, const std::string& n
   std::string response="";
   std::string err="";
   
-  if(!m_backend_client.SendCommand("W_BASECONFIG", cmd_string, &response, &timeout, &err)){
+  if(!m_backend_client.SendCommand("W_BASECONFIG", cmd_string, &response, timeout, &err)){
     if(m_verbose) std::cerr<<"SendBaseConfig error: "<<err<<std::endl;
     return false;
   }
@@ -292,7 +295,7 @@ bool Services::SendRunModeConfig(const std::string& json_data, const std::string
   std::string response="";
   std::string err="";
   
-  if(!m_backend_client.SendCommand("W_RUNMODECONFIG", cmd_string, &response, &timeout, &err)){
+  if(!m_backend_client.SendCommand("W_RUNMODECONFIG", cmd_string, &response, timeout, &err)){
     if(m_verbose) std::cerr<<"SendRunModeConfig error: "<<err<<std::endl;
     return false;
   }
@@ -329,7 +332,7 @@ bool Services::SendROOTplot(const std::string& plot_name, const std::string& dra
   std::string err="";
   std::string response="";
   
-  if(!m_backend_client.SendCommand("W_TROOTPLOT", cmd_string, &response, &timeout, &err)){
+  if(!m_backend_client.SendCommand("W_TROOTPLOT", cmd_string, &response, timeout, &err)){
     if(m_verbose) std::cerr<<"SendROOTplot error: "<<err<<std::endl;
     return false;
   }
@@ -405,7 +408,7 @@ bool Services::SendPlotlyPlot(
   std::string response="";
   
   std::string err;
-  if (!m_backend_client.SendCommand("W_PLOTLYPLOT", ss.str(), &response, &timeout, &err)){
+  if (!m_backend_client.SendCommand("W_PLOTLYPLOT", ss.str(), &response, timeout, &err)){
     if(m_verbose) std::cerr << "SendPlotlyPlot error: " << err << std::endl;
     return false;
   };
@@ -442,7 +445,7 @@ bool Services::SQLQuery(const std::string& query, std::vector<std::string>& resp
   // Since we don't know what a user-provided query string may be, prepend with a space to ensure this.
   std::string sanitized_query = std::string{" "}+query;
   
-  if(!m_backend_client.SendCommand("W_QUERY", sanitized_query, &responses, &timeout, &err)){
+  if(!m_backend_client.SendCommand("W_QUERY", sanitized_query, &responses, timeout, &err)){
     if(m_verbose) std::cerr<<"SQLQuery error: "<<err<<std::endl;
     responses.resize(1);
     responses.front() = err;
@@ -506,7 +509,7 @@ bool Services::GetCalibrationData(std::string& json_data, int& version, const st
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_CALIBRATION", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_CALIBRATION", cmd_string, &json_data, timeout, &err)){
     if(m_verbose) std::cerr<<"GetCalibrationData error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -561,7 +564,7 @@ bool Services::GetDeviceConfig(std::string& json_data, const int version, const 
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, timeout, &err)){
     if(m_verbose) std::cerr<<"GetDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -604,7 +607,7 @@ bool Services::GetRunConfig(std::string& json_data, const int base_config_id, co
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, timeout, &err)){
     if(m_verbose) std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -651,7 +654,7 @@ bool Services::GetRunModeConfig(std::string& json_data, const std::string& name,
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_RUNCONFIG", cmd_string, &json_data, timeout, &err)){
     if(m_verbose) std::cerr<<"GetRunConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -703,7 +706,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const int base_config_
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_RUNDEVICECONFIG", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_RUNDEVICECONFIG", cmd_string, &json_data, timeout, &err)){
     if(m_verbose) std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -749,7 +752,7 @@ bool Services::GetCachedDeviceConfig(std::string& json_data, int base_config_id,
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_KACHEDDEVICECONFIG", name, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_KACHEDDEVICECONFIG", name, &json_data, timeout, &err)){
     if(m_verbose) std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -808,7 +811,7 @@ bool Services::GetRunDeviceConfig(std::string& json_data, const std::string& run
   
   std::string err="";
   
-  if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_DEVCONFIG", cmd_string, &json_data, timeout, &err)){
     if(m_verbose) std::cerr<<"GetRunDeviceConfig error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -860,7 +863,7 @@ bool Services::GetROOTplot(const std::string& plot_name, std::string& draw_optio
   std::string err="";
   std::string response="";
   
-  if(!m_backend_client.SendCommand("R_TROOTPLOT", cmd_string, &response, &timeout, &err)){
+  if(!m_backend_client.SendCommand("R_TROOTPLOT", cmd_string, &response, timeout, &err)){
     if(m_verbose) std::cerr<<"GetROOTplot error: "<<err<<std::endl;
     json_data = err;
     return false;
@@ -920,7 +923,7 @@ bool Services::GetPlotlyPlot(
   
   std::string err;
   std::string response;
-  if (!m_backend_client.SendCommand("R_PLOTLYPLOT", cmd_string, &response, &timeout, &err)){
+  if (!m_backend_client.SendCommand("R_PLOTLYPLOT", cmd_string, &response, timeout, &err)){
     if(m_verbose) std::cerr << "GetPlotlyPlot error: " << err << std::endl;
     trace = err;
     return false;
@@ -1126,13 +1129,12 @@ std::string Services::TimeStringFromUnixMs(uint64_t& timestamp){
   if(timestamp==1) return "now()";  // remotely interpret 'now'
   
   time_t timestamp_sec; // time_t is equivalent to uint64_t
-  uint16_t timestamp_ms = 0;
+  uint16_t timestamp_ms;
   if(timestamp==0){
-    timestamp = 1000*time(&timestamp_sec); // locally interpret 'now'
-  } else {
-    timestamp_ms = timestamp%1000;
-    timestamp_sec = timestamp/1000;
+	timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   }
+  timestamp_ms = timestamp%1000;
+  timestamp_sec = timestamp/1000;
   struct tm timestruct;
   gmtime_r(&timestamp_sec, &timestruct); // FIXME error checking?
   char timestring[24];
@@ -1168,23 +1170,21 @@ bool Services::LoadConfigAlertFunc(const char* alert, const char* payload){
   if(run_mode_config_id!=m_run_mode_config_id || base_config_id!=m_base_config_id){
     
     while(count<5){
-      if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id)){
-	usleep(100000);
-	count++;
+      if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id, config_devicename)){
+        usleep(100000);
+        count++;
       }
       else count=99;
     }
     if(count==5) return false;
-      
-      (*sc_vars)["NewConfig"]->SetValue(1);
-      m_base_config_id = base_config_id;
-      m_run_mode_config_id = run_mode_config_id;
-    }      
-
-
-
+    
+    (*sc_vars)["NewConfig"]->SetValue(1);
+    m_base_config_id = base_config_id;
+    m_run_mode_config_id = run_mode_config_id;
+  }
+  
   return true;
-
+  
 }
 
 std::string Services::LoadConfigSlowControlFunc(const char* control){
@@ -1194,10 +1194,10 @@ std::string Services::LoadConfigSlowControlFunc(const char* control){
   tmp.JsonParser(payload);
   uint64_t base_config_id=0;
   uint64_t run_mode_config_id=0;
-
+  
   short count = 0;
   std::stringstream ret;
-
+  
   
   tmp.Get("Base",base_config_id);
   tmp.Get("RunMode",run_mode_config_id);
@@ -1205,7 +1205,7 @@ std::string Services::LoadConfigSlowControlFunc(const char* control){
   if(run_mode_config_id!=m_run_mode_config_id || base_config_id!=m_base_config_id){
     
     while(count<5){
-      if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id)){
+      if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id, config_devicename)){
 	usleep(100000);
 	count++;
       }
@@ -1223,8 +1223,8 @@ std::string Services::LoadConfigSlowControlFunc(const char* control){
     ret <<"Loaded config "<<base_config_id<<":"<<run_mode_config_id;
   }
   
-
-    return ret.str();
+  
+  return ret.str();
   
 }
 

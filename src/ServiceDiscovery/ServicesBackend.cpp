@@ -435,13 +435,13 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	return true;
 }
 
-bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results, const uint32_t* timeout_ms, std::string* err){
+bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results, const uint32_t timeout_ms, std::string* err){
 	// send a command and receive response.
 	// This is a wrapper that ensures we always return within the requested timeout.
 	if(m_verbosity>10) std::cout<<"ServicesBackend::SendCommand invoked with command '"<<command<<"'"<<std::endl;
 	
 	uint32_t timeout=command_timeout;            // default timeout for submission of command and receipt of response
-	if(timeout_ms) timeout=*timeout_ms;     // override by user if a custom timeout is given
+	if(timeout_ms) timeout=timeout_ms;     // override by user if a custom timeout is given
 	
 	// encapsulate the command in an object.
 	// We need this since we can only get one return value from an asynchronous function call,
@@ -513,7 +513,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	return false;
 }
 
-bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::string* results, const uint32_t* timeout_ms, std::string* err){
+bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::string* results, const uint32_t timeout_ms, std::string* err){
 	// wrapper for when user expects only one returned response part
 	if(err) *err="";
 	std::vector<std::string> resultsvec;
@@ -867,7 +867,8 @@ bool ServicesBackend::Finalise(){
 	terminator.set_value();
 	// wait for it to finish up and return
 	Log("ServicesBackend waiting for background thread to rejoin",v_debug,m_verbosity);
-	background_thread.join();
+	// if errors during initialise, it may not be running
+	if(background_thread.joinable()) background_thread.join();
 	
 	Log("ServicesBackend Removing services",v_debug,m_verbosity);
 	//if(utilities) utilities->RemoveService("slowcontrol_write");
