@@ -18,11 +18,17 @@ std\+::vector$<$ \mbox{\hyperlink{structToolFramework_1_1LogMsg}{Log\+Msg}} $>$ 
 \mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_ad1f9d7457ea729ff48b64b8b2fe186c9}\label{structToolFramework_1_1BufferThreadArgs_ad1f9d7457ea729ff48b64b8b2fe186c9}} 
 std\+::unordered\+\_\+map$<$ std\+::string, \mbox{\hyperlink{structToolFramework_1_1MonitoringMsg}{Monitoring\+Msg}} $>$ $\ast$ {\bfseries monitoring\+\_\+buf}
 \item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_a42b5e3d0df1c16a242f94982cf6962b0}\label{structToolFramework_1_1BufferThreadArgs_a42b5e3d0df1c16a242f94982cf6962b0}} 
+std\+::vector$<$ \mbox{\hyperlink{structToolFramework_1_1AlarmMsg}{Alarm\+Msg}} $>$ $\ast$ {\bfseries alarm\+\_\+buf}
+\item 
 \mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_af91d9e24fc5622a985b55f6bff848c84}\label{structToolFramework_1_1BufferThreadArgs_af91d9e24fc5622a985b55f6bff848c84}} 
 std\+::mutex $\ast$ {\bfseries logging\+\_\+buf\+\_\+mtx}
 \item 
 \mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_adc13804d1df8820676962103d19fa6ed}\label{structToolFramework_1_1BufferThreadArgs_adc13804d1df8820676962103d19fa6ed}} 
 std\+::mutex $\ast$ {\bfseries monitoring\+\_\+buf\+\_\+mtx}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_a716e6eef47f31eae5c503ce83206affc}\label{structToolFramework_1_1BufferThreadArgs_a716e6eef47f31eae5c503ce83206affc}} 
+std\+::mutex $\ast$ {\bfseries alarm\+\_\+buf\+\_\+mtx}
 \item 
 \mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_afa7e4acf5e647863264479c44d154ba9}\label{structToolFramework_1_1BufferThreadArgs_afa7e4acf5e647863264479c44d154ba9}} 
 std\+::chrono\+::milliseconds {\bfseries multicast\+\_\+send\+\_\+period\+\_\+ms}
@@ -32,6 +38,9 @@ std\+::chrono\+::steady\+\_\+clock\+::time\+\_\+point {\bfseries last\+\_\+send}
 \item 
 \mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_ac4d0f5d3fc0213b94b81374c27426b39}\label{structToolFramework_1_1BufferThreadArgs_ac4d0f5d3fc0213b94b81374c27426b39}} 
 std\+::string {\bfseries local\+\_\+merge\+\_\+buf}
+\item 
+\mbox{\Hypertarget{structToolFramework_1_1BufferThreadArgs_a1a0215b7c3513559c8f904c393f68f63}\label{structToolFramework_1_1BufferThreadArgs_a1a0215b7c3513559c8f904c393f68f63}} 
+uint32\+\_\+t {\bfseries alarm\+\_\+cooldown\+\_\+ms}
 \end{DoxyCompactItemize}
 
 

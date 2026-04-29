@@ -90,12 +90,18 @@ std::vector&lt; <a class="el" href="structToolFramework_1_1LogMsg.html">LogMsg</
 <tr class="memitem:ad1f9d7457ea729ff48b64b8b2fe186c9"><td class="memItemLeft" align="right" valign="top"><a id="ad1f9d7457ea729ff48b64b8b2fe186c9"></a>
 std::unordered_map&lt; std::string, <a class="el" href="structToolFramework_1_1MonitoringMsg.html">MonitoringMsg</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>monitoring_buf</b></td></tr>
 <tr class="separator:ad1f9d7457ea729ff48b64b8b2fe186c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42b5e3d0df1c16a242f94982cf6962b0"><td class="memItemLeft" align="right" valign="top"><a id="a42b5e3d0df1c16a242f94982cf6962b0"></a>
+std::vector&lt; <a class="el" href="structToolFramework_1_1AlarmMsg.html">AlarmMsg</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>alarm_buf</b></td></tr>
+<tr class="separator:a42b5e3d0df1c16a242f94982cf6962b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af91d9e24fc5622a985b55f6bff848c84"><td class="memItemLeft" align="right" valign="top"><a id="af91d9e24fc5622a985b55f6bff848c84"></a>
 std::mutex *&#160;</td><td class="memItemRight" valign="bottom"><b>logging_buf_mtx</b></td></tr>
 <tr class="separator:af91d9e24fc5622a985b55f6bff848c84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc13804d1df8820676962103d19fa6ed"><td class="memItemLeft" align="right" valign="top"><a id="adc13804d1df8820676962103d19fa6ed"></a>
 std::mutex *&#160;</td><td class="memItemRight" valign="bottom"><b>monitoring_buf_mtx</b></td></tr>
 <tr class="separator:adc13804d1df8820676962103d19fa6ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a716e6eef47f31eae5c503ce83206affc"><td class="memItemLeft" align="right" valign="top"><a id="a716e6eef47f31eae5c503ce83206affc"></a>
+std::mutex *&#160;</td><td class="memItemRight" valign="bottom"><b>alarm_buf_mtx</b></td></tr>
+<tr class="separator:a716e6eef47f31eae5c503ce83206affc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa7e4acf5e647863264479c44d154ba9"><td class="memItemLeft" align="right" valign="top"><a id="afa7e4acf5e647863264479c44d154ba9"></a>
 std::chrono::milliseconds&#160;</td><td class="memItemRight" valign="bottom"><b>multicast_send_period_ms</b></td></tr>
 <tr class="separator:afa7e4acf5e647863264479c44d154ba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -105,6 +111,9 @@ std::chrono::steady_clock::time_point&#160;</td><td class="memItemRight" valign=
 <tr class="memitem:ac4d0f5d3fc0213b94b81374c27426b39"><td class="memItemLeft" align="right" valign="top"><a id="ac4d0f5d3fc0213b94b81374c27426b39"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>local_merge_buf</b></td></tr>
 <tr class="separator:ac4d0f5d3fc0213b94b81374c27426b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a0215b7c3513559c8f904c393f68f63"><td class="memItemLeft" align="right" valign="top"><a id="a1a0215b7c3513559c8f904c393f68f63"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>alarm_cooldown_ms</b></td></tr>
+<tr class="separator:a1a0215b7c3513559c8f904c393f68f63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/ServiceDiscovery/<a class="el" href="Services_8h_source.html">Services.h</a></li>
