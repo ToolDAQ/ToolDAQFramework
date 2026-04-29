@@ -145,10 +145,11 @@ void SocketManager::Thread(Thread_args* arg){
 
 
   //////////////////////////////////////// Sending replies ///////////////////////
-  
   if(args->items[1].revents & ZMQ_POLLOUT && args->local_messages_to_send.size() >0){ 
+    size_t i=0;
+    
     try{
-      for(size_t i=0; i < args->local_messages_to_send.size(); i++){
+      for(i=0; i < args->local_messages_to_send.size(); i++){
 	sock_lock.lock();
 	
 	args->return_check = true;
@@ -168,10 +169,13 @@ void SocketManager::Thread(Thread_args* arg){
 	  //	  args->m_data->services->SendLog("Info: error sending response", LogLevel::Message);
 	  (*args->num_send_errors)++;
 	  if(args->local_messages_to_send.at(i)->sent) *(args->local_messages_to_send.at(i)->sent)=false;
+	  if(args->local_messages_to_send.at(i)->error) *(args->local_messages_to_send.at(i)->error)=true;
+	  
 	}
 	else{
 	  (*args->num_replies_sent)++;
-	  *(args->local_messages_to_send.at(i)->sent)=true;
+	  if(args->local_messages_to_send.at(i)->sent) *(args->local_messages_to_send.at(i)->sent)=true;
+	  if(args->local_messages_to_send.at(i)->error) *(args->local_messages_to_send.at(i)->error)=false;
 	}
 	sock_lock.unlock();
       }
@@ -179,6 +183,10 @@ void SocketManager::Thread(Thread_args* arg){
     catch(...){
       *(args->m_data->Log)<<"INFO: Socket Manager caught error in send"<<std::endl;
       if(sock_lock.owns_lock()) sock_lock.unlock();
+      (*args->num_send_errors)++;
+      if(args->local_messages_to_send.at(i)->sent) *(args->local_messages_to_send.at(i)->sent)=false;
+      if(args->local_messages_to_send.at(i)->error) *(args->local_messages_to_send.at(i)->error)=true;
+      
     }
     for(size_t i=0; i < args->local_messages_to_send.size(); i++){
       args->local_messages_to_send.at(i)->messages.clear();
