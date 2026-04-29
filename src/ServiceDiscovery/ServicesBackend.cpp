@@ -179,7 +179,7 @@ bool ServicesBackend::InitZMQ(){
 	inpoll_timeout=500;
 	
 	// total timeout on how long we wait for response from a command
-	command_timeout=2000;
+	command_timeout=300;
 	
 	// Update with user-specified values.
 	m_variables.Get("clt_pub_port",clt_pub_port);
