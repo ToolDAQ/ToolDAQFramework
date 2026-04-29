@@ -19,14 +19,14 @@
 #include <ServicesBackend.h>
 #include <Utilities.h>
 
-#define SERVICES_DEFAULT_TIMEOUT 1800
+#define SERVICES_DEFAULT_TIMEOUT 0
 
 namespace ToolFramework {
   
   enum class LogLevel { Error=0, Warning=1, Message=2, Debug=3, Debug1=4, Debug2=5, Debug3=6 };
   
   struct LogMsg {
-    LogMsg(const std::string& i_message, LogLevel i_severity=LogLevel::Message, const std::string& i_device="", const uint64_t i_timestamp=0) : message{i_message}, severity{i_severity}, device{i_device}, timestamp{i_timestamp} {};
+    LogMsg(const std::string& i_message, LogLevel i_severity=LogLevel::Message, const std::string& i_device="", const uint64_t i_timestamp=0) : message{i_message}, severity{i_severity}, device{i_device}, timestamp{i_timestamp}, repeats{0} {};
     std::string message;
     LogLevel severity;
     std::string device;
@@ -136,6 +136,7 @@ namespace ToolFramework {
     static void BufferThread(Thread_args* args);
     
     std::string m_name;
+    std::string config_devicename;
     bool m_verbose;
     zmq::context_t* m_context;
     ServicesBackend m_backend_client;

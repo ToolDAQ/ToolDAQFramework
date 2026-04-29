@@ -179,7 +179,7 @@ bool ServicesBackend::InitZMQ(){
 	inpoll_timeout=500;
 	
 	// total timeout on how long we wait for response from a command
-	command_timeout=2000;
+	command_timeout=300;
 	
 	// Update with user-specified values.
 	m_variables.Get("clt_pub_port",clt_pub_port);
@@ -215,23 +215,32 @@ bool ServicesBackend::InitZMQ(){
 	
 	// socket to publish write commands
 	// -------------------------------
-	clt_pub_socket = new zmq::socket_t(*context, ZMQ_PUB);
-	clt_pub_socket->setsockopt(ZMQ_LINGER,10);
-	clt_pub_socket->setsockopt(ZMQ_SNDTIMEO, clt_pub_socket_timeout);
-	clt_pub_socket->setsockopt(ZMQ_LINGER, 10);
-	clt_pub_socket->bind(std::string("tcp://*:")+std::to_string(clt_pub_port));
-	
+	try{
+		clt_pub_socket = new zmq::socket_t(*context, ZMQ_PUB);
+		clt_pub_socket->setsockopt(ZMQ_LINGER,10);
+		clt_pub_socket->setsockopt(ZMQ_SNDTIMEO, clt_pub_socket_timeout);
+		clt_pub_socket->setsockopt(ZMQ_LINGER, 10);
+		clt_pub_socket->bind(std::string("tcp://*:")+std::to_string(clt_pub_port));
+	} catch(zmq::error_t& e){
+		std::cerr<<"ServicesBackend caught "<<e.what()<<" creating pub socket on port "<<clt_pub_port<<std::endl;
+		return false;
+	}
 	
 	// socket to deal read commands and receive responses
 	// -------------------------------------------------
-	clt_dlr_socket = new zmq::socket_t(*context, ZMQ_DEALER);
-	clt_dlr_socket->setsockopt(ZMQ_LINGER,10);
-	clt_dlr_socket->setsockopt(ZMQ_SNDTIMEO, clt_dlr_socket_timeout);
-	clt_dlr_socket->setsockopt(ZMQ_RCVTIMEO, clt_dlr_socket_timeout);
-	clt_dlr_socket->setsockopt(ZMQ_IDENTITY, clt_ID.c_str(), clt_ID.length());
-	clt_dlr_socket->setsockopt(ZMQ_IMMEDIATE,1);
-	clt_dlr_socket->setsockopt(ZMQ_LINGER, 10);
-	clt_dlr_socket->bind(std::string("tcp://*:")+std::to_string(clt_dlr_port));
+	try{
+		clt_dlr_socket = new zmq::socket_t(*context, ZMQ_DEALER);
+		clt_dlr_socket->setsockopt(ZMQ_LINGER,10);
+		clt_dlr_socket->setsockopt(ZMQ_SNDTIMEO, clt_dlr_socket_timeout);
+		clt_dlr_socket->setsockopt(ZMQ_RCVTIMEO, clt_dlr_socket_timeout);
+		clt_dlr_socket->setsockopt(ZMQ_IDENTITY, clt_ID.c_str(), clt_ID.length());
+		clt_dlr_socket->setsockopt(ZMQ_IMMEDIATE,1);
+		clt_dlr_socket->setsockopt(ZMQ_LINGER, 10);
+		clt_dlr_socket->bind(std::string("tcp://*:")+std::to_string(clt_dlr_port));
+	} catch(zmq::error_t& e){
+		std::cerr<<"ServicesBackend caught "<<e.what()<<" creating dealer socket on port "<<clt_dlr_port<<std::endl;
+		return false;
+	}
 	
 	/*
 	// debug: check socket option
@@ -426,13 +435,13 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	return true;
 }
 
-bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results, const uint32_t* timeout_ms, std::string* err){
+bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results, const uint32_t timeout_ms, std::string* err){
 	// send a command and receive response.
 	// This is a wrapper that ensures we always return within the requested timeout.
 	if(m_verbosity>10) std::cout<<"ServicesBackend::SendCommand invoked with command '"<<command<<"'"<<std::endl;
 	
 	uint32_t timeout=command_timeout;            // default timeout for submission of command and receipt of response
-	if(timeout_ms) timeout=*timeout_ms;     // override by user if a custom timeout is given
+	if(timeout_ms) timeout=timeout_ms;     // override by user if a custom timeout is given
 	
 	// encapsulate the command in an object.
 	// We need this since we can only get one return value from an asynchronous function call,
@@ -504,7 +513,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	return false;
 }
 
-bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::string* results, const uint32_t* timeout_ms, std::string* err){
+bool ServicesBackend::SendCommand(const std::string& topic, const std::string& command, std::string* results, const uint32_t timeout_ms, std::string* err){
 	// wrapper for when user expects only one returned response part
 	if(err) *err="";
 	std::vector<std::string> resultsvec;
@@ -669,9 +678,16 @@ bool ServicesBackend::GetNextResponse(){
 	int poll_timeout = (waiting_senders.empty()) ? inpoll_timeout : 0;
 	
 	std::vector<zmq::message_t> response;
-	dlr_socket_mutex.lock();
-	int ret = PollAndReceive(clt_dlr_socket, in_polls.at(0), poll_timeout, response);
-	dlr_socket_mutex.unlock();
+	int ret;
+	try{
+		dlr_socket_mutex.lock();
+		ret = PollAndReceive(clt_dlr_socket, in_polls.at(0), poll_timeout, response);
+		dlr_socket_mutex.unlock();
+	}catch(zmq::error_t& e){
+		dlr_socket_mutex.unlock();
+		std::cerr<<"ServicesBackend caught "<<e.what()<<" receiving next response"<<std::endl;
+		return false;
+	}
 	//std::cout<<"ServicesBackend: GNR returned "<<ret<<std::endl;
 	
 	// check return status
@@ -817,18 +833,25 @@ bool ServicesBackend::SendNextCommand(){
 	// XXX note! read commands go out via a Dealer socket, which automatically prepends
 	// the ZMQ identity of the sender. Writes go out via a Pub socket that does not!
 	int ret=-99;
-	dlr_socket_mutex.lock();
 	if(m_verbosity>10) std::cout<<"ServicesBackend::SendNextCommand calling PollAndSend"
 	                            <<", message type: "<<cmd.type<<", topic '"<<cmd.topic<<"'"<<std::endl;
-	if(cmd.type=='w'){
-		// write commands go to the pub socket, read commands to the dealer
-		ret = PollAndSend(clt_pub_socket, out_polls.at(0), cmd.timeout_ms, cmd.topic, clt_ID, cmd.msg_id, cmd.command);
-	} else {
-		// clt_ID already added by dealer socket
-		ret = PollAndSend(clt_dlr_socket, out_polls.at(1), cmd.timeout_ms, cmd.topic, cmd.msg_id, cmd.command);
+	try{
+		dlr_socket_mutex.lock();
+		if(cmd.type=='w'){
+			// write commands go to the pub socket, read commands to the dealer
+			ret = PollAndSend(clt_pub_socket, out_polls.at(0), cmd.timeout_ms, cmd.topic, clt_ID, cmd.msg_id, cmd.command);
+		} else {
+			// clt_ID already added by dealer socket
+			ret = PollAndSend(clt_dlr_socket, out_polls.at(1), cmd.timeout_ms, cmd.topic, cmd.msg_id, cmd.command);
+		}
+		dlr_socket_mutex.unlock();
+	} catch(zmq::error_t& e){
+		dlr_socket_mutex.unlock();
+		std::cerr<<"ServicesBackend caught "<<e.what()<<" sending "<<cmd.type<<" message, id "<<cmd.msg_id<<std::endl;
+		ret=false;
 	}
+	
 	if(m_verbosity>10) std::cout<<"ServicesBackend::SendNextCommand send returned "<<ret<<", passing to recipient"<<std::endl;
-	dlr_socket_mutex.unlock();
 	//std::cout<<"ServicesBackend SNC P&S returned "<<ret<<std::endl;
 	
 	// notify the client that the message has been sent
@@ -844,7 +867,8 @@ bool ServicesBackend::Finalise(){
 	terminator.set_value();
 	// wait for it to finish up and return
 	Log("ServicesBackend waiting for background thread to rejoin",v_debug,m_verbosity);
-	background_thread.join();
+	// if errors during initialise, it may not be running
+	if(background_thread.joinable()) background_thread.join();
 	
 	Log("ServicesBackend Removing services",v_debug,m_verbosity);
 	//if(utilities) utilities->RemoveService("slowcontrol_write");
@@ -1037,6 +1061,7 @@ bool ServicesBackend::Ready(int timeout){
 		ret = zmq::poll(&out_polls.at(1), 1, timeout);
 		dlr_socket_mutex.unlock();
 	} catch (zmq::error_t& err){
+		dlr_socket_mutex.unlock();
 		std::cerr<<"ServicesBackend::Ready caught "<<err.what()<<std::endl;
 		return false;
 	}

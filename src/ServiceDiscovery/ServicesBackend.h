@@ -64,8 +64,8 @@ class ServicesBackend {
 	bool Finalise();
 	
 	// interfaces called by clients. These return within timeout.
-	bool SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results=nullptr, const uint32_t* timeout_ms=nullptr, std::string* err=nullptr);
-	bool SendCommand(const std::string& topic, const std::string& command, std::string* results=nullptr, const uint32_t* timeout_ms=nullptr, std::string* err=nullptr);
+	bool SendCommand(const std::string& topic, const std::string& command, std::vector<std::string>* results=nullptr, const uint32_t timeout_ms=0, std::string* err=nullptr);
+	bool SendCommand(const std::string& topic, const std::string& command, std::string* results=nullptr, const uint32_t timeout_ms=0, std::string* err=nullptr);
 	
 	// multicasts
 	bool SendMulticast(MulticastType type, std::string command, std::string* err=nullptr);
