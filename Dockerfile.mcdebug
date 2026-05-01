@@ -1,0 +1,13 @@
+### Created by Dr. Benjamin Richards
+
+### Download base image from repo
+FROM tooldaq/core
+
+### Run the following commands as super user (root):
+USER root
+ENV LD_LIBRARY_PATH=/opt/ToolFrameworkCore/lib/:/opt/ToolDAQFramework/lib/:/opt/boost_1_66_0/install/lib/:/opt/zeromq-4.0.7/lib/:$LD_LIBRARY_PATH
+RUN cd /opt/ToolDAQFramework \
+    && make MCDebug
+
+### Open terminal
+CMD ["/opt/ToolDAQFramework/MCDebug"]
