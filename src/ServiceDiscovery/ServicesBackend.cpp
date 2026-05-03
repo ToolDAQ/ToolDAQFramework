@@ -3,6 +3,7 @@
 namespace {
 	const uint32_t MAX_UDP_PACKET_SIZE = 655355;
 	const uint32_t MAX_DECOMPRESSED_MSG_SIZE = 655355;
+	const unsigned char ZSTD_MAGIC_BYTES[] = {0xFD,0x2F,0xB5,0x28};
 }
 
 using namespace ToolFramework;
@@ -219,7 +220,7 @@ bool ServicesBackend::InitZMQ(){
 		clt_pub_socket = new zmq::socket_t(*context, ZMQ_PUB);
 		clt_pub_socket->setsockopt(ZMQ_LINGER,10);
 		clt_pub_socket->setsockopt(ZMQ_SNDTIMEO, clt_pub_socket_timeout);
-		clt_pub_socket->setsockopt(ZMQ_LINGER, 10);
+		clt_pub_socket->setsockopt(ZMQ_IMMEDIATE,1);
 		clt_pub_socket->bind(std::string("tcp://*:")+std::to_string(clt_pub_port));
 	} catch(zmq::error_t& e){
 		std::cerr<<"ServicesBackend caught "<<e.what()<<" creating pub socket on port "<<clt_pub_port<<std::endl;
@@ -241,6 +242,16 @@ bool ServicesBackend::InitZMQ(){
 		std::cerr<<"ServicesBackend caught "<<e.what()<<" creating dealer socket on port "<<clt_dlr_port<<std::endl;
 		return false;
 	}
+	
+	// tell the socket to start sending monitoring messages
+	if(zmq_socket_monitor((void*)(*clt_pub_socket), "inproc://BackendPubMonitor", ZMQ_EVENT_ALL)!=0){
+		std::cerr<<"error starting monitor on pub socket: "<<zmq_strerror(errno)<<std::endl;
+	}
+	// open a pair socket to receive them
+	monitor_socket = new zmq::socket_t(*context, ZMQ_PAIR);
+	monitor_socket->setsockopt(ZMQ_LINGER,0);
+	monitor_socket->connect("inproc://BackendPubMonitor");
+	mon_poll = zmq::pollitem_t{*monitor_socket, 0, ZMQ_POLLIN, 0};
 	
 	/*
 	// debug: check socket option
@@ -368,6 +379,7 @@ bool ServicesBackend::BackgroundThread(std::future<void> signaller){
 		}
 		
 		// otherwise continue our duties
+		if(monitor_socket) CheckSocketEvents(10);
 		get_ok = GetNextResponse();
 		get_ok = SendNextCommand();
 	}
@@ -521,7 +533,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	if(resultsvec.size()>0 && results!=nullptr) *results = resultsvec.front();
 	// if more than one part returned, flag as error
 	if(resultsvec.size()>1){
-		*err += ". Command returned "+std::to_string(resultsvec.size())+" parts!";
+		if(err) *err += ". Command returned "+std::to_string(resultsvec.size())+" parts!";
 		ret=false;
 	}
 	return ret;
@@ -733,15 +745,14 @@ bool ServicesBackend::GetNextResponse(){
 	// if we also had further parts, fetch those
 	// if the command failed the response contains an error message (which will only ever be one part)
 	for(unsigned int i=2; i<response.size(); ++i){
-		
-		if(zstd_dctx && response.at(i).size() && ((char*)(response.at(i).data()))[0]=='('){
+		if(zstd_dctx && response.at(i).size()>4 && strncmp((char*)(response.at(i).data()),(char*)ZSTD_MAGIC_BYTES,4)){
 			
 			// compressed - decompress it
 			next_bytes = ZSTD_getFrameContentSize(response.at(i).data(), response.at(i).size());
 			if(next_bytes==ZSTD_CONTENTSIZE_UNKNOWN || next_bytes==ZSTD_CONTENTSIZE_ERROR){
 				// bad response
 				cmd.success = false;
-				cmd.err="Received corrupt zstd response size";
+				cmd.err="Received corrupt zstd response size, zmq reponse size: "+std::to_string(response.at(i).size());
 				Log(cmd.err,v_warning,m_verbosity);
 				break;
 			}
@@ -890,6 +901,11 @@ bool ServicesBackend::Finalise(){
 	clt_dlr_connections.clear();
 	
 	Log("ServicesBackend deleting sockets",v_debug,m_verbosity);
+	if(monitor_socket){
+		zmq_socket_monitor(clt_pub_socket, NULL, 0); // close monitor socket on pub
+		delete monitor_socket;
+		monitor_socket=nullptr;
+	}
 	delete clt_pub_socket; clt_pub_socket=nullptr;
 	delete clt_dlr_socket; clt_dlr_socket=nullptr;
 	
@@ -1049,13 +1065,11 @@ bool ServicesBackend::Receive(zmq::socket_t* sock, std::vector<zmq::message_t>& 
 
 bool ServicesBackend::Ready(int timeout){
 	
-	// poll the output sockets for listeners
-	// only poll dealer socket, pub sockets always return true immediately so ignore the timeout
-	// polling the input socket checks for a message, so don't do that.
+//	printf("ServicesBackend waiting for up to %d ms for connection to middleman\n",timeout);
+	std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+
+	// poll DEALER socket until it returns we have a listener
 	int ret;
-//	printf("ServicesBackend waiting for up to %d ms for connection on read/rep socket\n",timeout);
-//	auto timeout_ms = std::chrono::milliseconds(timeout);
-//	std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
 	try {
 		dlr_socket_mutex.lock();
 		ret = zmq::poll(&out_polls.at(1), 1, timeout);
@@ -1069,15 +1083,73 @@ bool ServicesBackend::Ready(int timeout){
 		// error polling - is the socket closed?
 		std::cerr<<"ServicesBackend::Ready error: "<<zmq_strerror(errno)<<std::endl;
 		return false;
-	} else if(ret==0){
-		// 'resource temoprarily unavailable' - no-one connected.
+	} else if(ret==0 || (out_polls.at(1).revents & ZMQ_POLLOUT)==0){
+		// 'resource temoprarily unavailable' or no pollout - no-one connected.
 //		printf("ServicesBackend::Ready - no one connected (%s)\n", zmq_strerror(errno));
-	} else if(out_polls.at(1).revents & ZMQ_POLLOUT){
-//		printf("Connected!\n");
-		return true;
+		return false;
 	}
-//	printf("returning after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
+	if(m_verbosity) printf("Dealer connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
+	
+	// the above doesn't work for the PUB socket as they always report having a listener via POLLOUT.
+	// instead use socket monitor to listen for the connected event.
+	std::chrono::time_point<std::chrono::steady_clock> end = start+std::chrono::milliseconds{timeout};
+	std::unique_lock<std::timed_mutex> timed_locker(pub_connected_mtx, std::defer_lock);
+	if(!timed_locker.try_lock_until(end)){
+		printf("ServicesBackend::Ready - pub socket didn't get connected event\n");
+		return false;
+	}
+	if(m_verbosity) printf("Pub connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
+	// send test pub queries until one gets a reply - this may be redundant
+	std::chrono::milliseconds time_left;
+	std::string resp;
+	while(time_left>std::chrono::milliseconds{100}){
+		time_left = std::chrono::duration_cast<std::chrono::milliseconds>(end-std::chrono::steady_clock::now());
+		//std::cout<<"sending test query with time_left: "<<time_left.count()<<" ms"<<std::endl;
+		if(!SendCommand("W_QUERY"," select now()", &resp, std::min(500L,time_left.count()))){
+			std::cerr<<"timeout waiting on test pub"<<std::endl;
+		} else {
+			if(m_verbosity) std::cout<<"test pub repsonse: "<<resp<<std::endl;
+			return true;
+		}
+	}
 	
 	return false;
 	
+}
+
+void ServicesBackend::CheckSocketEvents(int timeout_ms){
+	zmq::message_t tmp, tmp2;
+	try {
+		zmq::poll(&mon_poll, 1, timeout_ms);
+		if(mon_poll.revents & ZMQ_POLLIN){
+			monitor_socket->recv(&tmp);
+			if(tmp.more()){
+				monitor_socket->recv(&tmp2);
+			} else {
+				std::cerr<<"MonitorSocket got only one part?"<<std::endl;
+			}
+			uint16_t event_id;
+			uint32_t event_val;
+			memcpy(&event_id, tmp.data(), sizeof(event_id));
+			memcpy(&event_val, (unsigned char*)tmp.data()+sizeof(event_id), sizeof(event_val));
+			std::string endpoint((char*)tmp2.data(), tmp2.size());
+			if(m_verbosity>1) std::cout<<"got event "<<event_id<<" value "<<event_val<<" for socket "<<endpoint<<std::endl;
+			if(event_id==ZMQ_EVENT_CONNECTED || event_id== ZMQ_EVENT_ACCEPTED){
+				pub_connected_mtx.unlock();
+				// if not printing out events, no point keeping the monitor open once we've spotted the connection
+				if(m_verbosity<2){
+					zmq_socket_monitor(clt_pub_socket, NULL, 0); // close monitor socket on pub
+					delete monitor_socket;
+					monitor_socket=nullptr;
+				}
+			} else if(event_id==ZMQ_EVENT_MONITOR_STOPPED){
+				//printf("monitor: stopped\n");
+				delete monitor_socket;
+				monitor_socket=nullptr;
+			}
+		}
+	} catch(zmq::error_t& e){
+		std::cerr<<"ServicesBackend::CheckSocketEvents caught "<<e.what()<<std::endl;
+	}
+	return;
 }

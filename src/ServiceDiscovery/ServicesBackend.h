@@ -90,6 +90,11 @@ class ServicesBackend {
 	zmq::socket_t* clt_pub_socket = nullptr;
 	zmq::socket_t* clt_dlr_socket = nullptr;
 	
+	std::timed_mutex pub_connected_mtx;
+	zmq::socket_t* monitor_socket = nullptr;
+	zmq::pollitem_t mon_poll;
+	void CheckSocketEvents(int timeout_ms);
+	
 	std::vector<zmq::pollitem_t> in_polls;
 	std::vector<zmq::pollitem_t> out_polls;
 	
