@@ -136,6 +136,10 @@ int DAQUtilities::UpdateConnections(std::string ServiceName, zmq::socket_t* sock
       //service->Get("remote_port",port);
       tmp="tcp://"+ tmp;
       sock->connect(tmp.c_str());
+      // trigger pub sockets to immediately send their topic subscriptions, perhaps
+      zmq::pollitem_t tmppoll{*sock, 0, ZMQ_POLLIN, 0};
+      zmq::poll(&tmppoll, 1, 0);
+
     }
     else{
       delete service;
