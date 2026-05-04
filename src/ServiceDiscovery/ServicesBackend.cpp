@@ -3,7 +3,7 @@
 namespace {
 	const uint32_t MAX_UDP_PACKET_SIZE = 655355;
 	const uint32_t MAX_DECOMPRESSED_MSG_SIZE = 655355;
-	const unsigned char ZSTD_MAGIC_BYTES[] = {0xFD,0x2F,0xB5,0x28};
+	const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
 }
 
 using namespace ToolFramework;
@@ -745,7 +745,7 @@ bool ServicesBackend::GetNextResponse(){
 	// if we also had further parts, fetch those
 	// if the command failed the response contains an error message (which will only ever be one part)
 	for(unsigned int i=2; i<response.size(); ++i){
-		if(zstd_dctx && response.at(i).size()>4 && strncmp((char*)(response.at(i).data()),(char*)ZSTD_MAGIC_BYTES,4)){
+		if(zstd_dctx && response.at(i).size()>4 && std::memcmp(response.at(i).data(),ZSTD_MAGIC_BYTES,4)==0){
 			
 			// compressed - decompress it
 			next_bytes = ZSTD_getFrameContentSize(response.at(i).data(), response.at(i).size());
