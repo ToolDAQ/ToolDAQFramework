@@ -1127,6 +1127,7 @@ void ServicesBackend::CheckSocketEvents(int timeout_ms){
 				monitor_socket->recv(&tmp2);
 			} else {
 				std::cerr<<"MonitorSocket got only one part?"<<std::endl;
+				return;
 			}
 			uint16_t event_id;
 			uint32_t event_val;
