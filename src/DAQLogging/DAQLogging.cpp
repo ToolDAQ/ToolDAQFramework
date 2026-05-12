@@ -287,16 +287,16 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 
      zmq::message_t Receive;
      LogReceiver.recv (&Receive);
-     std::istringstream ss(static_cast<char*>(Receive.data()));
+     std::string ss(static_cast<char*>(Receive.data()),Receive.size());
 
 
      if (logfile.is_open())
        {
-	 logfile << ss.str();//<<std::endl;
+	 logfile << ss;//<<std::endl;
       
        }
      
-     if(ss.str()=="Quit")running=false;
+     if(ss=="Quit")running=false;
    }
    std::cout<<"imclosing"<<std::endl;
    logfile.close();   
@@ -367,9 +367,9 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
         
        zmq::message_t Receive;
        if(LogReceiver.recv (&Receive)){
-	 std::istringstream ss(static_cast<char*>(Receive.data()));
+	 std::string ss(static_cast<char*>(Receive.data()),Receive.size());
 	 
-	 if(ss.str()=="Quit"){
+	 if(ss=="Quit"){
 	   //printf("%s \n","received quit");
 	   running=false;
 	 }
@@ -388,13 +388,13 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 	   outmessage.Set("msg_id",msg_id);
 	   outmessage.Set("msg_time", isot.str());
 	   outmessage.Set("msg_type", "Log");
-	   outmessage.Set("msg_value",ss.str());
+	   outmessage.Set("msg_value",ss);
 	   */
 	   outmessage.Set("topic","logging");
 	   outmessage.Set("time", isot.str());
 	   outmessage.Set("device",args->m_service);
 	   outmessage.Set("severity","logging");
-	   outmessage.Set("message",ss.str());
+	   outmessage.Set("message",ss);
 	     
 	   std::string rmessage;
 	   outmessage>>rmessage;
@@ -459,7 +459,7 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 
        zmq::message_t Receive;
        if(LogReceiver.recv (&Receive)){
-	 std::istringstream ss(static_cast<char*>(Receive.data()));
+	 std::string ss(static_cast<char*>(Receive.data()),Receive.size());
 
 
 	 boost::posix_time::ptime t = boost::posix_time::microsec_clock::universal_time();
@@ -474,7 +474,7 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 	 outmessage.Set("msg_id",msg_id);
 	 *outmessage["msg_time"]=isot.str();
 	 *outmessage["msg_type"]="Log";
-	 outmessage.Set("msg_value",ss.str());
+	 outmessage.Set("msg_value",ss);
 
 
 	 for(std::map<std::string,zmq::socket_t*>::iterator it=RemoteConnections.begin(); it!=RemoteConnections.end(); ++it){
@@ -500,7 +500,7 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 	 }
 	 
 	 
-	 if(ss.str()=="Quit"){
+	 if(ss=="Quit"){
 	   //printf("%s \n","received quit");
 	   running=false;
 	 }
@@ -536,7 +536,8 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 	 //printf("sent sd req \n");	 
 	 zmq::message_t receive;
 	 if(Ireceive.recv(&receive)){
-	   std::istringstream iss(static_cast<char*>(receive.data()));
+	   std::string ss(static_cast<char*>(receive.data()),receive.size());
+	   std::istringstream iss(ss);
 	   //printf("received from sd \n");	   
 
 	   int size;
@@ -560,8 +561,8 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
 	     zmq::message_t servicem;
 	     Ireceive.recv(&servicem);
 	     
-	     std::istringstream ss(static_cast<char*>(servicem.data()));
-	     service->JsonParser(ss.str());
+	     std::string ss2(static_cast<char*>(servicem.data()),servicem.size());
+	     service->JsonParser(ss2);
 	     
 	     std::string servicetype;
 	     std::string uuid;

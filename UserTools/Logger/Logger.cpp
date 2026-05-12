@@ -46,13 +46,13 @@ bool Logger::Execute(){
     zmq::message_t Rmessage;
     if(  LogReceiver->recv (&Rmessage)){
       // printf("got a message \n");
-      std::istringstream ss(static_cast<char*>(Rmessage.data()));
+      std::string ss(static_cast<char*>(Rmessage.data()),Rmessage.size());
       
-      *m_log<<ss.str()<<std::flush;
+      *m_log<<ss<<std::flush;
       
       Store bb;
       
-      bb.JsonParser(ss.str());
+      bb.JsonParser(ss);
       
       *m_log<<*(bb["msg_value"])<<std::flush;
     }

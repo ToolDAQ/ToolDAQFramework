@@ -169,7 +169,8 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
       zmq::message_t commands;
       Ireceive.recv(&commands);
       
-      std::istringstream tmp(static_cast<char*>(commands.data()));
+      std::string stmp(static_cast<char*>(commands.data()),commands.size());
+      std::istringstream tmp(stmp);
       std::string command;
       std::string service;
       boost::uuids::uuid uuid;
@@ -324,9 +325,9 @@ void* ServiceDiscovery::MulticastPublishThread(void* arg){
             if(in[0].revents & ZMQ_POLLIN){
               zmq::message_t Ereceive;
               StatusCheck.recv (&Ereceive);
-              std::istringstream ss(static_cast<char*>(Ereceive.data()));
+              std::string ss(static_cast<char*>(Ereceive.data()),Ereceive.size());
               
-              mm.JsonParser(ss.str());
+              mm.JsonParser(ss);
             }
           }
         }
@@ -580,7 +581,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
           
           Store* newservice= new Store();
           newservice->Set("ip",inet_ntoa(addr.at(i).sin_addr));
-          newservice->JsonParser(message);
+          newservice->JsonParser(std::string(&message[0],cnt));
           
           std::string uuid;
           newservice->Get("uuid",uuid);
@@ -665,7 +666,8 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
       
       if(Ireceive.recv(&comm)){
         
-        std::istringstream iss(static_cast<char*>(comm.data()));
+        std::string ss(static_cast<char*>(comm.data()),comm.size());
+        std::istringstream iss(ss);
         std::string arg1="";
         std::string arg2="";
         
@@ -676,9 +678,10 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
           //printf("d2\n");
           //zmq::message_t sizem(512);
           int size= RemoteServices.size();
-          zmq::message_t sizem(sizeof size);
+          std::string sizes = std::to_string(size);
+          zmq::message_t sizem(sizes.length()+1);
           
-          snprintf ((char *) sizem.data(), sizeof size , "%d" ,size) ;
+          snprintf ((char *) sizem.data(), sizes.length()+1 , "%d" ,size) ;
           
           //           zmq::poll(out,1,1000);
           

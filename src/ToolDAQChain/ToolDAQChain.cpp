@@ -246,8 +246,7 @@ void ToolDAQChain::Remote(){
     std::string command="";
     if(Ireceiver.recv(&message, ZMQ_NOBLOCK)){
       
-      std::istringstream iss(static_cast<char*>(message.data()));
-      command=iss.str();
+      command = std::string(static_cast<char*>(message.data()),message.size());
 
       Store rr;
       rr.JsonParser(command);
