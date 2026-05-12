@@ -119,7 +119,8 @@ namespace ToolFramework{
       
       if(sock->recv(&message)){   
 	
-	std::istringstream iss(static_cast<char*>(message.data()));
+	std::string ss(static_cast<char*>(message.data()),message.size());
+	std::istringstream iss(ss);
 	
 	//      long long unsigned int tmpP;
 	unsigned long tmpP;

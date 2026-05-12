@@ -78,7 +78,8 @@ int main(int argc, char** argv){
       
       zmq::message_t receive;
       Ireceive.recv(&receive);
-      std::istringstream iss(static_cast<char*>(receive.data()));
+      std::string ss(static_cast<char*>(receive.data()),receive.size());
+      std::istringstream iss(ss);
       
       int size;
       iss>>size;
@@ -97,8 +98,8 @@ int main(int argc, char** argv){
 	zmq::message_t servicem;
 	Ireceive.recv(&servicem);
 	
-	std::istringstream ss(static_cast<char*>(servicem.data()));
-	service->JsonParser(ss.str());
+	std::string ss(static_cast<char*>(servicem.data()),servicem.size());
+	service->JsonParser(ss);
 	std::string name;
 	name=(*service).Get<std::string>("msg_value");
 	
@@ -236,10 +237,7 @@ int main(int argc, char** argv){
 	  
 	  zmq::message_t receive;
 	  if(ServiceSend.recv(&receive)){
-	    std::istringstream iss(static_cast<char*>(receive.data()));
-	    
-	    std::string answer;
-	    answer=iss.str();
+	    std::string answer(static_cast<char*>(receive.data()),receive.size());
 	    
 	    Store rr;
 	    rr.JsonParser(answer);
@@ -364,10 +362,7 @@ int main(int argc, char** argv){
 	    
 	    zmq::message_t receive;
 	    if(ServiceSend.recv(&receive)){
-	      std::istringstream iss(static_cast<char*>(receive.data()));
-	      
-	      std::string answer;
-	      answer=iss.str();
+	      std::string answer(static_cast<char*>(receive.data()),receive.size());
 	      
 	      Store rr;
 	      rr.JsonParser(answer);

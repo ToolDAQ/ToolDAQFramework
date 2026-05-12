@@ -103,7 +103,7 @@ int main(){
 	//	break;
 	//} 
 	//else if (cnt > 0){
-    printf("%s: message = \"%s\"\n", inet_ntoa(addr.sin_addr), message);
+    printf("%s: message = \"%.*s\"\n", inet_ntoa(addr.sin_addr), cnt, message);
 	
 	//if(message[0]!='[') break;
 	
