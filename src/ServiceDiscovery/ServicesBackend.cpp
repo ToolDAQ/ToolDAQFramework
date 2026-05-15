@@ -379,7 +379,7 @@ bool ServicesBackend::BackgroundThread(std::future<void> signaller){
 		}
 		
 		// otherwise continue our duties
-		if(monitor_socket) CheckSocketEvents(10);
+		if(monitor_socket) CheckSocketEvents(0);
 		get_ok = GetNextResponse();
 		get_ok = SendNextCommand();
 	}
@@ -902,7 +902,7 @@ bool ServicesBackend::Finalise(){
 	
 	Log("ServicesBackend deleting sockets",v_debug,m_verbosity);
 	if(monitor_socket){
-		zmq_socket_monitor(clt_pub_socket, NULL, 0); // close monitor socket on pub
+		zmq_socket_monitor((void*)(*clt_pub_socket), NULL, 0); // close monitor socket on pub
 		delete monitor_socket;
 		monitor_socket=nullptr;
 	}
@@ -1139,7 +1139,9 @@ void ServicesBackend::CheckSocketEvents(int timeout_ms){
 				pub_connected_mtx.unlock();
 				// if not printing out events, no point keeping the monitor open once we've spotted the connection
 				if(m_verbosity<2){
-					zmq_socket_monitor(clt_pub_socket, NULL, 0); // close monitor socket on pub
+					if(zmq_socket_monitor((void*)(*clt_pub_socket), NULL, 0)){ // close monitor socket on pub
+						std::cerr<<"error stopping monitor on pub socket: "<<zmq_strerror(errno)<<std::endl;
+					}
 					delete monitor_socket;
 					monitor_socket=nullptr;
 				}
