@@ -1104,7 +1104,7 @@ bool ServicesBackend::Ready(int timeout){
 	std::chrono::milliseconds time_left = std::chrono::duration_cast<std::chrono::milliseconds>(end-std::chrono::steady_clock::now());
 	while(time_left>std::chrono::milliseconds{100}){
 		//std::cout<<"sending test query with time_left: "<<time_left.count()<<" ms"<<std::endl;
-		if(!SendCommand("W_QUERY"," select now()", &resp, std::min(500L,time_left.count()))){
+		if(!SendCommand("W_QUERY"," select now()", &resp, std::min(500LL,time_left.count()))){
 			std::cerr<<"timeout waiting on test pub"<<std::endl;
 		} else {
 			if(m_verbosity) std::cout<<"test pub repsonse: "<<resp<<std::endl;
