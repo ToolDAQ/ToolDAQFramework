@@ -11,6 +11,11 @@ SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
   alert_functions=0;
   alert_functions_mutex=0;
   SC_vars=0;
+  
+  m_pub = 0;
+  pub_monitor_socket = 0;
+  pub_connected_mtx = 0;
+  
 }
 
 SlowControlCollectionThread_args::~SlowControlCollectionThread_args(){
@@ -25,6 +30,16 @@ SlowControlCollectionThread_args::~SlowControlCollectionThread_args(){
   alert_functions=0;
   alert_functions_mutex=0;
   SC_vars=0;
+  
+  if(pub_monitor_socket){
+    if(m_pub) zmq_socket_monitor((void*)(*m_pub), NULL, 0); // stop pub socket sending events
+    delete (*pub_monitor_socket);
+    *pub_monitor_socket=nullptr;
+    pub_monitor_socket = nullptr;
+    pub_connected_mtx = 0;
+  }
+  m_pub = 0;
+  
 }
 
 SlowControlCollection::SlowControlCollection(){
@@ -44,7 +59,7 @@ SlowControlCollection::SlowControlCollection(){
 
 SlowControlCollection::~SlowControlCollection(){
 
-  Stop();  
+  Stop();
   
 }
 
@@ -97,7 +112,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       std::stringstream tmp;
       tmp << "tcp://*:" << alert_send_port;
       m_pub->bind(tmp.str().c_str());
-
+      
       if(!m_util->AddPort("alerts",alert_send_port)){
 
 	delete m_pub;
@@ -106,11 +121,25 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
 
 	delete args;
 	args=0;
-      
-	
+        
 	std::clog<<"Error adding alert send port to SD"<<std::endl;
 	return false;
-      } 
+      }
+      
+      if(m_thread){
+        // tell the socket to send monitoring messages so we can identify when its connected
+        if(zmq_socket_monitor((void*)(*m_pub), "inproc://AlertSendMonitor", ZMQ_EVENT_ALL)!=0){
+          std::cerr<<"error starting monitor on alert send socket: "<<zmq_strerror(errno)<<std::endl;
+        }
+        // open a pair socket to receive them
+        pub_monitor_socket = new zmq::socket_t(*context, ZMQ_PAIR);
+        pub_monitor_socket->setsockopt(ZMQ_LINGER,0);
+        pub_monitor_socket->connect("inproc://AlertSendMonitor");
+        pub_connected_mtx.lock(); // signal connection by unlocking this mutex
+        args->m_pub = m_pub;
+        args->pub_monitor_socket = &pub_monitor_socket;
+        args->pub_connected_mtx = &pub_connected_mtx;
+      }
       
     }
     
@@ -214,7 +243,8 @@ bool SlowControlCollection::InitThreadedReceiver(zmq::context_t* context, int po
 void SlowControlCollection::Thread(Thread_args* arg){
   
   SlowControlCollectionThread_args* args=reinterpret_cast<SlowControlCollectionThread_args*>(arg);
-
+  if(args->pub_monitor_socket) CheckReady(args->pub_monitor_socket, args->pub_connected_mtx, args->m_pub);
+  
   if(args->alerts_receive)  zmq::poll(&(args->items[0]), 2, args->poll_length);
   else zmq::poll(&(args->items[0]), 1, args->poll_length);
     
@@ -690,3 +720,57 @@ void SlowControlCollection::TestingEnable(){
 void SlowControlCollection::TestingDisable(){
   m_testing=false;
 }
+
+// non-blocking function to check if alert send socket is connected
+void SlowControlCollection::CheckReady(zmq::socket_t**& mon_sock_ptr, std::timed_mutex* connected_mtx, zmq::socket_t* m_pub){
+  // FIXME we could extend this like the ServicesBackend to wait until all sockets are ready, not just the alert send
+  zmq::socket_t* mon_sock = *mon_sock_ptr;
+  zmq::pollitem_t poller = zmq::pollitem_t{*mon_sock, 0, ZMQ_POLLIN, 0};
+  try {
+    zmq::poll(&poller, 1, 0);
+    if(poller.revents & ZMQ_POLLIN){
+      zmq::message_t tmp, tmp2;
+      mon_sock->recv(&tmp);
+      if(tmp.more()){
+        mon_sock->recv(&tmp2);
+      } else {
+        std::cerr<<"MonitorSocket got only one part?"<<std::endl;
+        return;
+      }
+      uint16_t event_id;
+      uint32_t event_val;
+      memcpy(&event_id, tmp.data(), sizeof(event_id));
+      memcpy(&event_val, (unsigned char*)tmp.data()+sizeof(event_id), sizeof(event_val));
+      /*if(m_verbosity>1){
+        std::string endpoint((char*)tmp2.data(), tmp2.size());
+        std::cout<<"got event "<<event_id<<" value "<<event_val<<" for socket "<<endpoint<<std::endl;
+      }*/
+      if(event_id==ZMQ_EVENT_CONNECTED || event_id== ZMQ_EVENT_ACCEPTED){
+        connected_mtx->unlock();
+        if(true){ // set to false to continue receiving future events
+          if(zmq_socket_monitor((void*)(*m_pub), NULL, 0)){ // stop pub socket sending events
+            std::cerr<<"error stopping monitor on pub socket: "<<zmq_strerror(errno)<<std::endl;
+          }
+          delete mon_sock;
+          *mon_sock_ptr=nullptr;
+          mon_sock_ptr = nullptr;
+        }
+      } else if(event_id==ZMQ_EVENT_MONITOR_STOPPED){
+        //printf("monitor: stopped\n");
+        delete mon_sock;
+        *mon_sock_ptr = nullptr;
+        mon_sock_ptr = nullptr;
+      }
+    }
+  } catch(zmq::error_t& e){
+    std::cerr<<"SlowControlCollection::CheckSocketEvents caught "<<e.what()<<std::endl;
+  }
+  return;
+}
+
+// blocking function to wait for up to timeout ms for alert send socket to connect
+bool SlowControlCollection::Ready(int timeout_ms){
+  std::unique_lock<std::timed_mutex> timed_locker(pub_connected_mtx, std::defer_lock);
+  return timed_locker.try_lock_for(std::chrono::milliseconds(timeout_ms));
+}
+

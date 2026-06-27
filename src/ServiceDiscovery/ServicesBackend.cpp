@@ -252,6 +252,7 @@ bool ServicesBackend::InitZMQ(){
 	monitor_socket->setsockopt(ZMQ_LINGER,0);
 	monitor_socket->connect("inproc://BackendPubMonitor");
 	mon_poll = zmq::pollitem_t{*monitor_socket, 0, ZMQ_POLLIN, 0};
+	pub_connected_mtx.lock();
 	
 	/*
 	// debug: check socket option
