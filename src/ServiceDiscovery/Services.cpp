@@ -102,7 +102,12 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
 }
 
 bool Services::Ready(const unsigned int timeout){
-  return m_backend_client.Ready(timeout);
+  std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+  if(m_backend_client.Ready(timeout)){
+    int ms_left = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-start).count();
+    return sc_vars->Ready(ms_left);
+  }
+  return false;
 }
 
 // ===========================================================================
