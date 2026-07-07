@@ -151,6 +151,42 @@ int DAQUtilities::UpdateConnections(std::string ServiceName, zmq::socket_t* sock
   return connections.size();
 }
 
+int DAQUtilities::GetServices(std::vector<Store> &services){
+  
+  
+  services.clear();
+  
+  zmq::socket_t Ireceive (*context, ZMQ_DEALER);
+  Ireceive.connect("inproc://ServiceDiscovery");
+  
+  
+  zmq::message_t send(4);
+  snprintf ((char *) send.data(), 4 , "%s" ,"All") ;
+  
+  
+  Ireceive.send(send);
+  
+  zmq::message_t receive;
+  Ireceive.recv(&receive);
+  std::istringstream iss(static_cast<char*>(receive.data()));
+  
+  int size;
+  iss>>size;
+  
+  for(int i=0;i<size;i++){
+
+    services.emplace_back();    
+    
+    zmq::message_t servicem;
+    Ireceive.recv(&servicem);
+    
+    std::istringstream ss(static_cast<char*>(servicem.data()));
+    services.back().JsonParser(ss.str());
+  } 
+  
+  return services.size();
+}
+
 
 
 DAQThread_args* DAQUtilities::CreateThread(std::string ThreadName,  void (*func)(std::string)){
