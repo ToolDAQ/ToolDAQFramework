@@ -17,7 +17,7 @@ Services::Services(){
 Services::~Services(){
   
   m_backend_client.Finalise();
-  sc_vars->Stop();
+  sc_vars->Stop(); // FIXME this is called in the SlowControlCollection destructor, but if we only call it there, it hangs....
   m_utils.KillThread(&thread_args);
   m_context=nullptr;
   
@@ -50,6 +50,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   m_variables.Get("mon_merge_period_ms",mon_merge_period_ms);
   m_variables.Get("multicast_send_period_ms",multicast_send_period_ms);
   m_variables.Get("alarm_cooldown_ms",alarm_cooldown_ms);
+  m_variables.Get("verbose",m_verbose);
   
   sc_vars->InitThreadedReceiver(m_context, sc_port, 100, new_service, alert_receive_port, alerts_receive, alert_send_port, alerts_send);
   m_backend_client.SetUp(m_context);

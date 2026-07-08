@@ -58,32 +58,40 @@ SlowControlCollection::SlowControlCollection(){
 }
 
 SlowControlCollection::~SlowControlCollection(){
-
+  
   Stop();
   
 }
 
 void SlowControlCollection::Stop(){
+  if(args==nullptr){
+    //printf("args is null, assume already stopped\n");
+    return;
+  }
   //printf("p0\n");
   //  std::cout<<args<<std::endl;
   //printf("p1 %p \n",args);
-if(m_thread && args) m_util->KillThread(args);
- m_thread=false;
-   //printf("p2\n");
+  if(m_thread && args) m_util->KillThread(args);
+  m_thread=false;
+  //printf("p2\n");
   delete args;
   args=0;
-   //printf("p3\n");
+  //printf("p3\n");
   delete m_pub;
   m_pub=0;
- //printf("p4\n");
-  if(m_new_service) m_util->RemoveService("SlowControlReceiver");
+  //printf("p4\n");
+  if(m_new_service) m_util->RemovePort("sc");
+  if(m_alerts_receive) m_util->RemovePort("alertr");
+  if(m_alerts_send) m_util->RemovePort("alerts");
   m_new_service=false;
-   //printf("p5\n");
+  m_alerts_receive=false;
+  m_alerts_send=false;
+  //printf("p5\n");
   delete m_util;
   m_util=0;
-   //printf("p6\n");
+  //printf("p6\n");
   Clear();
-   //printf("p7\n");
+  //printf("p7\n");
 }
 
 bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_service, int alert_receive_port, bool alerts_receive, int alert_send_port, bool alerts_send){
@@ -129,7 +137,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       if(m_thread){
         // tell the socket to send monitoring messages so we can identify when its connected
         if(zmq_socket_monitor((void*)(*m_pub), "inproc://AlertSendMonitor", ZMQ_EVENT_ALL)!=0){
-          std::cerr<<"error starting monitor on alert send socket: "<<zmq_strerror(errno)<<std::endl;
+          std::cerr<<"SCC error starting monitor on alert send socket: "<<zmq_strerror(errno)<<std::endl;
         }
         // open a pair socket to receive them
         pub_monitor_socket = new zmq::socket_t(*context, ZMQ_PAIR);
@@ -743,13 +751,13 @@ void SlowControlCollection::CheckReady(zmq::socket_t**& mon_sock_ptr, std::timed
       memcpy(&event_val, (unsigned char*)tmp.data()+sizeof(event_id), sizeof(event_val));
       /*if(m_verbosity>1){
         std::string endpoint((char*)tmp2.data(), tmp2.size());
-        std::cout<<"got event "<<event_id<<" value "<<event_val<<" for socket "<<endpoint<<std::endl;
+        std::cout<<"SCC got event "<<event_id<<" value "<<event_val<<" for socket "<<endpoint<<std::endl;
       }*/
       if(event_id==ZMQ_EVENT_CONNECTED || event_id== ZMQ_EVENT_ACCEPTED){
         connected_mtx->unlock();
         if(true){ // set to false to continue receiving future events
           if(zmq_socket_monitor((void*)(*m_pub), NULL, 0)){ // stop pub socket sending events
-            std::cerr<<"error stopping monitor on pub socket: "<<zmq_strerror(errno)<<std::endl;
+            std::cerr<<"SCC error stopping monitor on pub socket: "<<zmq_strerror(errno)<<std::endl;
           }
           delete mon_sock;
           *mon_sock_ptr=nullptr;
