@@ -698,7 +698,7 @@ bool ServicesBackend::GetNextResponse(){
 		dlr_socket_mutex.unlock();
 	}catch(zmq::error_t& e){
 		dlr_socket_mutex.unlock();
-		std::cerr<<"ServicesBackend caught "<<e.what()<<" receiving next response"<<std::endl;
+		if(m_verbosity) std::cerr<<"ServicesBackend caught "<<e.what()<<" receiving next response"<<std::endl;
 		return false;
 	}
 	//std::cout<<"ServicesBackend: GNR returned "<<ret<<std::endl;
@@ -859,7 +859,7 @@ bool ServicesBackend::SendNextCommand(){
 		dlr_socket_mutex.unlock();
 	} catch(zmq::error_t& e){
 		dlr_socket_mutex.unlock();
-		std::cerr<<"ServicesBackend caught "<<e.what()<<" sending "<<cmd.type<<" message, id "<<cmd.msg_id<<std::endl;
+		if(m_verbosity) std::cerr<<"ServicesBackend caught "<<e.what()<<" sending "<<cmd.type<<" message, id "<<cmd.msg_id<<std::endl;
 		ret=false;
 	}
 	
@@ -1012,7 +1012,7 @@ int ServicesBackend::PollAndReceive(zmq::socket_t* sock, zmq::pollitem_t poll, u
 	try {
 		get_ok = zmq::poll(&poll, 1, timeout);
 	} catch (zmq::error_t& err){
-		std::cerr<<"ServicesBackend::PollAndReceive poller caught "<<err.what()<<std::endl;
+		if(m_verbosity) std::cerr<<"ServicesBackend::PollAndReceive poller caught "<<err.what()<<std::endl;
 		get_ok = -1;
 	}
 	if(get_ok<0){
@@ -1077,12 +1077,12 @@ bool ServicesBackend::Ready(int timeout){
 		dlr_socket_mutex.unlock();
 	} catch (zmq::error_t& err){
 		dlr_socket_mutex.unlock();
-		std::cerr<<"ServicesBackend::Ready caught "<<err.what()<<std::endl;
+		if(m_verbosity) std::cerr<<"ServicesBackend::Ready caught "<<err.what()<<std::endl;
 		return false;
 	}
 	if(ret<0){
 		// error polling - is the socket closed?
-		std::cerr<<"ServicesBackend::Ready error: "<<zmq_strerror(errno)<<std::endl;
+		if(m_verbosity) std::cerr<<"ServicesBackend::Ready error: "<<zmq_strerror(errno)<<std::endl;
 		return false;
 	} else if(ret==0 || (out_polls.at(1).revents & ZMQ_POLLOUT)==0){
 		// 'resource temoprarily unavailable' or no pollout - no-one connected.
@@ -1106,7 +1106,7 @@ bool ServicesBackend::Ready(int timeout){
 	while(time_left>std::chrono::milliseconds{100}){
 		//std::cout<<"sending test query with time_left: "<<time_left.count()<<" ms"<<std::endl;
 		if(!SendCommand("W_QUERY"," select now()", &resp, std::min(500L,time_left.count()))){
-			std::cerr<<"timeout waiting on test pub"<<std::endl;
+			if(m_verbosity) std::cerr<<"timeout waiting on test pub"<<std::endl;
 		} else {
 			if(m_verbosity) std::cout<<"test pub repsonse: "<<resp<<std::endl;
 			return true;
@@ -1127,7 +1127,7 @@ void ServicesBackend::CheckSocketEvents(int timeout_ms){
 			if(tmp.more()){
 				monitor_socket->recv(&tmp2);
 			} else {
-				std::cerr<<"MonitorSocket got only one part?"<<std::endl;
+				if(m_verbosity) std::cerr<<"MonitorSocket got only one part?"<<std::endl;
 				return;
 			}
 			uint16_t event_id;
@@ -1141,7 +1141,7 @@ void ServicesBackend::CheckSocketEvents(int timeout_ms){
 				// if not printing out events, no point keeping the monitor open once we've spotted the connection
 				if(m_verbosity<2){
 					if(zmq_socket_monitor((void*)(*clt_pub_socket), NULL, 0)){ // close monitor socket on pub
-						std::cerr<<"error stopping monitor on pub socket: "<<zmq_strerror(errno)<<std::endl;
+						if(m_verbosity) std::cerr<<"error stopping monitor on pub socket: "<<zmq_strerror(errno)<<std::endl;
 					}
 					delete monitor_socket;
 					monitor_socket=nullptr;
@@ -1153,7 +1153,7 @@ void ServicesBackend::CheckSocketEvents(int timeout_ms){
 			}
 		}
 	} catch(zmq::error_t& e){
-		std::cerr<<"ServicesBackend::CheckSocketEvents caught "<<e.what()<<std::endl;
+		if(m_verbosity) std::cerr<<"ServicesBackend::CheckSocketEvents caught "<<e.what()<<std::endl;
 	}
 	return;
 }
