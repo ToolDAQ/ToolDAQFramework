@@ -201,7 +201,7 @@ bool ServicesBackend::InitZMQ(){
 	// so seems to need to set it manually to be able to know what the ID is, and
 	// insert it into the write commands.
 	// FIXME replace with whatever ben wants?
-	clt_ID=m_variables.Get<std::string>("UUID");
+	clt_ID=m_variables.Get<std::string>("service_name");
 
 	/*
 	get_ok = m_variables.Get("ZMQ_IDENTITY",clt_ID);
