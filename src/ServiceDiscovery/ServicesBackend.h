@@ -114,7 +114,7 @@ class ServicesBackend {
 	std::queue<std::pair<Command, std::promise<int>>> waiting_senders;
 	std::map<uint32_t, std::promise<Command>> waiting_recipients;
 	
-	void Log(std::string msg, int msg_verb, int verbosity); //??  generalise private
+	void Log(std::string msg, int msg_verb, int verbosity=-999); //??  generalise private
 	bool InitZMQ(); //private
 	bool InitMulticast(); // private
 	bool RegisterServices(); //private

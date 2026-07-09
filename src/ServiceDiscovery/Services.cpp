@@ -16,9 +16,11 @@ Services::Services(){
  
 Services::~Services(){
   
-  m_backend_client.Finalise();
-  sc_vars->Stop(); // FIXME this is called in the SlowControlCollection destructor, but if we only call it there, it hangs....
+  // kill background buffering thread
   m_utils.KillThread(&thread_args);
+  // stop sc_vars before backend client finalises, because sc_vars may call services functions (for alerts) and those functions use backend client
+  sc_vars->Stop(); // stop background thread (listening for alerts etc) so we can delete the context
+  m_backend_client.Finalise();
   m_context=nullptr;
   
 }
@@ -1259,7 +1261,7 @@ void Services::BufferThread(Thread_args* args){
   }
   
   // send
-  if(m_args->services->SendLog(m_args->local_merge_buf)){
+  if(m_args->local_merge_buf.empty() || m_args->services->SendLog(m_args->local_merge_buf)){
     m_args->logging_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
   }
   
@@ -1279,7 +1281,7 @@ void Services::BufferThread(Thread_args* args){
   }
   
   // send
-  if(m_args->services->SendMonitoringData(m_args->local_merge_buf)){
+  if(m_args->local_merge_buf.empty() || m_args->services->SendMonitoringData(m_args->local_merge_buf)){
     m_args->monitoring_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
   }
   

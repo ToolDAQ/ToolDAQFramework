@@ -454,7 +454,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   
   thread_args* args= static_cast<thread_args*>(arg);
   zmq::context_t * context = args->context;
- // boost::uuids::uuid m_UUID=args->UUID;
+  // boost::uuids::uuid m_UUID=args->UUID;
   std::vector<std::string> m_multicastaddress=args->multicastaddress;
   std::vector<int> m_multicastport=args->multicastport;
   std::string m_service=args->service;
@@ -816,7 +816,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
   }
   RemoteServices.clear();
   //printf("exiting sd listen thread \n");
-  pthread_exit(NULL);
+  pthread_exit(NULL);  // should be equivalent to `return(NULL)`; https://stackoverflow.com/questions/3844678/pthread-exit-vs-return
   //return (NULL);
   
 }

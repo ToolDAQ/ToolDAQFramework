@@ -360,9 +360,11 @@ bool ServicesBackend::RegisterServices(){
 }
 
 void ServicesBackend::Log(std::string msg, int msg_verb, int verbosity){
+	//if(verbosity==-999) verbosity=m_verbosity;
 	// this is normally defined in Tool.h
 	if(m_log) m_log(msg, msg_verb, verbosity);
-	else if(msg_verb<= verbosity) std::cout<<msg<<std::endl;
+	// FIXME we need to be able to turn off all stderr output for cgi scripts...
+	else if(m_verbosity && msg_verb<=verbosity) std::cout<<msg<<std::endl;
 	return;
 }
 
@@ -404,6 +406,11 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 		multicast_socket = mon_socket;
 		socket_mtx = &mon_socket_mtx;
 		multicast_addr = &mon_addr;
+	}
+	if(multicast_socket<0){
+		Log("ServicesBackend::SendMulticast for message '"+command+"' with no socket to send on!\n",v_error,m_verbosity);
+		if(err) *err = "socket closed";
+		return false;
 	}
 	
 	// compress the message if applicable
@@ -807,7 +814,7 @@ bool ServicesBackend::GetNextResponse(){
 		send_queue_mutex.unlock();
 	} else {
 		// unknown message id?
-		Log("Unknown message id "+std::to_string(message_id_rcvd)+" with no client",v_error,m_verbosity);
+		Log("Unknown message id "+std::to_string(message_id_rcvd)+" with no client",v_warning,m_verbosity);
 		return false;
 	}
 	
@@ -880,16 +887,15 @@ bool ServicesBackend::Finalise(){
 	// wait for it to finish up and return
 	Log("ServicesBackend waiting for background thread to rejoin",v_debug,m_verbosity);
 	// if errors during initialise, it may not be running
-	if(background_thread.joinable()) background_thread.join();
+	if(background_thread.joinable()){
+		Log("ServicesBackend background thread is joinable, asking it to join",v_debug,m_verbosity);
+		background_thread.join();
+	}
 	
 	Log("ServicesBackend Removing services",v_debug,m_verbosity);
 	//if(utilities) utilities->RemoveService("slowcontrol_write");
 	if(utilities) utilities->RemovePort("db_read");
 	if(utilities) utilities->RemovePort("db_write");
-	
-	Log("ServicesBackend Closing multicast socket",v_debug,m_verbosity);
-	close(log_socket);
-	close(mon_socket);
 	
 	Log("ServicesBackend Deleting Utilities class",v_debug,m_verbosity);
 	if(utilities){
@@ -914,6 +920,12 @@ bool ServicesBackend::Finalise(){
 	in_polls.clear();
 	out_polls.clear();
 	
+	Log("ServicesBackend Closing multicast socket",v_debug,m_verbosity);
+	close(log_socket);
+	log_socket=-1;
+	close(mon_socket);
+	mon_socket=-1;
+	
 	// clear old commands and responses
 	waiting_senders = std::queue<std::pair<Command, std::promise<int>>>{};
 	waiting_recipients.clear();
@@ -922,7 +934,7 @@ bool ServicesBackend::Finalise(){
 	if(zstd_cctx) ZSTD_freeCCtx(zstd_cctx);
 	if(zstd_dctx) ZSTD_freeDCtx(zstd_dctx);
 	
-	// can't use 'Log' since we may have deleted the Logging class
+	// can't use 'Log' since we may have deleted the Logging class / closed the multicast sockets
 	if(m_verbosity>3) std::cout<<"ServicesBackend finalise done"<<std::endl;
 	
 	return true;
