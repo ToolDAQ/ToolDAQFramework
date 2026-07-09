@@ -140,11 +140,11 @@ int main(int argc, char* argv[]){
 
       direct.recv(&message);
       
-      std::istringstream iss(static_cast<char*>(message.data()));
-      //std::cout<<"Received message: "<<iss.str()<<std::endl;
+      std::string iss(static_cast<char*>(message.data()), message.size());
+      //std::cout<<"Received message: "<<iss<<std::endl;
       
       Store bb;
-      bb.JsonParser(iss.str());
+      bb.JsonParser(iss);
       
       
       std::string ret="Command not recognised (Use ? to find valid commands)";
@@ -193,7 +193,7 @@ int main(int argc, char* argv[]){
       
       else if(msg_value=="File"){
 	ret="Receiving file";
-	std::ofstream outfile (bb.Get<std::string>("var1").c_str());
+	std::ofstream outfile (bb.Get<std::string>("var1").c_str(), std::ios::binary);
 	if (outfile.is_open()){
 	  
 	  while (1) {
@@ -207,14 +207,15 @@ int main(int argc, char* argv[]){
 	      int64_t more;
 	      size_t size = sizeof(int64_t);
 	      ftp.getsockopt(ZMQ_RCVMORE, &more, &size);
-	      std::istringstream filess(static_cast<char*>(file.data()));
+	      //std::istringstream filess(static_cast<char*>(file.data());
 	      //  char *tmp=static_cast<char*>(file.data());
 	      //	std::cout<<"buf before = "<<filess.rdbuf()<<std::endl;
 	      //	filess>>tmp;	  
 	      //std::string tmp2;
 	    // filess>>tmp2;
 	    //std::cout<<"received = "<<tmp<<std::endl;
-	      outfile<<filess.rdbuf()<<"\n";
+	      outfile.write(static_cast<const char*>(file.data()),file.size());
+              outfile<<"\n";
 	      // std::cout<<"received part"<<std::endl;
 	      //file.rebuild();
 	      if (!more) break;

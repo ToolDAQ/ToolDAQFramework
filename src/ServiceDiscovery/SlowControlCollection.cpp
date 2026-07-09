@@ -244,10 +244,10 @@ void SlowControlCollection::Thread(Thread_args* arg){
       return;
     }
     
-    std::istringstream iss(static_cast<char*>(message.data()));
+    std::string iss(static_cast<char*>(message.data()),message.size());
     Store tmp;
-    //printf("iss=%s\n",iss.str().c_str());
-    tmp.JsonParser(iss.str());
+    //printf("iss=%s\n",iss.c_str());
+    tmp.JsonParser(iss);
     //tmp.Print();
     if(!tmp.Has("msg_value")){
       std::cerr<<"error: Poorly formatted slowcontrol input [no msg_value]"<<std::endl;
@@ -352,7 +352,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
       // FIXME this case should be handled! what do we do?
       std::cerr<<"failed to receive alert!"<<std::endl;
     }
-    std::istringstream iss(static_cast<char*>(message.data()));
+    std::string iss(static_cast<char*>(message.data()),message.size());
     
     // receive alert payload
     std::string payload;
@@ -363,15 +363,14 @@ void SlowControlCollection::Thread(Thread_args* arg){
         // FIXME this case should be handled! what do we do?
         std::cerr<<"failed to receive alert payload!"<<std::endl;
       }
-      payload.resize(message.size(),'\0');
-      memcpy((void*)payload.data(),message.data(),message.size());
+      payload = std::string(static_cast<char*>(message.data()),message.size());
       has_data=true;
     }
     
-    //std::cout<<iss.str()<<std::endl;
+    //std::cout<<iss<<std::endl;
     args->alert_functions_mutex->lock();
-    if(iss.str() == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
-    else if(iss.str() == "ChangeConfig"){
+    if(iss == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
+    else if(iss == "ChangeConfig"){
       if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0) return;
       (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
     }
@@ -379,19 +378,19 @@ void SlowControlCollection::Thread(Thread_args* arg){
 
     bool error = false;
     
-    if(args->alert_functions->count(iss.str())){
+    if(args->alert_functions->count(iss)){
       if(has_data){
 	try{
-	  error = !((*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str()));
+	  error = !((*(args->alert_functions))[iss](iss.c_str(), payload.c_str()));
 	}
 	catch(...){
 	  error = true;  
 	}
-	if(iss.str() == "LoadConfig"){
+	if(iss == "LoadConfig"){
 	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
 	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
 	}
-	else if(iss.str() == "ChangeConfig"){
+	else if(iss == "ChangeConfig"){
 	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeFail);
 	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeEnd);
 	  (*args->SC_vars)["NewConfig"]->SetValue(0);
@@ -400,13 +399,13 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
       else         
 	try{
-	  error=!((*(args->alert_functions))[iss.str()](iss.str().c_str(), 0));
+	  error=!((*(args->alert_functions))[iss](iss.c_str(), 0));
 	}
 	catch(...){
 	  error = true;
 	}
    
-      if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+      if(error)   std::cerr<<"alert fucntion failed: "<<iss.c_str()<<std::endl;
 	
 
  }

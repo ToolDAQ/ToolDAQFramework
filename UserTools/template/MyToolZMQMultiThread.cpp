@@ -75,8 +75,8 @@ bool MyToolZMQMultiThread::Execute(){
 
     zmq::message_t message;
     ManagerReceive->recv(&message);
-    std::istringstream iss(static_cast<char*>(message.data()));
-    *m_log<<"reply = "<<iss.str()<<std::endl;
+    std::string iss(static_cast<char*>(message.data()),message.size());
+    *m_log<<"reply = "<<iss<<std::endl;
     m_freethreads++;
 
   }
@@ -141,7 +141,7 @@ void MyToolZMQMultiThread::Thread(Thread_args* arg){
   
     zmq::message_t message;
     args->ThreadReceive->recv(&message);
-    std::istringstream iss(static_cast<char*>(message.data()));
+    std::string ss(static_cast<char*>(message.data()),message.size());
   
     sleep(10);
 
