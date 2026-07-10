@@ -1,5 +1,5 @@
-#ifndef SERIALISABLEOBJECT_H
-#define SERIALISABLEOBJECT_H
+#ifndef BSERIALISABLEOBJECT_H
+#define BSERIALISABLEOBJECT_H
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -11,7 +11,7 @@
 namespace ToolFramework{
   
   /**
-   * \class SerialisableObject
+   * \class BSerialisableObject
    *
    * An abstract base class for sustom calsses to inherit from to ensure version and type information are present, as well as a Print function and some form of sereialisation.
    *
@@ -19,33 +19,33 @@ namespace ToolFramework{
    * $Date: 2019/05/28 10:44:00 $
    */
   
-  class SerialisableObject{
+  class BSerialisableObject{
     
     friend class boost::serialization::access;
     
   public:
     
     virtual bool Print()=0; ///< Simple virtual Pritn function to ensure inhereted classes have one
-    // virtual ~SerialisableObject(){}; ///< Destructor
+    virtual ~BSerialisableObject(){}; ///< Destructor
     bool serialise; ///< Denotes if the calss should be serialised or not when added to a BoostStore. 
     
-    //protected:
+  protected:
     
-    //std::string type; ///< String to store type of Tool
-    //std::string version; ///< String to store version of Tool
+    std::string type; ///< String to store type of Tool
+    std::string version; ///< String to store version of Tool
     
     /**
        Simple Boost serialise method to serialise the membervariables of a custom class. This shuld be expanded to include the custom classes variables
        @param ar Boost archive.
        @param version of the archive.
     */
-    /*    template<class Archive> void serialize(Archive & ar, const unsigned int version){  
-	  if(serialise){
-	  ar & type;
-	  ar & version;
-	  }
-	  }
-    */
+    template<class Archive> void serialize(Archive & ar, const unsigned int version){  
+      if(serialise){
+	ar & type;
+	ar & version;
+      }
+    }
+    
     
     
     

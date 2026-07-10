@@ -13,7 +13,7 @@
 #include <iostream>
 #include <sstream>
 #include <typeinfo>
-#include <SerialisableObject.h>
+#include <BSerialisableObject.h>
 #include <PointerWrapper.h>
 #include <stdio.h>
 
