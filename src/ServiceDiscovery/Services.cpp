@@ -60,7 +60,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   sc_vars->Add("State",SlowControlElementType(INFO),0,0,false,false);
   (*sc_vars)["State"]->SetValue(0);
   
-  sc_vars->Add("LoadConfig",SlowControlElementType(VARIABLE),std::bind(&Services::LoadConfigSlowControlFunc, this, std::placeholders::_1),0,false,false);
+  sc_vars->Add("LoadConfig",SlowControlElementType(COMMAND),std::bind(&Services::LoadConfigSlowControlFunc, this, std::placeholders::_1),0,false,false);
   AlertSubscribe("LoadConfig", std::bind(&Services::LoadConfigAlertFunc, this,  std::placeholders::_1, std::placeholders::_2));
   
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";

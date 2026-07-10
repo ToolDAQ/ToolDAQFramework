@@ -201,7 +201,7 @@ bool ServicesBackend::InitZMQ(){
 	// so seems to need to set it manually to be able to know what the ID is, and
 	// insert it into the write commands.
 	// FIXME replace with whatever ben wants?
-	clt_ID=m_variables.Get<std::string>("UUID");
+	clt_ID=m_variables.Get<std::string>("service_name");
 
 	/*
 	get_ok = m_variables.Get("ZMQ_IDENTITY",clt_ID);
@@ -1117,7 +1117,7 @@ bool ServicesBackend::Ready(int timeout){
 	std::chrono::milliseconds time_left = std::chrono::duration_cast<std::chrono::milliseconds>(end-std::chrono::steady_clock::now());
 	while(time_left>std::chrono::milliseconds{100}){
 		//std::cout<<"sending test query with time_left: "<<time_left.count()<<" ms"<<std::endl;
-		if(!SendCommand("W_QUERY"," select now()", &resp, std::min(500L,time_left.count()))){
+			if(!SendCommand("W_QUERY"," select now()", &resp, std::min(decltype(time_left.count())(500), time_left.count()))){
 			if(m_verbosity) std::cerr<<"timeout waiting on test pub"<<std::endl;
 		} else {
 			if(m_verbosity) std::cout<<"test pub repsonse: "<<resp<<std::endl;
