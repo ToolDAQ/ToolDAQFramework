@@ -33,6 +33,11 @@ namespace ToolFramework{
     bool* testing;
     std::map<std::string, SlowControlElement*>* SC_vars;
     
+    // for checking when alert send socket is ready
+    zmq::socket_t* m_pub = nullptr;
+    zmq::socket_t** pub_monitor_socket = nullptr;
+    std::timed_mutex* pub_connected_mtx = nullptr;
+    
   };
   
   class SlowControlCollection{
@@ -57,6 +62,7 @@ namespace ToolFramework{
     void JsonParser(std::string json);
     void TestingEnable();
     void TestingDisable();
+    bool Ready(int timeout_ms);
     
     template<typename T> T GetValue(std::string name){
       if(!SC_vars.count(name)) return T{};
@@ -84,6 +90,11 @@ namespace ToolFramework{
     void Unpack(std::string in, std::map<std::string,std::string> &out, std::string header="");
     bool Update(std::string key, std::string value, std::string &reply, bool &strip, bool &testing);
     static bool Update( SlowControlCollection* SCC, std::string key, std::string value, std::string &reply, bool &strip, bool& testing);
+    
+    // for determining when the alert PUB socket is connected
+    zmq::socket_t* pub_monitor_socket = nullptr;
+    std::timed_mutex pub_connected_mtx;
+    static void CheckReady(zmq::socket_t**& mon_sock, std::timed_mutex* connected_mtx, zmq::socket_t* m_pub);
     
   };
   

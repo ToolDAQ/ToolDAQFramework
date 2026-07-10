@@ -16,9 +16,11 @@ Services::Services(){
  
 Services::~Services(){
   
-  m_backend_client.Finalise();
-  sc_vars->Stop();
+  // kill background buffering thread
   m_utils.KillThread(&thread_args);
+  // stop sc_vars before backend client finalises, because sc_vars may call services functions (for alerts) and those functions use backend client
+  sc_vars->Stop(); // stop background thread (listening for alerts etc) so we can delete the context
+  m_backend_client.Finalise();
   m_context=nullptr;
   
 }
@@ -50,6 +52,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   m_variables.Get("mon_merge_period_ms",mon_merge_period_ms);
   m_variables.Get("multicast_send_period_ms",multicast_send_period_ms);
   m_variables.Get("alarm_cooldown_ms",alarm_cooldown_ms);
+  m_variables.Get("verbose",m_verbose);
   
   sc_vars->InitThreadedReceiver(m_context, sc_port, 100, new_service, alert_receive_port, alerts_receive, alert_send_port, alerts_send);
   m_backend_client.SetUp(m_context);
@@ -102,7 +105,12 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
 }
 
 bool Services::Ready(const unsigned int timeout){
-  return m_backend_client.Ready(timeout);
+  std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+  if(m_backend_client.Ready(timeout)){
+    int ms_left = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-start).count();
+    return sc_vars->Ready(ms_left);
+  }
+  return false;
 }
 
 // ===========================================================================
@@ -1253,7 +1261,7 @@ void Services::BufferThread(Thread_args* args){
   }
   
   // send
-  if(m_args->services->SendLog(m_args->local_merge_buf)){
+  if(m_args->local_merge_buf.empty() || m_args->services->SendLog(m_args->local_merge_buf)){
     m_args->logging_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
   }
   
@@ -1273,7 +1281,7 @@ void Services::BufferThread(Thread_args* args){
   }
   
   // send
-  if(m_args->services->SendMonitoringData(m_args->local_merge_buf)){
+  if(m_args->local_merge_buf.empty() || m_args->services->SendMonitoringData(m_args->local_merge_buf)){
     m_args->monitoring_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
   }
   
