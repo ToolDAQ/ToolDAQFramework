@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['fastcover_5ftryparameters_5fdata_5ft_1210',['FASTCOVER_tryParameters_data_t',['../zstd_8c.html#a7509ace266912c8ba8e10d3f7fc479bb',1,'zstd.c']]],
-  ['fse_5fctable_1211',['FSE_CTable',['../zstd_8c.html#a54dd08a75764e9f6058b47735da04eea',1,'zstd.c']]]
+  ['fastcover_5ftryparameters_5fdata_5ft_1206',['FASTCOVER_tryParameters_data_t',['../zstd_8c.html#a7509ace266912c8ba8e10d3f7fc479bb',1,'zstd.c']]],
+  ['fse_5fctable_1207',['FSE_CTable',['../zstd_8c.html#a54dd08a75764e9f6058b47735da04eea',1,'zstd.c']]]
 ];

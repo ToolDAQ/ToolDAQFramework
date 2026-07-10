@@ -1,0 +1,83 @@
+\hypertarget{classToolFramework_1_1BSerialisableObject}{}\doxysection{Tool\+Framework\+::BSerialisable\+Object Class Reference}
+\label{classToolFramework_1_1BSerialisableObject}\index{ToolFramework::BSerialisableObject@{ToolFramework::BSerialisableObject}}
+
+
+{\ttfamily \#include $<$BSerialisable\+Object.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1BSerialisableObject_a07a1320a77c51343c24e851dd234b845}\label{classToolFramework_1_1BSerialisableObject_a07a1320a77c51343c24e851dd234b845}} 
+virtual bool \mbox{\hyperlink{classToolFramework_1_1BSerialisableObject_a07a1320a77c51343c24e851dd234b845}{Print}} ()=0
+\begin{DoxyCompactList}\small\item\em Simple virtual Pritn function to ensure inhereted classes have one. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classToolFramework_1_1BSerialisableObject_aa2c2cec7ae52990671d1df90f84a77f4}{serialise}}
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$class Archive $>$ }\\void \mbox{\hyperlink{classToolFramework_1_1BSerialisableObject_a95ce7246b3cef84310710cd036b5e65a}{serialize}} (Archive \&ar, const unsigned int \mbox{\hyperlink{classToolFramework_1_1BSerialisableObject_a8b317fce316582fbd8b592a19e056bbd}{version}})
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1BSerialisableObject_ac1c3edd941971c9d4f87bcb98a210777}\label{classToolFramework_1_1BSerialisableObject_ac1c3edd941971c9d4f87bcb98a210777}} 
+std\+::string \mbox{\hyperlink{classToolFramework_1_1BSerialisableObject_ac1c3edd941971c9d4f87bcb98a210777}{type}}
+\begin{DoxyCompactList}\small\item\em String to store type of Tool. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classToolFramework_1_1BSerialisableObject_a8b317fce316582fbd8b592a19e056bbd}\label{classToolFramework_1_1BSerialisableObject_a8b317fce316582fbd8b592a19e056bbd}} 
+std\+::string \mbox{\hyperlink{classToolFramework_1_1BSerialisableObject_a8b317fce316582fbd8b592a19e056bbd}{version}}
+\begin{DoxyCompactList}\small\item\em String to store version of Tool. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1BSerialisableObject_ac98d07dd8f7b70e16ccb9a01abf56b9c}\label{classToolFramework_1_1BSerialisableObject_ac98d07dd8f7b70e16ccb9a01abf56b9c}} 
+class {\bfseries boost\+::serialization\+::access}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+An abstract base class for sustom calsses to inherit from to ensure version and type information are present, as well as a Print function and some form of sereialisation.
+
+\begin{DoxyParagraph}{Author}
+B.\+Richards 
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Date}
+2019/05/28 10\+:44\+:00 
+\end{DoxyParagraph}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classToolFramework_1_1BSerialisableObject_a95ce7246b3cef84310710cd036b5e65a}\label{classToolFramework_1_1BSerialisableObject_a95ce7246b3cef84310710cd036b5e65a}} 
+\index{ToolFramework::BSerialisableObject@{ToolFramework::BSerialisableObject}!serialize@{serialize}}
+\index{serialize@{serialize}!ToolFramework::BSerialisableObject@{ToolFramework::BSerialisableObject}}
+\doxysubsubsection{\texorpdfstring{serialize()}{serialize()}}
+{\footnotesize\ttfamily template$<$class Archive $>$ \\
+void Tool\+Framework\+::\+BSerialisable\+Object\+::serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const unsigned int}]{version }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+Simple Boost serialise method to serialise the membervariables of a custom class. This shuld be expanded to include the custom classes variables 
+\begin{DoxyParams}{Parameters}
+{\em ar} & Boost archive. \\
+\hline
+{\em version} & of the archive. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classToolFramework_1_1BSerialisableObject_aa2c2cec7ae52990671d1df90f84a77f4}\label{classToolFramework_1_1BSerialisableObject_aa2c2cec7ae52990671d1df90f84a77f4}} 
+\index{ToolFramework::BSerialisableObject@{ToolFramework::BSerialisableObject}!serialise@{serialise}}
+\index{serialise@{serialise}!ToolFramework::BSerialisableObject@{ToolFramework::BSerialisableObject}}
+\doxysubsubsection{\texorpdfstring{serialise}{serialise}}
+{\footnotesize\ttfamily bool Tool\+Framework\+::\+BSerialisable\+Object\+::serialise}
+
+
+
+Destructor. 
+
+Denotes if the calss should be serialised or not when added to a \mbox{\hyperlink{classToolFramework_1_1BoostStore}{Boost\+Store}}. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\+Store/BSerialisable\+Object.\+h\end{DoxyCompactItemize}
