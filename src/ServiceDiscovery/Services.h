@@ -119,6 +119,7 @@ namespace ToolFramework {
     std::string PrintSlowControlVariables();
     std::string GetDeviceName();
     void SetVerbose(bool in);
+    static std::string JsonEscape(std::string s);
     
     template<typename T> T GetSlowControlValue(std::string name){
       return (*sc_vars)[name]->GetValue<T>();
