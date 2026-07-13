@@ -1231,6 +1231,8 @@ std::string Services::LoadConfigSlowControlFunc(const char* control){
     ret <<"Loaded config "<<base_config_id<<":"<<run_mode_config_id;
   }
   
+  // FIXME currently webpage chokes if a slow control value contains JSON
+  (*sc_vars)[control]->SetValue("");
   
   return ret.str();
   
@@ -1250,12 +1252,14 @@ void Services::BufferThread(Thread_args* args){
   // merge into a batch
   bool first=true;
   for(LogMsg& msg : *m_args->logging_buf){
+    
     m_args->local_merge_buf += std::string(first ? "" : ",")
                             + "{\"topic\":\"LOGGING\""
                             + ",\"time\":\""+TimeStringFromUnixMs(msg.timestamp)+"\""
                             + ",\"device\":\""+ msg.device +"\""
                             + ",\"severity\":"+std::to_string(int(msg.severity))
-                            + ",\"message\":\"" + msg. message + "\""
+                            // we need to escape any " or \ symbols in the user message
+                            + ",\"message\":\"" + JsonEscape(msg.message) + "\""
                             + ",\"repeats\":"+std::to_string(msg.repeats)+"}";
     first=false;
   }
@@ -1271,6 +1275,7 @@ void Services::BufferThread(Thread_args* args){
   
   first=true;
   for(std::pair<const std::string, MonitoringMsg>& msg : *m_args->monitoring_buf){
+    
     m_args->local_merge_buf += std::string(first ? "" : ",")
                             + "{\"topic\":\"MONITORING\""
                             + ",\"time\":\""+TimeStringFromUnixMs(msg.second.timestamp)+"\""
@@ -1301,6 +1306,16 @@ void Services::BufferThread(Thread_args* args){
   std::this_thread::sleep_until(m_args->last_send+m_args->multicast_send_period_ms);
   
   return;
+}
+
+std::string Services::JsonEscape(std::string s){
+  // TODO is there a more efficient way to do this...
+  std::string out;
+  for(char& a : s){
+    if(a=='"' || a=='\\') out.push_back('\\');
+    out.push_back(a);
+  }
+  return out;
 }
 
 std::string Services::GetLocalConfig(){

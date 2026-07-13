@@ -217,10 +217,17 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
     Add("Status",SlowControlElementType(INFO),0,0,false,false);
     Add("?",SlowControlElementType(BUTTON),0,0,false,true);
     SC_vars["Status"]->SetValue("N/A");
-    Add("State",SlowControlElementType(INFO),0,0,false,false);
-    SC_vars["State"]->SetValue((int)State::Inactive);
     Add("Config",SlowControlElementType(INFO),0,0,false,false);
     SC_vars["Config"]->SetValue((int)ConfigState::Unconfigured);
+    
+    Add("State",SlowControlElementType(INFO),0,0,false,false);
+    SC_vars["State"]->SetValue(0);
+    Add("ClearState",SlowControlElementType(BUTTON),
+        [this](const char*) -> std::string { ClearState(); return "OK";},
+        0,false);
+    
+    // add state to the service discovery broadcast; default is no flags (not active, no error, no warning)
+    m_util->AddPort("State",0);
     
     return true;
 }
@@ -423,26 +430,27 @@ void SlowControlCollection::Thread(Thread_args* arg){
 	  error = !((*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str()));
 	}
 	catch(...){
-	  error = true;  
+	  error = true;
 	}
 	if(iss.str() == "LoadConfig"){
 	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
 	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
 	}
-	else if(iss.str() == "ChangeConfig"){
-	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeFail);
-	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeEnd);
-	  (*args->SC_vars)["NewConfig"]->SetValue(0);
-	}
    	
       }
-      else         
+      else {
 	try{
 	  error=!((*(args->alert_functions))[iss.str()](iss.str().c_str(), 0));
 	}
 	catch(...){
 	  error = true;
 	}
+	if(iss.str() == "ChangeConfig"){
+	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeFail);
+	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeEnd);
+	  (*args->SC_vars)["NewConfig"]->SetValue(0);
+	}
+      }
    
       if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
 	
@@ -657,7 +665,7 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
       return true;
     }
     else{
-      reply=SCC->Print();   
+      reply=SCC->Print();
       //printf("reply=%s\n", reply.c_str());
       return true;
     }  
@@ -782,3 +790,34 @@ bool SlowControlCollection::Ready(int timeout_ms){
   return timed_locker.try_lock_for(std::chrono::milliseconds(timeout_ms));
 }
 
+void SlowControlCollection::SetActive(bool active){
+  int mask = 1 << (int)State::Active;
+  m_state = (active ? m_state | mask : m_state & ~mask);
+  m_util->AddPort("State",m_state);    // update service discovery broadcast value
+  SC_vars["State"]->SetValue(m_state); // update slow control value
+  return;
+}
+
+void SlowControlCollection::SetError(bool error){
+  int mask = 1 << (int)State::Error;
+  m_state = (error ? m_state | mask : m_state & ~mask);
+  m_util->AddPort("State",m_state);
+  SC_vars["State"]->SetValue(m_state);
+  return;
+}
+
+void SlowControlCollection::SetWarning(bool warn){
+  int mask = 1 << (int)State::Warning;
+  m_state = (warn ? m_state | mask : m_state & ~mask);
+  m_util->AddPort("State",m_state);
+  SC_vars["State"]->SetValue(m_state);
+  return;
+}
+
+void SlowControlCollection::ClearState(){
+  int mask = (1 << (int)State::Warning) | (1 << (int)State::Error);
+  m_state = m_state & ~mask;
+  m_util->AddPort("State",m_state);
+  SC_vars["State"]->SetValue(m_state);
+  return;
+}

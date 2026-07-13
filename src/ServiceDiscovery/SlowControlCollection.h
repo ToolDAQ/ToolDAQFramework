@@ -12,7 +12,8 @@ namespace ToolFramework{
   typedef std::function<bool(const char*, const char*)> AlertFunction;
 
   enum class ConfigState { Unconfigured=0, LoadStart=1, LoadEnd=2, LoadFail=3, ChangeStart=4, ChangeEnd=5, ChangeFail=6};
-  enum class State { Active=0, Inactive=1, Warning=2, Error=3};
+  // N.B. m_state is a bitmask, these values represent bit numbers; bit 0 is active, bit 1 is warning...
+  enum class State { Active=0, Warning=1, Error=2 };
   
   class SlowControlCollection;
   
@@ -63,6 +64,10 @@ namespace ToolFramework{
     void TestingEnable();
     void TestingDisable();
     bool Ready(int timeout_ms);
+    void SetActive(bool active);
+    void SetError(bool error);
+    void SetWarning(bool warn);
+    void ClearState();
     
     template<typename T> T GetValue(std::string name){
       if(!SC_vars.count(name)) return T{};
@@ -85,6 +90,7 @@ namespace ToolFramework{
     bool m_alerts_receive;
     bool m_alerts_send;
     bool m_testing = false;
+    int m_state = 0;
     
     static void Thread(Thread_args* arg);
     void Unpack(std::string in, std::map<std::string,std::string> &out, std::string header="");
