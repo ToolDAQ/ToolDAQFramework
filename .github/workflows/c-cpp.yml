@@ -45,12 +45,12 @@ jobs:
        && cd ToolFrameworkCore
        && make clean
        && git pull
-       && make
+       && make -j `nproc --all`
        && cd ../ToolDAQFramework
     - name: make
       run: cd /opt/ToolDAQFramework
        && make clean
-       && make
+       && make -j `nproc --all`
     - name: test
       run: cd /opt/ToolDAQFramework
        && export LD_LIBRARY_PATH=`pwd`/lib:/opt/ToolFrameworkCore/lib:/opt/zeromq-4.0.7/lib:/opt/boost_1_66_0/install/lib:$LD_LIBRARY_PATH
