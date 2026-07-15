@@ -52,5 +52,5 @@ Tools_File configfiles/ToolsConfig    # list of tools to run and their config fi
 ##### Run Type #####
 Inline 1                # number of Execute steps in program, -1 infinite loop that is ended by user 
 Interactive 0           # set to 1 if you want to run the code interactively
-Remote 0                # set to 1 if you want to run the code remotely
+Remote 0                # set to 1 if you want to run the code remotely and 2 if you want to run it remotely and auto start
 

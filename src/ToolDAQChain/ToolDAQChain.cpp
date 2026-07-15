@@ -50,7 +50,7 @@ ToolDAQChain::ToolDAQChain(std::string configfile, DataModel* data_model, int ar
   
   if(!m_data->vars.Get("Inline", m_inline))  m_inline=0;
   if(!m_data->vars.Get("Interactive", m_interactive)) m_interactive=false;
-  if(!m_data->vars.Get("Remote", m_remote)) m_remote=false;
+  if(!m_data->vars.Get("Remote", m_remote)) m_remote=0;
   
   
   unsigned int IO_Threads=1;
@@ -73,8 +73,10 @@ ToolDAQChain::ToolDAQChain(std::string configfile, DataModel* data_model, int ar
  
   if(m_inline!=0) Inline();  
   else if(m_interactive) Interactive(); 
-  else if(m_remote) Remote();
-  
+  else if(m_remote){
+    if(m_remote==2) ExecuteCommand("Start");
+    Remote();
+  }
 }
 
 ToolDAQChain::ToolDAQChain(int verbose, int errorlevel, std::string service, bool interactive, bool local, std::string log_local_path, bool remote, std::string log_address, int log_port,  bool split_output_files, int pub_sec, int kick_sec,unsigned int IO_Threads, DataModel* in_data_model){

@@ -102,7 +102,7 @@ namespace ToolFramework{
     std::string m_log_address;
     int m_log_port;
     std::string m_service;
-    bool m_remote;
+    uint16_t m_remote;
     bool m_backend_services;
     
     //socket coms and threading variables
