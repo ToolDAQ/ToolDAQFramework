@@ -164,7 +164,7 @@ void ToolDAQChain::Init(unsigned int IO_Threads){
 
   SD=new ServiceDiscovery(sendflag,receiveflag, m_remoteport, m_multicastaddress,m_multicastport,context,m_UUID,m_service,m_pub_sec,m_kick_sec);
  
-  if(m_remote) sleep(10); //needed to allow service discovery find time
+  //if(m_remote) sleep(10); //needed to allow service discovery find time
   
   //  *m_log<<MsgL(1,m_verbose)<<cyan<<"UUID = "<<m_UUID<<std::endl<<yellow<<"\n********************************************************\n"<<"**** Tool chain created ****\n"<<"********************************************************"<<std::endl;
   *m_log<<MsgL(1,m_verbose)<<cyan<<"UUID = "<<m_UUID<<yellow<<"\n********************************************************\n"<<"**** Tool chain created ****\n"<<"********************************************************"<<std::endl;

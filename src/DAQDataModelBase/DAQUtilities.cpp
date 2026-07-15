@@ -280,7 +280,7 @@ bool DAQUtilities::MessageThread(std::string ThreadName, std::string Message, bo
 }
 
 
-Thread_args* DAQUtilities::ZMQProxy(std::string name, zmq::socket_t* from_sock, zmq::socket_t* to_sock){
+Thread_args* DAQUtilities::ZMQProxy(std::string name, zmq::socket_t* from_sock, zmq::socket_t* to_sock, bool* pause, std::mutex* mtx){
   
   if(!from_sock || !to_sock) return 0;
   
@@ -296,6 +296,8 @@ Thread_args* DAQUtilities::ZMQProxy(std::string name, zmq::socket_t* from_sock, 
   args->items[0].fd=0;
   args->items[0].events=ZMQ_POLLIN;
   args->items[0].revents=0;
+  args->pause = pause;
+  args->mtx = mtx;
   
   return CreateThread(name, &Proxy_Thread, args);
   
@@ -343,16 +345,33 @@ void DAQUtilities::Proxy_Thread(Thread_args *arg){
   //   zmq::proxy(*(args->from_sock), *(args->to_sock), NULL);
   //zmq::proxy_steerable(args->from_sock, args->to_sock, NULL , args->control);
   //}
-  
-  zmq::poll(&(args->items[0]), 1, 100);
-  
-  if (args->items[0].revents & ZMQ_POLLIN){
-    
-    zmq::message_t msg;
-    args->from_sock->recv(&msg);
-    if(msg.more()) args->to_sock->send(msg, ZMQ_SNDMORE);
-    else args->to_sock->send(msg);
+
+  if(args->pause !=0 && *(args->pause)){
+    usleep(100);
+    return;
   }
   
+  try{
+    if(args->mtx != 0) std::lock_guard<std::mutex> lock(*(args->mtx));   
+    zmq::poll(&(args->items[0]), 1, 100);
+    
+    if (args->items[0].revents & ZMQ_POLLIN){
+
+      args->msgs.emplace_back();
+      if(args->from_sock->recv(&(args->msgs.back()))){ 
+	while(args->msgs.back().more()){
+	  if(!args->from_sock->recv(&(args->msgs.back()))) return;
+	}
+	
+	for(size_t i=0 ; i<args->msgs.size()-1 ; i++){  
+	  if(!args->to_sock->send(args->msgs[i], ZMQ_SNDMORE)) return;
+	}
+	if(args->to_sock->send(args->msgs.back())) return;
+      }
+	 
+      args->msgs.clear();
+    }
+  }
+  catch(...){}
   
 }

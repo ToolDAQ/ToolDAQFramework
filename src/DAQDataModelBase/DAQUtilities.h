@@ -11,6 +11,7 @@
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <Utilities.h>
+#include <mutex>
 
 namespace ToolFramework{
   
@@ -64,12 +65,14 @@ namespace ToolFramework{
   
   struct Proxy_Thread_args : public Thread_args{
     
-    zmq::socket_t* from_sock;
-    zmq::socket_t* to_sock;
+    zmq::socket_t* from_sock = 0;
+    zmq::socket_t* to_sock = 0;
     //zmq::socket_t* control;
     //bool started;
     zmq::pollitem_t items[1];
-    
+    std::mutex* mtx = 0;
+    bool* pause = 0;
+    std::vector<zmq::message_t> msgs;
   };
   
   /**
@@ -98,7 +101,7 @@ namespace ToolFramework{
     DAQThread_args* CreateThread(std::string ThreadName,  void (*func)(std::string));  //func = &my_int_func; ///< Create a simple thread that has string exchange with main thread
     bool MessageThread(DAQThread_args* args, std::string Message, bool block=true); ///< Send simple string to String thread
     bool MessageThread(std::string ThreadName, std::string Message, bool block=true); ///< Send simple string to String thread
-    Thread_args* ZMQProxy(std::string name, zmq::socket_t* sock_1, zmq::socket_t* sock_2);
+    Thread_args* ZMQProxy(std::string name, zmq::socket_t* sock_1, zmq::socket_t* sock_2, bool* pause=0, std::mutex* mtx=0);
     bool KillZMQProxy(std::string name);
     bool KillZMQProxy(Thread_args* args);
     
