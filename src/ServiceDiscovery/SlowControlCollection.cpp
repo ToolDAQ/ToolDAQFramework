@@ -694,6 +694,7 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
 	  
 	  (*SCC)[key]->SetValue(value);
 	  //(*SCC)[key]->Print();
+	  /*
 	  SCFunction tmp_func= (*SCC)[key]->GetChangeFunction();
 	  if (tmp_func!=nullptr){
 	    try{ 
@@ -703,11 +704,13 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
 	    catch(...){
 	      reply= "change function failed";
 	    }
-	  }	  
+	  }
+	  */
 	}
 	else reply = key + " locked";
       }
       else{
+	/*
 	SCFunction tmp_func= (*SCC)[key]->GetReadFunction();
 	if (tmp_func!=nullptr){
 	  try{
@@ -718,8 +721,8 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
 	  }
 	}
 	else (*SCC)[key]->GetValue(reply);
-	
-	
+	*/
+	(*SCC)[key]->GetValue(reply);	
       }
     }
     return true;

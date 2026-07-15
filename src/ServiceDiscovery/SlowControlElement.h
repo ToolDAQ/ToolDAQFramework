@@ -101,6 +101,16 @@ namespace ToolFramework{
 	  if(value>max) value=max;
 	}
       }
+      if(m_change_function!=0){
+	std::stringstream tmp;
+	tmp<<value;
+	try{
+	  m_change_function(tmp.str().c_str());
+	}
+	catch(...){
+	    std::cerr<<"failed to call change fucntion"<<std::endl;
+	}
+      }
       options.Set("value", value);
       mtx.unlock();
       return true;
@@ -110,6 +120,14 @@ namespace ToolFramework{
     template<typename T> T GetValue(){
       T tmp;
       mtx.lock();
+      if(m_read_function!=0){
+	try{
+	  options.Set("value",m_read_function(""));
+	}
+	catch(...){
+	  std::cerr<<"failed to call read fucntion"<<std::endl;
+	}
+      }
       options.Get("value", tmp);
       mtx.unlock();
       return tmp;
@@ -117,7 +135,15 @@ namespace ToolFramework{
     }
     
     template<typename T> bool GetValue(T &value){
-      mtx.lock();
+      mtx.lock();  
+      if(m_read_function!=0){
+	try{
+	  options.Set("value",m_read_function("")); 
+	}
+	catch(...){
+	  std::cerr<<"failed to call read fucntion"<<std::endl;
+	}
+      }
       bool ret=options.Get("value", value);
       mtx.unlock();
       return ret;

@@ -35,12 +35,19 @@ std::string SlowControlElement::Print(){
   else if (m_type==SlowControlElementType(OPTIONS)) out+="OPTIONS\"";
   else if (m_type==SlowControlElementType(COMMAND)) out+="COMMAND\"";
   else if (m_type==SlowControlElementType(INFO)) out+="INFO\"";
+
+    mtx.lock();
+
+  if(m_read_function!=0){
+    try{
+       options.Set("value",m_read_function(""));        
+    }
+    catch(...){
+      std::cerr<<"failed to call read fucntion"<<std::endl;
+    }
+  }
   
-  mtx.lock();
-
-
   for(std::map<std::string,std::string>::iterator it=options.begin(); it!=options.end(); it++){
-
     out+=",\""+it->first+"\":"+it->second;
   }
   out+="}";
@@ -210,6 +217,16 @@ bool SlowControlElement::SetValue(const char value[]){
 
 bool SlowControlElement::SetValue(std::string value){
   mtx.lock();
+
+  if(m_change_function!=0){
+    try{
+      m_change_function(value.c_str());
+    }
+    catch(...){
+      std::cerr<<"failed to call change fucntion"<<std::endl;
+    }
+  }
+  
   if(m_type == SlowControlElementType(VARIABLE)){
     std::stringstream tmp(value);
     double val=0;
@@ -233,6 +250,14 @@ bool SlowControlElement::SetValue(std::string value){
 
 bool SlowControlElement::GetValue(std::string &value){
   mtx.lock();
+  if(m_read_function!=0){
+    try{
+      options.Set("value",m_read_function("")); 
+    }
+    catch(...){
+      std::cerr<<"failed to call read fucntion"<<std::endl;
+    }
+  }
   if(!options.Has("value")){
     mtx.unlock();
     return false;
