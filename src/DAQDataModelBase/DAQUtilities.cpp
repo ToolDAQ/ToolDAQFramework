@@ -352,7 +352,12 @@ void DAQUtilities::Proxy_Thread(Thread_args *arg){
   }
   
   try{
-    if(args->mtx != 0) std::lock_guard<std::mutex> lock(*(args->mtx));   
+    std::unique_ptr<std::lock_guard<std::mutex> >lock;
+    
+    if(args->mtx != 0){
+      
+      lock.reset(new std::lock_guard<std::mutex>(*(args->mtx)));
+    }
     zmq::poll(&(args->items[0]), 1, 100);
     
     if (args->items[0].revents & ZMQ_POLLIN){

@@ -12,6 +12,7 @@
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <Utilities.h>
 #include <mutex>
+#include <memory>
 
 namespace ToolFramework{
   
