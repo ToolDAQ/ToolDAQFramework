@@ -82,14 +82,23 @@ Inheritance diagram for ToolFramework::Proxy_Thread_args:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a5076dd6ff905ebe65409a2156b9ece30"><td class="memItemLeft" align="right" valign="top"><a id="a5076dd6ff905ebe65409a2156b9ece30"></a>
-zmq::socket_t *&#160;</td><td class="memItemRight" valign="bottom"><b>from_sock</b></td></tr>
+zmq::socket_t *&#160;</td><td class="memItemRight" valign="bottom"><b>from_sock</b> = 0</td></tr>
 <tr class="separator:a5076dd6ff905ebe65409a2156b9ece30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6c7e88cb42d8da798318ec8aef89014"><td class="memItemLeft" align="right" valign="top"><a id="ab6c7e88cb42d8da798318ec8aef89014"></a>
-zmq::socket_t *&#160;</td><td class="memItemRight" valign="bottom"><b>to_sock</b></td></tr>
+zmq::socket_t *&#160;</td><td class="memItemRight" valign="bottom"><b>to_sock</b> = 0</td></tr>
 <tr class="separator:ab6c7e88cb42d8da798318ec8aef89014"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af77b89ce4d80a2f65123de9436832c85"><td class="memItemLeft" align="right" valign="top"><a id="af77b89ce4d80a2f65123de9436832c85"></a>
 zmq::pollitem_t&#160;</td><td class="memItemRight" valign="bottom"><b>items</b> [1]</td></tr>
 <tr class="separator:af77b89ce4d80a2f65123de9436832c85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06cc834dbfbe00d767f4e9f0d71d806b"><td class="memItemLeft" align="right" valign="top"><a id="a06cc834dbfbe00d767f4e9f0d71d806b"></a>
+std::mutex *&#160;</td><td class="memItemRight" valign="bottom"><b>mtx</b> = 0</td></tr>
+<tr class="separator:a06cc834dbfbe00d767f4e9f0d71d806b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91a5f29afe55b714744d17aa5260b088"><td class="memItemLeft" align="right" valign="top"><a id="a91a5f29afe55b714744d17aa5260b088"></a>
+bool *&#160;</td><td class="memItemRight" valign="bottom"><b>pause</b> = 0</td></tr>
+<tr class="separator:a91a5f29afe55b714744d17aa5260b088"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb61889a024dda209a43995afcb73edd"><td class="memItemLeft" align="right" valign="top"><a id="acb61889a024dda209a43995afcb73edd"></a>
+std::vector&lt; zmq::message_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>msgs</b></td></tr>
+<tr class="separator:acb61889a024dda209a43995afcb73edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/DAQDataModelBase/<a class="el" href="DAQUtilities_8h_source.html">DAQUtilities.h</a></li>
