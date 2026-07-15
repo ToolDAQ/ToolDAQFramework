@@ -74,6 +74,7 @@ ToolDAQChain::ToolDAQChain(std::string configfile, DataModel* data_model, int ar
   if(m_inline!=0) Inline();  
   else if(m_interactive) Interactive(); 
   else if(m_remote){
+    exeloop=false;
     if(m_remote==2) ExecuteCommand("Start");
     Remote();
   }
@@ -226,7 +227,7 @@ void ToolDAQChain::Remote(int portnum, std::vector<std::string> SD_address, std:
 void ToolDAQChain::Remote(){
   
   //m_verbose=false;
-  exeloop=false;
+  //exeloop=false;
 
   std::stringstream tcp;
   tcp<<"tcp://*:"<<m_remoteport;
