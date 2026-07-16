@@ -109,6 +109,8 @@ namespace ToolFramework{
 	}
 	catch(...){
 	    std::cerr<<"failed to call change fucntion"<<std::endl;
+	    mtx.unlock();
+	    reutrn false;
 	}
       }
       options.Set("value", value);
@@ -126,6 +128,8 @@ namespace ToolFramework{
 	}
 	catch(...){
 	  std::cerr<<"failed to call read fucntion"<<std::endl;
+	  mtx.unlock();
+	  return false;
 	}
       }
       options.Get("value", tmp);
@@ -142,6 +146,8 @@ namespace ToolFramework{
 	}
 	catch(...){
 	  std::cerr<<"failed to call read fucntion"<<std::endl;
+	  mtx.unlock();
+	  return false;
 	}
       }
       bool ret=options.Get("value", value);
