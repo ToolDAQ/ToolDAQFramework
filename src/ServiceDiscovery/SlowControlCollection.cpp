@@ -398,6 +398,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
       std::cerr<<"failed to receive alert!"<<std::endl;
     }
     std::istringstream iss(static_cast<char*>(message.data()));
+
     
     // receive alert payload
     std::string payload;
@@ -412,12 +413,23 @@ void SlowControlCollection::Thread(Thread_args* arg){
       memcpy((void*)payload.data(),message.data(),message.size());
       has_data=true;
     }
+
+    //int a=0;
+    while(message.more()){
+      
+      args->sub->recv(&message);
+      //memcpy((void*)payload.data(),message.data(),message.size());
+      //a++;
+    }
     
     //std::cout<<iss.str()<<std::endl;
     args->alert_functions_mutex->lock();
     if(iss.str() == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
     else if(iss.str() == "ChangeConfig"){
-      if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0) return;
+       if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0){
+	 args->alert_functions_mutex->unlock();
+	 return;
+       }
       (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
     }
     
@@ -453,7 +465,6 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
    
       if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
-	
 
  }
     args->alert_functions_mutex->unlock();
