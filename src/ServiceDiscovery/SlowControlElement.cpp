@@ -218,6 +218,14 @@ bool SlowControlElement::SetValue(const char value[]){
 bool SlowControlElement::SetValue(std::string value){
   mtx.lock();
 
+  if(m_type == SlowControlElementType(VARIABLE)){
+    std::stringstream tmp(value);
+    double val=0;
+    tmp>>val;
+    mtx.unlock();
+    return SetValue(val);
+  }
+  
   if(m_change_function!=0){
     try{
       m_change_function(value.c_str());
@@ -227,14 +235,9 @@ bool SlowControlElement::SetValue(std::string value){
     }
   }
   
-  if(m_type == SlowControlElementType(VARIABLE)){
-    std::stringstream tmp(value);
-    double val=0;
-    tmp>>val;
-    mtx.unlock();
-    return SetValue(val);
-  }
-  else if(m_type == SlowControlElementType(INFO)){ //sanitising for web printout
+  
+  
+  if(m_type == SlowControlElementType(INFO)){ //sanitising for web printout
     for(unsigned int i=0; i<value.length(); i++){
       if(value.at(i)==',') value.at(i)='.';
       else if (value.at(i)=='{') value.at(i)='[';
