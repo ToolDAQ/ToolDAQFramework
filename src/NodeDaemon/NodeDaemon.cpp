@@ -99,9 +99,9 @@ int main(int argc, char* argv[]){
   //int port=5000;
 
   std::stringstream service;
-  if(argc ==2) service<<argv[1];
+  if(argc >1) service<<argv[1];
   service<<" Node Daemon";
-
+  
   ServiceDiscovery SD(true, false, REMOTE_PORT, MULTICAST_ADDRESS, MULTICAST_PORT, &context, m_UUID, service.str());
 
   //int a =120000;
@@ -128,6 +128,28 @@ int main(int argc, char* argv[]){
   bool run=true;
   std::vector< pid_t > pids;
   //pids= new std::vector< pid_t >;
+
+  if(argc >2){
+    std::ifstream file(argv[2]);    
+    // confirm file opening
+    
+    if (!file.is_open()) {
+      // print error message and return
+      std::cerr << "Failed to open autoprocess file: " << argv[2] << std::endl;
+    }
+    else{
+      // Read the file line by line into a string
+      std::string line;
+      while (getline(file, line)) {
+	if(line[0] != '#') Start(&pids, line);
+      }
+      
+      // Close the file
+      file.close();
+    }
+    
+  }
+
   
   while (run){
     
