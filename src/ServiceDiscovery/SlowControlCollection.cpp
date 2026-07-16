@@ -708,11 +708,11 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
 	  
 	  if(!(*SCC)[key]->SetValue(value)){
 	    reply =" Error setting "+key+" to value: " + value;
-	    return flase
+	    return false;
 	  }
 	  else{
-	    reply = value
-	      return true;
+	    reply = value;
+	    return true;
 	  }
 	  //(*SCC)[key]->Print();
 	  /*

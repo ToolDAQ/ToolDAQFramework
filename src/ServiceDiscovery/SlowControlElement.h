@@ -110,7 +110,7 @@ namespace ToolFramework{
 	catch(...){
 	    std::cerr<<"failed to call change fucntion"<<std::endl;
 	    mtx.unlock();
-	    reutrn false;
+	    return false;
 	}
       }
       options.Set("value", value);
@@ -129,7 +129,7 @@ namespace ToolFramework{
 	catch(...){
 	  std::cerr<<"failed to call read fucntion"<<std::endl;
 	  mtx.unlock();
-	  return false;
+	  return tmp;
 	}
       }
       options.Get("value", tmp);
