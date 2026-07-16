@@ -181,7 +181,7 @@ $(function() {
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">catch</span>(...){</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        std::cerr&lt;&lt;<span class="stringliteral">&quot;failed to call change fucntion&quot;</span>&lt;&lt;std::endl;</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        mtx.unlock();</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        reutrn <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    }</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;      }</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      options.Set(<span class="stringliteral">&quot;value&quot;</span>, value);</div>
@@ -200,7 +200,7 @@ $(function() {
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordflow">catch</span>(...){</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;      std::cerr&lt;&lt;<span class="stringliteral">&quot;failed to call read fucntion&quot;</span>&lt;&lt;std::endl;</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;      mtx.unlock();</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      <span class="keywordflow">return</span> tmp;</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    }</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;      }</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      options.Get(<span class="stringliteral">&quot;value&quot;</span>, tmp);</div>
