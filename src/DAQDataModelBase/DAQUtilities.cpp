@@ -361,20 +361,21 @@ void DAQUtilities::Proxy_Thread(Thread_args *arg){
     zmq::poll(&(args->items[0]), 1, 100);
     
     if (args->items[0].revents & ZMQ_POLLIN){
-
+      args->msgs.clear();
+  
       args->msgs.emplace_back();
       if(args->from_sock->recv(&(args->msgs.back()))){ 
 	while(args->msgs.back().more()){
+	   args->msgs.emplace_back();
 	  if(!args->from_sock->recv(&(args->msgs.back()))) return;
 	}
 	
 	for(size_t i=0 ; i<args->msgs.size()-1 ; i++){  
 	  if(!args->to_sock->send(args->msgs[i], ZMQ_SNDMORE)) return;
 	}
-	if(args->to_sock->send(args->msgs.back())) return;
+	if(!args->to_sock->send(args->msgs.back())) return;
       }
 	 
-      args->msgs.clear();
     }
   }
   catch(...){}
