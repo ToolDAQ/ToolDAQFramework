@@ -94,6 +94,7 @@ namespace ToolFramework{
     using Utilities::CreateThread;  
     DAQUtilities(zmq::context_t* zmqcontext); ///< Simple constructor
     bool AddService(std::string ServiceName, unsigned int port, bool StatusQuery=false); ///< Broadcasts an available service (only in remote mode)
+    bool AddService(std::vector<std::string> ServiceName, std::vector<unsigned int> port, std::vector<bool> StatusQuery); ///< Broadcasts an available service (only in remote mode)
     bool RemoveService(std::string ServiceName); ///< Removes service broadcasts for a service
     bool AddPort(std::string ServiceName, unsigned int port); ///< Broadcasts an available port (only in remote mode)
     bool RemovePort(std::string ServiceName); ///< Removes port broadcasts for a service

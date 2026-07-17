@@ -78,10 +78,12 @@ int main(int argc, char** argv){
       
       zmq::message_t receive;
       Ireceive.recv(&receive);
-      std::istringstream iss(static_cast<char*>(receive.data()));
+      // std::istringstream iss(static_cast<char*>(receive.data()));
       
       int size;
-      iss>>size;
+      // iss>>size;s
+
+      std::memcpy(&size, receive.data(), sizeof(size));
       
       for(unsigned int i=0;i<RemoteServices.size();i++){
 	delete RemoteServices.at(i);
@@ -89,14 +91,13 @@ int main(int argc, char** argv){
       }
       RemoteServices.clear();
       
-      
+      //printf("size=%u\n",size);
       for(int i=0;i<size;i++){
 	
 	Store *service = new Store;
 	
 	zmq::message_t servicem;
 	Ireceive.recv(&servicem);
-	
 	std::istringstream ss(static_cast<char*>(servicem.data()));
 	service->JsonParser(ss.str());
 	std::string name;
@@ -106,7 +107,6 @@ int main(int argc, char** argv){
 	else delete service;
 	
       }
-      
       
       //      zmq::message_t tmp;
       // Ireceive.recv(&tmp);
