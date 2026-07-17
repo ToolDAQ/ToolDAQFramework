@@ -678,8 +678,8 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
           int size= RemoteServices.size();
           zmq::message_t sizem(sizeof size);
           
-          snprintf ((char *) sizem.data(), sizeof size , "%d" ,size) ;
-          
+          //snprintf ((char *) sizem.data(), sizeof size , "%d" ,size) ;
+	  std::memcpy(sizem.data(), &size,sizeof size); 
           //           zmq::poll(out,1,1000);
           
           // if (out[0].revents & ZMQ_POLLOUT){ 
@@ -689,8 +689,8 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
           if(size==0) Ireceive.send(sizem);
           else Ireceive.send(sizem,ZMQ_SNDMORE);
           
-          
-          for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ){
+          //printf("SD size=%u\n", size);
+	  for (std::map<std::string,Store*>::iterator it=RemoteServices.begin(); it!=RemoteServices.end(); ){
             
             std::string service;
             *(it->second)>>service;
@@ -717,7 +717,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
             // }
             
           }
-          // }
+	  // }
           
         }
         

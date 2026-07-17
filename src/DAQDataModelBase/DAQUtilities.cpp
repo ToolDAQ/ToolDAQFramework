@@ -26,6 +26,32 @@ bool DAQUtilities::AddService(std::string ServiceName, unsigned int port, bool S
   
 }
 
+bool DAQUtilities::AddService(std::vector<std::string> ServiceName, std::vector<unsigned int> port, std::vector<bool> StatusQuery){
+
+  bool ret = true;
+  zmq::socket_t Ireceive (*context, ZMQ_PUSH);
+  Ireceive.connect("inproc://ServicePublish");
+
+  if(ServiceName.size() != port.size() || ServiceName.size() != StatusQuery.size()) return false;
+  
+  for(size_t i=0; i<ServiceName.size(); i++){
+    
+  boost::uuids::uuid m_UUID;
+  m_UUID = boost::uuids::random_generator()();
+  
+  std::stringstream test;
+  test<<"Add "<< ServiceName.at(i) <<" "<<m_UUID<<" "<<port.at(i)<<" "<<((int)StatusQuery.at(i)) ;
+  
+  zmq::message_t send(test.str().length()+1);
+  snprintf ((char *) send.data(), test.str().length()+1 , "%s" ,test.str().c_str()) ;
+
+  ret = Ireceive.send(send) && ret;
+  }
+  return ret;
+  
+  
+}
+
 
 bool DAQUtilities::RemoveService(std::string ServiceName){
   
@@ -361,20 +387,21 @@ void DAQUtilities::Proxy_Thread(Thread_args *arg){
     zmq::poll(&(args->items[0]), 1, 100);
     
     if (args->items[0].revents & ZMQ_POLLIN){
-
+      args->msgs.clear();
+  
       args->msgs.emplace_back();
       if(args->from_sock->recv(&(args->msgs.back()))){ 
 	while(args->msgs.back().more()){
+	   args->msgs.emplace_back();
 	  if(!args->from_sock->recv(&(args->msgs.back()))) return;
 	}
 	
 	for(size_t i=0 ; i<args->msgs.size()-1 ; i++){  
 	  if(!args->to_sock->send(args->msgs[i], ZMQ_SNDMORE)) return;
 	}
-	if(args->to_sock->send(args->msgs.back())) return;
+	if(!args->to_sock->send(args->msgs.back())) return;
       }
 	 
-      args->msgs.clear();
     }
   }
   catch(...){}
