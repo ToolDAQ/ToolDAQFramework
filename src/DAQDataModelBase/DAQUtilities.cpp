@@ -26,6 +26,32 @@ bool DAQUtilities::AddService(std::string ServiceName, unsigned int port, bool S
   
 }
 
+bool DAQUtilities::AddService(std::vector<std::string> ServiceName, std::vector<unsigned int> port, std::vector<bool> StatusQuery){
+
+  bool ret = true;
+  zmq::socket_t Ireceive (*context, ZMQ_PUSH);
+  Ireceive.connect("inproc://ServicePublish");
+
+  if(ServiceName.size() != port.size() || ServiceName.size() != StatusQuery.size()) return false;
+  
+  for(size_t i=0; i<ServiceName.size(); i++){
+    
+  boost::uuids::uuid m_UUID;
+  m_UUID = boost::uuids::random_generator()();
+  
+  std::stringstream test;
+  test<<"Add "<< ServiceName.at(i) <<" "<<m_UUID<<" "<<port.at(i)<<" "<<((int)StatusQuery.at(i)) ;
+  
+  zmq::message_t send(test.str().length()+1);
+  snprintf ((char *) send.data(), test.str().length()+1 , "%s" ,test.str().c_str()) ;
+
+  ret = Ireceive.send(send) && ret;
+  }
+  return ret;
+  
+  
+}
+
 
 bool DAQUtilities::RemoveService(std::string ServiceName){
   
