@@ -119,10 +119,12 @@ int DAQUtilities::UpdateConnections(std::string ServiceName, zmq::socket_t* sock
   
   zmq::message_t receive;
   Ireceive.recv(&receive);
-  std::istringstream iss(static_cast<char*>(receive.data()));
+  //std::istringstream iss(static_cast<char*>(receive.data()));
   
   int size;
-  iss>>size;
+  //iss>>size;
+
+  std::memcpy(&size, receive.data(), sizeof(size));
   
   for(int i=0;i<size;i++){
     
@@ -194,10 +196,11 @@ int DAQUtilities::GetServices(std::vector<Store> &services){
   
   zmq::message_t receive;
   Ireceive.recv(&receive);
-  std::istringstream iss(static_cast<char*>(receive.data()));
+  //std::istringstream iss(static_cast<char*>(receive.data()));
   
   int size;
-  iss>>size;
+  //iss>>size;
+  std::memcpy(&size, receive.data(), sizeof(size));
   
   for(int i=0;i<size;i++){
 
