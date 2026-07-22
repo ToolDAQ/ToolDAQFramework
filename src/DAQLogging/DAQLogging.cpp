@@ -360,7 +360,7 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
      //printf("%s \n","in log loop");
   
      //  if (RemoteConnections.size()==0) sleep(1);
-     zmq::poll(&items[0],2,1000);
+     zmq::poll(&items[0],1,1000);
      
      if ((items[0].revents & ZMQ_POLLIN ) && running){ //log a 1message so send it
        // printf("received message to send \n");
