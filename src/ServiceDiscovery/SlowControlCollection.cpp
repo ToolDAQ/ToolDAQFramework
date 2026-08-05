@@ -747,10 +747,6 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
 	  reply="Error getting value from key: "+key;
 	  return false;
 	}
-	else{
-	  reply=value;
-	  return true;
-	}
       }
     }
     return true;
