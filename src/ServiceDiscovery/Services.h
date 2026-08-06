@@ -112,6 +112,7 @@ namespace ToolFramework {
     bool AddSlowControlVariable(std::string name, SlowControlElementType type, std::function<std::string(const char*)> change_function=nullptr, std::function<std::string(const char*)> read_function=nullptr);
     bool RemoveSlowControlVariable(std::string name);
     void ClearSlowControlVariables();
+    void ResetConfigIDs();
     
     bool AlertSubscribe(std::string alert, std::function<bool(const char*, const char*)> function);
     bool AlertSend(std::string alert, std::string payload);

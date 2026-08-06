@@ -11,6 +11,8 @@ Services::Services(){
   m_context=0;
   m_name="";
   m_verbose=false;
+  m_base_config_id=0;
+  m_run_mode_config_id=0;
 
 }
  
@@ -1225,7 +1227,7 @@ std::string Services::LoadConfigSlowControlFunc(const char* control){
 
     if(count==5){
       ret <<"Failed to load config "<<base_config_id<<":"<<run_mode_config_id;
-      return ret.str();;
+      return ret.str();
     }
     
     (*sc_vars)["NewConfig"]->SetValue(1);
@@ -1234,11 +1236,15 @@ std::string Services::LoadConfigSlowControlFunc(const char* control){
     ret <<"Loaded config "<<base_config_id<<":"<<run_mode_config_id;
   }
   
-  // FIXME currently webpage chokes if a slow control value contains JSON
-  (*sc_vars)[control]->SetValue("");
-  
   return ret.str();
   
+}
+
+void Services::ResetConfigIDs(){
+  // reset the active configuration numbers so that the next ChangeConfig alert will invoke the callback.
+  m_base_config_id = 0;
+  m_run_mode_config_id = 0;
+  return;
 }
 
 // ========================
