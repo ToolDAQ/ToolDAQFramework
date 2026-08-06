@@ -76,6 +76,12 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ae4a1363bf1cfab795a83b5e776305dfd"><td class="memItemLeft" align="right" valign="top"><a id="ae4a1363bf1cfab795a83b5e776305dfd"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (<a class="el" href="classDataModel.html">DataModel</a> *data_model, zmq::socket_t *in_sock, <a class="el" href="structbuffer__s.html">Buffer</a>&lt; std::shared_ptr&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> &gt; &gt; *receive_buffer, <a class="el" href="structbuffer__s.html">Buffer</a>&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> * &gt; *send_buffer, <a class="el" href="structbuffer__s.html">Buffer</a>&lt; std::shared_ptr&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> &gt; &gt; *error_buffer, Pool&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> &gt; *message_pool, uint16_t expected_number_messages=0)</td></tr>
+<tr class="separator:ae4a1363bf1cfab795a83b5e776305dfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbb8ffca496cdcadaa75c8187752389c"><td class="memItemLeft" align="right" valign="top"><a id="afbb8ffca496cdcadaa75c8187752389c"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (<a class="el" href="classDataModel.html">DataModel</a> *data_model, zmq::socket_t *in_sock, <a class="el" href="structbuffer__s.html">Buffer</a>&lt; std::shared_ptr&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> &gt; &gt; *receive_buffer, <a class="el" href="structbuffer__s.html">Buffer</a>&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> * &gt; *send_buffer, <a class="el" href="structbuffer__s.html">Buffer</a>&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> * &gt; *error_buffer, Pool&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> &gt; *message_pool, uint16_t expected_number_messages=0)</td></tr>
+<tr class="separator:afbb8ffca496cdcadaa75c8187752389c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4a6483c35eb97e1cff9eb50c7df8c1a"><td class="memItemLeft" align="right" valign="top"><a id="ac4a6483c35eb97e1cff9eb50c7df8c1a"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (<a class="el" href="classDataModel.html">DataModel</a> *data_model, zmq::socket_t *in_sock, <a class="el" href="structbuffer__s.html">Buffer</a>&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> * &gt; *receive_buffer, <a class="el" href="structbuffer__s.html">Buffer</a>&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> * &gt; *send_buffer, <a class="el" href="structbuffer__s.html">Buffer</a>&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> * &gt; *error_buffer, Pool&lt; <a class="el" href="classToolFramework_1_1ZMQMessages.html">ZMQMessages</a> &gt; *message_pool, uint16_t expected_number_messages=0)</td></tr>
 <tr class="separator:ac4a6483c35eb97e1cff9eb50c7df8c1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -85,6 +91,17 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>Update</b> (std::
 <tr class="memitem:a35156bb8a621ef6790ab41cc5af39d21"><td class="memItemLeft" align="right" valign="top"><a id="a35156bb8a621ef6790ab41cc5af39d21"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Close</b> ()</td></tr>
 <tr class="separator:a35156bb8a621ef6790ab41cc5af39d21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d08fc69f91851a4bcffbaa1661c954c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classToolFramework_1_1SocketManager.html#a5d08fc69f91851a4bcffbaa1661c954c">GetStats</a> (Store *store, std::string prefix, std::mutex *mtx=0)</td></tr>
+<tr class="separator:a5d08fc69f91851a4bcffbaa1661c954c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac233533eb34b58fd4f1a1039106b7a4d"><td class="memItemLeft" align="right" valign="top"><a id="ac233533eb34b58fd4f1a1039106b7a4d"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetConnections</b> ()</td></tr>
+<tr class="separator:ac233533eb34b58fd4f1a1039106b7a4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a796d264d9b96f11b668794d2927f286c"><td class="memItemLeft" align="right" valign="top"><a id="a796d264d9b96f11b668794d2927f286c"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>SCResetConnections</b> (const char *payload)</td></tr>
+<tr class="separator:a796d264d9b96f11b668794d2927f286c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47ad2cf7d957d98c46c58e97216ea37b"><td class="memItemLeft" align="right" valign="top"><a id="a47ad2cf7d957d98c46c58e97216ea37b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>ResetConnections</b> ()</td></tr>
+<tr class="separator:a47ad2cf7d957d98c46c58e97216ea37b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -106,6 +123,43 @@ std::atomic&lt; uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"
 std::map&lt; std::string, Store * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>connections</b></td></tr>
 <tr class="separator:a9f9f69726d52945cfdaeb8e5d58e060a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a5d08fc69f91851a4bcffbaa1661c954c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d08fc69f91851a4bcffbaa1661c954c">&#9670;&nbsp;</a></span>GetStats()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SocketManager::GetStats </td>
+          <td>(</td>
+          <td class="paramtype">Store *&#160;</td>
+          <td class="paramname"><em>store</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>prefix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::mutex *&#160;</td>
+          <td class="paramname"><em>mtx</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>&lt; counter for messages received</p>
+<p>&lt; counter for replies sent</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/DAQDataModelBase/<a class="el" href="SocketManager_8h_source.html">SocketManager.h</a></li>
 <li>src/DAQDataModelBase/SocketManager.cpp</li>

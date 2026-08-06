@@ -22,6 +22,7 @@ var searchData=
   ['booststore_27',['BoostStore',['../classToolFramework_1_1BoostStore.html#aea2bb2615d02e5961f1d1b963ae42ea2',1,'ToolFramework::BoostStore::BoostStore(std::map&lt; std::string, std::string &gt; invariables, std::map&lt; std::string, std::string &gt; ininfo)'],['../classToolFramework_1_1BoostStore.html#abc1e56a0fddc63c835e829a1dff2eee0',1,'ToolFramework::BoostStore::BoostStore(std::map&lt; std::string, std::string &gt; invariables)'],['../classToolFramework_1_1BoostStore.html#aa5442553dec390048b20e0cd05e6ec60',1,'ToolFramework::BoostStore::BoostStore(bool typechecking=true, int format=0)'],['../classToolFramework_1_1BoostStore.html',1,'ToolFramework::BoostStore']]],
   ['bserialisableobject_28',['BSerialisableObject',['../classToolFramework_1_1BSerialisableObject.html',1,'ToolFramework']]],
   ['buffer_5fs_29',['buffer_s',['../structbuffer__s.html',1,'']]],
-  ['buffer_5fs_3c_20toolframework_3a_3azmqmessages_20_2a_20_3e_30',['buffer_s&lt; ToolFramework::ZMQMessages * &gt;',['../structbuffer__s.html',1,'']]],
-  ['bufferthreadargs_31',['BufferThreadArgs',['../structToolFramework_1_1BufferThreadArgs.html',1,'ToolFramework']]]
+  ['buffer_5fs_3c_20std_3a_3ashared_5fptr_3c_20toolframework_3a_3azmqmessages_20_3e_20_3e_30',['buffer_s&lt; std::shared_ptr&lt; ToolFramework::ZMQMessages &gt; &gt;',['../structbuffer__s.html',1,'']]],
+  ['buffer_5fs_3c_20toolframework_3a_3azmqmessages_20_2a_20_3e_31',['buffer_s&lt; ToolFramework::ZMQMessages * &gt;',['../structbuffer__s.html',1,'']]],
+  ['bufferthreadargs_32',['BufferThreadArgs',['../structToolFramework_1_1BufferThreadArgs.html',1,'ToolFramework']]]
 ];
