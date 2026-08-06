@@ -11,7 +11,19 @@ namespace ToolFramework{
   class ZMQMessages: SerialisableObject{
     
   public:
-    
+
+    ZMQMessages(){;}
+      // Move constructor
+    /*    ZMQMessages(ZMQMessages&& other) noexcept
+        :
+        messages(std::move(other.messages)),
+        sent(other.sent),
+        error(other.error)
+    {
+        other.sent = nullptr;
+        other.error = nullptr;
+    }
+    */
     bool Print(){
       return true;
     }

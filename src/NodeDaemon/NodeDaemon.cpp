@@ -67,6 +67,7 @@ std::string Start(std::vector< pid_t > *pids, std::string configfile=""){
     else execl(DAQ_PATH, DAQ_PATH, configfile.c_str(), NULL);
     ret="Uh-Oh! execl() failed!"; /* execl doesn't return unless there's an error */
     //exit(1);
+    return ret;
   default: /* Parent process */
     std::stringstream tmp;
     tmp<< "ToolChain Process created with pid " << pid << "\n";

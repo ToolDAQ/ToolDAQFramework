@@ -115,6 +115,10 @@ namespace ToolFramework {
     
     bool AlertSubscribe(std::string alert, std::function<bool(const char*, const char*)> function);
     bool AlertSend(std::string alert, std::string payload);
+
+    bool SetChangeConfigFunc(std::function<bool(std::string)>);
+    bool SetRunStopFunc(std::function<bool()>);
+    bool SetExportConfigFunc(std::function<bool(std::string&)>);
     
     std::string PrintSlowControlVariables();
     std::string GetDeviceName();
@@ -135,6 +139,7 @@ namespace ToolFramework {
     bool SendLog(std::string& msg);
     bool SendMonitoringData(std::string& msg);
     static void BufferThread(Thread_args* args);
+    std::string SCLocalConfig(const char* data);
     
     std::string m_name;
     std::string config_devicename;
@@ -157,6 +162,8 @@ namespace ToolFramework {
     uint32_t mon_merge_period_ms;
     uint32_t multicast_send_period_ms;
     uint32_t alarm_cooldown_ms;
+
+    std::string tmp_config;
     
   };
   

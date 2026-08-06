@@ -39,7 +39,8 @@ namespace ToolFramework{
        @param ar Boost archive.
        @param version of the archive.
     */
-    template<class Archive> void serialize(Archive & ar, const unsigned int version){  
+    //    template<class Archive> void serialize(Archive & ar, const unsigned int version){  
+    template<class Archive> void serialize(Archive & ar){
       if(serialise){
 	ar & type;
 	ar & version;
