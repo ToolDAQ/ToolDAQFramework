@@ -142,8 +142,8 @@ namespace ToolFramework {
     bool m_verbose;
     zmq::context_t* m_context;
     ServicesBackend m_backend_client;
-    uint32_t m_base_config_id;
-    uint32_t m_run_mode_config_id;
+    uint64_t m_base_config_id;
+    uint64_t m_run_mode_config_id;
     std::string m_local_config;
 
     Utilities m_utils;

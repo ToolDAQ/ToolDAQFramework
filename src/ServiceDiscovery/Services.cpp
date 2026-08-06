@@ -1170,8 +1170,8 @@ bool Services::LoadConfigAlertFunc(const char* alert, const char* payload){
   
   Store tmp;
   tmp.JsonParser(payload);
-  uint32_t base_config_id=0;
-  uint32_t run_mode_config_id=0;
+  uint64_t base_config_id=0;
+  uint64_t run_mode_config_id=0;
   short count = 0;
   
   tmp.Get("Base",base_config_id);
@@ -1202,8 +1202,8 @@ std::string Services::LoadConfigSlowControlFunc(const char* control){
   std::string payload = (*sc_vars)[control]->GetValue<std::string>();
   Store tmp;
   tmp.JsonParser(payload);
-  uint32_t base_config_id=0;
-  uint32_t run_mode_config_id=0;
+  uint64_t base_config_id=0;
+  uint64_t run_mode_config_id=0;
   
   short count = 0;
   std::stringstream ret;
