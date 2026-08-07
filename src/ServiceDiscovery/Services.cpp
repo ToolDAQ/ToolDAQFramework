@@ -1387,8 +1387,6 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
                 int new_state = ok ? (int)ConfigState::ChangeEnd : (int)ConfigState::ChangeFail;
                 (*sc_vars)["Config"]->SetValue(new_state);
                 (*sc_vars)["NewConfig"]->SetValue(0);
-                // FIXME dcsdue to a present bug in the webserver, if we leave a JSON value
-                // in a slow control, it will break the display of slow controls. :(
                 return (ok ? "OK" : "Error");
               },
               0,
@@ -1409,8 +1407,6 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
 		  std::cerr<<"ChangeConfig Error"<<std::endl;
 		  SendLog("ChangeConfig Error", LogLevel::Error);
 		}
-                // FIXME due to a present bug in the webserver, if we leave a JSON value
-                // in a slow control, it will break the display of slow controls. :(
                 return (ok ? "OK" : "Error");
               },
               0,
@@ -1423,21 +1419,18 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
 
 bool Services::SetRunStopFunc(std::function<bool()> func){
   
-  // we'll make three things that call this function:
+  // as per SetChangeConfigFunc, but for RunStop, make:
   // 1. subscribe to alerts.
   // 2. a BUTTON slow control.
-  // 3. a COMMAND slow control.
-  // However, the signatures here are different:
-  // Alert callbacks receive an alert name and payload, and return a bool.
-  // Slow controls receive a control name, and return a string.
-  // COMMANDs have an associated string variable in the SlowControlCollection, but buttons don't.
-  // The idea here is the Alert and BUTTON will retrieve their configuration from the LocalConfig member of
-  // the SlowControlCollection, while the COMMAND will get its configuration from the slow control variable.
-  // To align these we accept something whihc is none of these, and pass it whatever's appropriate.
+  // as an addition, on RunStop clear the internal base and runmode configuration IDs.
+  // The ChangeConfig callback is only invoked when these change, so by resetting them we ensure
+  // the callback is invoked on the next ChangeConfig alert,
+  // which may be required to re-start data acquisition after a RunStop.
   bool allgood=true;
   
   // 1.
   allgood = AlertSubscribe("RunStop", [this, func](const char*, const char*) -> bool{
+    ResetConfigIDs();
     if(func()) return true;
     sc_vars->SetWarning(true);
     std::cerr<<"RunStop Error"<<std::endl;
@@ -1447,23 +1440,22 @@ bool Services::SetRunStopFunc(std::function<bool()> func){
   
   // 2.
   allgood = allgood &&
-    sc_vars->Add("RunStop",  //here ben
+    sc_vars->Add("RunStop",
               BUTTON,
               [this, func](const char*) -> std::string {
+                ResetConfigIDs();
                 bool ok = func();
                 if(!ok){
-		  sc_vars->SetWarning(true);
-		  std::cerr<<"RunStop Error"<<std::endl;
-		  SendLog("RunStop Error", LogLevel::Error);
-		}
-		(*sc_vars)["Config"]->SetValue((int)ConfigState::Unconfigured);
+                  sc_vars->SetWarning(true);
+                  std::cerr<<"RunStop Error"<<std::endl;
+                  SendLog("RunStop Error", LogLevel::Error);
+                }
+                (*sc_vars)["Config"]->SetValue((int)ConfigState::Unconfigured);
                 return (ok ? "OK" : "Error");
               },
               0,
               false); // this version will not be locked during non-testing runs,
-                      // since it only allows loading configurations in line with the current run type.
-  
-  // 3.
+                      // since it is a fallback control in case the alert gets missed
   
   return allgood;
   
@@ -1471,18 +1463,11 @@ bool Services::SetRunStopFunc(std::function<bool()> func){
 
 bool Services::SetExportConfigFunc(std::function<bool(std::string&)> func){
   
-  // we'll make three things that call this function:
+  // for ExportConfig, make:
   // 1. subscribe to alerts.
-  // 2. a BUTTON slow control.
-  // 3. a COMMAND slow control.
-  // However, the signatures here are different:
-  // Alert callbacks receive an alert name and payload, and return a bool.
-  // Slow controls receive a control name, and return a string.
-  // COMMANDs have an associated string variable in the SlowControlCollection, but buttons don't.
-  // The idea here is the Alert and BUTTON will retrieve their configuration from the LocalConfig member of
-  // the SlowControlCollection, while the COMMAND will get its configuration from the slow control variable.
-  // To align these we accept something whihc is none of these, and pass it whatever's appropriate.
+  // 2. a BUTTON slow control. 
   bool allgood=true;
+  
   // 1.
   allgood = AlertSubscribe("ExportConfig", [this, func](const char*, const char*) -> bool{
     if(func(tmp_config)){
@@ -1504,25 +1489,23 @@ bool Services::SetExportConfigFunc(std::function<bool(std::string&)> func){
   sc_vars->Add("ExportConfig",
               BUTTON,
               [this, func](const char*) -> std::string {
-
-		bool ok = func(tmp_config);
+                bool ok = func(tmp_config);
                 if(!ok){
-		  sc_vars->SetWarning(true);
-		  std::cerr<<"ExportConfig Error"<<std::endl;
-		  SendLog("ExportConfig Error", LogLevel::Error);
-		  return "Error";
-		}
-		if(tmp_config.compare(m_local_config) !=0){
-		  m_local_config = tmp_config;
-		  m_base_config_id = 0;
-		  m_run_mode_config_id = 0;
-		}
-		
-		return tmp_config; 
-	      },
-	       0,
-	       false); // this version will not be locked during non-testing runs,
-  // since it only allows loading configurations in line with the current run type.
+                  sc_vars->SetWarning(true);
+                  std::cerr<<"ExportConfig Error"<<std::endl;
+                  SendLog("ExportConfig Error", LogLevel::Error);
+                  return "Error";
+                }
+                if(tmp_config.compare(m_local_config) !=0){
+                  m_local_config = tmp_config;
+                  m_base_config_id = 0;
+                  m_run_mode_config_id = 0;
+                }
+                
+                return tmp_config; 
+              },
+              0,
+              false); // not be locked during non-testing runs, since it does not change configuration
   
   
   return allgood;
