@@ -886,7 +886,6 @@ zmq::message_t SlowControlCollection::ZstdCompress(SlowControlCollection* SCC, s
 
 bool SlowControlCollection::ZstdDecompress(SlowControlCollection* SCC, char* msg, uint64_t msgsize, std::string& decompress_buffer){
   std::string errmsg;
-  std::string* decompressed_msg=nullptr;
   std::unique_lock<std::mutex> locker(*SCC->zstd_dctx_mtx);
   if(msgsize>4 && std::memcmp(msg,ZSTD_MAGIC_BYTES,4)==0){
     uint64_t decompressed_bytes = ZSTD_getFrameContentSize(msg, msgsize);
