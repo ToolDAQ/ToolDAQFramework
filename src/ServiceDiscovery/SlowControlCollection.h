@@ -5,6 +5,8 @@
 #include <zmq.hpp>
 #include "DAQUtilities.h"
 #include <functional>
+#include <mutex>
+#include <zstd.h>
 
 namespace ToolFramework{
 
@@ -68,6 +70,8 @@ namespace ToolFramework{
     void SetError(bool error);
     void SetWarning(bool warn);
     void ClearState();
+    zmq::message_t ZstdCompress(SlowControlCollection* SCC, std::string& msg);
+    bool ZstdDecompress(SlowControlCollection* SCC, char* msg, uint64_t msgsize, std::string& decompress_buffer);
     
     template<typename T> T GetValue(std::string name){
       if(!SC_vars.count(name)) return T{};
@@ -80,6 +84,14 @@ namespace ToolFramework{
     std::map<std::string, SlowControlElement*> SC_vars;
     std::map<std::string, AlertFunction>  m_alert_functions;
     std::mutex m_alert_functions_mutex;
+    
+    ZSTD_CCtx* zstd_cctx;
+    std::mutex* zstd_cctx_mtx;
+    ZSTD_DCtx* zstd_dctx;
+    std::mutex* zstd_dctx_mtx;
+    int zstd_compression_level=1;
+    uint32_t COMPRESS_THRESHOLD=0; //1024; // compress any send messages > this many bytes
+    uint32_t MAX_DECOMPRESSED_SIZE=655355; // refuse to decompress messages that will exceed this size once decompressed
     
     DAQUtilities* m_util;
     zmq::context_t* m_context;

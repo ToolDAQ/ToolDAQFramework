@@ -2,6 +2,10 @@
 
 using namespace ToolFramework;
 
+namespace {
+    const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
+}
+
 SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
   
   sock=0;
@@ -12,9 +16,6 @@ SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
   alert_functions_mutex=0;
   SC_vars=0;
   
-  m_pub = 0;
-  pub_monitor_socket = 0;
-  pub_connected_mtx = 0;
   
 }
 
@@ -54,6 +55,9 @@ SlowControlCollection::SlowControlCollection(){
   SC_vars["Config"]->SetValue(0);
   Add("NewConfig",SlowControlElementType(INFO),0,0,false,false);
   SC_vars["NewConfig"]->SetValue(0);
+  
+  zstd_cctx = ZSTD_createCCtx();
+  zstd_dctx = ZSTD_createDCtx();
   
 }
 
@@ -123,15 +127,15 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       
       if(!m_util->AddPort("alerts",alert_send_port)){
 
-	delete m_pub;
-	m_pub=0;
-	m_alerts_send = false;
+        delete m_pub;
+        m_pub=0;
+        m_alerts_send = false;
 
-	delete args;
-	args=0;
+        delete args;
+        args=0;
         
-	std::clog<<"Error adding alert send port to SD"<<std::endl;
-	return false;
+        std::clog<<"Error adding alert send port to SD"<<std::endl;
+        return false;
       }
       
       if(m_thread){
@@ -165,17 +169,17 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
 
       if(!m_util->AddPort("alertr",alert_receive_port)){
 
-	delete args->sub;
-	args->sub = 0;
-	m_alerts_receive = false;
+        delete args->sub;
+        args->sub = 0;
+        m_alerts_receive = false;
 
-	delete args;
-	args=0;
+        delete args;
+        args=0;
 
-	
-	std::clog<<"Error adding port alert receive to SD"<<std::endl;
-	return false;
-	
+        
+        std::clog<<"Error adding port alert receive to SD"<<std::endl;
+        return false;
+        
       }
       
     }
@@ -289,10 +293,14 @@ void SlowControlCollection::Thread(Thread_args* arg){
       return;
     }
     
-    std::istringstream iss(static_cast<char*>(message.data()));
+    std::string payload;
+    if(!args->SCC->ZstdDecompress(args->SCC, (char*)message.data(), message.size(), payload)){
+      std::cerr<<"failed to decompress slow control message!"<<std::endl;
+      return;
+    }
+    
     Store tmp;
-    //printf("iss=%s\n",iss.str().c_str());
-    tmp.JsonParser(iss.str());
+    tmp.JsonParser(payload);
     //tmp.Print();
     if(!tmp.Has("msg_value")){
       std::cerr<<"error: Poorly formatted slowcontrol input [no msg_value]"<<std::endl;
@@ -322,8 +330,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
     if(key == "?"){
       //printf("args->SCC->Print()=%s\n", args->SCC->Print().c_str());
       if(value=="JSON"){
-	reply=args->SCC->PrintJSON();
-	strip=true;
+        reply=args->SCC->PrintJSON();
+        strip=true;
       }
       else  reply=args->SCC->Print();
       //printf("reply=%s\n", reply.c_str());
@@ -336,29 +344,29 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
       
       else{
-	reply=key;
-	if((*args->SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
-	  value="1";
-	}
+        reply=key;
+        if((*args->SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
+          value="1";
+        }
         //std::stringstream input;
         //input<<tmp.Get<std::string>("msg_value");
-	//        std::string key="";
-	// std::string value="";
+        //        std::string key="";
+        // std::string value="";
         //input>>key>>value;
-	//printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
-	if(value!=""){
-	  (*args->SCC)[key]->SetValue(value);
-	  //(*args->SCC)[key]->Print();
-	  SCFunction tmp_func= (*args->SCC)[key]->GetChangeFunction();
-	  if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
-	  
-	}
-	else{
-	  SCFunction tmp_func= (*args->SCC)[key]->GetReadFunction();
-	  if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
-	  else (*args->SCC)[key]->GetValue(reply);
-	  
-	}
+        //printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
+        if(value!=""){
+          (*args->SCC)[key]->SetValue(value);
+          //(*args->SCC)[key]->Print();
+          SCFunction tmp_func= (*args->SCC)[key]->GetChangeFunction();
+          if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+          
+        }
+        else{
+          SCFunction tmp_func= (*args->SCC)[key]->GetReadFunction();
+          if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+          else (*args->SCC)[key]->GetValue(reply);
+          
+        }
       }
     }
     */
@@ -372,9 +380,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
     std::string tmp2="";
     rr>>tmp2;
     //printf("reply message is= %s \n",tmp2.c_str());
-    zmq::message_t send(tmp2.length()+1);
-    snprintf ((char *) send.data(), tmp2.length()+1 , "%s" ,tmp2.c_str()) ;
     
+    zmq::message_t send = args->SCC->ZstdCompress(args->SCC, tmp2);
     
     bool tmp_ok = args->sock->send(identity, ZMQ_SNDMORE);
     if(tmp_ok) tmp_ok = tmp_ok && args->sock->send(blank, ZMQ_SNDMORE);
@@ -407,17 +414,20 @@ void SlowControlCollection::Thread(Thread_args* arg){
       ok = args->sub->recv(&message);
       if(ok==0){
         // FIXME this case should be handled! what do we do?
-        std::cerr<<"failed to receive alert payload!"<<std::endl;
+        std::cerr<<"failed to receive "<<iss.str() << " alert payload!"<<std::endl;
+        return;
       }
-      payload.resize(message.size(),'\0');
-      memcpy((void*)payload.data(),message.data(),message.size());
+      if(!args->SCC->ZstdDecompress(args->SCC, (char*)message.data(), message.size(), payload)){
+        std::cerr<<"failed to decompress "<<iss.str() << " alert payload!"<<std::endl;
+        return;
+      }
       has_data=true;
     }
 
     //int a=0;
     while(message.more()){
       
-      args->sub->recv(&message);
+      args->sub->recv(&message); // FIXME do we want any warnings or handling here?
       //memcpy((void*)payload.data(),message.data(),message.size());
       //a++;
     }
@@ -427,8 +437,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
     if(iss.str() == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
     else if(iss.str() == "ChangeConfig"){
        if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0){
-	 args->alert_functions_mutex->unlock();
-	 return;
+         args->alert_functions_mutex->unlock();
+         return;
        }
       (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
     }
@@ -438,30 +448,30 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     if(args->alert_functions->count(iss.str())){
       if(has_data){
-	try{
-	  error = !((*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str()));
-	}
-	catch(...){
-	  error = true;
-	}
-	if(iss.str() == "LoadConfig"){
-	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
-	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
-	}
-   	
+        try{
+          error = !((*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str()));
+        }
+        catch(...){
+          error = true;
+        }
+        if(iss.str() == "LoadConfig"){
+          if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
+          else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
+        }
+           
       }
       else {
-	try{
-	  error=!((*(args->alert_functions))[iss.str()](iss.str().c_str(), 0));
-	}
-	catch(...){
-	  error = true;
-	}
-	if(iss.str() == "ChangeConfig"){
-	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeFail);
-	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeEnd);
-	  (*args->SC_vars)["NewConfig"]->SetValue(0);
-	}
+        try{
+          error=!((*(args->alert_functions))[iss.str()](iss.str().c_str(), 0));
+        }
+        catch(...){
+          error = true;
+        }
+        if(iss.str() == "ChangeConfig"){
+          if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeFail);
+          else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeEnd);
+          (*args->SC_vars)["NewConfig"]->SetValue(0);
+        }
       }
    
       if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
@@ -595,8 +605,8 @@ bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
   // if we didn't return, we have a payload as well
   bool ok = m_pub->send(message, ZMQ_SNDMORE);
   if(!ok) return false; // err: "zmq send "+zmq_strerror(errno)
-  zmq::message_t message2(payload.length()+1);
-  snprintf((char*) message2.data(), payload.length()+1, "%s", payload.c_str());
+  
+  zmq::message_t message2 = args->SCC->ZstdCompress(args->SCC, payload);
   return m_pub->send(message2);  // err: "zmq send "+zmq_strerror(errno)
   
 }
@@ -644,16 +654,16 @@ void SlowControlCollection::Unpack(std::string in, std::map<std::string, std::st
       //      unsigned int counter=0;
       unsigned int first=0;
       for(unsigned int i=1; i<it->second.length(); i++){
-	if(it->second[i]=='{') first=i;
-	if(it->second[i]=='}'){
-	  //  std::stringstream tmp;
-	  //tmp<<counter;
-	  Store tmp;
-	  tmp.JsonParser(it->second.substr(first,i-first+1));
-	  out[header+tmp.Get<std::string>("name")]=it->second.substr(first,i-first+1);	  
-	  //	  counter++;
-	}
-	
+        if(it->second[i]=='{') first=i;
+        if(it->second[i]=='}'){
+          //  std::stringstream tmp;
+          //tmp<<counter;
+          Store tmp;
+          tmp.JsonParser(it->second.substr(first,i-first+1));
+          out[header+tmp.Get<std::string>("name")]=it->second.substr(first,i-first+1);          
+          //          counter++;
+        }
+        
       }
       
     }
@@ -665,17 +675,17 @@ void SlowControlCollection::Unpack(std::string in, std::map<std::string, std::st
       unsigned int counter=0;
       
       for(unsigned int i = 1; i<it->second.length(); i++){
-	//std::cout<<"i="<<i<<" : it->second[i]="<<it->second[i]<<" : counter="<<counter<<" : bracket_counter="<<bracket_counter<<std::endl; 
-	if(it->second[i]=='{' && bracket_counter==0) start=i;
-	if(it->second[i]=='{') bracket_counter++;
-	else if(it->second[i]=='}' && bracket_counter==1) {
-	  std::stringstream tmp;
-	  tmp<<counter;
-	  Unpack(it->second.substr(start,i-start+1), out, header+it->first+"::"+tmp.str());
-	  counter++;
-	  bracket_counter=0;
-	}
-	else if (it->second[i]=='}') bracket_counter--;
+        //std::cout<<"i="<<i<<" : it->second[i]="<<it->second[i]<<" : counter="<<counter<<" : bracket_counter="<<bracket_counter<<std::endl; 
+        if(it->second[i]=='{' && bracket_counter==0) start=i;
+        if(it->second[i]=='{') bracket_counter++;
+        else if(it->second[i]=='}' && bracket_counter==1) {
+          std::stringstream tmp;
+          tmp<<counter;
+          Unpack(it->second.substr(start,i-start+1), out, header+it->first+"::"+tmp.str());
+          counter++;
+          bracket_counter=0;
+        }
+        else if (it->second[i]=='}') bracket_counter--;
       }
     }
   }
@@ -709,8 +719,8 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
     //std::cout<<"variable exists"<<std::endl;
     if((*SCC)[key]->GetType() == SlowControlElementType(INFO)){
       if(!(*SCC)[key]->GetValue(value)){
-	reply="Error getting value form key: "+key;
-	return false;
+        reply="Error getting value form key: "+key;
+        return false;
       }
       reply=value;
       return true;
@@ -719,7 +729,7 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
     else{
       reply=key;
       if((*SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
-	value="1";
+        value="1";
       }
       //std::stringstream input;
       //input<<tmp.Get<std::string>("msg_value");
@@ -728,49 +738,49 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
       //input>>key>>value;
       //printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
       if(value!=""){
-	if(!testing || (testing && !(*SCC)[key]->Lockable())){
-	  
-	  if(!(*SCC)[key]->SetValue(value)){
-	    reply =" Error setting "+key+" to value: " + value;
-	    return false;
-	  }
-	  else{
-	    reply = value;
-	    return true;
-	  }
-	  //(*SCC)[key]->Print();
-	  /*
-	  SCFunction tmp_func= (*SCC)[key]->GetChangeFunction();
-	  if (tmp_func!=nullptr){
-	    try{ 
-	      reply=tmp_func(key.c_str());
-	      
-	    }
-	    catch(...){
-	      reply= "change function failed";
-	    }
-	  }
-	  */
-	}
-	else reply = key + " locked";
+        if(!testing || (testing && !(*SCC)[key]->Lockable())){
+          
+          if(!(*SCC)[key]->SetValue(value)){
+            reply =" Error setting "+key+" to value: " + value;
+            return false;
+          }
+          else{
+            reply = value;
+            return true;
+          }
+          //(*SCC)[key]->Print();
+          /*
+          SCFunction tmp_func= (*SCC)[key]->GetChangeFunction();
+          if (tmp_func!=nullptr){
+            try{ 
+              reply=tmp_func(key.c_str());
+              
+            }
+            catch(...){
+              reply= "change function failed";
+            }
+          }
+          */
+        }
+        else reply = key + " locked";
       }
       else{
-	/*
-	SCFunction tmp_func= (*SCC)[key]->GetReadFunction();
-	if (tmp_func!=nullptr){
-	  try{
-	    reply=tmp_func(key.c_str());
-	  }
-	  catch(...){
-	    reply="read function failed";
-	  }
-	}
-	else (*SCC)[key]->GetValue(reply);
-	*/
+        /*
+        SCFunction tmp_func= (*SCC)[key]->GetReadFunction();
+        if (tmp_func!=nullptr){
+          try{
+            reply=tmp_func(key.c_str());
+          }
+          catch(...){
+            reply="read function failed";
+          }
+        }
+        else (*SCC)[key]->GetValue(reply);
+        */
         if(!(*SCC)[key]->GetValue(reply)){
-	  reply="Error getting value from key: "+key;
-	  return false;
-	}
+          reply="Error getting value from key: "+key;
+          return false;
+        }
       }
     }
     return true;
@@ -871,4 +881,63 @@ void SlowControlCollection::ClearState(){
   m_util->AddPort("State",m_state);
   SC_vars["State"]->SetValue(m_state);
   return;
+}
+
+zmq::message_t SlowControlCollection::ZstdCompress(SlowControlCollection* SCC, std::string& msg){
+  if(msg.length()<SCC->COMPRESS_THRESHOLD){
+    zmq::message_t zmsg(msg.size());
+    memcpy(zmsg.data(), msg.data(), msg.size());
+    return zmsg;
+  }
+  
+  std::unique_lock<std::mutex> locker(*SCC->zstd_cctx_mtx);
+  std::string compressed_msg_buf;
+  compressed_msg_buf.resize(ZSTD_compressBound(msg.size()));
+  uint64_t bytes_to_send = ZSTD_compressCCtx(SCC->zstd_cctx, (void*)compressed_msg_buf.data(), compressed_msg_buf.size(), msg.data(), msg.size(), SCC->zstd_compression_level);
+  if(ZSTD_isError(bytes_to_send)){
+    locker.unlock();
+    std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
+    std::clog << errmsg << std::endl;
+    // send it uncompressed
+    zmq::message_t zmsg(msg.size());
+    memcpy(zmsg.data(), msg.data(), msg.size());
+    return zmsg;
+  }
+  zmq::message_t zmsg(msg.size());
+  memcpy(zmsg.data(), compressed_msg_buf.data(), bytes_to_send);
+  return zmsg;
+}
+
+bool SlowControlCollection::ZstdDecompress(SlowControlCollection* SCC, char* msg, uint64_t msgsize, std::string& decompress_buffer){
+  std::string errmsg;
+  std::string* decompressed_msg=nullptr;
+  std::unique_lock<std::mutex> locker(*SCC->zstd_dctx_mtx);
+  if(msgsize>4 && std::memcmp(msg,ZSTD_MAGIC_BYTES,4)==0){
+    uint64_t decompressed_bytes = ZSTD_getFrameContentSize(msg, msgsize);
+    if(decompressed_bytes==ZSTD_CONTENTSIZE_UNKNOWN || decompressed_bytes==ZSTD_CONTENTSIZE_ERROR){
+      // bad response
+      errmsg = std::string{"Received corrupt zstd message "}+ZSTD_getErrorName(decompressed_bytes);
+      goto decompress_error;
+    }
+    if(decompressed_bytes > SCC->MAX_DECOMPRESSED_SIZE){
+      errmsg = "Compressed message with oversized payload: "+std::to_string(decompressed_bytes)+" bytes";
+      goto decompress_error;
+    }
+    decompress_buffer.resize(decompressed_bytes);
+    decompressed_bytes = ZSTD_decompressDCtx(SCC->zstd_dctx,(void*)decompress_buffer.data(),decompressed_bytes, msg, msgsize);
+    if(ZSTD_isError(decompressed_bytes)){
+      errmsg = std::string{"zstd error decompressing response: "}+ZSTD_getErrorName(decompressed_bytes);
+      goto decompress_error;
+    }
+  } else {
+    // message not compressed
+    decompress_buffer.assign(msg, msgsize);
+  }
+  return true;
+  
+  decompress_error:
+  locker.unlock();
+  std::clog << errmsg << std::endl;
+  decompress_buffer.clear();
+  return false;
 }
