@@ -5,6 +5,7 @@
 
 #include "ServiceDiscovery.h"
 #include "zmq.hpp"
+#include <zstd.h>
 
 #include <boost/uuid/uuid.hpp>            // uuid class
 #include <boost/uuid/uuid_generators.hpp> // generators
@@ -18,8 +19,12 @@
 #define GROUP_COMMAND_REPLY_WAIT 2000
 #define FILE_SEND_WAIT 120000
 #define FILE_SEND_PORT 24001
+#define MAX_DECOMPRESSED_SIZE 655355
+const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
 
 using namespace ToolFramework;
+
+bool ZstdDecompress(ZSTD_DCtx* zstd_dctx, char* msg, uint64_t msgsize, std::string& decompress_buffer);
 
 int main(int argc, char** argv){
 
@@ -30,6 +35,7 @@ int main(int argc, char** argv){
    
    
    zmq::context_t context(3);
+   ZSTD_DCtx* zstd_dctx = ZSTD_createDCtx();
 
   //std::string address(argv[1]);
   // std::stringstream tmp (argv[2]);
@@ -236,14 +242,17 @@ int main(int argc, char** argv){
 	  
 	  zmq::message_t receive;
 	  if(ServiceSend.recv(&receive)){
-	    std::istringstream iss(static_cast<char*>(receive.data()));
-	    
 	    std::string answer;
-	    answer=iss.str();
+	    if(!ZstdDecompress(zstd_dctx, (char*)receive.data(), receive.size(), answer)){
+	      std::cerr<<"failed to decompress reply!"<<std::endl;
+	      
+	    } else {
+	      Store rr;
+	      rr.JsonParser(answer);
+	      if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<rr.Get<std::string>("msg_value")<<std::endl<<std::endl;
+	      
+	    }
 	    
-	    Store rr;
-	    rr.JsonParser(answer);
-	    if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<(rr.Get<std::string>("msg_value"))<<std::endl<<std::endl;
 	  }
 	  else std::cout<<std::endl<<"message timed out"<<std::endl; 
 	  
@@ -364,15 +373,18 @@ int main(int argc, char** argv){
 	    
 	    zmq::message_t receive;
 	    if(ServiceSend.recv(&receive)){
-	      std::istringstream iss(static_cast<char*>(receive.data()));
-	      
 	      std::string answer;
-	      answer=iss.str();
-	      
-	      Store rr;
-	      rr.JsonParser(answer);
-	      if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<rr.Get<std::string>("msg_value")<<std::endl<<std::endl;
+	      if(!ZstdDecompress(zstd_dctx, (char*)receive.data(), receive.size(), answer)){
+	        std::cerr<<"failed to decompress reply!"<<std::endl;
+	        
+	      } else {
+	        Store rr;
+	        rr.JsonParser(answer);
+	        if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<rr.Get<std::string>("msg_value")<<std::endl<<std::endl;
+	        
+	      }
 	    }
+	    
 	  }
 	}
 	
@@ -391,4 +403,35 @@ int main(int argc, char** argv){
   
   return 0;
   
+}
+
+bool ZstdDecompress(ZSTD_DCtx* zstd_dctx, char* msg, uint64_t msgsize, std::string& decompress_buffer){
+  std::string errmsg;
+  if(msgsize>4 && std::memcmp(msg,ZSTD_MAGIC_BYTES,4)==0){
+    uint64_t decompressed_bytes = ZSTD_getFrameContentSize(msg, msgsize);
+    if(decompressed_bytes==ZSTD_CONTENTSIZE_UNKNOWN || decompressed_bytes==ZSTD_CONTENTSIZE_ERROR){
+      // bad response
+      errmsg = std::string{"Received corrupt zstd message "}+ZSTD_getErrorName(decompressed_bytes);
+      goto decompress_error;
+    }
+    if(decompressed_bytes > MAX_DECOMPRESSED_SIZE){
+      errmsg = "Compressed message with oversized payload: "+std::to_string(decompressed_bytes)+" bytes";
+      goto decompress_error;
+    }
+    decompress_buffer.resize(decompressed_bytes);
+    decompressed_bytes = ZSTD_decompressDCtx(zstd_dctx,(void*)decompress_buffer.data(),decompressed_bytes, msg, msgsize);
+    if(ZSTD_isError(decompressed_bytes)){
+      errmsg = std::string{"zstd error decompressing response: "}+ZSTD_getErrorName(decompressed_bytes);
+      goto decompress_error;
+    }
+  } else {
+    // message not compressed
+    decompress_buffer.assign(msg, msgsize);
+  }
+  return true;
+  
+  decompress_error:
+  std::cerr << errmsg << std::endl;
+  decompress_buffer.clear();
+  return false;
 }
