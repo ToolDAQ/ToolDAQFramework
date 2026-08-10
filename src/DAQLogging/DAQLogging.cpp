@@ -351,8 +351,7 @@ src/DAQLogging/DAQLogging.{h,cpp} -nw
   //  printf("%s %d n",log_address.c_str(), log_port);
   
   zmq::pollitem_t items [] = {
-    { LogReceiver, 0, ZMQ_POLLIN, 0 },
-    {NULL, sock, ZMQ_POLLOUT, 0 },
+    { LogReceiver, 0, ZMQ_POLLIN, 0 }
   };
 
 
