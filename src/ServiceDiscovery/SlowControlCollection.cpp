@@ -466,7 +466,31 @@ void SlowControlCollection::Thread(Thread_args* arg){
    
       if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
 
- }
+    }
+    if(args->alert_functions->count("*")){
+      if(has_data){
+	try{
+	  error = !((*(args->alert_functions))["*"](iss.str().c_str(), payload.c_str()));
+	}
+	catch(...){
+	  error = true;
+	}	
+      }
+      else {
+	try{
+	  error=!((*(args->alert_functions))["*"](iss.str().c_str(), 0));
+	}
+	catch(...){
+	  error = true;
+	}
+      }
+   
+      if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+      
+    }
+    
+    
+    
     args->alert_functions_mutex->unlock();
     
     //if(payload!=nullptr) free(payload);
