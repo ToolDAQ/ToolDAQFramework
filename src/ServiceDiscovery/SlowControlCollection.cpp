@@ -890,7 +890,7 @@ zmq::message_t SlowControlCollection::ZstdCompress(SlowControlCollection* SCC, s
     return zmsg;
   }
   
-  std::unique_lock<std::mutex> locker(*SCC->zstd_cctx_mtx);
+  std::unique_lock<std::mutex> locker(SCC->zstd_cctx_mtx);
   std::string compressed_msg_buf;
   compressed_msg_buf.resize(ZSTD_compressBound(msg.size()));
   uint64_t bytes_to_send = ZSTD_compressCCtx(SCC->zstd_cctx, (void*)compressed_msg_buf.data(), compressed_msg_buf.size(), msg.data(), msg.size(), SCC->zstd_compression_level);
@@ -910,7 +910,7 @@ zmq::message_t SlowControlCollection::ZstdCompress(SlowControlCollection* SCC, s
 
 bool SlowControlCollection::ZstdDecompress(SlowControlCollection* SCC, char* msg, uint64_t msgsize, std::string& decompress_buffer){
   std::string errmsg;
-  std::unique_lock<std::mutex> locker(*SCC->zstd_dctx_mtx);
+  std::unique_lock<std::mutex> locker(SCC->zstd_dctx_mtx);
   if(msgsize>4 && std::memcmp(msg,ZSTD_MAGIC_BYTES,4)==0){
     uint64_t decompressed_bytes = ZSTD_getFrameContentSize(msg, msgsize);
     if(decompressed_bytes==ZSTD_CONTENTSIZE_UNKNOWN || decompressed_bytes==ZSTD_CONTENTSIZE_ERROR){

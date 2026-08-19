@@ -86,11 +86,11 @@ namespace ToolFramework{
     std::mutex m_alert_functions_mutex;
     
     ZSTD_CCtx* zstd_cctx;
-    std::mutex* zstd_cctx_mtx;
+    std::mutex zstd_cctx_mtx;
     ZSTD_DCtx* zstd_dctx;
-    std::mutex* zstd_dctx_mtx;
+    std::mutex zstd_dctx_mtx;
     int zstd_compression_level=1;
-    uint32_t COMPRESS_THRESHOLD=0; //1024; // compress any send messages > this many bytes
+    uint32_t COMPRESS_THRESHOLD=1024000000; // compress any send messages > this many bytes
     uint32_t MAX_DECOMPRESSED_SIZE=655355; // refuse to decompress messages that will exceed this size once decompressed
     
     DAQUtilities* m_util;
