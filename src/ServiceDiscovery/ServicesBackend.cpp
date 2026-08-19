@@ -1,8 +1,8 @@
 #include "ServicesBackend.h"
 
 namespace {
-	const uint32_t MAX_UDP_PACKET_SIZE = 655355;
-	const uint32_t MAX_DECOMPRESSED_MSG_SIZE = 655355;
+	const uint32_t MAX_UDP_PACKET_SIZE = 65507; // limit from UDP message length field
+	const uint32_t MAX_DECOMPRESSED_MSG_SIZE = 104857600; // 100MB limit. I'm sure we can spare that much RAM.
 	const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
 }
 
@@ -142,7 +142,7 @@ bool ServicesBackend::Initialise(Store &variables_in){
 	
 	if(msg_compression){
 		zstd_cctx = ZSTD_createCCtx();
-		compressed_msg_buf = new char[ZSTD_compressBound(MAX_UDP_PACKET_SIZE)];
+		compressed_msg_buf = new char[MAX_UDP_PACKET_SIZE];
 		zstd_dctx = ZSTD_createDCtx();
 	}
 	
@@ -433,24 +433,25 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 		bytes_to_send = command.length();
 	}
 	
-	/*
-	// check for listeners...? - seems redundant, multicast can always send
-	zmq::poll(&multicast_poller,1, 0);   // timeout 0 = return immediately...
-	if(multicast_poller.revents & ZMQ_POLLOUT){
-	*/
-		
-		// got a listener - ship it
-		socket_mtx->lock();
-		int cnt = sendto(multicast_socket, msg_to_send, bytes_to_send, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
-		socket_mtx->unlock();
-		if(cnt < 0){
-			std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
-			Log(errmsg,v_error,m_verbosity);
-			if(err) *err= errmsg; //zmq_strerror(errno);
-			return false;
-		}
-		
-	//}
+	// check we're not going to exceed multicast message size limit
+	if(bytes_to_send > MAX_UDP_PACKET_SIZE){
+		// we can't send this on multicast.
+		if(locker.owns_lock()) locker.unlock();
+		std::string errmsg = "Error: message exceeds maximum bytes of "+std::to_string(MAX_UDP_PACKET_SIZE);
+		Log(errmsg,v_error,m_verbosity);  // XXX should send to MM uncompressed, along with other errors
+		if(err) *err= errmsg;
+		return false;
+	}
+	
+	socket_mtx->lock();
+	int cnt = sendto(multicast_socket, msg_to_send, bytes_to_send, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
+	socket_mtx->unlock();
+	if(cnt < 0){
+		std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
+		Log(errmsg,v_error,m_verbosity);
+		if(err) *err= errmsg; //zmq_strerror(errno);
+		return false;
+	}
 	
 	return true;
 }

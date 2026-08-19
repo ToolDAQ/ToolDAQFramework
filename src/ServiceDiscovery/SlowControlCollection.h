@@ -90,8 +90,9 @@ namespace ToolFramework{
     ZSTD_DCtx* zstd_dctx;
     std::mutex zstd_dctx_mtx;
     int zstd_compression_level=1;
-    uint32_t COMPRESS_THRESHOLD=1024000000; // compress any send messages > this many bytes
-    uint32_t MAX_DECOMPRESSED_SIZE=655355; // refuse to decompress messages that will exceed this size once decompressed
+    uint32_t COMPRESS_THRESHOLD=1024; // compress any send messages > this many bytes
+    uint32_t MAX_DECOMPRESSED_SIZE=104857600; // refuse to decompress messages that will exceed this size once decompressed
+    // defautl 100MB; I'm sure we can spare that much RAM.
     
     DAQUtilities* m_util;
     zmq::context_t* m_context;
