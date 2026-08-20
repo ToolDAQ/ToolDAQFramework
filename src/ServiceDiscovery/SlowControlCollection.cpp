@@ -574,7 +574,7 @@ std::string SlowControlCollection::PrintJSON(){
 
 bool SlowControlCollection::AlertSubscribe(std::string alert, AlertFunction function){
   
-  if(function==nullptr || !m_alerts_send) return false;
+  if(function==nullptr || !m_alerts_receive) return false;
   m_alert_functions_mutex.lock();
   m_alert_functions[alert]=function;
   m_alert_functions_mutex.unlock();
