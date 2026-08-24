@@ -3,8 +3,9 @@
 using namespace ToolFramework;
 
 namespace {
-  constexpr uint32_t MAX_UDP_PACKET_SIZE = 655355;
+  constexpr uint32_t MAX_UDP_PACKET_SIZE = 65507;
   constexpr size_t MAX_MSG_SIZE = MAX_UDP_PACKET_SIZE-100; // 100 chars for JSON keys, timestamp string and quotes/commas
+  uint32_t MSS_SIZE=1472; // for standard MTU of 1500 bytes
 }
 
 Services::Services(){
@@ -55,6 +56,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   m_variables.Get("multicast_send_period_ms",multicast_send_period_ms);
   m_variables.Get("alarm_cooldown_ms",alarm_cooldown_ms);
   m_variables.Get("verbose",m_verbose);
+  if(m_variables.Get("MTU",MSS_SIZE)) MSS_SIZE -= 28; // account for headers
   
   sc_vars->InitThreadedReceiver(m_context, sc_port, 100, new_service, alert_receive_port, alerts_receive, alert_send_port, alerts_send);
   m_backend_client.SetUp(m_context);
@@ -65,7 +67,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   sc_vars->Add("LoadConfig",SlowControlElementType(COMMAND),std::bind(&Services::LoadConfigSlowControlFunc, this, std::placeholders::_1),0,false,false);
   AlertSubscribe("LoadConfig", std::bind(&Services::LoadConfigAlertFunc, this,  std::placeholders::_1, std::placeholders::_2));
 
-  sc_vars->Add("LocalConfig",SlowControlElementType(INFO),std::bind(&Services::SCLocalConfig, this, std::placeholders::_1),0,false,false);
+  sc_vars->Add("LocalConfig",SlowControlElementType(INFO),0,std::bind(&Services::SCLocalConfig, this, std::placeholders::_1),false,true); // FIXME hidden until Control page supports JSON
 
   
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";
@@ -105,6 +107,13 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
     if(m_verbose) std::cerr<<"failed to spawn background thread"<<std::endl;
     return false;
   }
+  
+  // fewer, larger packets are better for network performance, so we batch logging and monitoring messages.
+  // on the other hand, if packet size exceeds the MTU, they will fragment, increasing packets and reducing reliability
+  // so, try to batch up to the MTU size. In order to do that, we need to know the MTU.
+  //std::set<std::string> interfaces = GetInterfaces();
+  //if(interfaces.size()) MSS_SIZE = GetMTU(interfaces[??]); // but which interface?
+  // just get MTU from config variable. *sigh*
   
   return true;
 }
@@ -978,23 +987,34 @@ bool Services::SendLog(const std::string& message, LogLevel severity, const std:
   
   const std::string& name = (device=="") ? m_name : device;
   
-  // FIXME we should be able to relax this check if compression is enabled...
-  if((message.length()+name.length())>MAX_MSG_SIZE){
-    if(m_verbose) std::cerr<<"Logging message is too long!"<<std::endl;
-    return false;
-  }
+  // grab timestamp at time of call if 0
+  time_t ts = (timestamp!=0) ? timestamp : time(nullptr)*1000;
   
   std::unique_lock<std::mutex> locker(logging_buf_mtx);
   
+  // merge identical logging messages back-to-back
   if(logging_buf.size() && name==logging_buf.back().device && message==logging_buf.back().message){
     ++logging_buf.back().repeats;
     return true;
   }
   
-  // grab timestamp at time of call if 0
-  time_t ts = (timestamp!=0) ? timestamp : time(nullptr)*1000;
+  // reject if this message is too big to fit in a UDP datagram even with compression
+  size_t compressed_bytes = ZSTD_compressBound(message.length()+name.length());
+  if(compressed_bytes > MAX_MSG_SIZE){
+    if(m_verbose) std::cerr<<"Logging message is too long!"<<std::endl;
+    return false;
+  }
+  
+  // if appending this message to the batch may put the batch over the UDP datagram size limit,
+  // we need to send current contents first.
+  // actually, let's be more conservative and send before we go over MSS to prevent fragmentation if we can
+  if((compressed_bytes+thread_args.logging_batch_bytes) > MSS_SIZE){
+    BatchAndSendMulticast(&thread_args, false, true); // don't try to lock logging buffer, we've got it
+  }
   
   logging_buf.emplace_back(message, severity, name, ts);
+  
+  thread_args.logging_batch_bytes += compressed_bytes;
   
   return true;
 }
@@ -1017,23 +1037,37 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   
   const std::string& name = (device=="") ? m_name : device;
   
-  if((json_data.length()+name.length()+subject.length())>MAX_MSG_SIZE){
-    if(m_verbose) std::cerr<<"Monitoring message is too long!"<<std::endl;
-    return false;
-  }
-  
   // grab timestamp at time of call if 0
   time_t ts = (timestamp!=0) ? timestamp : time(nullptr)*1000;
   
   std::unique_lock<std::mutex> locker(monitoring_buf_mtx);
   
-  // take first of repeated monitoring sends within buffer period
+  // only accept the first of repeated monitoring sends within buffer period
   auto it = monitoring_buf.find(name+subject);
   if(it!=monitoring_buf.end() && (ts - it->second.timestamp)<mon_merge_period_ms) return true;
+  
+  // reject if this message is too big to fit in a UDP datagram even with compression
+  size_t compressed_bytes = ZSTD_compressBound(json_data.length()+name.length()+subject.length());
+  if(compressed_bytes > MAX_MSG_SIZE){
+    if(m_verbose) std::cerr<<"Monitoring message is too long!"<<std::endl;
+    return false;
+  }
+  
+  // if appending this message to the batch may put the batch over the UDP datagram size limit,
+  // we need to send current contents first.
+  // actually, let's be more conservative and send before we go over MTU to prevent fragmentation if we can
+  // (this is a little conservative as it assumes each message is compressed independently,
+  // rather than as a batch, which probably gets a better compression ratio.. but we want to avoid
+  // incurring the merge+compress overhead without actually sending)
+  if((compressed_bytes+thread_args.monitoring_batch_bytes) > MSS_SIZE){
+    BatchAndSendMulticast(&thread_args, true, false); // don't try to lock monitoring buffer, we've got it
+  }
   
   monitoring_buf.emplace(std::piecewise_construct,
                          std::forward_as_tuple(name+subject),
                          std::forward_as_tuple(json_data, subject, name, ts));
+  
+  thread_args.monitoring_batch_bytes += compressed_bytes;
   
   return true;
 }
@@ -1062,8 +1096,8 @@ bool Services::SendROOTplotMulticast(const std::string& plot_name, const std::st
                          + ", \"lifetime\":"+std::to_string(lifetime)
                          + ", \"data\":"+ json_data+"}";
   
-  if(cmd_string.length()>MAX_UDP_PACKET_SIZE){
-    if(m_verbose) std::cerr<<"ROOT plot json is too long! Maximum length may be MAX_UDP_PACKET_SIZE bytes"<<std::endl;
+  if(ZSTD_compressBound(cmd_string.length()) > MAX_UDP_PACKET_SIZE){
+    if(m_verbose) std::cerr<<"ROOT plot json is too long!"<<std::endl;
     return false;
   }
   
@@ -1219,8 +1253,8 @@ std::string Services::LoadConfigSlowControlFunc(const char* control){
     
     while(count<5){
       if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id, config_devicename)){
-	usleep(100000);
-	count++;
+        usleep(100000);
+        count++;
       }
       else count=99;
     }
@@ -1252,11 +1286,19 @@ void Services::ResetConfigIDs(){
 void Services::BufferThread(Thread_args* args){
   
   BufferThreadArgs* m_args = dynamic_cast<BufferThreadArgs*>(args);
+  BatchAndSendMulticast(m_args, true, true);
+  std::this_thread::sleep_until(m_args->last_send+m_args->multicast_send_period_ms);
+  return;
+  
+}
+
+bool Services::BatchAndSendMulticast(BufferThreadArgs* m_args, bool log_lock, bool mon_lock){
   
   m_args->last_send = std::chrono::steady_clock::now();
   
   m_args->local_merge_buf.clear();
-  std::unique_lock<std::mutex> locker(*m_args->logging_buf_mtx);
+  std::unique_lock<std::mutex> locker(*m_args->logging_buf_mtx, std::defer_lock);
+  if(log_lock) locker.lock();
   
   // merge into a batch
   bool first=true;
@@ -1274,13 +1316,16 @@ void Services::BufferThread(Thread_args* args){
   }
   
   // send
-  if(m_args->local_merge_buf.empty() || m_args->services->SendLog(m_args->local_merge_buf)){
-    m_args->logging_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
+  if(!m_args->local_merge_buf.empty()){
+    m_args->services->SendLog(m_args->local_merge_buf);
+    m_args->logging_buf->clear();
+    m_args->logging_batch_bytes = 0;
   }
   
   // repeat for monitoring messages
   m_args->local_merge_buf.clear();
-  locker = std::unique_lock<std::mutex>(*m_args->monitoring_buf_mtx);
+  locker = std::unique_lock<std::mutex>(*m_args->monitoring_buf_mtx, std::defer_lock);
+  if(mon_lock) locker.lock();
   
   first=true;
   for(std::pair<const std::string, MonitoringMsg>& msg : *m_args->monitoring_buf){
@@ -1295,8 +1340,10 @@ void Services::BufferThread(Thread_args* args){
   }
   
   // send
-  if(m_args->local_merge_buf.empty() || m_args->services->SendMonitoringData(m_args->local_merge_buf)){
-    m_args->monitoring_buf->clear(); // FIXME do we not clear on error...? does it depend on the error...?
+  if(!m_args->local_merge_buf.empty()){
+    m_args->services->SendMonitoringData(m_args->local_merge_buf);
+    m_args->monitoring_buf->clear();
+    m_args->monitoring_batch_bytes = 0;
   }
   
   // our other sevice task: prune the alarm buffer.
@@ -1309,12 +1356,7 @@ void Services::BufferThread(Thread_args* args){
     else ++it;
   }
   
-  // release mtx
-  locker.unlock();
-  
-  std::this_thread::sleep_until(m_args->last_send+m_args->multicast_send_period_ms);
-  
-  return;
+  return true;
 }
 
 std::string Services::JsonEscape(std::string s){
@@ -1335,7 +1377,7 @@ std::string Services::GetLocalConfig(){
 
 std::string Services::SCLocalConfig(const char* data){
 
-  return "["+std::to_string(m_base_config_id)+","+std::to_string(m_run_mode_config_id)+"]: "+m_local_config;
+  return "base: "+std::to_string(m_base_config_id)+", runmode:"+std::to_string(m_run_mode_config_id)+", config: "+m_local_config;
 
 }
 
@@ -1380,18 +1422,18 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
                 (*sc_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
                 bool ok = func(m_local_config);
                 if(!ok){
-		  std::cerr<<"ChangeConfig Error"<<std::endl;
-		  SendLog("ChangeConfig Error", LogLevel::Error);
-		  sc_vars->SetWarning(true);
-		}
+                  std::cerr<<"ChangeConfig Error"<<std::endl;
+                  SendLog("ChangeConfig Error", LogLevel::Error);
+                  sc_vars->SetWarning(true);
+                }
                 int new_state = ok ? (int)ConfigState::ChangeEnd : (int)ConfigState::ChangeFail;
                 (*sc_vars)["Config"]->SetValue(new_state);
                 (*sc_vars)["NewConfig"]->SetValue(0);
                 return (ok ? "OK" : "Error");
-              },
-              0,
-              false); // this version will not be locked during non-testing runs,
-                      // since it only allows loading configurations in line with the current run type.
+              },  // setter
+              0,  // getter
+              false,  // not locked during non-testing runs, as it only allows loading configurations in line with the current run type
+              false); // not hidden
   
   // 3.
   allgood = allgood &&
@@ -1403,15 +1445,15 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
                 int new_state = ok ? (int)ConfigState::ChangeEnd : (int)ConfigState::ChangeFail;
                 (*sc_vars)["Config"]->SetValue(new_state);
                 if(!ok){
-		  sc_vars->SetWarning(true);
-		  std::cerr<<"ChangeConfig Error"<<std::endl;
-		  SendLog("ChangeConfig Error", LogLevel::Error);
-		}
+                  sc_vars->SetWarning(true);
+                  std::cerr<<"ChangeConfig Error"<<std::endl;
+                  SendLog("ChangeConfig Error", LogLevel::Error);
+                }
                 return (ok ? "OK" : "Error");
-              },
-              0,
-              true); // this version will be locked during non-testing runs,
-                     // since it allows loading arbitrary configurations
+              },  // setter
+              0,  // getter
+              true,   // locked during non-testing runs as it allows loading arbitrary configurations
+              false); // not hidden
   
   return allgood;
   
@@ -1452,10 +1494,10 @@ bool Services::SetRunStopFunc(std::function<bool()> func){
                 }
                 (*sc_vars)["Config"]->SetValue((int)ConfigState::Unconfigured);
                 return (ok ? "OK" : "Error");
-              },
-              0,
-              false); // this version will not be locked during non-testing runs,
-                      // since it is a fallback control in case the alert gets missed
+              }, // setter
+              0, // getter
+              false,  // not locked during non-testing runs: it is a fallback control in case alert gets missed
+              false); // not hidden
   
   return allgood;
   
@@ -1472,9 +1514,9 @@ bool Services::SetExportConfigFunc(std::function<bool(std::string&)> func){
   allgood = AlertSubscribe("ExportConfig", [this, func](const char*, const char*) -> bool{
     if(func(tmp_config)){
       if(tmp_config.compare(m_local_config) !=0){
-	m_local_config = tmp_config;
-	m_base_config_id = 0;
-	m_run_mode_config_id = 0;
+        m_local_config = tmp_config;
+        m_base_config_id = 0;
+        m_run_mode_config_id = 0;
       }
       return true;
     }
@@ -1502,12 +1544,60 @@ bool Services::SetExportConfigFunc(std::function<bool(std::string&)> func){
                   m_run_mode_config_id = 0;
                 }
                 
-                return tmp_config; 
-              },
-              0,
-              false); // not be locked during non-testing runs, since it does not change configuration
+                return tmp_config;
+              }, // setter
+              0, // getter
+              false, // not be locked during non-testing runs, since it does not change configuration
+              true); // hidden, since it would return JSON and for now, web doesn't support that
   
   
   return allgood;
   
 }
+
+/*
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <netdb.h>
+
+#include <sys/ioctl.h>
+#include <net/if.h>
+// header size constants
+#include <netinet/ip.h>
+#include <netinet/udp.h>
+
+size_t Services::GetMTU(int f_socket, std::string iface_name){
+    struct ifreq ifr;
+    memset(&ifr, 0, sizeof(ifr));
+    strncpy(ifr.ifr_name, iface_name.c_str(), sizeof(ifr.ifr_name));
+    int f_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    if(ioctl(f_socket.get(), SIOCGIFMTU, &ifr) == 0)
+    {
+        size_t f_mtu_size = ifr.ifr_mtu - sizeof(iphdr) - sizeof(udphdr); // subtract header sizes from MTU to get MSS
+        close(f_socket);
+        return f_mtu_size;
+    }
+    return 0;  // errno set by ioctl()
+}
+
+std::set<std::string> Services::GetInterfaces(){
+    std::set<std::string> ifnames;
+    struct ifaddrs *ifaddr;
+    if(getifaddrs(&ifaddr)==-1){
+        std::cerr<<"getifaddrs couldn't find any network interfaces!"<<std::endl;
+        return ifnames;
+    }
+    for(struct ifaddrs *ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next){
+        
+        if(ifa->ifa_addr == nullptr) continue; // ignore if no IP address; e.g. if interface down/unconfigured
+        
+        int family = ifa->ifa_addr->sa_family;
+        if(family!=AF_INET && family!=AF_INET6) continue; // ignore AP_PACKET/AF_PACKET interfaces
+        
+        ifnames.emplace(ifa->ifa_name);
+    }
+    // we're responsible for freeing the list
+    freeifaddrs(ifaddr);
+    return ifnames;
+}
+*/

@@ -236,7 +236,6 @@ bool ServicesBackend::InitZMQ(){
 		clt_dlr_socket->setsockopt(ZMQ_RCVTIMEO, clt_dlr_socket_timeout);
 		clt_dlr_socket->setsockopt(ZMQ_IDENTITY, clt_ID.c_str(), clt_ID.length());
 		clt_dlr_socket->setsockopt(ZMQ_IMMEDIATE,1);
-		clt_dlr_socket->setsockopt(ZMQ_LINGER, 10);
 		clt_dlr_socket->bind(std::string("tcp://*:")+std::to_string(clt_dlr_port));
 	} catch(zmq::error_t& e){
 		std::cerr<<"ServicesBackend caught "<<e.what()<<" creating dealer socket on port "<<clt_dlr_port<<std::endl;
@@ -1025,7 +1024,7 @@ int ServicesBackend::PollAndReceive(zmq::socket_t* sock, zmq::pollitem_t poll, u
 	try {
 		get_ok = zmq::poll(&poll, 1, timeout);
 	} catch (zmq::error_t& err){
-		if(m_verbosity) std::cerr<<"ServicesBackend::PollAndReceive poller caught "<<err.what()<<std::endl;
+		if(m_verbosity>1) std::cerr<<"ServicesBackend::PollAndReceive poller caught "<<err.what()<<std::endl;
 		get_ok = -1;
 	}
 	if(get_ok<0){
@@ -1081,7 +1080,7 @@ bool ServicesBackend::Ready(int timeout){
 	
 //	printf("ServicesBackend waiting for up to %d ms for connection to middleman\n",timeout);
 	std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
-
+	
 	// poll DEALER socket until it returns we have a listener
 	int ret;
 	try {
@@ -1102,7 +1101,7 @@ bool ServicesBackend::Ready(int timeout){
 //		printf("ServicesBackend::Ready - no one connected (%s)\n", zmq_strerror(errno));
 		return false;
 	}
-	if(m_verbosity) printf("Dealer connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
+	if(m_verbosity>1) printf("Dealer connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
 	
 	// the above doesn't work for the PUB socket as they always report having a listener via POLLOUT.
 	// instead use socket monitor to listen for the connected event.
@@ -1112,7 +1111,7 @@ bool ServicesBackend::Ready(int timeout){
 		printf("ServicesBackend::Ready - pub socket didn't get connected event\n");
 		return false;
 	}
-	if(m_verbosity) printf("Pub connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
+	if(m_verbosity>1) printf("Pub connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
 	// send test pub queries until one gets a reply - this may be redundant
 	std::string resp;
 	std::chrono::milliseconds time_left = std::chrono::duration_cast<std::chrono::milliseconds>(end-std::chrono::steady_clock::now());
@@ -1121,7 +1120,7 @@ bool ServicesBackend::Ready(int timeout){
 		if(!SendCommand("W_QUERY"," select now()", &resp, std::min(decltype(time_left.count())(500), time_left.count()))){
 			if(m_verbosity) std::cerr<<"timeout waiting on test pub"<<std::endl;
 		} else {
-			if(m_verbosity) std::cout<<"test pub repsonse: "<<resp<<std::endl;
+			if(m_verbosity>1) std::cout<<"test pub repsonse: "<<resp<<std::endl;
 			return true;
 		}
 		time_left = std::chrono::duration_cast<std::chrono::milliseconds>(end-std::chrono::steady_clock::now());
@@ -1140,7 +1139,7 @@ void ServicesBackend::CheckSocketEvents(int timeout_ms){
 			if(tmp.more()){
 				monitor_socket->recv(&tmp2);
 			} else {
-				if(m_verbosity) std::cerr<<"MonitorSocket got only one part?"<<std::endl;
+				if(m_verbosity>1) std::cerr<<"MonitorSocket got only one part?"<<std::endl;
 				return;
 			}
 			uint16_t event_id;

@@ -405,7 +405,6 @@ void SlowControlCollection::Thread(Thread_args* arg){
       std::cerr<<"failed to receive alert!"<<std::endl;
     }
     std::istringstream iss(static_cast<char*>(message.data()));
-
     
     // receive alert payload
     std::string payload;
@@ -432,19 +431,17 @@ void SlowControlCollection::Thread(Thread_args* arg){
       //a++;
     }
     
-    //std::cout<<iss.str()<<std::endl;
-    args->alert_functions_mutex->lock();
     if(iss.str() == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
     else if(iss.str() == "ChangeConfig"){
        if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0){
-         args->alert_functions_mutex->unlock();
          return;
        }
       (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
     }
     
-
+    
     bool error = false;
+    std::unique_lock<std::mutex> locker(*args->alert_functions_mutex);
     
     if(args->alert_functions->count(iss.str())){
       if(has_data){
@@ -458,7 +455,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
           if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
           else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
         }
-           
+        
       }
       else {
         try{
@@ -498,10 +495,6 @@ void SlowControlCollection::Thread(Thread_args* arg){
       if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
       
     }
-    
-    
-    
-    args->alert_functions_mutex->unlock();
     
     //if(payload!=nullptr) free(payload);
   }
@@ -660,8 +653,8 @@ void SlowControlCollection::Unpack(std::string in, std::map<std::string, std::st
           //tmp<<counter;
           Store tmp;
           tmp.JsonParser(it->second.substr(first,i-first+1));
-          out[header+tmp.Get<std::string>("name")]=it->second.substr(first,i-first+1);          
-          //          counter++;
+          out[header+tmp.Get<std::string>("name")]=it->second.substr(first,i-first+1);
+          //counter++;
         }
         
       }
@@ -892,8 +885,11 @@ zmq::message_t SlowControlCollection::ZstdCompress(SlowControlCollection* SCC, s
   
   std::unique_lock<std::mutex> locker(SCC->zstd_cctx_mtx);
   std::string compressed_msg_buf;
-  compressed_msg_buf.resize(ZSTD_compressBound(msg.size()));
-  uint64_t bytes_to_send = ZSTD_compressCCtx(SCC->zstd_cctx, (void*)compressed_msg_buf.data(), compressed_msg_buf.size(), msg.data(), msg.size(), SCC->zstd_compression_level);
+  size_t bytes_to_send = ZSTD_compressBound(msg.size()); // this can fail too!
+  if(!ZSTD_isError(bytes_to_send)){
+    compressed_msg_buf.resize(bytes_to_send);
+    bytes_to_send = ZSTD_compressCCtx(SCC->zstd_cctx, (void*)compressed_msg_buf.data(), compressed_msg_buf.size(), msg.data(), msg.size(), SCC->zstd_compression_level);
+  }
   if(ZSTD_isError(bytes_to_send)){
     locker.unlock();
     std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
@@ -903,7 +899,7 @@ zmq::message_t SlowControlCollection::ZstdCompress(SlowControlCollection* SCC, s
     memcpy(zmsg.data(), msg.data(), msg.size());
     return zmsg;
   }
-  zmq::message_t zmsg(msg.size());
+  zmq::message_t zmsg(bytes_to_send);
   memcpy(zmsg.data(), compressed_msg_buf.data(), bytes_to_send);
   return zmsg;
 }

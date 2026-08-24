@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <set>
 #include <thread>
 #include <chrono>
 #include <functional>
@@ -62,6 +63,8 @@ namespace ToolFramework {
     std::chrono::milliseconds multicast_send_period_ms;
     std::chrono::steady_clock::time_point last_send;
     std::string local_merge_buf;
+    size_t logging_batch_bytes=0;
+    size_t monitoring_batch_bytes=0;
     uint32_t alarm_cooldown_ms;
   };
   
@@ -140,7 +143,11 @@ namespace ToolFramework {
     bool SendLog(std::string& msg);
     bool SendMonitoringData(std::string& msg);
     static void BufferThread(Thread_args* args);
+    static bool BatchAndSendMulticast(BufferThreadArgs* m_args, bool log_lock, bool mon_lock);
     std::string SCLocalConfig(const char* data);
+    
+    //size_t GetMTU(std::string iface_name);
+    //std::set<std::string> GetInterfaces();
     
     std::string m_name;
     std::string config_devicename;
