@@ -462,9 +462,32 @@ void SlowControlCollection::Thread(Thread_args* arg){
         }
       }
       
-      if(error) std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
+      if(error)   std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
+
+    }
+    if(args->alert_functions->count("*")){
+      if(has_data){
+	try{
+	  error = !((*(args->alert_functions))["*"](iss.str().c_str(), payload.c_str()));
+	}
+	catch(...){
+	  error = true;
+	}	
+      }
+      else {
+	try{
+	  error=!((*(args->alert_functions))["*"](iss.str().c_str(), 0));
+	}
+	catch(...){
+	  error = true;
+	}
+      }
+   
+      if(error)   std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
       
     }
+    
+ 
     args->alert_functions_mutex->unlock();
     
     //if(payload!=nullptr) free(payload);
@@ -548,7 +571,7 @@ std::string SlowControlCollection::PrintJSON(){
 
 bool SlowControlCollection::AlertSubscribe(std::string alert, AlertFunction function){
   
-  if(function==nullptr || !m_alerts_send) return false;
+  if(function==nullptr || !m_alerts_receive) return false;
   m_alert_functions_mutex.lock();
   m_alert_functions[alert]=function;
   m_alert_functions_mutex.unlock();
