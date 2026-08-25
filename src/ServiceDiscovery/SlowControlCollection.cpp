@@ -122,16 +122,16 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       m_pub->bind(tmp.str().c_str());
       
       if(!m_util->AddPort("alerts",alert_send_port)){
-
-	delete m_pub;
-	m_pub=0;
-	m_alerts_send = false;
-
-	delete args;
-	args=0;
         
-	std::clog<<"Error adding alert send port to SD"<<std::endl;
-	return false;
+        delete m_pub;
+        m_pub=0;
+        m_alerts_send = false;
+        
+        delete args;
+        args=0;
+        
+        std::clog<<"Error adding alert send port to SD"<<std::endl;
+        return false;
       }
       
       if(m_thread){
@@ -152,7 +152,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
     }
     
     if(m_alerts_receive){
-
+      
       args->sub = new zmq::socket_t(*(m_context), ZMQ_SUB);
       args->sub->setsockopt(ZMQ_SUBSCRIBE, "", 0);
       args->sub->setsockopt(ZMQ_LINGER, 0);
@@ -162,20 +162,20 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       
       args->alert_functions=&m_alert_functions;
       args->alert_functions_mutex=&m_alert_functions_mutex;
-
+      
       if(!m_util->AddPort("alertr",alert_receive_port)){
-
-	delete args->sub;
-	args->sub = 0;
-	m_alerts_receive = false;
-
-	delete args;
-	args=0;
-
-	
-	std::clog<<"Error adding port alert receive to SD"<<std::endl;
-	return false;
-	
+        
+        delete args->sub;
+        args->sub = 0;
+        m_alerts_receive = false;
+        
+        delete args;
+        args=0;
+        
+        
+        std::clog<<"Error adding port alert receive to SD"<<std::endl;
+        return false;
+        
       }
       
     }
@@ -195,7 +195,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       
       delete args;
       args=0;
-
+      
       std::clog<<"Error adding port SC to SD"<<std::endl;
       
       return false;
@@ -212,7 +212,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       args->items[1].events=ZMQ_POLLIN;
     args->items[1].revents=0;
     }
-
+    
     args->SCC=this;
     Add("Status",SlowControlElementType(INFO),0,0,false,false);
     Add("?",SlowControlElementType(BUTTON),0,0,false,true);
@@ -246,7 +246,7 @@ bool SlowControlCollection::InitThreadedReceiver(zmq::context_t* context, int po
   if(args) return false;
   //printf("InitThreadedReceiver\n");
   m_thread=true;
-
+  
   //std::cout<<"new_service="<<new_service<<std::endl;
   Init(context, port, new_service, alert_receive_port, alert_receive, alert_send_port, alert_send);
   args->poll_length=poll_length;
@@ -267,7 +267,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     zmq::message_t identity;
     int ok = args->sock->recv(&identity);
-
+    
     if(ok==0 || !identity.more()){
       std::cerr<<"error: Poorly formatted slowcontrol input [identity problem]"<<std::endl;
       return;
@@ -310,20 +310,19 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     //tmp.Print();
     //printf("key=%s\n",key.c_str());
-
     
     //    std::string reply="error: " + key;
     std::string reply="";
     bool strip=false;
-
+    
     Update(args->SCC, key, value, reply, strip, *(args->testing));
     /*
     
     if(key == "?"){
       //printf("args->SCC->Print()=%s\n", args->SCC->Print().c_str());
       if(value=="JSON"){
-	reply=args->SCC->PrintJSON();
-	strip=true;
+        reply=args->SCC->PrintJSON();
+        strip=true;
       }
       else  reply=args->SCC->Print();
       //printf("reply=%s\n", reply.c_str());
@@ -336,29 +335,29 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
       
       else{
-	reply=key;
-	if((*args->SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
-	  value="1";
-	}
+        reply=key;
+        if((*args->SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
+          value="1";
+        }
         //std::stringstream input;
         //input<<tmp.Get<std::string>("msg_value");
-	//        std::string key="";
-	// std::string value="";
+        //        std::string key="";
+        // std::string value="";
         //input>>key>>value;
-	//printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
-	if(value!=""){
-	  (*args->SCC)[key]->SetValue(value);
-	  //(*args->SCC)[key]->Print();
-	  SCFunction tmp_func= (*args->SCC)[key]->GetChangeFunction();
-	  if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
-	  
-	}
-	else{
-	  SCFunction tmp_func= (*args->SCC)[key]->GetReadFunction();
-	  if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
-	  else (*args->SCC)[key]->GetValue(reply);
-	  
-	}
+        //printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
+        if(value!=""){
+          (*args->SCC)[key]->SetValue(value);
+          //(*args->SCC)[key]->Print();
+          SCFunction tmp_func= (*args->SCC)[key]->GetChangeFunction();
+          if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+          
+        }
+        else{
+          SCFunction tmp_func= (*args->SCC)[key]->GetReadFunction();
+          if (tmp_func!=nullptr) reply=tmp_func(key.c_str());
+          else (*args->SCC)[key]->GetValue(reply);
+          
+        }
       }
     }
     */
@@ -398,7 +397,6 @@ void SlowControlCollection::Thread(Thread_args* arg){
       std::cerr<<"failed to receive alert!"<<std::endl;
     }
     std::istringstream iss(static_cast<char*>(message.data()));
-
     
     // receive alert payload
     std::string payload;
@@ -413,7 +411,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
       memcpy((void*)payload.data(),message.data(),message.size());
       has_data=true;
     }
-
+    
     //int a=0;
     while(message.more()){
       
@@ -427,44 +425,44 @@ void SlowControlCollection::Thread(Thread_args* arg){
     if(iss.str() == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
     else if(iss.str() == "ChangeConfig"){
        if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0){
-	 args->alert_functions_mutex->unlock();
-	 return;
+         args->alert_functions_mutex->unlock();
+         return;
        }
       (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
     }
     
-
+    
     bool error = false;
     
     if(args->alert_functions->count(iss.str())){
       if(has_data){
-	try{
-	  error = !((*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str()));
-	}
-	catch(...){
-	  error = true;
-	}
-	if(iss.str() == "LoadConfig"){
-	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
-	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
-	}
-   	
+        try{
+          error = !((*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str()));
+        }
+        catch(...){
+          error = true;
+        }
+        if(iss.str() == "LoadConfig"){
+          if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
+          else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
+        }
+        
       }
       else {
-	try{
-	  error=!((*(args->alert_functions))[iss.str()](iss.str().c_str(), 0));
-	}
-	catch(...){
-	  error = true;
-	}
-	if(iss.str() == "ChangeConfig"){
-	  if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeFail);
-	  else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeEnd);
-	  (*args->SC_vars)["NewConfig"]->SetValue(0);
-	}
+        try{
+          error=!((*(args->alert_functions))[iss.str()](iss.str().c_str(), 0));
+        }
+        catch(...){
+          error = true;
+        }
+        if(iss.str() == "ChangeConfig"){
+          if(error)(*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeFail);
+          else (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeEnd);
+          (*args->SC_vars)["NewConfig"]->SetValue(0);
+        }
       }
-   
-      if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+      
+      if(error)   std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
 
     }
     if(args->alert_functions->count("*")){
@@ -485,12 +483,11 @@ void SlowControlCollection::Thread(Thread_args* arg){
 	}
       }
    
-      if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+      if(error)   std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
       
     }
     
-    
-    
+ 
     args->alert_functions_mutex->unlock();
     
     //if(payload!=nullptr) free(payload);
@@ -512,7 +509,7 @@ void SlowControlCollection::Clear(){
 
 
 bool SlowControlCollection::Add(std::string name, SlowControlElementType type, SCFunction change_function, SCFunction read_function, bool testing_lock, bool hidden){
-
+  
   if(SC_vars.count(name)) return false;
   SC_vars[name] = new SlowControlElement(name, type, change_function, read_function,testing_lock, hidden);
   
@@ -567,7 +564,7 @@ std::string SlowControlCollection::PrintJSON(){
     first = false;
   }
   reply+="]";
-
+  
   return reply;
   
 }
@@ -584,7 +581,7 @@ bool SlowControlCollection::AlertSubscribe(std::string alert, AlertFunction func
 
 
 bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
-
+  
   // TODO add some means of returning error info, e.g. accept alert by reference and set to err description on error
   if(!m_alerts_send) return false;  // err: "unknown alert"
   zmq::message_t message(alert.length()+1);
@@ -602,22 +599,21 @@ bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
 }
 
 void SlowControlCollection::JsonParser(std::string json){
-
+  
   std::map<std::string, std::string> out;
-
+  
   Unpack(json, out);
-
+  
   //std::cout<<"out map"<<std::endl;
   
   for(std::map<std::string, std::string>::iterator it=out.begin(); it!=out.end(); it++){
-
+    
     //std::cout<<it->first<<" -> "<<it->second<<std::endl;
     
     Add(it->first, SlowControlElementType::VARIABLE);
     SC_vars[it->first]->JsonParser(it->second);
     
   }
-  
   
 }
 
@@ -644,16 +640,16 @@ void SlowControlCollection::Unpack(std::string in, std::map<std::string, std::st
       //      unsigned int counter=0;
       unsigned int first=0;
       for(unsigned int i=1; i<it->second.length(); i++){
-	if(it->second[i]=='{') first=i;
-	if(it->second[i]=='}'){
-	  //  std::stringstream tmp;
-	  //tmp<<counter;
-	  Store tmp;
-	  tmp.JsonParser(it->second.substr(first,i-first+1));
-	  out[header+tmp.Get<std::string>("name")]=it->second.substr(first,i-first+1);	  
-	  //	  counter++;
-	}
-	
+        if(it->second[i]=='{') first=i;
+        if(it->second[i]=='}'){
+          //  std::stringstream tmp;
+          //tmp<<counter;
+          Store tmp;
+          tmp.JsonParser(it->second.substr(first,i-first+1));
+          out[header+tmp.Get<std::string>("name")]=it->second.substr(first,i-first+1);          
+          //          counter++;
+        }
+        
       }
       
     }
@@ -665,17 +661,17 @@ void SlowControlCollection::Unpack(std::string in, std::map<std::string, std::st
       unsigned int counter=0;
       
       for(unsigned int i = 1; i<it->second.length(); i++){
-	//std::cout<<"i="<<i<<" : it->second[i]="<<it->second[i]<<" : counter="<<counter<<" : bracket_counter="<<bracket_counter<<std::endl; 
-	if(it->second[i]=='{' && bracket_counter==0) start=i;
-	if(it->second[i]=='{') bracket_counter++;
-	else if(it->second[i]=='}' && bracket_counter==1) {
-	  std::stringstream tmp;
-	  tmp<<counter;
-	  Unpack(it->second.substr(start,i-start+1), out, header+it->first+"::"+tmp.str());
-	  counter++;
-	  bracket_counter=0;
-	}
-	else if (it->second[i]=='}') bracket_counter--;
+        //std::cout<<"i="<<i<<" : it->second[i]="<<it->second[i]<<" : counter="<<counter<<" : bracket_counter="<<bracket_counter<<std::endl; 
+        if(it->second[i]=='{' && bracket_counter==0) start=i;
+        if(it->second[i]=='{') bracket_counter++;
+        else if(it->second[i]=='}' && bracket_counter==1) {
+          std::stringstream tmp;
+          tmp<<counter;
+          Unpack(it->second.substr(start,i-start+1), out, header+it->first+"::"+tmp.str());
+          counter++;
+          bracket_counter=0;
+        }
+        else if (it->second[i]=='}') bracket_counter--;
       }
     }
   }
@@ -709,8 +705,8 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
     //std::cout<<"variable exists"<<std::endl;
     if((*SCC)[key]->GetType() == SlowControlElementType(INFO)){
       if(!(*SCC)[key]->GetValue(value)){
-	reply="Error getting value form key: "+key;
-	return false;
+        reply="Error getting value from key: "+key;
+        return false;
       }
       reply=value;
       return true;
@@ -719,7 +715,7 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
     else{
       reply=key;
       if((*SCC)[key]->GetType() == SlowControlElementType(BUTTON)){
-	value="1";
+        value="1";
       }
       //std::stringstream input;
       //input<<tmp.Get<std::string>("msg_value");
@@ -728,49 +724,49 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
       //input>>key>>value;
       //printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
       if(value!=""){
-	if(!testing || (testing && !(*SCC)[key]->Lockable())){
-	  
-	  if(!(*SCC)[key]->SetValue(value)){
-	    reply =" Error setting "+key+" to value: " + value;
-	    return false;
-	  }
-	  else{
-	    reply = value;
-	    return true;
-	  }
-	  //(*SCC)[key]->Print();
-	  /*
-	  SCFunction tmp_func= (*SCC)[key]->GetChangeFunction();
-	  if (tmp_func!=nullptr){
-	    try{ 
-	      reply=tmp_func(key.c_str());
-	      
-	    }
-	    catch(...){
-	      reply= "change function failed";
-	    }
-	  }
-	  */
-	}
-	else reply = key + " locked";
+        if(!testing || (testing && !(*SCC)[key]->Lockable())){
+          
+          if(!(*SCC)[key]->SetValue(value)){
+            reply =" Error setting "+key+" to value: " + value;
+            return false;
+          }
+          else{
+            reply = value;
+            return true;
+          }
+          //(*SCC)[key]->Print();
+          /*
+          SCFunction tmp_func= (*SCC)[key]->GetChangeFunction();
+          if (tmp_func!=nullptr){
+            try{ 
+              reply=tmp_func(key.c_str());
+              
+            }
+            catch(...){
+              reply= "change function failed";
+            }
+          }
+          */
+        }
+        else reply = key + " locked";
       }
       else{
-	/*
-	SCFunction tmp_func= (*SCC)[key]->GetReadFunction();
-	if (tmp_func!=nullptr){
-	  try{
-	    reply=tmp_func(key.c_str());
-	  }
-	  catch(...){
-	    reply="read function failed";
-	  }
-	}
-	else (*SCC)[key]->GetValue(reply);
-	*/
+        /*
+        SCFunction tmp_func= (*SCC)[key]->GetReadFunction();
+        if (tmp_func!=nullptr){
+          try{
+            reply=tmp_func(key.c_str());
+          }
+          catch(...){
+            reply="read function failed";
+          }
+        }
+        else (*SCC)[key]->GetValue(reply);
+        */
         if(!(*SCC)[key]->GetValue(reply)){
-	  reply="Error getting value from key: "+key;
-	  return false;
-	}
+          reply="Error getting value from key: "+key;
+          return false;
+        }
       }
     }
     return true;

@@ -255,19 +255,24 @@ bool SlowControlElement::SetValue(std::string value){
 
 bool SlowControlElement::GetValue(std::string &value){
   mtx.lock();
-  if(!options.Has("value")){
-    mtx.unlock();
-    return false;
-  }
   if(m_read_function!=0){
     try{
-      options.Set("value",m_read_function("")); 
+      options.Set("value",m_read_function(""));
     }
-    catch(...){
-      std::cerr<<"failed to call read fucntion"<<std::endl;
+    catch(std::exception& e){
+      std::cerr<<"caught "<<e.what()<<" calling read function for SlowControl "<<m_name<<std::endl;
       mtx.unlock();
       return false;
     }
+    catch(...){
+      std::cerr<<"caught non-exception calling read function for SlowControl "<<m_name<<std::endl;
+      mtx.unlock();
+      return false;
+    }
+  }
+  if(!options.Has("value")){
+    mtx.unlock();
+    return false;
   }
   options.Get("value", value);
   mtx.unlock();
