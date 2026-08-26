@@ -63,6 +63,8 @@ namespace ToolFramework{
     std::string PrintJSON();
     void Stop();
     void JsonParser(std::string json);
+    void SetTesting(bool testing);
+    bool GetTesting();
     void TestingEnable();
     void TestingDisable();
     bool Ready(int timeout_ms);

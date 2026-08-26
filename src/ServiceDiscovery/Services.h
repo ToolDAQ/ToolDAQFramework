@@ -144,7 +144,7 @@ namespace ToolFramework {
     bool SendMonitoringData(std::string& msg);
     static void BufferThread(Thread_args* args);
     static bool BatchAndSendMulticast(BufferThreadArgs* m_args, bool log_lock, bool mon_lock);
-    std::string SCLocalConfig(const char* data);
+    std::string SCLocalConfig(const char*);
     
     //size_t GetMTU(std::string iface_name);
     //std::set<std::string> GetInterfaces();
@@ -156,6 +156,7 @@ namespace ToolFramework {
     ServicesBackend m_backend_client;
     uint64_t m_base_config_id;
     uint64_t m_run_mode_config_id;
+    bool m_testing;
     std::string m_local_config;
 
     Utilities m_utils;

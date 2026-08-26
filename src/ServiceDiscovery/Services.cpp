@@ -1210,10 +1210,12 @@ bool Services::LoadConfigAlertFunc(const char* alert, const char* payload){
   tmp.JsonParser(payload);
   uint64_t base_config_id=0;
   uint64_t run_mode_config_id=0;
+  bool testing=false;
   short count = 0;
   
   tmp.Get("Base",base_config_id);
   tmp.Get("RunMode",run_mode_config_id);
+  tmp.Get("Testing", testing);
   
   if(run_mode_config_id!=m_run_mode_config_id || base_config_id!=m_base_config_id){
     
@@ -1229,49 +1231,20 @@ bool Services::LoadConfigAlertFunc(const char* alert, const char* payload){
     (*sc_vars)["NewConfig"]->SetValue(1);
     m_base_config_id = base_config_id;
     m_run_mode_config_id = run_mode_config_id;
+    m_testing = testing;
+    
   }
   
   return true;
   
 }
 
-std::string Services::LoadConfigSlowControlFunc(const char* control){
+std::string Services::LoadConfigSlowControlFunc(const char* payload){
   
-  std::string payload = (*sc_vars)[control]->GetValue<std::string>();
-  Store tmp;
-  tmp.JsonParser(payload);
-  uint64_t base_config_id=0;
-  uint64_t run_mode_config_id=0;
+  bool success = LoadConfigAlertFunc("",payload);
   
-  short count = 0;
-  std::stringstream ret;
-  
-  
-  tmp.Get("Base",base_config_id);
-  tmp.Get("RunMode",run_mode_config_id);
-  
-  if(run_mode_config_id!=m_run_mode_config_id || base_config_id!=m_base_config_id){
-    
-    while(count<5){
-      if(!GetCachedDeviceConfig(m_local_config, base_config_id, run_mode_config_id, config_devicename)){
-        usleep(100000);
-        count++;
-      }
-      else count=99;
-    }
-
-    if(count==5){
-      ret <<"Failed to load config "<<base_config_id<<":"<<run_mode_config_id;
-      return ret.str();
-    }
-    
-    (*sc_vars)["NewConfig"]->SetValue(1);
-    m_base_config_id = base_config_id;
-    m_run_mode_config_id = run_mode_config_id;
-    ret <<"Loaded config "<<base_config_id<<":"<<run_mode_config_id;
-  }
-  
-  return ret.str();
+  if(!success) return std::string("Failed to load config: ")+payload;
+  return std::string("Loaded config: ")+payload;
   
 }
 
@@ -1376,7 +1349,7 @@ std::string Services::GetLocalConfig(){
 
 }
 
-std::string Services::SCLocalConfig(const char* data){
+std::string Services::SCLocalConfig(const char*){
 
   return "base: "+std::to_string(m_base_config_id)+", runmode:"+std::to_string(m_run_mode_config_id)+", config: "+m_local_config;
 
@@ -1408,7 +1381,10 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
   
   // 1.
   allgood = AlertSubscribe("ChangeConfig", [this, func](const char*, const char*) -> bool{
+    bool old_testing = sc_vars->GetTesting();
+    sc_vars->SetTesting(m_testing);
     if(func(m_local_config)) return true;
+    sc_vars->SetTesting(old_testing); // on error, revert
     sc_vars->SetWarning(true);
     std::cerr<<"ChangeConfig Error"<<std::endl;
     SendLog("ChangeConfig Error", LogLevel::Error);
@@ -1422,12 +1398,16 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
               [this, func](const char*) -> std::string {
                 (*sc_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
                 bool ok = func(m_local_config);
+                int new_state;
                 if(!ok){
+                  new_state = (int)ConfigState::ChangeFail;
                   std::cerr<<"ChangeConfig Error"<<std::endl;
                   SendLog("ChangeConfig Error", LogLevel::Error);
                   sc_vars->SetWarning(true);
+                } else {
+                  new_state = (int)ConfigState::ChangeEnd;
+                  sc_vars->SetTesting(m_testing);
                 }
-                int new_state = ok ? (int)ConfigState::ChangeEnd : (int)ConfigState::ChangeFail;
                 (*sc_vars)["Config"]->SetValue(new_state);
                 (*sc_vars)["NewConfig"]->SetValue(0);
                 return (ok ? "OK" : "Error");
@@ -1440,11 +1420,16 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
   allgood = allgood &&
   sc_vars->Add("ChangeToConfig",
               COMMAND,
-              [this, func](const char* name) -> std::string {
+              [this, func](const char* payload) -> std::string {
                 (*sc_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
-                bool ok = func((*sc_vars)[name]->GetValue<std::string>());
+                bool ok = func(payload);
                 int new_state = ok ? (int)ConfigState::ChangeEnd : (int)ConfigState::ChangeFail;
                 (*sc_vars)["Config"]->SetValue(new_state);
+                if(ok && m_local_config.compare(payload) !=0){
+                  m_local_config = payload;
+                  m_base_config_id = 0;
+                  m_run_mode_config_id = 0;
+                }
                 if(!ok){
                   sc_vars->SetWarning(true);
                   std::cerr<<"ChangeConfig Error"<<std::endl;

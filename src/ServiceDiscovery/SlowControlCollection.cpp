@@ -796,6 +796,14 @@ void SlowControlCollection::TestingDisable(){
   m_testing=false;
 }
 
+void SlowControlCollection::SetTesting(bool testing){
+  m_testing=testing;
+}
+
+bool SlowControlCollection::GetTesting(){
+  return m_testing;
+}
+
 // non-blocking function to check if alert send socket is connected
 void SlowControlCollection::CheckReady(zmq::socket_t**& mon_sock_ptr, std::timed_mutex* connected_mtx, zmq::socket_t* m_pub){
   // FIXME we could extend this like the ServicesBackend to wait until all sockets are ready, not just the alert send
