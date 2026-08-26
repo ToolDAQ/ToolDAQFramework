@@ -1000,7 +1000,7 @@ bool Services::SendLog(const std::string& message, LogLevel severity, const std:
   
   // reject if this message is too big to fit in a UDP datagram even with compression
   size_t compressed_bytes = ZSTD_compressBound(message.length()+name.length());
-  if(compressed_bytes > MAX_MSG_SIZE){
+  if(ZSTD_isError(compressed_bytes) || compressed_bytes > MAX_MSG_SIZE){
     if(m_verbose) std::cerr<<"Logging message is too long!"<<std::endl;
     return false;
   }
@@ -1048,7 +1048,7 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   
   // reject if this message is too big to fit in a UDP datagram even with compression
   size_t compressed_bytes = ZSTD_compressBound(json_data.length()+name.length()+subject.length());
-  if(compressed_bytes > MAX_MSG_SIZE){
+  if(ZSTD_isError(compressed_bytes) || compressed_bytes > MAX_MSG_SIZE){
     if(m_verbose) std::cerr<<"Monitoring message is too long!"<<std::endl;
     return false;
   }
@@ -1096,7 +1096,8 @@ bool Services::SendROOTplotMulticast(const std::string& plot_name, const std::st
                          + ", \"lifetime\":"+std::to_string(lifetime)
                          + ", \"data\":"+ json_data+"}";
   
-  if(ZSTD_compressBound(cmd_string.length()) > MAX_UDP_PACKET_SIZE){
+  size_t compressed_bytes = ZSTD_compressBound(cmd_string.length());
+  if(ZSTD_isError(compressed_bytes) || compressed_bytes > MAX_UDP_PACKET_SIZE){
     if(m_verbose) std::cerr<<"ROOT plot json is too long!"<<std::endl;
     return false;
   }
