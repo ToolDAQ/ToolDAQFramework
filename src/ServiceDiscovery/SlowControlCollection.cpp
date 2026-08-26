@@ -123,11 +123,11 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       m_pub->bind(tmp.str().c_str());
       
       if(!m_util->AddPort("alerts",alert_send_port)){
-
+        
         delete m_pub;
         m_pub=0;
         m_alerts_send = false;
-
+        
         delete args;
         args=0;
         
@@ -153,7 +153,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
     }
     
     if(m_alerts_receive){
-
+      
       args->sub = new zmq::socket_t(*(m_context), ZMQ_SUB);
       args->sub->setsockopt(ZMQ_SUBSCRIBE, "", 0);
       args->sub->setsockopt(ZMQ_LINGER, 0);
@@ -163,16 +163,16 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       
       args->alert_functions=&m_alert_functions;
       args->alert_functions_mutex=&m_alert_functions_mutex;
-
+      
       if(!m_util->AddPort("alertr",alert_receive_port)){
-
+        
         delete args->sub;
         args->sub = 0;
         m_alerts_receive = false;
-
+        
         delete args;
         args=0;
-
+        
         
         std::clog<<"Error adding port alert receive to SD"<<std::endl;
         return false;
@@ -196,7 +196,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       
       delete args;
       args=0;
-
+      
       std::clog<<"Error adding port SC to SD"<<std::endl;
       
       return false;
@@ -213,7 +213,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       args->items[1].events=ZMQ_POLLIN;
     args->items[1].revents=0;
     }
-
+    
     args->SCC=this;
     Add("Status",SlowControlElementType(INFO),0,0,false,false);
     Add("?",SlowControlElementType(BUTTON),0,0,false,true);
@@ -247,7 +247,7 @@ bool SlowControlCollection::InitThreadedReceiver(zmq::context_t* context, int po
   if(args) return false;
   //printf("InitThreadedReceiver\n");
   m_thread=true;
-
+  
   //std::cout<<"new_service="<<new_service<<std::endl;
   Init(context, port, new_service, alert_receive_port, alert_receive, alert_send_port, alert_send);
   args->poll_length=poll_length;
@@ -268,7 +268,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     zmq::message_t identity;
     int ok = args->sock->recv(&identity);
-
+    
     if(ok==0 || !identity.more()){
       std::cerr<<"error: Poorly formatted slowcontrol input [identity problem]"<<std::endl;
       return;
@@ -317,12 +317,11 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     //tmp.Print();
     //printf("key=%s\n",key.c_str());
-
     
     //    std::string reply="error: " + key;
     std::string reply="";
     bool strip=false;
-
+    
     Update(args->SCC, key, value, reply, strip, *(args->testing));
     /*
     
@@ -425,7 +424,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
       has_data=true;
     }
-
+    
     //int a=0;
     while(message.more()){
       
@@ -473,8 +472,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
           (*args->SC_vars)["NewConfig"]->SetValue(0);
         }
       }
-   
-      if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+      
+      if(error)   std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
 
     }
     if(args->alert_functions->count("*")){
@@ -495,7 +494,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
 	}
       }
    
-      if(error)   std::cerr<<"alert fucntion failed: "<<iss.str().c_str()<<std::endl;
+      if(error)   std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
       
     }
     
@@ -518,7 +517,7 @@ void SlowControlCollection::Clear(){
 
 
 bool SlowControlCollection::Add(std::string name, SlowControlElementType type, SCFunction change_function, SCFunction read_function, bool testing_lock, bool hidden){
-
+  
   if(SC_vars.count(name)) return false;
   SC_vars[name] = new SlowControlElement(name, type, change_function, read_function,testing_lock, hidden);
   
@@ -573,7 +572,7 @@ std::string SlowControlCollection::PrintJSON(){
     first = false;
   }
   reply+="]";
-
+  
   return reply;
   
 }
@@ -590,7 +589,7 @@ bool SlowControlCollection::AlertSubscribe(std::string alert, AlertFunction func
 
 
 bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
-
+  
   // TODO add some means of returning error info, e.g. accept alert by reference and set to err description on error
   if(!m_alerts_send) return false;  // err: "unknown alert"
   zmq::message_t message(alert.length()+1);
@@ -612,22 +611,21 @@ bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
 }
 
 void SlowControlCollection::JsonParser(std::string json){
-
+  
   std::map<std::string, std::string> out;
-
+  
   Unpack(json, out);
-
+  
   //std::cout<<"out map"<<std::endl;
   
   for(std::map<std::string, std::string>::iterator it=out.begin(); it!=out.end(); it++){
-
+    
     //std::cout<<it->first<<" -> "<<it->second<<std::endl;
     
     Add(it->first, SlowControlElementType::VARIABLE);
     SC_vars[it->first]->JsonParser(it->second);
     
   }
-  
   
 }
 
@@ -719,7 +717,7 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
     //std::cout<<"variable exists"<<std::endl;
     if((*SCC)[key]->GetType() == SlowControlElementType(INFO)){
       if(!(*SCC)[key]->GetValue(value)){
-        reply="Error getting value form key: "+key;
+        reply="Error getting value from key: "+key;
         return false;
       }
       reply=value;
