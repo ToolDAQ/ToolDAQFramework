@@ -1139,9 +1139,6 @@ std::string Services::GetDeviceName(){
 
 std::string Services::TimeStringFromUnixMs(uint64_t& timestamp){
 
-  fprintf(stderr, "TimeStringFromUnixMs: received timestamp=%llu (sizeof(time_t)=%zu)\n",
-          (unsigned long long)timestamp, sizeof(time_t));
-
   if(timestamp==1) return "now()";  // remotely interpret 'now'
 
   time_t timestamp_sec; // time_t is equivalent to uint64_t
