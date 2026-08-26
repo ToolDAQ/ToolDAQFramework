@@ -143,6 +143,8 @@ ZSTDLIB_API const char* ZSTD_versionString(void);
 #define ZSTD_MAGIC_DICTIONARY       0xEC30A437    /* valid since v0.7.0 */
 #define ZSTD_MAGIC_SKIPPABLE_START  0x184D2A50    /* all 16 values, from 0x184D2A50 to 0x184D2A5F, signal the beginning of a skippable frame */
 #define ZSTD_MAGIC_SKIPPABLE_MASK   0xFFFFFFF0
+const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
+// used to check if a byte array is compressed
 
 #define ZSTD_BLOCKSIZELOG_MAX  17
 #define ZSTD_BLOCKSIZE_MAX     (1<<ZSTD_BLOCKSIZELOG_MAX)

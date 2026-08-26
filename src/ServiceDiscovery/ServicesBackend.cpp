@@ -1,9 +1,9 @@
 #include "ServicesBackend.h"
+#include "zstd_helpers.h"
 
 namespace {
 	const uint32_t MAX_UDP_PACKET_SIZE = 65507; // limit from UDP message length field
 	const uint32_t MAX_DECOMPRESSED_MSG_SIZE = 104857600; // 100MB limit. I'm sure we can spare that much RAM.
-	const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
 }
 
 using namespace ToolFramework;
@@ -361,9 +361,9 @@ bool ServicesBackend::RegisterServices(){
 void ServicesBackend::Log(std::string msg, int msg_verb, int verbosity){
 	//if(verbosity==-999) verbosity=m_verbosity;
 	// this is normally defined in Tool.h
-	if(m_log) m_log(msg, msg_verb, verbosity);
+	if(m_log) m_log(clt_ID+": "+msg, msg_verb, verbosity);
 	// FIXME we need to be able to turn off all stderr output for cgi scripts...
-	else if(m_verbosity && msg_verb<=verbosity) std::cout<<msg<<std::endl;
+	else if(m_verbosity && msg_verb<=verbosity) std::cout<<clt_ID<<": "<<msg<<std::endl;
 	return;
 }
 
@@ -413,29 +413,13 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	}
 	
 	// compress the message if applicable
-	msg_to_send=nullptr;
-	std::unique_lock<std::mutex> locker(msg_buf_mtx, std::defer_lock);
-	if(zstd_cctx){
-		locker.lock();
-		bytes_to_send = ZSTD_compressCCtx(zstd_cctx, compressed_msg_buf, MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
-		if(ZSTD_isError(bytes_to_send)){
-			locker.unlock();
-			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
-			Log(errmsg,v_error,m_verbosity);  // XXX should send to MM uncompressed, along with other errors
-			if(err) *err= errmsg;
-		} else {
-			msg_to_send = compressed_msg_buf;
-		}
-	}
-	if(!msg_to_send){
-		msg_to_send = const_cast<char*>(command.c_str());
-		bytes_to_send = command.length();
-	}
+	std::unique_lock<std::mutex> locker(msg_buf_mtx);
+	std::pair<const char*, size_t> out = ZstdCompress(zstd_cctx, command.data(), command.size(), compressed_msg_buf, MAX_UDP_PACKET_SIZE, compression_threshold, compression_level);
 	
 	// check we're not going to exceed multicast message size limit
-	if(bytes_to_send > MAX_UDP_PACKET_SIZE){
+	if(out.second > MAX_UDP_PACKET_SIZE){
 		// we can't send this on multicast.
-		if(locker.owns_lock()) locker.unlock();
+		locker.unlock();
 		std::string errmsg = "Error: message exceeds maximum bytes of "+std::to_string(MAX_UDP_PACKET_SIZE);
 		Log(errmsg,v_error,m_verbosity);  // XXX should send to MM uncompressed, along with other errors
 		if(err) *err= errmsg;
@@ -443,7 +427,7 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	}
 	
 	socket_mtx->lock();
-	int cnt = sendto(multicast_socket, msg_to_send, bytes_to_send, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
+	int cnt = sendto(multicast_socket, out.first, out.second, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
 	socket_mtx->unlock();
 	if(cnt < 0){
 		std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
@@ -488,32 +472,16 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	}
 	
 	// compress the message if applicable
-	msg_to_send=nullptr;
-	std::unique_lock<std::mutex> locker(msg_buf_mtx, std::defer_lock);
-	if(zstd_cctx){
-		locker.lock();
-		bytes_to_send = ZSTD_compressCCtx(zstd_cctx, compressed_msg_buf, MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
-		if(ZSTD_isError(bytes_to_send)){
-			locker.unlock();
-			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
-			Log(errmsg,v_error,m_verbosity);  // XXX should send to MM uncompressed, along with other errors
-			if(err) *err= errmsg;
-		} else {
-			msg_to_send = compressed_msg_buf;
-		}
-	}
-	if(!msg_to_send){
-		msg_to_send = const_cast<char*>(command.c_str());
-		bytes_to_send = command.length();
-	}
+	std::unique_lock<std::mutex> locker(msg_buf_mtx);
+	std::pair<const char*, size_t> out = ZstdCompress(zstd_cctx, command.data(), command.size(), compressed_msg_buf, MAX_UDP_PACKET_SIZE, compression_threshold, compression_level);
 	
 	// In the case of pub sockets, we specify a 'topic' that the recipient can use with ZMQ_SUBSCRIBE
 	// to filter out particular messages.
 	// In fact it's useful to indicate a topic in all cases, even when the actual message will
 	// (for now) go over a dealer/router combination that cannot filter on the topic.
 	// forward the timeout to the Command (and thus zmq::poll in PollAndSend...) ... is this sensible? HMMMMM FIXME
-	Command cmd{std::string(msg_to_send,bytes_to_send), type, topic,timeout};
-	if(locker.owns_lock()) locker.unlock(); // must check or it throws an exception
+	Command cmd{std::string(out.first,out.second), type, topic,timeout};
+	locker.unlock();
 	
 	// wrap our attempt to get the response in try/catch, just in case?
 	try {
@@ -616,7 +584,7 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 		// sending timed out
 		if(cmd.type=='w') ++write_commands_failed;
 		else if(cmd.type=='r') ++read_commands_failed;
-		Log("Timed out sending command "+std::to_string(thismsgid),v_error,m_verbosity);
+		Log("Timed out sending command "+cmd.command+", msg ID: "+std::to_string(thismsgid),v_error,m_verbosity);
 		cmd.success = false;
 		cmd.err = "Timed out sending command";
 		
@@ -753,45 +721,18 @@ bool ServicesBackend::GetNextResponse(){
 	// if we also had further parts, fetch those
 	// if the command failed the response contains an error message (which will only ever be one part)
 	for(unsigned int i=2; i<response.size(); ++i){
-		if(zstd_dctx && response.at(i).size()>4 && std::memcmp(response.at(i).data(),ZSTD_MAGIC_BYTES,4)==0){
-			
-			// compressed - decompress it
-			next_bytes = ZSTD_getFrameContentSize(response.at(i).data(), response.at(i).size());
-			if(next_bytes==ZSTD_CONTENTSIZE_UNKNOWN || next_bytes==ZSTD_CONTENTSIZE_ERROR){
-				// bad response
-				cmd.success = false;
-				cmd.err="Received corrupt zstd response size, zmq reponse size: "+std::to_string(response.at(i).size());
-				Log(cmd.err,v_warning,m_verbosity);
-				break;
-			}
-			if(next_bytes > MAX_DECOMPRESSED_MSG_SIZE){
-				cmd.success = false;
-				cmd.err="Received oversized zstd response: "+std::to_string(next_bytes)+" bytes";
-				Log(cmd.err,v_warning,m_verbosity);
-				break;
-			}
-			decompress_buffer.resize(next_bytes);
-			next_bytes = ZSTD_decompressDCtx(zstd_dctx,(void*)decompress_buffer.data(),next_bytes, response.at(i).data(), response.at(i).size());
-			if(ZSTD_isError(next_bytes)){
-				cmd.success = false;
-				cmd.err=std::string{"zstd error decompressing response: "}+ZSTD_getErrorName(next_bytes);
-				Log(cmd.err,v_warning,m_verbosity);
-				break;
-			}
-			
-			next_part = decompress_buffer.data();
-			
+		
+		bool decompress_ok = ZstdDecompress(zstd_dctx, (char*)response.at(i).data(), response.at(i).size(), cmd.err, MAX_DECOMPRESSED_MSG_SIZE);
+		if(!decompress_ok){
+			cmd.success = false;
+			Log(cmd.err, v_warning, m_verbosity);
+			break;
 		} else {
-			
-			next_bytes = response.at(i).size();
-			next_part = (const char*)response.at(i).data();
-			
+			cmd.response.push_back(std::move(cmd.err));
+			cmd.err = "";
 		}
 		
-		if(cmd.success) cmd.response.emplace_back(next_part, next_bytes);
-		else cmd.err.assign(next_part, next_bytes);
 	}
-	
 	
 	if(m_verbosity>3){
 		std::stringstream logmsg;
