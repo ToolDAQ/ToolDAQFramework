@@ -992,7 +992,7 @@ bool Services::SendLog(const std::string& message, LogLevel severity, const std:
   }
   
   // grab timestamp at time of call if 0
-  time_t ts = (timestamp!=0) ? timestamp : time(nullptr)*1000;
+  uint64_t ts = (timestamp!=0) ? timestamp : std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   
   logging_buf.emplace_back(message, severity, name, ts);
   
@@ -1023,7 +1023,7 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   }
   
   // grab timestamp at time of call if 0
-  time_t ts = (timestamp!=0) ? timestamp : time(nullptr)*1000;
+  uint64_t ts = (timestamp!=0) ? timestamp : std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   
   std::unique_lock<std::mutex> locker(monitoring_buf_mtx);
   
