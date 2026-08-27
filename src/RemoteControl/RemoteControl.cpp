@@ -5,6 +5,8 @@
 
 #include "ServiceDiscovery.h"
 #include "zmq.hpp"
+#include <zstd.h>
+#include "zstd_helpers.h"
 
 #include <boost/uuid/uuid.hpp>            // uuid class
 #include <boost/uuid/uuid_generators.hpp> // generators
@@ -30,6 +32,7 @@ int main(int argc, char** argv){
    
    
    zmq::context_t context(3);
+   ZSTD_DCtx* zstd_dctx = ZSTD_createDCtx();
 
   //std::string address(argv[1]);
   // std::stringstream tmp (argv[2]);
@@ -236,14 +239,17 @@ int main(int argc, char** argv){
 	  
 	  zmq::message_t receive;
 	  if(ServiceSend.recv(&receive)){
-	    std::istringstream iss(static_cast<char*>(receive.data()));
-	    
 	    std::string answer;
-	    answer=iss.str();
+	    if(!ZstdDecompress(zstd_dctx, (char*)receive.data(), receive.size(), answer)){
+	      std::cerr<<"failed to decompress reply!: "<<answer<<std::endl;
+	      
+	    } else {
+	      Store rr;
+	      rr.JsonParser(answer);
+	      if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<rr.Get<std::string>("msg_value")<<std::endl<<std::endl;
+	      
+	    }
 	    
-	    Store rr;
-	    rr.JsonParser(answer);
-	    if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<(rr.Get<std::string>("msg_value"))<<std::endl<<std::endl;
 	  }
 	  else std::cout<<std::endl<<"message timed out"<<std::endl; 
 	  
@@ -364,15 +370,18 @@ int main(int argc, char** argv){
 	    
 	    zmq::message_t receive;
 	    if(ServiceSend.recv(&receive)){
-	      std::istringstream iss(static_cast<char*>(receive.data()));
-	      
 	      std::string answer;
-	      answer=iss.str();
-	      
-	      Store rr;
-	      rr.JsonParser(answer);
-	      if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<rr.Get<std::string>("msg_value")<<std::endl<<std::endl;
+	      if(!ZstdDecompress(zstd_dctx, (char*)receive.data(), receive.size(), answer)){
+	        std::cerr<<"failed to decompress reply!"<<std::endl;
+	        
+	      } else {
+	        Store rr;
+	        rr.JsonParser(answer);
+	        if(rr.Get<std::string>("msg_type")=="Command Reply") std::cout<<std::endl<<rr.Get<std::string>("msg_value")<<std::endl<<std::endl;
+	        
+	      }
 	    }
+	    
 	  }
 	}
 	
@@ -392,3 +401,5 @@ int main(int argc, char** argv){
   return 0;
   
 }
+
+

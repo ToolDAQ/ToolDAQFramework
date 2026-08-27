@@ -45,6 +45,7 @@ mon_port 5000                   # remote multicast port to send monitoring messa
 multicast_send_period 5000      # logging & monitoring messages will be sent as a batch once per this period
 alarm_cooldown_ms 1000          # alarms with the same device and message will be limited to this rate
 mon_merge_period 5000           # monitoring messages with the same device and subject will be limited to this rate
+MTU 1500                        # MTU of interface used for logging/monitoring
 
 ##### Tools To Add #####
 Tools_File configfiles/ToolsConfig    # list of tools to run and their config files

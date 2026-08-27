@@ -1,4 +1,5 @@
 #include <SlowControlCollection.h>
+#include "zstd_helpers.h"
 
 using namespace ToolFramework;
 
@@ -12,9 +13,6 @@ SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
   alert_functions_mutex=0;
   SC_vars=0;
   
-  m_pub = 0;
-  pub_monitor_socket = 0;
-  pub_connected_mtx = 0;
   
 }
 
@@ -54,6 +52,9 @@ SlowControlCollection::SlowControlCollection(){
   SC_vars["Config"]->SetValue(0);
   Add("NewConfig",SlowControlElementType(INFO),0,0,false,false);
   SC_vars["NewConfig"]->SetValue(0);
+  
+  zstd_cctx = ZSTD_createCCtx();
+  zstd_dctx = ZSTD_createDCtx();
   
 }
 
@@ -289,10 +290,16 @@ void SlowControlCollection::Thread(Thread_args* arg){
       return;
     }
     
-    std::istringstream iss(static_cast<char*>(message.data()));
+    std::string payload;
+    std::unique_lock<std::mutex> locker(args->SCC->zstd_dctx_mtx);
+    if(!ZstdDecompress(args->SCC->zstd_dctx, (char*)message.data(), message.size(), payload, args->SCC->MAX_DECOMPRESSED_SIZE)){
+      std::cerr<<"failed to decompress slow control message: "<<payload<<std::endl;
+      return;
+    }
+    locker.unlock();
+    
     Store tmp;
-    //printf("iss=%s\n",iss.str().c_str());
-    tmp.JsonParser(iss.str());
+    tmp.JsonParser(payload);
     //tmp.Print();
     if(!tmp.Has("msg_value")){
       std::cerr<<"error: Poorly formatted slowcontrol input [no msg_value]"<<std::endl;
@@ -371,13 +378,16 @@ void SlowControlCollection::Thread(Thread_args* arg){
     std::string tmp2="";
     rr>>tmp2;
     //printf("reply message is= %s \n",tmp2.c_str());
-    zmq::message_t send(tmp2.length()+1);
-    snprintf ((char *) send.data(), tmp2.length()+1 , "%s" ,tmp2.c_str()) ;
     
+    locker = std::unique_lock<std::mutex>(args->SCC->zstd_cctx_mtx);
+    std::string compress_buffer;
+    std::pair<const char*, size_t> output = ZstdCompress(args->SCC->zstd_cctx, tmp2.data(), tmp2.size(), compress_buffer);
+    zmq::message_t zmsg(output.second);
+    memcpy(zmsg.data(), output.first, output.second);
     
     bool tmp_ok = args->sock->send(identity, ZMQ_SNDMORE);
     if(tmp_ok) tmp_ok = tmp_ok && args->sock->send(blank, ZMQ_SNDMORE);
-    if(tmp_ok) tmp_ok= tmp_ok && args->sock->send(send);
+    if(tmp_ok) tmp_ok= tmp_ok && args->sock->send(zmsg);
     if(!tmp_ok){
       std::cerr<<"failed to send '"<<reply<<"' to '"<<key<<"'"<<std::endl;
       return;
@@ -405,27 +415,27 @@ void SlowControlCollection::Thread(Thread_args* arg){
       ok = args->sub->recv(&message);
       if(ok==0){
         // FIXME this case should be handled! what do we do?
-        std::cerr<<"failed to receive alert payload!"<<std::endl;
+        std::cerr<<"failed to receive "<<iss.str() << " alert payload!"<<std::endl;
+        return;
       }
-      payload.resize(message.size(),'\0');
-      memcpy((void*)payload.data(),message.data(),message.size());
+      if(!ZstdDecompress(args->SCC->zstd_dctx, (char*)message.data(), message.size(), payload)){
+        std::cerr<<"failed to decompress "<<iss.str() << " alert payload!"<<std::endl;
+        return;
+      }
       has_data=true;
     }
     
     //int a=0;
     while(message.more()){
       
-      args->sub->recv(&message);
+      args->sub->recv(&message); // FIXME do we want any warnings or handling here?
       //memcpy((void*)payload.data(),message.data(),message.size());
       //a++;
     }
     
-    //std::cout<<iss.str()<<std::endl;
-    args->alert_functions_mutex->lock();
     if(iss.str() == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
     else if(iss.str() == "ChangeConfig"){
        if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0){
-         args->alert_functions_mutex->unlock();
          return;
        }
       (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
@@ -433,6 +443,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     
     bool error = false;
+    std::unique_lock<std::mutex> locker(*args->alert_functions_mutex);
     
     if(args->alert_functions->count(iss.str())){
       if(has_data){
@@ -486,9 +497,6 @@ void SlowControlCollection::Thread(Thread_args* arg){
       if(error)   std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
       
     }
-    
- 
-    args->alert_functions_mutex->unlock();
     
     //if(payload!=nullptr) free(payload);
   }
@@ -592,8 +600,12 @@ bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
   // if we didn't return, we have a payload as well
   bool ok = m_pub->send(message, ZMQ_SNDMORE);
   if(!ok) return false; // err: "zmq send "+zmq_strerror(errno)
-  zmq::message_t message2(payload.length()+1);
-  snprintf((char*) message2.data(), payload.length()+1, "%s", payload.c_str());
+  
+  std::unique_lock<std::mutex>locker(args->SCC->zstd_cctx_mtx);
+  std::string compress_buffer;
+  std::pair<const char*, size_t> output = ZstdCompress(args->SCC->zstd_cctx, payload.data(), payload.size(), compress_buffer);
+  zmq::message_t message2(output.second);
+  memcpy(message2.data(), output.first, output.second);
   return m_pub->send(message2);  // err: "zmq send "+zmq_strerror(errno)
   
 }
@@ -646,8 +658,8 @@ void SlowControlCollection::Unpack(std::string in, std::map<std::string, std::st
           //tmp<<counter;
           Store tmp;
           tmp.JsonParser(it->second.substr(first,i-first+1));
-          out[header+tmp.Get<std::string>("name")]=it->second.substr(first,i-first+1);          
-          //          counter++;
+          out[header+tmp.Get<std::string>("name")]=it->second.substr(first,i-first+1);
+          //counter++;
         }
         
       }
@@ -784,6 +796,14 @@ void SlowControlCollection::TestingDisable(){
   m_testing=false;
 }
 
+void SlowControlCollection::SetTesting(bool testing){
+  m_testing=testing;
+}
+
+bool SlowControlCollection::GetTesting(){
+  return m_testing;
+}
+
 // non-blocking function to check if alert send socket is connected
 void SlowControlCollection::CheckReady(zmq::socket_t**& mon_sock_ptr, std::timed_mutex* connected_mtx, zmq::socket_t* m_pub){
   // FIXME we could extend this like the ServicesBackend to wait until all sockets are ready, not just the alert send
@@ -868,3 +888,5 @@ void SlowControlCollection::ClearState(){
   SC_vars["State"]->SetValue(m_state);
   return;
 }
+
+

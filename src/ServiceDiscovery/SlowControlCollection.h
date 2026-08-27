@@ -5,6 +5,8 @@
 #include <zmq.hpp>
 #include "DAQUtilities.h"
 #include <functional>
+#include <mutex>
+#include <zstd.h>
 
 namespace ToolFramework{
 
@@ -61,6 +63,8 @@ namespace ToolFramework{
     std::string PrintJSON();
     void Stop();
     void JsonParser(std::string json);
+    void SetTesting(bool testing);
+    bool GetTesting();
     void TestingEnable();
     void TestingDisable();
     bool Ready(int timeout_ms);
@@ -80,6 +84,15 @@ namespace ToolFramework{
     std::map<std::string, SlowControlElement*> SC_vars;
     std::map<std::string, AlertFunction>  m_alert_functions;
     std::mutex m_alert_functions_mutex;
+    
+    ZSTD_CCtx* zstd_cctx;
+    std::mutex zstd_cctx_mtx;
+    ZSTD_DCtx* zstd_dctx;
+    std::mutex zstd_dctx_mtx;
+    int zstd_compression_level=1;
+    uint32_t COMPRESS_THRESHOLD=50; // compress any send messages > this many bytes
+    uint32_t MAX_DECOMPRESSED_SIZE=104857600; // refuse to decompress messages that will exceed this size once decompressed
+    // defautl 100MB; I'm sure we can spare that much RAM.
     
     DAQUtilities* m_util;
     zmq::context_t* m_context;

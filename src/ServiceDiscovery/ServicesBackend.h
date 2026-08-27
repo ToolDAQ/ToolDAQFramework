@@ -142,9 +142,6 @@ class ServicesBackend {
 	int v_message=2;
 	int v_debug=3;
 	int get_ok;
-	boost::posix_time::time_duration elapsed_time;
-	std::string hostname;   // for printing with stats
-	int execute_iterations=0;
 	
 	// ZMQ socket identities - we really only need the reply socket one
 	// since that's the one the middleman needs to know to send replies back
@@ -159,10 +156,8 @@ class ServicesBackend {
 	ZSTD_CCtx* zstd_cctx=nullptr;
 	ZSTD_DCtx* zstd_dctx=nullptr;
 	int compression_level=1;
+	size_t compression_threshold=50;
 	char* compressed_msg_buf=nullptr;
-	std::string decompress_buffer;
-	size_t next_bytes;
-	const char* next_part;
 	std::mutex msg_buf_mtx; // we'll share this buffer, since it's kind of a large buffer to keep allocating for every call
 	// and we shouldn't be spamming the Send calls so fast mutex contention becomes a problem
 	

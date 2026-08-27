@@ -1,9 +1,9 @@
 #include "ServicesBackend.h"
+#include "zstd_helpers.h"
 
 namespace {
-	const uint32_t MAX_UDP_PACKET_SIZE = 655355;
-	const uint32_t MAX_DECOMPRESSED_MSG_SIZE = 655355;
-	const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
+	const uint32_t MAX_UDP_PACKET_SIZE = 65507; // limit from UDP message length field
+	const uint32_t MAX_DECOMPRESSED_MSG_SIZE = 104857600; // 100MB limit. I'm sure we can spare that much RAM.
 }
 
 using namespace ToolFramework;
@@ -142,7 +142,7 @@ bool ServicesBackend::Initialise(Store &variables_in){
 	
 	if(msg_compression){
 		zstd_cctx = ZSTD_createCCtx();
-		compressed_msg_buf = new char[ZSTD_compressBound(MAX_UDP_PACKET_SIZE)];
+		compressed_msg_buf = new char[MAX_UDP_PACKET_SIZE];
 		zstd_dctx = ZSTD_createDCtx();
 	}
 	
@@ -236,7 +236,6 @@ bool ServicesBackend::InitZMQ(){
 		clt_dlr_socket->setsockopt(ZMQ_RCVTIMEO, clt_dlr_socket_timeout);
 		clt_dlr_socket->setsockopt(ZMQ_IDENTITY, clt_ID.c_str(), clt_ID.length());
 		clt_dlr_socket->setsockopt(ZMQ_IMMEDIATE,1);
-		clt_dlr_socket->setsockopt(ZMQ_LINGER, 10);
 		clt_dlr_socket->bind(std::string("tcp://*:")+std::to_string(clt_dlr_port));
 	} catch(zmq::error_t& e){
 		std::cerr<<"ServicesBackend caught "<<e.what()<<" creating dealer socket on port "<<clt_dlr_port<<std::endl;
@@ -362,9 +361,9 @@ bool ServicesBackend::RegisterServices(){
 void ServicesBackend::Log(std::string msg, int msg_verb, int verbosity){
 	//if(verbosity==-999) verbosity=m_verbosity;
 	// this is normally defined in Tool.h
-	if(m_log) m_log(msg, msg_verb, verbosity);
+	if(m_log) m_log(clt_ID+": "+msg, msg_verb, verbosity);
 	// FIXME we need to be able to turn off all stderr output for cgi scripts...
-	else if(m_verbosity && msg_verb<=verbosity) std::cout<<msg<<std::endl;
+	else if(m_verbosity && msg_verb<=verbosity) std::cout<<clt_ID<<": "<<msg<<std::endl;
 	return;
 }
 
@@ -414,43 +413,28 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	}
 	
 	// compress the message if applicable
-	msg_to_send=nullptr;
-	std::unique_lock<std::mutex> locker(msg_buf_mtx, std::defer_lock);
-	if(zstd_cctx){
-		locker.lock();
-		bytes_to_send = ZSTD_compressCCtx(zstd_cctx, compressed_msg_buf, MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
-		if(ZSTD_isError(bytes_to_send)){
-			locker.unlock();
-			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
-			Log(errmsg,v_error,m_verbosity);  // XXX should send to MM uncompressed, along with other errors
-			if(err) *err= errmsg;
-		} else {
-			msg_to_send = compressed_msg_buf;
-		}
-	}
-	if(!msg_to_send){
-		msg_to_send = const_cast<char*>(command.c_str());
-		bytes_to_send = command.length();
+	std::unique_lock<std::mutex> locker(msg_buf_mtx);
+	std::pair<const char*, size_t> out = ZstdCompress(zstd_cctx, command.data(), command.size(), compressed_msg_buf, MAX_UDP_PACKET_SIZE, compression_threshold, compression_level);
+	
+	// check we're not going to exceed multicast message size limit
+	if(out.second > MAX_UDP_PACKET_SIZE){
+		// we can't send this on multicast.
+		locker.unlock();
+		std::string errmsg = "Error: message exceeds maximum bytes of "+std::to_string(MAX_UDP_PACKET_SIZE);
+		Log(errmsg,v_error,m_verbosity);  // XXX should send to MM uncompressed, along with other errors
+		if(err) *err= errmsg;
+		return false;
 	}
 	
-	/*
-	// check for listeners...? - seems redundant, multicast can always send
-	zmq::poll(&multicast_poller,1, 0);   // timeout 0 = return immediately...
-	if(multicast_poller.revents & ZMQ_POLLOUT){
-	*/
-		
-		// got a listener - ship it
-		socket_mtx->lock();
-		int cnt = sendto(multicast_socket, msg_to_send, bytes_to_send, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
-		socket_mtx->unlock();
-		if(cnt < 0){
-			std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
-			Log(errmsg,v_error,m_verbosity);
-			if(err) *err= errmsg; //zmq_strerror(errno);
-			return false;
-		}
-		
-	//}
+	socket_mtx->lock();
+	int cnt = sendto(multicast_socket, out.first, out.second, 0, (struct sockaddr*)multicast_addr, multicast_addrlen);
+	socket_mtx->unlock();
+	if(cnt < 0){
+		std::string errmsg = "Error sending multicast message: "+std::string{strerror(errno)};
+		Log(errmsg,v_error,m_verbosity);
+		if(err) *err= errmsg; //zmq_strerror(errno);
+		return false;
+	}
 	
 	return true;
 }
@@ -488,32 +472,16 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	}
 	
 	// compress the message if applicable
-	msg_to_send=nullptr;
-	std::unique_lock<std::mutex> locker(msg_buf_mtx, std::defer_lock);
-	if(zstd_cctx){
-		locker.lock();
-		bytes_to_send = ZSTD_compressCCtx(zstd_cctx, compressed_msg_buf, MAX_UDP_PACKET_SIZE, command.data(), command.size(), compression_level);
-		if(ZSTD_isError(bytes_to_send)){
-			locker.unlock();
-			std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
-			Log(errmsg,v_error,m_verbosity);  // XXX should send to MM uncompressed, along with other errors
-			if(err) *err= errmsg;
-		} else {
-			msg_to_send = compressed_msg_buf;
-		}
-	}
-	if(!msg_to_send){
-		msg_to_send = const_cast<char*>(command.c_str());
-		bytes_to_send = command.length();
-	}
+	std::unique_lock<std::mutex> locker(msg_buf_mtx);
+	std::pair<const char*, size_t> out = ZstdCompress(zstd_cctx, command.data(), command.size(), compressed_msg_buf, MAX_UDP_PACKET_SIZE, compression_threshold, compression_level);
 	
 	// In the case of pub sockets, we specify a 'topic' that the recipient can use with ZMQ_SUBSCRIBE
 	// to filter out particular messages.
 	// In fact it's useful to indicate a topic in all cases, even when the actual message will
 	// (for now) go over a dealer/router combination that cannot filter on the topic.
 	// forward the timeout to the Command (and thus zmq::poll in PollAndSend...) ... is this sensible? HMMMMM FIXME
-	Command cmd{std::string(msg_to_send,bytes_to_send), type, topic,timeout};
-	if(locker.owns_lock()) locker.unlock(); // must check or it throws an exception
+	Command cmd{std::string(out.first,out.second), type, topic,timeout};
+	locker.unlock();
 	
 	// wrap our attempt to get the response in try/catch, just in case?
 	try {
@@ -616,7 +584,7 @@ bool ServicesBackend::DoCommand(Command& cmd, uint32_t timeout_ms){
 		// sending timed out
 		if(cmd.type=='w') ++write_commands_failed;
 		else if(cmd.type=='r') ++read_commands_failed;
-		Log("Timed out sending command "+std::to_string(thismsgid),v_error,m_verbosity);
+		Log("Timed out sending command "+cmd.command+", msg ID: "+std::to_string(thismsgid),v_error,m_verbosity);
 		cmd.success = false;
 		cmd.err = "Timed out sending command";
 		
@@ -753,45 +721,18 @@ bool ServicesBackend::GetNextResponse(){
 	// if we also had further parts, fetch those
 	// if the command failed the response contains an error message (which will only ever be one part)
 	for(unsigned int i=2; i<response.size(); ++i){
-		if(zstd_dctx && response.at(i).size()>4 && std::memcmp(response.at(i).data(),ZSTD_MAGIC_BYTES,4)==0){
-			
-			// compressed - decompress it
-			next_bytes = ZSTD_getFrameContentSize(response.at(i).data(), response.at(i).size());
-			if(next_bytes==ZSTD_CONTENTSIZE_UNKNOWN || next_bytes==ZSTD_CONTENTSIZE_ERROR){
-				// bad response
-				cmd.success = false;
-				cmd.err="Received corrupt zstd response size, zmq reponse size: "+std::to_string(response.at(i).size());
-				Log(cmd.err,v_warning,m_verbosity);
-				break;
-			}
-			if(next_bytes > MAX_DECOMPRESSED_MSG_SIZE){
-				cmd.success = false;
-				cmd.err="Received oversized zstd response: "+std::to_string(next_bytes)+" bytes";
-				Log(cmd.err,v_warning,m_verbosity);
-				break;
-			}
-			decompress_buffer.resize(next_bytes);
-			next_bytes = ZSTD_decompressDCtx(zstd_dctx,(void*)decompress_buffer.data(),next_bytes, response.at(i).data(), response.at(i).size());
-			if(ZSTD_isError(next_bytes)){
-				cmd.success = false;
-				cmd.err=std::string{"zstd error decompressing response: "}+ZSTD_getErrorName(next_bytes);
-				Log(cmd.err,v_warning,m_verbosity);
-				break;
-			}
-			
-			next_part = decompress_buffer.data();
-			
+		
+		bool decompress_ok = ZstdDecompress(zstd_dctx, (char*)response.at(i).data(), response.at(i).size(), cmd.err, MAX_DECOMPRESSED_MSG_SIZE);
+		if(!decompress_ok){
+			cmd.success = false;
+			Log(cmd.err, v_warning, m_verbosity);
+			break;
 		} else {
-			
-			next_bytes = response.at(i).size();
-			next_part = (const char*)response.at(i).data();
-			
+			cmd.response.push_back(std::move(cmd.err));
+			cmd.err = "";
 		}
 		
-		if(cmd.success) cmd.response.emplace_back(next_part, next_bytes);
-		else cmd.err.assign(next_part, next_bytes);
 	}
-	
 	
 	if(m_verbosity>3){
 		std::stringstream logmsg;
@@ -1024,7 +965,7 @@ int ServicesBackend::PollAndReceive(zmq::socket_t* sock, zmq::pollitem_t poll, u
 	try {
 		get_ok = zmq::poll(&poll, 1, timeout);
 	} catch (zmq::error_t& err){
-		if(m_verbosity) std::cerr<<"ServicesBackend::PollAndReceive poller caught "<<err.what()<<std::endl;
+		if(m_verbosity>1) std::cerr<<"ServicesBackend::PollAndReceive poller caught "<<err.what()<<std::endl;
 		get_ok = -1;
 	}
 	if(get_ok<0){
@@ -1080,7 +1021,7 @@ bool ServicesBackend::Ready(int timeout){
 	
 //	printf("ServicesBackend waiting for up to %d ms for connection to middleman\n",timeout);
 	std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
-
+	
 	// poll DEALER socket until it returns we have a listener
 	int ret;
 	try {
@@ -1101,7 +1042,7 @@ bool ServicesBackend::Ready(int timeout){
 //		printf("ServicesBackend::Ready - no one connected (%s)\n", zmq_strerror(errno));
 		return false;
 	}
-	if(m_verbosity) printf("Dealer connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
+	if(m_verbosity>1) printf("Dealer connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
 	
 	// the above doesn't work for the PUB socket as they always report having a listener via POLLOUT.
 	// instead use socket monitor to listen for the connected event.
@@ -1111,7 +1052,7 @@ bool ServicesBackend::Ready(int timeout){
 		printf("ServicesBackend::Ready - pub socket didn't get connected event\n");
 		return false;
 	}
-	if(m_verbosity) printf("Pub connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
+	if(m_verbosity>1) printf("Pub connected after %ld/%d ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count(), timeout);
 	// send test pub queries until one gets a reply - this may be redundant
 	std::string resp;
 	std::chrono::milliseconds time_left = std::chrono::duration_cast<std::chrono::milliseconds>(end-std::chrono::steady_clock::now());
@@ -1120,7 +1061,7 @@ bool ServicesBackend::Ready(int timeout){
 		if(!SendCommand("W_QUERY"," select now()", &resp, std::min(decltype(time_left.count())(500), time_left.count()))){
 			if(m_verbosity) std::cerr<<"timeout waiting on test pub"<<std::endl;
 		} else {
-			if(m_verbosity) std::cout<<"test pub repsonse: "<<resp<<std::endl;
+			if(m_verbosity>1) std::cout<<"test pub repsonse: "<<resp<<std::endl;
 			return true;
 		}
 		time_left = std::chrono::duration_cast<std::chrono::milliseconds>(end-std::chrono::steady_clock::now());
@@ -1139,7 +1080,7 @@ void ServicesBackend::CheckSocketEvents(int timeout_ms){
 			if(tmp.more()){
 				monitor_socket->recv(&tmp2);
 			} else {
-				if(m_verbosity) std::cerr<<"MonitorSocket got only one part?"<<std::endl;
+				if(m_verbosity>1) std::cerr<<"MonitorSocket got only one part?"<<std::endl;
 				return;
 			}
 			uint16_t event_id;
