@@ -3,6 +3,10 @@
 
 using namespace ToolFramework;
 
+namespace {
+    const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
+}
+
 SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
   
   sock=0;

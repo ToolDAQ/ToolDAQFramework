@@ -20,8 +20,12 @@
 #define GROUP_COMMAND_REPLY_WAIT 2000
 #define FILE_SEND_WAIT 120000
 #define FILE_SEND_PORT 24001
+#define MAX_DECOMPRESSED_SIZE 655355
+const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
 
 using namespace ToolFramework;
+
+bool ZstdDecompress(ZSTD_DCtx* zstd_dctx, char* msg, uint64_t msgsize, std::string& decompress_buffer);
 
 int main(int argc, char** argv){
 

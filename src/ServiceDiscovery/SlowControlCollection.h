@@ -70,6 +70,8 @@ namespace ToolFramework{
     void SetError(bool error);
     void SetWarning(bool warn);
     void ClearState();
+    zmq::message_t ZstdCompress(SlowControlCollection* SCC, std::string& msg);
+    bool ZstdDecompress(SlowControlCollection* SCC, char* msg, uint64_t msgsize, std::string& decompress_buffer);
     
     template<typename T> T GetValue(std::string name){
       if(!SC_vars.count(name)) return T{};
