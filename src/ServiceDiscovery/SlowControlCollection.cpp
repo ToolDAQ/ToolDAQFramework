@@ -2,6 +2,10 @@
 
 using namespace ToolFramework;
 
+namespace {
+    const unsigned char ZSTD_MAGIC_BYTES[4] = {0x28,0xB5,0x2F,0xFD}; // ZSTD_MAGICNUMBER from zstd.h BUT REVERSED!
+}
+
 SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
   
   sock=0;
@@ -12,9 +16,6 @@ SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
   alert_functions_mutex=0;
   SC_vars=0;
   
-  m_pub = 0;
-  pub_monitor_socket = 0;
-  pub_connected_mtx = 0;
   
 }
 
@@ -54,6 +55,9 @@ SlowControlCollection::SlowControlCollection(){
   SC_vars["Config"]->SetValue(0);
   Add("NewConfig",SlowControlElementType(INFO),0,0,false,false);
   SC_vars["NewConfig"]->SetValue(0);
+  
+  zstd_cctx = ZSTD_createCCtx();
+  zstd_dctx = ZSTD_createDCtx();
   
 }
 
@@ -289,10 +293,14 @@ void SlowControlCollection::Thread(Thread_args* arg){
       return;
     }
     
-    std::istringstream iss(static_cast<char*>(message.data()));
+    std::string payload;
+    if(!args->SCC->ZstdDecompress(args->SCC, (char*)message.data(), message.size(), payload)){
+      std::cerr<<"failed to decompress slow control message!"<<std::endl;
+      return;
+    }
+    
     Store tmp;
-    //printf("iss=%s\n",iss.str().c_str());
-    tmp.JsonParser(iss.str());
+    tmp.JsonParser(payload);
     //tmp.Print();
     if(!tmp.Has("msg_value")){
       std::cerr<<"error: Poorly formatted slowcontrol input [no msg_value]"<<std::endl;
@@ -371,9 +379,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
     std::string tmp2="";
     rr>>tmp2;
     //printf("reply message is= %s \n",tmp2.c_str());
-    zmq::message_t send(tmp2.length()+1);
-    snprintf ((char *) send.data(), tmp2.length()+1 , "%s" ,tmp2.c_str()) ;
     
+    zmq::message_t send = args->SCC->ZstdCompress(args->SCC, tmp2);
     
     bool tmp_ok = args->sock->send(identity, ZMQ_SNDMORE);
     if(tmp_ok) tmp_ok = tmp_ok && args->sock->send(blank, ZMQ_SNDMORE);
@@ -405,17 +412,20 @@ void SlowControlCollection::Thread(Thread_args* arg){
       ok = args->sub->recv(&message);
       if(ok==0){
         // FIXME this case should be handled! what do we do?
-        std::cerr<<"failed to receive alert payload!"<<std::endl;
+        std::cerr<<"failed to receive "<<iss.str() << " alert payload!"<<std::endl;
+        return;
       }
-      payload.resize(message.size(),'\0');
-      memcpy((void*)payload.data(),message.data(),message.size());
+      if(!args->SCC->ZstdDecompress(args->SCC, (char*)message.data(), message.size(), payload)){
+        std::cerr<<"failed to decompress "<<iss.str() << " alert payload!"<<std::endl;
+        return;
+      }
       has_data=true;
     }
     
     //int a=0;
     while(message.more()){
       
-      args->sub->recv(&message);
+      args->sub->recv(&message); // FIXME do we want any warnings or handling here?
       //memcpy((void*)payload.data(),message.data(),message.size());
       //a++;
     }
@@ -592,8 +602,8 @@ bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
   // if we didn't return, we have a payload as well
   bool ok = m_pub->send(message, ZMQ_SNDMORE);
   if(!ok) return false; // err: "zmq send "+zmq_strerror(errno)
-  zmq::message_t message2(payload.length()+1);
-  snprintf((char*) message2.data(), payload.length()+1, "%s", payload.c_str());
+  
+  zmq::message_t message2 = args->SCC->ZstdCompress(args->SCC, payload);
   return m_pub->send(message2);  // err: "zmq send "+zmq_strerror(errno)
   
 }
@@ -867,4 +877,62 @@ void SlowControlCollection::ClearState(){
   m_util->AddPort("State",m_state);
   SC_vars["State"]->SetValue(m_state);
   return;
+}
+
+zmq::message_t SlowControlCollection::ZstdCompress(SlowControlCollection* SCC, std::string& msg){
+  if(msg.length()<SCC->COMPRESS_THRESHOLD){
+    zmq::message_t zmsg(msg.size());
+    memcpy(zmsg.data(), msg.data(), msg.size());
+    return zmsg;
+  }
+  
+  std::unique_lock<std::mutex> locker(*SCC->zstd_cctx_mtx);
+  std::string compressed_msg_buf;
+  compressed_msg_buf.resize(ZSTD_compressBound(msg.size()));
+  uint64_t bytes_to_send = ZSTD_compressCCtx(SCC->zstd_cctx, (void*)compressed_msg_buf.data(), compressed_msg_buf.size(), msg.data(), msg.size(), SCC->zstd_compression_level);
+  if(ZSTD_isError(bytes_to_send)){
+    locker.unlock();
+    std::string errmsg = std::string{"Warning: error compressing multicast message "}+ZSTD_getErrorName(bytes_to_send);
+    std::clog << errmsg << std::endl;
+    // send it uncompressed
+    zmq::message_t zmsg(msg.size());
+    memcpy(zmsg.data(), msg.data(), msg.size());
+    return zmsg;
+  }
+  zmq::message_t zmsg(msg.size());
+  memcpy(zmsg.data(), compressed_msg_buf.data(), bytes_to_send);
+  return zmsg;
+}
+
+bool SlowControlCollection::ZstdDecompress(SlowControlCollection* SCC, char* msg, uint64_t msgsize, std::string& decompress_buffer){
+  std::string errmsg;
+  std::unique_lock<std::mutex> locker(*SCC->zstd_dctx_mtx);
+  if(msgsize>4 && std::memcmp(msg,ZSTD_MAGIC_BYTES,4)==0){
+    uint64_t decompressed_bytes = ZSTD_getFrameContentSize(msg, msgsize);
+    if(decompressed_bytes==ZSTD_CONTENTSIZE_UNKNOWN || decompressed_bytes==ZSTD_CONTENTSIZE_ERROR){
+      // bad response
+      errmsg = std::string{"Received corrupt zstd message "}+ZSTD_getErrorName(decompressed_bytes);
+      goto decompress_error;
+    }
+    if(decompressed_bytes > SCC->MAX_DECOMPRESSED_SIZE){
+      errmsg = "Compressed message with oversized payload: "+std::to_string(decompressed_bytes)+" bytes";
+      goto decompress_error;
+    }
+    decompress_buffer.resize(decompressed_bytes);
+    decompressed_bytes = ZSTD_decompressDCtx(SCC->zstd_dctx,(void*)decompress_buffer.data(),decompressed_bytes, msg, msgsize);
+    if(ZSTD_isError(decompressed_bytes)){
+      errmsg = std::string{"zstd error decompressing response: "}+ZSTD_getErrorName(decompressed_bytes);
+      goto decompress_error;
+    }
+  } else {
+    // message not compressed
+    decompress_buffer.assign(msg, msgsize);
+  }
+  return true;
+  
+  decompress_error:
+  locker.unlock();
+  std::clog << errmsg << std::endl;
+  decompress_buffer.clear();
+  return false;
 }
