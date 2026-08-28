@@ -988,7 +988,7 @@ bool Services::SendLog(const std::string& message, LogLevel severity, const std:
   const std::string& name = (device=="") ? m_name : device;
   
   // grab timestamp at time of call if 0
-  time_t ts = (timestamp!=0) ? timestamp : time(nullptr)*1000;
+  uint64_t ts = (timestamp!=0) ? timestamp : std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   
   std::unique_lock<std::mutex> locker(logging_buf_mtx);
   
@@ -1038,7 +1038,7 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   const std::string& name = (device=="") ? m_name : device;
   
   // grab timestamp at time of call if 0
-  time_t ts = (timestamp!=0) ? timestamp : time(nullptr)*1000;
+  uint64_t ts = (timestamp!=0) ? timestamp : std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   
   std::unique_lock<std::mutex> locker(monitoring_buf_mtx);
   
@@ -1173,9 +1173,9 @@ std::string Services::GetDeviceName(){
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
 std::string Services::TimeStringFromUnixMs(uint64_t& timestamp){
-  
+
   if(timestamp==1) return "now()";  // remotely interpret 'now'
-  
+
   time_t timestamp_sec; // time_t is equivalent to uint64_t
   uint16_t timestamp_ms;
   if(timestamp==0){
