@@ -216,6 +216,11 @@ bool SlowControlElement::SetValue(const char value[]){
 
 
 bool SlowControlElement::SetValue(std::string value){
+  std::string result;
+  return SetValue(value, result);
+}
+
+bool SlowControlElement::SetValue(std::string value, std::string& result){
   mtx.lock();
 
   if(m_type == SlowControlElementType(VARIABLE)){
@@ -225,10 +230,10 @@ bool SlowControlElement::SetValue(std::string value){
     mtx.unlock();
     return SetValue(val);
   }
-  
+
   if(m_change_function!=0){
     try{
-      m_change_function(value.c_str());
+      result = m_change_function(value.c_str());
     }
     catch(...){
       std::cerr<<"failed to call change fucntion"<<std::endl;
@@ -236,9 +241,9 @@ bool SlowControlElement::SetValue(std::string value){
        return false;
     }
   }
-  
-  
-  
+
+
+
   if(m_type == SlowControlElementType(INFO)){ //sanitising for web printout
     for(unsigned int i=0; i<value.length(); i++){
       if(value.at(i)==',') value.at(i)='.';

@@ -737,28 +737,21 @@ bool SlowControlCollection::Update(SlowControlCollection* SCC, std::string key, 
       //printf("d0 %s = %s : %s\n", reply.c_str(), key.c_str(), value.c_str());
       if(value!=""){
         if(!testing || (testing && !(*SCC)[key]->Lockable())){
-          
-          if(!(*SCC)[key]->SetValue(value)){
+
+          std::string change_result;
+          if(!(*SCC)[key]->SetValue(value, change_result)){
             reply =" Error setting "+key+" to value: " + value;
             return false;
           }
           else{
-            reply = value;
+            // A change function's actual return (e.g. ExportConfig's JSON
+            // payload) matters for some controls - fall back to echoing
+            // value for the common case of no change function / nothing
+            // returned, matching the old behaviour.
+            reply = change_result.empty() ? value : change_result;
             return true;
           }
           //(*SCC)[key]->Print();
-          /*
-          SCFunction tmp_func= (*SCC)[key]->GetChangeFunction();
-          if (tmp_func!=nullptr){
-            try{ 
-              reply=tmp_func(key.c_str());
-              
-            }
-            catch(...){
-              reply= "change function failed";
-            }
-          }
-          */
         }
         else reply = key + " locked";
       }
