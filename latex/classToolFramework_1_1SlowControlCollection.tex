@@ -15,6 +15,9 @@ bool {\bfseries Init\+Threaded\+Receiver} (zmq\+::context\+\_\+t $\ast$context, 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a8a335148054d1f139c3de8f93b625e1c}\label{classToolFramework_1_1SlowControlCollection_a8a335148054d1f139c3de8f93b625e1c}} 
 \mbox{\hyperlink{classToolFramework_1_1SlowControlElement}{Slow\+Control\+Element}} $\ast$ {\bfseries operator\mbox{[}$\,$\mbox{]}} (std\+::string key)
 \item 
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a64f8c1c5212d7e1cc6e181f4ebffab59}\label{classToolFramework_1_1SlowControlCollection_a64f8c1c5212d7e1cc6e181f4ebffab59}} 
+void {\bfseries Set\+Services} (\mbox{\hyperlink{classToolFramework_1_1Services}{Services}} $\ast$)
+\item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_ab952fe696e4211321b9800345b6c9a34}\label{classToolFramework_1_1SlowControlCollection_ab952fe696e4211321b9800345b6c9a34}} 
 bool {\bfseries Add} (std\+::string name, Slow\+Control\+Element\+Type type, SCFunction change\+\_\+function=0, SCFunction read\+\_\+function=0, bool testing\+\_\+lock=true, bool hidded=false)
 \item 
@@ -42,17 +45,8 @@ void {\bfseries Stop} ()
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a2a6ec133b73896d550ff57ca970cead2}\label{classToolFramework_1_1SlowControlCollection_a2a6ec133b73896d550ff57ca970cead2}} 
 void {\bfseries Json\+Parser} (std\+::string json)
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_ab43a3686b1762b3be8174cc6baa72e34}\label{classToolFramework_1_1SlowControlCollection_ab43a3686b1762b3be8174cc6baa72e34}} 
-void {\bfseries Set\+Testing} (bool testing)
-\item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_aed56f17437b1c5946caed6f0c509347c}\label{classToolFramework_1_1SlowControlCollection_aed56f17437b1c5946caed6f0c509347c}} 
 bool {\bfseries Get\+Testing} ()
-\item 
-\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_ae654bda0e21c8ce8e4a0ce70edfb6fb6}\label{classToolFramework_1_1SlowControlCollection_ae654bda0e21c8ce8e4a0ce70edfb6fb6}} 
-void {\bfseries Testing\+Enable} ()
-\item 
-\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_ae5f0374d539ae8bb270da634833203cf}\label{classToolFramework_1_1SlowControlCollection_ae5f0374d539ae8bb270da634833203cf}} 
-void {\bfseries Testing\+Disable} ()
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a30bef047a948625723fec193c380092b}\label{classToolFramework_1_1SlowControlCollection_a30bef047a948625723fec193c380092b}} 
 bool {\bfseries Ready} (int timeout\+\_\+ms)
@@ -71,6 +65,12 @@ void {\bfseries Clear\+State} ()
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_acd2408dd7bf2d90ae34e17c9dc6e934c}\label{classToolFramework_1_1SlowControlCollection_acd2408dd7bf2d90ae34e17c9dc6e934c}} 
 {\footnotesize template$<$typename T $>$ }\\T {\bfseries Get\+Value} (std\+::string name)
+\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1SlowControlCollection_a455fc4a81ce836abba439678d2c4a3c2}\label{classToolFramework_1_1SlowControlCollection_a455fc4a81ce836abba439678d2c4a3c2}} 
+class {\bfseries Services}
 \end{DoxyCompactItemize}
 
 

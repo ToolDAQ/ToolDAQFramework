@@ -67,6 +67,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classToolFramework_1_1SlowControlCollection-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">ToolFramework::SlowControlCollection Class Reference</div>  </div>
@@ -87,6 +88,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>InitThreadedReceiver<
 <tr class="memitem:a8a335148054d1f139c3de8f93b625e1c"><td class="memItemLeft" align="right" valign="top"><a id="a8a335148054d1f139c3de8f93b625e1c"></a>
 <a class="el" href="classToolFramework_1_1SlowControlElement.html">SlowControlElement</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>operator[]</b> (std::string key)</td></tr>
 <tr class="separator:a8a335148054d1f139c3de8f93b625e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64f8c1c5212d7e1cc6e181f4ebffab59"><td class="memItemLeft" align="right" valign="top"><a id="a64f8c1c5212d7e1cc6e181f4ebffab59"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetServices</b> (<a class="el" href="classToolFramework_1_1Services.html">Services</a> *)</td></tr>
+<tr class="separator:a64f8c1c5212d7e1cc6e181f4ebffab59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab952fe696e4211321b9800345b6c9a34"><td class="memItemLeft" align="right" valign="top"><a id="ab952fe696e4211321b9800345b6c9a34"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>Add</b> (std::string name, SlowControlElementType type, SCFunction change_function=0, SCFunction read_function=0, bool testing_lock=true, bool hidded=false)</td></tr>
 <tr class="separator:ab952fe696e4211321b9800345b6c9a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -114,18 +118,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Stop</b> ()</td></tr>
 <tr class="memitem:a2a6ec133b73896d550ff57ca970cead2"><td class="memItemLeft" align="right" valign="top"><a id="a2a6ec133b73896d550ff57ca970cead2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>JsonParser</b> (std::string json)</td></tr>
 <tr class="separator:a2a6ec133b73896d550ff57ca970cead2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab43a3686b1762b3be8174cc6baa72e34"><td class="memItemLeft" align="right" valign="top"><a id="ab43a3686b1762b3be8174cc6baa72e34"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetTesting</b> (bool testing)</td></tr>
-<tr class="separator:ab43a3686b1762b3be8174cc6baa72e34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed56f17437b1c5946caed6f0c509347c"><td class="memItemLeft" align="right" valign="top"><a id="aed56f17437b1c5946caed6f0c509347c"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetTesting</b> ()</td></tr>
 <tr class="separator:aed56f17437b1c5946caed6f0c509347c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae654bda0e21c8ce8e4a0ce70edfb6fb6"><td class="memItemLeft" align="right" valign="top"><a id="ae654bda0e21c8ce8e4a0ce70edfb6fb6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>TestingEnable</b> ()</td></tr>
-<tr class="separator:ae654bda0e21c8ce8e4a0ce70edfb6fb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5f0374d539ae8bb270da634833203cf"><td class="memItemLeft" align="right" valign="top"><a id="ae5f0374d539ae8bb270da634833203cf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>TestingDisable</b> ()</td></tr>
-<tr class="separator:ae5f0374d539ae8bb270da634833203cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30bef047a948625723fec193c380092b"><td class="memItemLeft" align="right" valign="top"><a id="a30bef047a948625723fec193c380092b"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>Ready</b> (int timeout_ms)</td></tr>
 <tr class="separator:a30bef047a948625723fec193c380092b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,6 +140,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>ClearState</b> ()</td
 template&lt;typename T &gt; </td></tr>
 <tr class="memitem:acd2408dd7bf2d90ae34e17c9dc6e934c"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>GetValue</b> (std::string name)</td></tr>
 <tr class="separator:acd2408dd7bf2d90ae34e17c9dc6e934c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a455fc4a81ce836abba439678d2c4a3c2"><td class="memItemLeft" align="right" valign="top"><a id="a455fc4a81ce836abba439678d2c4a3c2"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>Services</b></td></tr>
+<tr class="separator:a455fc4a81ce836abba439678d2c4a3c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/ServiceDiscovery/<a class="el" href="SlowControlCollection_8h_source.html">SlowControlCollection.h</a></li>
