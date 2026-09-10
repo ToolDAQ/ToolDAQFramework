@@ -56,6 +56,7 @@ namespace ToolFramework {
     Services* services;
     std::vector<LogMsg>* logging_buf;
     std::unordered_map<std::string, MonitoringMsg>* monitoring_buf;
+    std::unordered_map<std::string, uint64_t>* monitoring_msgs_sent;
     std::vector<AlarmMsg>* alarm_buf;
     std::mutex* logging_buf_mtx;
     std::mutex* monitoring_buf_mtx;
@@ -164,11 +165,12 @@ namespace ToolFramework {
     
     std::vector<LogMsg> logging_buf;
     std::unordered_map<std::string, MonitoringMsg> monitoring_buf;
+    std::unordered_map<std::string, uint64_t> monitoring_msgs_sent;
     std::vector<AlarmMsg> alarm_buf;
     std::mutex logging_buf_mtx;
     std::mutex monitoring_buf_mtx;
     std::mutex alarm_buf_mtx;
-    uint32_t mon_merge_period_ms;
+    uint32_t mon_merge_period_ms;       // N.B. can be at most multicast_send_period_ms
     uint32_t multicast_send_period_ms;
     uint32_t alarm_cooldown_ms;
 

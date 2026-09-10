@@ -16,7 +16,7 @@ Services::Services(){
   m_run_mode_config_id=0;
 
 }
- 
+
 Services::~Services(){
   
   // kill background buffering thread
@@ -36,6 +36,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
 
   m_context = context_in;
   sc_vars = sc_vars_in;
+  sc_vars->SetServices(this);
 
   bool alerts_send = 0;
   int alert_send_port = 12242;
@@ -88,7 +89,11 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   // so we need to wait for the middleman to receive one & connect before we can communicate with it.
   int pub_period=5;
   m_variables.Get("service_publish_sec",pub_period);
-  if(!Ready(pub_period*3000)){ // Wait up to 3 broadcast periods. It'll return sooner if it connects.
+  // Wait up to 3 broadcast periods by default. It'll return sooner if it connects.
+  int ready_wait_ms = pub_period*3000;
+  m_variables.Get("ready_wait_ms",ready_wait_ms);
+  
+  if(ready_wait_ms>0 && !Ready(ready_wait_ms)){
     if(m_verbose) std::cerr<<"Warning: service not yet connected..."<<std::endl;
   }
   
@@ -96,6 +101,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   thread_args.services = this;
   thread_args.logging_buf = &logging_buf;
   thread_args.monitoring_buf = &monitoring_buf;
+  thread_args.monitoring_msgs_sent = & monitoring_msgs_sent;
   thread_args.alarm_buf = &alarm_buf;
   thread_args.logging_buf_mtx = &logging_buf_mtx;
   thread_args.monitoring_buf_mtx = &monitoring_buf_mtx;
@@ -463,11 +469,7 @@ bool Services::SQLQuery(const std::string& query, std::vector<std::string>& resp
   
   std::string err="";
   
-  // for now, commands must not begin with '(' as this is used to identify compressed messages.
-  // Since we don't know what a user-provided query string may be, prepend with a space to ensure this.
-  std::string sanitized_query = std::string{" "}+query;
-  
-  if(!m_backend_client.SendCommand("W_QUERY", sanitized_query, &responses, timeout, &err)){
+  if(!m_backend_client.SendCommand("W_QUERY", query, &responses, timeout, &err)){
     if(m_verbose) std::cerr<<"SQLQuery error: "<<err<<std::endl;
     responses.resize(1);
     responses.front() = err;
@@ -1043,8 +1045,8 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   std::unique_lock<std::mutex> locker(monitoring_buf_mtx);
   
   // only accept the first of repeated monitoring sends within buffer period
-  auto it = monitoring_buf.find(name+subject);
-  if(it!=monitoring_buf.end() && (ts - it->second.timestamp)<mon_merge_period_ms) return true;
+  auto it = monitoring_msgs_sent.find(name+subject);
+  if(it!=monitoring_msgs_sent.end() && (ts - it->second)<mon_merge_period_ms) return true;
   
   // reject if this message is too big to fit in a UDP datagram even with compression
   size_t compressed_bytes = ZSTD_compressBound(json_data.length()+name.length()+subject.length());
@@ -1066,6 +1068,10 @@ bool Services::SendMonitoringData(const std::string& json_data, const std::strin
   monitoring_buf.emplace(std::piecewise_construct,
                          std::forward_as_tuple(name+subject),
                          std::forward_as_tuple(json_data, subject, name, ts));
+  
+  monitoring_msgs_sent.emplace(std::piecewise_construct,
+                               std::forward_as_tuple(name+subject),
+                               std::forward_as_tuple(ts));
   
   thread_args.monitoring_batch_bytes += compressed_bytes;
   
@@ -1241,7 +1247,10 @@ bool Services::LoadConfigAlertFunc(const char* alert, const char* payload){
 
 std::string Services::LoadConfigSlowControlFunc(const char* payload){
   
+  (*sc_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
   bool success = LoadConfigAlertFunc("",payload);
+  if(success)(*sc_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
+  else (*sc_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
   
   if(!success) return std::string("Failed to load config: ")+payload;
   return std::string("Loaded config: ")+payload;
@@ -1318,6 +1327,7 @@ bool Services::BatchAndSendMulticast(BufferThreadArgs* m_args, bool log_lock, bo
     m_args->services->SendMonitoringData(m_args->local_merge_buf);
     m_args->monitoring_buf->clear();
     m_args->monitoring_batch_bytes = 0;
+    if(mon_lock) m_args->monitoring_msgs_sent->clear();
   }
   
   // our other sevice task: prune the alarm buffer.
@@ -1336,8 +1346,10 @@ bool Services::BatchAndSendMulticast(BufferThreadArgs* m_args, bool log_lock, bo
 std::string Services::JsonEscape(std::string s){
   // TODO is there a more efficient way to do this...
   std::string out;
+  while(s.size() && std::isspace(s.back())) s.pop_back();
   for(char& a : s){
     if(a=='"' || a=='\\') out.push_back('\\');
+    if(a=='\x0a' || a=='\x0d'){ out+="\\n"; continue; }
     out.push_back(a);
   }
   return out;
@@ -1351,7 +1363,7 @@ std::string Services::GetLocalConfig(){
 
 std::string Services::SCLocalConfig(const char*){
 
-  return "base: "+std::to_string(m_base_config_id)+", runmode:"+std::to_string(m_run_mode_config_id)+", config: "+m_local_config;
+  return "base: "+std::to_string(m_base_config_id)+", runmode:"+std::to_string(m_run_mode_config_id)+", testing:"+std::to_string(m_testing)+", config: "+m_local_config;
 
 }
 

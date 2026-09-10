@@ -1,5 +1,6 @@
 #include <SlowControlCollection.h>
 #include "zstd_helpers.h"
+#include "Services.h"
 
 using namespace ToolFramework;
 
@@ -12,6 +13,7 @@ SlowControlCollectionThread_args::SlowControlCollectionThread_args(){
   alert_functions=0;
   alert_functions_mutex=0;
   SC_vars=0;
+  m_services=0;
   
   
 }
@@ -28,6 +30,7 @@ SlowControlCollectionThread_args::~SlowControlCollectionThread_args(){
   alert_functions=0;
   alert_functions_mutex=0;
   SC_vars=0;
+  m_services=0;
   
   if(pub_monitor_socket){
     if(m_pub) zmq_socket_monitor((void*)(*m_pub), NULL, 0); // stop pub socket sending events
@@ -43,6 +46,7 @@ SlowControlCollectionThread_args::~SlowControlCollectionThread_args(){
 SlowControlCollection::SlowControlCollection(){
   
   args=0;
+  m_services=0;
   m_util=0;
   m_context=0;
   m_pub=0;
@@ -56,6 +60,10 @@ SlowControlCollection::SlowControlCollection(){
   zstd_cctx = ZSTD_createCCtx();
   zstd_dctx = ZSTD_createDCtx();
   
+}
+
+void SlowControlCollection::SetServices(Services* services){
+  m_services = services;
 }
 
 SlowControlCollection::~SlowControlCollection(){
@@ -93,6 +101,7 @@ void SlowControlCollection::Stop(){
   //printf("p6\n");
   Clear();
   //printf("p7\n");
+  m_services=0;
 }
 
 bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_service, int alert_receive_port, bool alerts_receive, int alert_send_port, bool alerts_send){
@@ -131,14 +140,16 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
         delete args;
         args=0;
         
-        std::clog<<"Error adding alert send port to SD"<<std::endl;
+        m_services->SendLog("Error adding alert send port to SD", LogLevel::Error);
+        SetError(true);
         return false;
       }
       
       if(m_thread){
         // tell the socket to send monitoring messages so we can identify when its connected
         if(zmq_socket_monitor((void*)(*m_pub), "inproc://AlertSendMonitor", ZMQ_EVENT_ALL)!=0){
-          std::cerr<<"SCC error starting monitor on alert send socket: "<<zmq_strerror(errno)<<std::endl;
+          m_services->SendLog(std::string{"SCC error starting monitor on alert send socket: "}+zmq_strerror(errno), LogLevel::Error);
+          SetError(true);
         }
         // open a pair socket to receive them
         pub_monitor_socket = new zmq::socket_t(*context, ZMQ_PAIR);
@@ -174,7 +185,8 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
         args=0;
         
         
-        std::clog<<"Error adding port alert receive to SD"<<std::endl;
+        m_services->SendLog("Error adding port alert receive to SD",LogLevel::Error);
+        SetError(true);
         return false;
         
       }
@@ -197,7 +209,8 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
       delete args;
       args=0;
       
-      std::clog<<"Error adding port SC to SD"<<std::endl;
+      m_services->SendLog("Error adding port SC to SD",LogLevel::Error);
+      SetError(true);
       
       return false;
     }
@@ -270,7 +283,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     int ok = args->sock->recv(&identity);
     
     if(ok==0 || !identity.more()){
-      std::cerr<<"error: Poorly formatted slowcontrol input [identity problem]"<<std::endl;
+      args->m_services->SendLog("Poorly formatted slowcontrol input [identity problem]",LogLevel::Warning);
       return;
     }
     
@@ -278,7 +291,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     ok = args->sock->recv(&blank);
     
     if (!blank.more()){
-      std::cerr<<"error: Poorly formatted slowcontrol input [blank problem]"<<std::endl;
+      args->m_services->SendLog("Poorly formatted slowcontrol input [blank problem]",LogLevel::Warning);
       return;
     }
     
@@ -286,14 +299,14 @@ void SlowControlCollection::Thread(Thread_args* arg){
     ok = args->sock->recv(&message);
     
     if(ok==0 || message.more()){
-      std::cerr<<"error: Poorly formatted slowcontrol input [message problem]"<<std::endl;
+      args->m_services->SendLog("Poorly formatted slowcontrol input [message problem]",LogLevel::Warning);
       return;
     }
     
     std::string payload;
     std::unique_lock<std::mutex> locker(args->SCC->zstd_dctx_mtx);
     if(!ZstdDecompress(args->SCC->zstd_dctx, (char*)message.data(), message.size(), payload, args->SCC->MAX_DECOMPRESSED_SIZE)){
-      std::cerr<<"failed to decompress slow control message: "<<payload<<std::endl;
+      args->m_services->SendLog("failed to decompress slow control message",LogLevel::Warning);
       return;
     }
     locker.unlock();
@@ -302,7 +315,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
     tmp.JsonParser(payload);
     //tmp.Print();
     if(!tmp.Has("msg_value")){
-      std::cerr<<"error: Poorly formatted slowcontrol input [no msg_value]"<<std::endl;
+      args->m_services->SendLog("Poorly formatted slowcontrol input [no msg_value]",LogLevel::Warning);
       return;
     }
     
@@ -322,7 +335,12 @@ void SlowControlCollection::Thread(Thread_args* arg){
     std::string reply="";
     bool strip=false;
     
-    Update(args->SCC, key, value, reply, strip, *(args->testing));
+    bool callback_successs = Update(args->SCC, key, value, reply, strip, *(args->testing));
+    if(!callback_successs){
+      args->SCC->SetWarning(true);
+      // is this generally appropriate? Should we SetError or SetWarning? should we leave it to users?
+      // users may have called SetError within their callback...this would override that...
+    }
     /*
     
     if(key == "?"){
@@ -389,11 +407,9 @@ void SlowControlCollection::Thread(Thread_args* arg){
     if(tmp_ok) tmp_ok = tmp_ok && args->sock->send(blank, ZMQ_SNDMORE);
     if(tmp_ok) tmp_ok= tmp_ok && args->sock->send(zmsg);
     if(!tmp_ok){
-      std::cerr<<"failed to send '"<<reply<<"' to '"<<key<<"'"<<std::endl;
+      args->m_services->SendLog("failed to send SlowControl '"+key+"' reply '"+reply+"'",LogLevel::Warning);
       return;
     }
-    // FIXME these sorts of errors should be logged somewhere
-    // rather than being silently ignored. This info could be critical for debugging issues!!!
   }
   
   if (args->alerts_receive && args->items[1].revents & ZMQ_POLLIN){ //received alert value;
@@ -403,8 +419,9 @@ void SlowControlCollection::Thread(Thread_args* arg){
     // receive alert type
     int ok = args->sub->recv(&message);
     if(ok==0){
-      // FIXME this case should be handled! what do we do?
-      std::cerr<<"failed to receive alert!"<<std::endl;
+      args->m_services->SendLog("error receiving alert!",LogLevel::Error);
+      args->SCC->SetError(true);
+      return;
     }
     std::istringstream iss(static_cast<char*>(message.data()));
     
@@ -414,23 +431,22 @@ void SlowControlCollection::Thread(Thread_args* arg){
     if(message.more()){
       ok = args->sub->recv(&message);
       if(ok==0){
-        // FIXME this case should be handled! what do we do?
-        std::cerr<<"failed to receive "<<iss.str() << " alert payload!"<<std::endl;
+        args->m_services->SendLog("failed to receive "+iss.str()+"' alert payload",LogLevel::Warning);
+        args->SCC->SetError(true);
         return;
       }
       if(!ZstdDecompress(args->SCC->zstd_dctx, (char*)message.data(), message.size(), payload)){
-        std::cerr<<"failed to decompress "<<iss.str() << " alert payload!"<<std::endl;
+        args->m_services->SendLog("failed to decompress "+iss.str()+"' alert payload",LogLevel::Warning);
         return;
       }
       has_data=true;
     }
     
-    //int a=0;
+    int a=0;
     while(message.more()){
-      
-      args->sub->recv(&message); // FIXME do we want any warnings or handling here?
-      //memcpy((void*)payload.data(),message.data(),message.size());
-      //a++;
+      args->sub->recv(&message);
+      if(a==0) args->m_services->SendLog("Unexpected additional "+iss.str()+" alert parts",LogLevel::Warning);
+      a++;
     }
     
     if(iss.str() == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
@@ -473,28 +489,34 @@ void SlowControlCollection::Thread(Thread_args* arg){
         }
       }
       
-      if(error)   std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
+      if(error){
+        args->m_services->SendLog("alert function failed: "+iss.str(),LogLevel::Error);
+        args->SCC->SetError(true);
+      }
 
     }
     if(args->alert_functions->count("*")){
       if(has_data){
-	try{
-	  error = !((*(args->alert_functions))["*"](iss.str().c_str(), payload.c_str()));
-	}
-	catch(...){
-	  error = true;
-	}	
+        try{
+          error = !((*(args->alert_functions))["*"](iss.str().c_str(), payload.c_str()));
+        }
+        catch(...){
+          error = true;
+        }
       }
       else {
-	try{
-	  error=!((*(args->alert_functions))["*"](iss.str().c_str(), 0));
-	}
-	catch(...){
-	  error = true;
-	}
+        try{
+          error=!((*(args->alert_functions))["*"](iss.str().c_str(), 0));
+        }
+        catch(...){
+          error = true;
+        }
       }
-   
-      if(error)   std::cerr<<"alert function failed: "<<iss.str().c_str()<<std::endl;
+      
+      if(error){
+        args->m_services->SendLog("alert function failed: "+iss.str(),LogLevel::Error);
+        args->SCC->SetError(true);
+      }
       
     }
     
@@ -590,24 +612,41 @@ bool SlowControlCollection::AlertSubscribe(std::string alert, AlertFunction func
 
 bool SlowControlCollection::AlertSend(std::string alert, std::string payload){
   
-  // TODO add some means of returning error info, e.g. accept alert by reference and set to err description on error
-  if(!m_alerts_send) return false;  // err: "unknown alert"
+  if(!m_alerts_send){
+    m_services->SendLog("error sending alert: functionality not enabled",LogLevel::Error);
+    return false;
+  }
+  bool ok;
+  
   zmq::message_t message(alert.length()+1);
   snprintf((char*) message.data(), alert.length()+1, "%s", alert.c_str());
   if(payload==""){
-    return m_pub->send(message); // err: "zmq send "+zmq_strerror(errno)
+    ok = m_pub->send(message);
+    if(!ok){
+      m_services->SendLog("zmq error sending alert '"+alert+"': "+zmq_strerror(errno),LogLevel::Error);
+      return false;
+    }
+    return true;
   }
+  
   // if we didn't return, we have a payload as well
-  bool ok = m_pub->send(message, ZMQ_SNDMORE);
-  if(!ok) return false; // err: "zmq send "+zmq_strerror(errno)
+  ok = m_pub->send(message, ZMQ_SNDMORE);
+  if(!ok){
+    m_services->SendLog("zmq error sending alert '"+alert+"': "+zmq_strerror(errno),LogLevel::Error);
+    return false;
+  }
   
   std::unique_lock<std::mutex>locker(args->SCC->zstd_cctx_mtx);
   std::string compress_buffer;
   std::pair<const char*, size_t> output = ZstdCompress(args->SCC->zstd_cctx, payload.data(), payload.size(), compress_buffer);
   zmq::message_t message2(output.second);
   memcpy(message2.data(), output.first, output.second);
-  return m_pub->send(message2);  // err: "zmq send "+zmq_strerror(errno)
-  
+  ok = m_pub->send(message2);
+  if(!ok){
+    m_services->SendLog("zmq error sending alert '"+alert+"': "+zmq_strerror(errno),LogLevel::Error);
+    return false;
+  }
+  return true;
 }
 
 void SlowControlCollection::JsonParser(std::string json){

@@ -9,7 +9,9 @@
 #include <zstd.h>
 
 namespace ToolFramework{
-
+  
+  class Services;
+  
   //typedef void (*AlertFunction)(const char*, const char*);
   typedef std::function<bool(const char*, const char*)> AlertFunction;
 
@@ -35,6 +37,7 @@ namespace ToolFramework{
     bool alerts_receive;
     bool* testing;
     std::map<std::string, SlowControlElement*>* SC_vars;
+    Services* m_services = nullptr;
     
     // for checking when alert send socket is ready
     zmq::socket_t* m_pub = nullptr;
@@ -45,6 +48,9 @@ namespace ToolFramework{
   
   class SlowControlCollection{
     
+    // allow Services class to access e.g. SetTesting function
+    friend class Services;
+    
    public:
     
     SlowControlCollection();
@@ -54,6 +60,7 @@ namespace ToolFramework{
     bool ListenForData(int poll_length=0);
     bool InitThreadedReceiver(zmq::context_t* context, int port=60000, int poll_length=100, bool new_service=true, int alert_receive_port=12243, bool alert_receive=true, int alert_send_port=12242, bool alert_send=true);
     SlowControlElement* operator[](std::string key);
+    void SetServices(Services*);
     bool Add(std::string name, SlowControlElementType type, SCFunction change_function = 0, SCFunction read_function = 0, bool testing_lock=true, bool hidded=false);
     bool Remove(std::string name);
     void Clear();
@@ -63,10 +70,7 @@ namespace ToolFramework{
     std::string PrintJSON();
     void Stop();
     void JsonParser(std::string json);
-    void SetTesting(bool testing);
     bool GetTesting();
-    void TestingEnable();
-    void TestingDisable();
     bool Ready(int timeout_ms);
     void SetActive(bool active);
     void SetError(bool error);
@@ -78,8 +82,10 @@ namespace ToolFramework{
       return SC_vars[name]->GetValue<T>();
     }
     
-    
    private:
+    void SetTesting(bool testing);
+    void TestingEnable();
+    void TestingDisable();
     
     std::map<std::string, SlowControlElement*> SC_vars;
     std::map<std::string, AlertFunction>  m_alert_functions;
@@ -94,6 +100,7 @@ namespace ToolFramework{
     uint32_t MAX_DECOMPRESSED_SIZE=104857600; // refuse to decompress messages that will exceed this size once decompressed
     // defautl 100MB; I'm sure we can spare that much RAM.
     
+    Services* m_services;
     DAQUtilities* m_util;
     zmq::context_t* m_context;
     zmq::socket_t* m_pub;

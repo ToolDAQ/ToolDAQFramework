@@ -727,7 +727,7 @@ bool ServicesBackend::GetNextResponse(){
 			cmd.success = false;
 			Log(cmd.err, v_warning, m_verbosity);
 			break;
-		} else {
+		} else if(cmd.success){
 			cmd.response.push_back(std::move(cmd.err));
 			cmd.err = "";
 		}
