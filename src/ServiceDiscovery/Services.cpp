@@ -65,10 +65,10 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   sc_vars->Add("State",SlowControlElementType(INFO),0,0,false,false);
   (*sc_vars)["State"]->SetValue(0);
   
-  sc_vars->Add("LoadConfig",SlowControlElementType(COMMAND),std::bind(&Services::LoadConfigSlowControlFunc, this, std::placeholders::_1),0,false,false);
+  sc_vars->Add("LoadConfig",SlowControlElementType(COMMAND),std::bind(&Services::LoadConfigSlowControlFunc, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),0,false,false);
   AlertSubscribe("LoadConfig", std::bind(&Services::LoadConfigAlertFunc, this,  std::placeholders::_1, std::placeholders::_2));
 
-  sc_vars->Add("LocalConfig",SlowControlElementType(INFO),0,std::bind(&Services::SCLocalConfig, this, std::placeholders::_1),false,true); // FIXME hidden until Control page supports JSON
+  sc_vars->Add("LocalConfig",SlowControlElementType(INFO),0,std::bind(&Services::SCLocalConfig, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),false,true); // FIXME hidden until Control page supports JSON
 
   
   if(!m_variables.Get("service_name",m_name)) m_name="test_service";
@@ -1135,7 +1135,7 @@ SlowControlElement* Services::GetSlowControlVariable(std::string key){
   
 }
 
-bool Services::AddSlowControlVariable(std::string name, SlowControlElementType type, std::function<std::string(const char*)> change_function, std::function<std::string(const char*)> read_function){
+bool Services::AddSlowControlVariable(std::string name, SlowControlElementType type, std::function<bool(const char*, const char*, std::string&)> change_function, std::function<bool(const char*, const char*, std::string&)> read_function){
   
   return sc_vars->Add(name, type, change_function, read_function);
   
@@ -1245,15 +1245,17 @@ bool Services::LoadConfigAlertFunc(const char* alert, const char* payload){
   
 }
 
-std::string Services::LoadConfigSlowControlFunc(const char* payload){
+bool Services::LoadConfigSlowControlFunc(const char* value, const char* sc_name, std::string& response){
   
   (*sc_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
-  bool success = LoadConfigAlertFunc("",payload);
+  bool success = LoadConfigAlertFunc("", value);
   if(success)(*sc_vars)["Config"]->SetValue((int)ConfigState::LoadEnd);
   else (*sc_vars)["Config"]->SetValue((int)ConfigState::LoadFail);
   
-  if(!success) return std::string("Failed to load config: ")+payload;
-  return std::string("Loaded config: ")+payload;
+  if(!success)response = std::string("Failed to load config: ")+value;
+  else response = std::string("Loaded config: ")+value;
+  
+  return success;
   
 }
 
@@ -1361,10 +1363,11 @@ std::string Services::GetLocalConfig(){
 
 }
 
-std::string Services::SCLocalConfig(const char*){
+bool Services::SCLocalConfig(const char* value, const char* sc_name, std::string& response){
 
-  return "base: "+std::to_string(m_base_config_id)+", runmode:"+std::to_string(m_run_mode_config_id)+", testing:"+std::to_string(m_testing)+", config: "+m_local_config;
+  response = "base: "+std::to_string(m_base_config_id)+", runmode:"+std::to_string(m_run_mode_config_id)+", testing:"+std::to_string(m_testing)+", config: "+m_local_config;
 
+  return true;
 }
 
 
@@ -1407,7 +1410,7 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
   allgood = allgood &&
   sc_vars->Add("ChangeConfig",
               BUTTON,
-              [this, func](const char*) -> std::string {
+	       [this, func](const char*, const char*, std::string& response) -> bool {
                 (*sc_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
                 bool ok = func(m_local_config);
                 int new_state;
@@ -1416,13 +1419,15 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
                   std::cerr<<"ChangeConfig Error"<<std::endl;
                   SendLog("ChangeConfig Error", LogLevel::Error);
                   sc_vars->SetWarning(true);
+		  response = "Error";
                 } else {
                   new_state = (int)ConfigState::ChangeEnd;
                   sc_vars->SetTesting(m_testing);
+		  response = "OK";
                 }
                 (*sc_vars)["Config"]->SetValue(new_state);
                 (*sc_vars)["NewConfig"]->SetValue(0);
-                return (ok ? "OK" : "Error");
+                return ok;
               },  // setter
               0,  // getter
               false,  // not locked during non-testing runs, as it only allows loading configurations in line with the current run type
@@ -1432,10 +1437,11 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
   allgood = allgood &&
   sc_vars->Add("ChangeToConfig",
               COMMAND,
-              [this, func](const char* payload) -> std::string {
+              [this, func](const char* payload, const char*, std::string& response) -> bool {
                 (*sc_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
                 bool ok = func(payload);
                 int new_state = ok ? (int)ConfigState::ChangeEnd : (int)ConfigState::ChangeFail;
+		response = ok ? "OK" : "Error";
                 (*sc_vars)["Config"]->SetValue(new_state);
                 if(ok && m_local_config.compare(payload) !=0){
                   m_local_config = payload;
@@ -1447,7 +1453,7 @@ bool Services::SetChangeConfigFunc(std::function<bool(std::string)> func){
                   std::cerr<<"ChangeConfig Error"<<std::endl;
                   SendLog("ChangeConfig Error", LogLevel::Error);
                 }
-                return (ok ? "OK" : "Error");
+                return ok;
               },  // setter
               0,  // getter
               true,   // locked during non-testing runs as it allows loading arbitrary configurations
@@ -1482,7 +1488,7 @@ bool Services::SetRunStopFunc(std::function<bool()> func){
   allgood = allgood &&
     sc_vars->Add("RunStop",
               BUTTON,
-              [this, func](const char*) -> std::string {
+              [this, func](const char* payload, const char*, std::string& response) -> bool {
                 ResetConfigIDs();
                 bool ok = func();
                 if(!ok){
@@ -1491,7 +1497,8 @@ bool Services::SetRunStopFunc(std::function<bool()> func){
                   SendLog("RunStop Error", LogLevel::Error);
                 }
                 (*sc_vars)["Config"]->SetValue((int)ConfigState::Unconfigured);
-                return (ok ? "OK" : "Error");
+                response = ok ? "OK" : "Error";
+		return ok;
               }, // setter
               0, // getter
               false,  // not locked during non-testing runs: it is a fallback control in case alert gets missed
@@ -1528,21 +1535,23 @@ bool Services::SetExportConfigFunc(std::function<bool(std::string&)> func){
   allgood = allgood &&
   sc_vars->Add("ExportConfig",
               BUTTON,
-              [this, func](const char*) -> std::string {
+              [this, func](const char* payload, const char*, std::string& response) -> bool {
                 bool ok = func(tmp_config);
                 if(!ok){
                   sc_vars->SetWarning(true);
                   std::cerr<<"ExportConfig Error"<<std::endl;
                   SendLog("ExportConfig Error", LogLevel::Error);
-                  return "Error";
+		  response = "Error";
+                  return ok;
                 }
                 if(tmp_config.compare(m_local_config) !=0){
                   m_local_config = tmp_config;
                   m_base_config_id = 0;
                   m_run_mode_config_id = 0;
-                }
-                
-                return tmp_config;
+	        }
+
+		response = tmp_config;
+                return ok;
               }, // setter
               0, // getter
               false, // not be locked during non-testing runs, since it does not change configuration
