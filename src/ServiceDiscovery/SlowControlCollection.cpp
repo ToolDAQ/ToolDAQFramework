@@ -118,7 +118,8 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
 
   args=new SlowControlCollectionThread_args();
   //printf("init p=%p\n", args);
-  
+
+  args->m_services = m_services;
   args->alerts_receive=m_alerts_receive;
   args->testing=&m_testing;
   args->SC_vars=&SC_vars;
@@ -451,12 +452,11 @@ void SlowControlCollection::Thread(Thread_args* arg){
     
     if(iss.str() == "LoadConfig") (*args->SC_vars)["Config"]->SetValue((int)ConfigState::LoadStart);
     else if(iss.str() == "ChangeConfig"){
-       if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0){
-         return;
-       }
+      if((*args->SC_vars)["NewConfig"]->GetValue<int>() == 0){
+	return;
+      }
       (*args->SC_vars)["Config"]->SetValue((int)ConfigState::ChangeStart);
     }
-    
     
     bool error = false;
     std::unique_lock<std::mutex> locker(*args->alert_functions_mutex);
@@ -465,7 +465,7 @@ void SlowControlCollection::Thread(Thread_args* arg){
       if(has_data){
         try{
           error = !((*(args->alert_functions))[iss.str()](iss.str().c_str(), payload.c_str()));
-        }
+ 	}
         catch(...){
           error = true;
         }
@@ -477,8 +477,8 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
       else {
         try{
-          error=!((*(args->alert_functions))[iss.str()](iss.str().c_str(), 0));
-        }
+	  error=!((*(args->alert_functions))[iss.str()](iss.str().c_str(), 0));
+ 	}
         catch(...){
           error = true;
         }
@@ -490,24 +490,24 @@ void SlowControlCollection::Thread(Thread_args* arg){
       }
       
       if(error){
-        args->m_services->SendLog("alert function failed: "+iss.str(),LogLevel::Error);
+	args->m_services->SendLog("alert function failed: "+iss.str(),LogLevel::Error);
         args->SCC->SetError(true);
       }
-
+      
     }
     if(args->alert_functions->count("*")){
       if(has_data){
         try{
-          error = !((*(args->alert_functions))["*"](iss.str().c_str(), payload.c_str()));
-        }
+	  error = !((*(args->alert_functions))["*"](iss.str().c_str(), payload.c_str()));
+	}
         catch(...){
           error = true;
-        }
+	}
       }
       else {
         try{
-          error=!((*(args->alert_functions))["*"](iss.str().c_str(), 0));
-        }
+	  error=!((*(args->alert_functions))["*"](iss.str().c_str(), 0));
+	}
         catch(...){
           error = true;
         }
