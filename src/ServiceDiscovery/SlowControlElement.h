@@ -33,6 +33,10 @@ namespace ToolFramework{
     bool SetValue(const char value[]);
     bool SetDefault(std::string value);
     bool SetValue(std::string value);
+    // Same as SetValue(std::string), but also hands back whatever the change
+    // function actually returned (empty if there's no change function, or it
+    // returned nothing) - SetValue(std::string) alone discards that.
+    bool SetValue(std::string value, std::string& result);
     bool GetValue(std::string &value); 
     bool Lockable();
     bool Hidden();
