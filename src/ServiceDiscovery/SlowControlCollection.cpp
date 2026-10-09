@@ -238,7 +238,7 @@ bool SlowControlCollection::Init(zmq::context_t* context, int sc_port, bool new_
     Add("State",SlowControlElementType(INFO),0,0,false,false);
     SC_vars["State"]->SetValue(0);
     Add("ClearState",SlowControlElementType(BUTTON),
-        [this](const char*) -> std::string { ClearState(); return "OK";},
+        [this](const char*, const char*, std::string&) -> bool { ClearState(); return true;},
         0,false);
     
     // add state to the service discovery broadcast; default is no flags (not active, no error, no warning)

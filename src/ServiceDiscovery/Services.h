@@ -12,6 +12,7 @@
 #include <chrono>
 #include <functional>
 #include <SlowControlCollection.h>
+#include <string>
 //#include <boost/uuid/uuid.hpp>            // uuid class
 //#include <boost/uuid/uuid_generators.hpp> // generators
 //#include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
@@ -113,7 +114,7 @@ namespace ToolFramework {
     
     SlowControlCollection* GetSlowControlCollection();
     SlowControlElement* GetSlowControlVariable(std::string key);
-    bool AddSlowControlVariable(std::string name, SlowControlElementType type, std::function<std::string(const char*)> change_function=nullptr, std::function<std::string(const char*)> read_function=nullptr);
+    bool AddSlowControlVariable(std::string name, SlowControlElementType type, std::function<bool(const char*, const char*, std::string&)> change_function=nullptr, std::function<bool(const char*, const char*, std::string&)> read_function=nullptr);
     bool RemoveSlowControlVariable(std::string name);
     void ClearSlowControlVariables();
     void ResetConfigIDs();
@@ -138,14 +139,14 @@ namespace ToolFramework {
     
   private:
 
-    std::string LoadConfigSlowControlFunc(const char* sc_name);
+    bool LoadConfigSlowControlFunc(const char* value, const char* sc_name, std::string& response);
     bool LoadConfigAlertFunc(const char* alert, const char* payload);
     // private methods for sending from buffer
     bool SendLog(std::string& msg);
     bool SendMonitoringData(std::string& msg);
     static void BufferThread(Thread_args* args);
     static bool BatchAndSendMulticast(BufferThreadArgs* m_args, bool log_lock, bool mon_lock);
-    std::string SCLocalConfig(const char*);
+    bool SCLocalConfig(const char* value, const char* sc_name, std::string& response);
     
     //size_t GetMTU(std::string iface_name);
     //std::set<std::string> GetInterfaces();

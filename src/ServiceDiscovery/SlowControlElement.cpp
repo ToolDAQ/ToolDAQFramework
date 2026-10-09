@@ -39,11 +39,17 @@ std::string SlowControlElement::Print(){
     mtx.lock();
 
   if(m_read_function!=0){
+     std::string response="";
+     bool ret = false;
     try{
-       options.Set("value",m_read_function(""));        
+      ret = m_read_function("", m_name.c_str(), response);
+      if(ret) options.Set("value", response);        
     }
     catch(...){
-      std::cerr<<"failed to call read fucntion"<<std::endl;
+      ret = false;
+    }
+    if(!ret){
+      std::cerr<<"failed to call read fucntion"<<m_name<<" : "<<response<<std::endl;
     }
   }
   
@@ -209,13 +215,27 @@ bool SlowControlElement::SetDefault(std::string value){
 }
 
 
+
 bool SlowControlElement::SetValue(const char value[]){
   std::string tmp_value=value;
   return SetValue(tmp_value);
 }
 
 
+bool SlowControlElement::SetValue(const char value[], std::string& response){
+  std::string tmp_value=value;
+  return SetValue(tmp_value, response);
+}
+
+
 bool SlowControlElement::SetValue(std::string value){
+  std::string tmp="";
+  return SetValue(value, tmp);
+
+}
+
+bool SlowControlElement::SetValue(std::string value,  std::string& response){  
+
   mtx.lock();
 
   if(m_type == SlowControlElementType(VARIABLE)){
@@ -223,17 +243,21 @@ bool SlowControlElement::SetValue(std::string value){
     double val=0;
     tmp>>val;
     mtx.unlock();
-    return SetValue(val);
+    return SetValue(val, response);
   }
   
   if(m_change_function!=0){
+    bool ret = false;
     try{
-      m_change_function(value.c_str());
+     ret = m_change_function(value.c_str(), m_name.c_str(), response);
     }
     catch(...){
-      std::cerr<<"failed to call change fucntion"<<std::endl;
-       mtx.unlock();
-       return false;
+      ret = false;
+    }
+    if(!ret){
+      std::cerr<<"failed to call change fucntion "<<m_name<<" : "<<response<<std::endl;
+      mtx.unlock();
+      return false;
     }
   }
   
@@ -254,10 +278,18 @@ bool SlowControlElement::SetValue(std::string value){
 
 
 bool SlowControlElement::GetValue(std::string &value){
+
+  std::string tmp="";
+ return GetValue(value, tmp);
+}
+
+bool SlowControlElement::GetValue(std::string &value, std::string& response){
   mtx.lock();
   if(m_read_function!=0){
+    bool ret = false;
     try{
-      options.Set("value",m_read_function(""));
+      ret = m_read_function("", m_name.c_str(), response);
+      if(ret) options.Set("value", response);
     }
     catch(std::exception& e){
       std::cerr<<"caught "<<e.what()<<" calling read function for SlowControl "<<m_name<<std::endl;
