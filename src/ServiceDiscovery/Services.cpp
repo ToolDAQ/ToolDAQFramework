@@ -190,6 +190,7 @@ bool Services::SendAlarm(const std::string& message, bool critical, const std::s
   cmd_string = std::string{"{\"topic\":\"LOGGING\""}
              + ",\"time\":\""+timestring+"\""
              + ",\"device\":\""+name+"\""
+             + ",\"device_id\":"+std::to_string(device_ids[name])
              + ",\"severity\":0"
              + ",\"message\":\"" + message + "\"}";
   
@@ -241,7 +242,7 @@ bool Services::SendCalibrationData(const std::string& json_data, const std::stri
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendDeviceConfig(const std::string& json_data, const std::string& author, const std::string& description, const std::string& device, uint64_t timestamp, int* version, const unsigned int timeout){
+bool Services::SendDeviceConfig(const std::string& json_data, const uint32_t author_id, const std::string& description, const std::string& device, uint64_t timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
@@ -249,7 +250,7 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
   
   std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"device\":\""+ name+"\""
-                         + ", \"author\":\""+ author+"\""
+                         + ", \"author_id\":\""+ std::to_string(author_id)+"\""
                          + ", \"description\":\""+ description+"\""
                          + ", \"data\":"+ json_data +" }";
   
@@ -282,13 +283,13 @@ bool Services::SendDeviceConfig(const std::string& json_data, const std::string&
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendBaseConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, uint64_t timestamp, int* version, const unsigned int timeout){
+bool Services::SendBaseConfig(const std::string& json_data, const std::string& name, const uint32_t author_id, const std::string& description, uint64_t timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
   std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"name\":\""+ name+"\""
-                         + ", \"author\":\""+ author+"\""
+                         + ", \"author_id\":\""+ std::to_string(author_id)+"\""
                          + ", \"description\":\""+ description+"\""
                          + ", \"data\":"+ json_data +" }";
   
@@ -322,13 +323,13 @@ bool Services::SendBaseConfig(const std::string& json_data, const std::string& n
 
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
-bool Services::SendRunModeConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, uint64_t timestamp, int* version, const unsigned int timeout){
+bool Services::SendRunModeConfig(const std::string& json_data, const std::string& name, const uint32_t author_id, const std::string& description, uint64_t timestamp, int* version, const unsigned int timeout){
   
   if(version) *version=-1;
   
   std::string cmd_string = "{ \"time\":\""+TimeStringFromUnixMs(timestamp)+"\""
                          + ", \"name\":\""+ name+"\""
-                         + ", \"author\":\""+ author+"\""
+                         + ", \"author_id\":\""+ std::to_string(author_id)+"\""
                          + ", \"description\":\""+ description+"\""
                          + ", \"data\":"+ json_data +" }";
   
@@ -1194,6 +1195,14 @@ std::string Services::GetDeviceName(){
   
 }
 
+uint32_t Services::GetDeviceId(const std::string& device_name){
+  
+  if(device_name=="") return device_ids[m_name];
+  if(device_ids.count(device_name)) return device_ids[device_name];
+  return 0;
+  
+}
+
 // ««-------------- ≪ °◇◆◇° ≫ --------------»»
 
 std::string Services::TimeStringFromUnixMs(uint64_t& timestamp){
@@ -1582,11 +1591,11 @@ uint64_t Services::GetDeviceID(const std::string& device_name, bool clear){
   std::string response;
   bool ok = SQLQuery(query, response);
   if(ok){
-    try {
-      the_id = std::stoi(response);
-    } catch(std::exception& e){
+    Store s;
+    s.JsonParser(response);
+    ok = s.Get("device_id", the_id);
+    if(!ok){
       std::cerr<<"Error parsing response from GetDeviceID: '"<<response<<"'"<<std::endl;
-      ok=false;
     }
   }
   if(!ok){
@@ -1601,7 +1610,7 @@ uint64_t Services::GetDeviceID(const std::string& device_name, bool clear){
     if(!clear) mode |= std::ios_base::app;
     std::ofstream fdevice_ids(device_id_path, mode);
     if(fdevice_ids.is_open()){
-      fdevice_ids << device_name << the_id << '\n';
+      fdevice_ids << device_name << " " << the_id << '\n';
       fdevice_ids.close();
     } else {
       std::cerr<<"Warning: Could not open device_id_path: '"<<device_id_path<<"'"<<std::endl;
