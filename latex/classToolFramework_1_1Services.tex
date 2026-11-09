@@ -36,14 +36,14 @@ bool {\bfseries Get\+Calibration\+Data} (std\+::string \&json\+\_\+data, int \&v
 \mbox{\Hypertarget{classToolFramework_1_1Services_a936c900b300a777ac001194448830891}\label{classToolFramework_1_1Services_a936c900b300a777ac001194448830891}} 
 bool {\bfseries Get\+Calibration\+Data} (std\+::string \&json\+\_\+data, int \&\&version=-\/1, const std\+::string \&device=\char`\"{}\char`\"{}, const unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1Services_a6d09d6e312515092fc69b328bcc9571d}\label{classToolFramework_1_1Services_a6d09d6e312515092fc69b328bcc9571d}} 
-bool {\bfseries Send\+Device\+Config} (const std\+::string \&json\+\_\+data, const std\+::string \&author, const std\+::string \&description, const std\+::string \&device=\char`\"{}\char`\"{}, uint64\+\_\+t timestamp=0, int $\ast$version=nullptr, const unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
+\mbox{\Hypertarget{classToolFramework_1_1Services_a79b7c3c7345e0789822652467faf2bd3}\label{classToolFramework_1_1Services_a79b7c3c7345e0789822652467faf2bd3}} 
+bool {\bfseries Send\+Device\+Config} (const std\+::string \&json\+\_\+data, const uint32\+\_\+t author\+\_\+id, const std\+::string \&description, const std\+::string \&device=\char`\"{}\char`\"{}, uint64\+\_\+t timestamp=0, int $\ast$version=nullptr, const unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1Services_af7602ae7034f28fdc3ca443d505bceca}\label{classToolFramework_1_1Services_af7602ae7034f28fdc3ca443d505bceca}} 
-bool {\bfseries Send\+Base\+Config} (const std\+::string \&json\+\_\+data, const std\+::string \&name, const std\+::string \&author, const std\+::string \&description, uint64\+\_\+t timestamp=0, int $\ast$version=nullptr, const unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
+\mbox{\Hypertarget{classToolFramework_1_1Services_a0d6b635af5951464c9d78a1ed8a7842a}\label{classToolFramework_1_1Services_a0d6b635af5951464c9d78a1ed8a7842a}} 
+bool {\bfseries Send\+Base\+Config} (const std\+::string \&json\+\_\+data, const std\+::string \&name, const uint32\+\_\+t author\+\_\+id, const std\+::string \&description, uint64\+\_\+t timestamp=0, int $\ast$version=nullptr, const unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
 \item 
-\mbox{\Hypertarget{classToolFramework_1_1Services_a6f4b7cebcdbc36b0a429fd4bd4c57b56}\label{classToolFramework_1_1Services_a6f4b7cebcdbc36b0a429fd4bd4c57b56}} 
-bool {\bfseries Send\+Run\+Mode\+Config} (const std\+::string \&json\+\_\+data, const std\+::string \&name, const std\+::string \&author, const std\+::string \&description, uint64\+\_\+t timestamp=0, int $\ast$version=nullptr, const unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
+\mbox{\Hypertarget{classToolFramework_1_1Services_a4cfb9475232d7303f281b261807cc084}\label{classToolFramework_1_1Services_a4cfb9475232d7303f281b261807cc084}} 
+bool {\bfseries Send\+Run\+Mode\+Config} (const std\+::string \&json\+\_\+data, const std\+::string \&name, const uint32\+\_\+t author\+\_\+id, const std\+::string \&description, uint64\+\_\+t timestamp=0, int $\ast$version=nullptr, const unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1Services_a3fdf12cfeb956f341258531f20647a07}\label{classToolFramework_1_1Services_a3fdf12cfeb956f341258531f20647a07}} 
 bool {\bfseries Get\+Device\+Config} (std\+::string \&json\+\_\+data, const int version=-\/1, const std\+::string \&device=\char`\"{}\char`\"{}, const unsigned int timeout=SERVICES\+\_\+\+DEFAULT\+\_\+\+TIMEOUT)
@@ -128,6 +128,9 @@ std\+::string {\bfseries Print\+Slow\+Control\+Variables} ()
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1Services_ab094e53fd778d188c98319539141946d}\label{classToolFramework_1_1Services_ab094e53fd778d188c98319539141946d}} 
 std\+::string {\bfseries Get\+Device\+Name} ()
+\item 
+\mbox{\Hypertarget{classToolFramework_1_1Services_aded19109570d487698593471c32611db}\label{classToolFramework_1_1Services_aded19109570d487698593471c32611db}} 
+uint32\+\_\+t {\bfseries Get\+Device\+Id} (const std\+::string \&device\+\_\+name=\char`\"{}\char`\"{})
 \item 
 \mbox{\Hypertarget{classToolFramework_1_1Services_a3b1b8204f961fa114e2c8530ed25f7da}\label{classToolFramework_1_1Services_a3b1b8204f961fa114e2c8530ed25f7da}} 
 void {\bfseries Set\+Verbose} (bool in)

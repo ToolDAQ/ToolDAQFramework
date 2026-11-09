@@ -110,15 +110,15 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetCalibrationData</b
 <tr class="memitem:a936c900b300a777ac001194448830891"><td class="memItemLeft" align="right" valign="top"><a id="a936c900b300a777ac001194448830891"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetCalibrationData</b> (std::string &amp;json_data, int &amp;&amp;version=-1, const std::string &amp;device=&quot;&quot;, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
 <tr class="separator:a936c900b300a777ac001194448830891"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d09d6e312515092fc69b328bcc9571d"><td class="memItemLeft" align="right" valign="top"><a id="a6d09d6e312515092fc69b328bcc9571d"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendDeviceConfig</b> (const std::string &amp;json_data, const std::string &amp;author, const std::string &amp;description, const std::string &amp;device=&quot;&quot;, uint64_t timestamp=0, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
-<tr class="separator:a6d09d6e312515092fc69b328bcc9571d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7602ae7034f28fdc3ca443d505bceca"><td class="memItemLeft" align="right" valign="top"><a id="af7602ae7034f28fdc3ca443d505bceca"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendBaseConfig</b> (const std::string &amp;json_data, const std::string &amp;name, const std::string &amp;author, const std::string &amp;description, uint64_t timestamp=0, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
-<tr class="separator:af7602ae7034f28fdc3ca443d505bceca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f4b7cebcdbc36b0a429fd4bd4c57b56"><td class="memItemLeft" align="right" valign="top"><a id="a6f4b7cebcdbc36b0a429fd4bd4c57b56"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendRunModeConfig</b> (const std::string &amp;json_data, const std::string &amp;name, const std::string &amp;author, const std::string &amp;description, uint64_t timestamp=0, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
-<tr class="separator:a6f4b7cebcdbc36b0a429fd4bd4c57b56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79b7c3c7345e0789822652467faf2bd3"><td class="memItemLeft" align="right" valign="top"><a id="a79b7c3c7345e0789822652467faf2bd3"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendDeviceConfig</b> (const std::string &amp;json_data, const uint32_t author_id, const std::string &amp;description, const std::string &amp;device=&quot;&quot;, uint64_t timestamp=0, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a79b7c3c7345e0789822652467faf2bd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d6b635af5951464c9d78a1ed8a7842a"><td class="memItemLeft" align="right" valign="top"><a id="a0d6b635af5951464c9d78a1ed8a7842a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendBaseConfig</b> (const std::string &amp;json_data, const std::string &amp;name, const uint32_t author_id, const std::string &amp;description, uint64_t timestamp=0, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a0d6b635af5951464c9d78a1ed8a7842a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cfb9475232d7303f281b261807cc084"><td class="memItemLeft" align="right" valign="top"><a id="a4cfb9475232d7303f281b261807cc084"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>SendRunModeConfig</b> (const std::string &amp;json_data, const std::string &amp;name, const uint32_t author_id, const std::string &amp;description, uint64_t timestamp=0, int *version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
+<tr class="separator:a4cfb9475232d7303f281b261807cc084"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3fdf12cfeb956f341258531f20647a07"><td class="memItemLeft" align="right" valign="top"><a id="a3fdf12cfeb956f341258531f20647a07"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetDeviceConfig</b> (std::string &amp;json_data, const int version=-1, const std::string &amp;device=&quot;&quot;, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT)</td></tr>
 <tr class="separator:a3fdf12cfeb956f341258531f20647a07"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -203,6 +203,9 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>PrintSlowContr
 <tr class="memitem:ab094e53fd778d188c98319539141946d"><td class="memItemLeft" align="right" valign="top"><a id="ab094e53fd778d188c98319539141946d"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetDeviceName</b> ()</td></tr>
 <tr class="separator:ab094e53fd778d188c98319539141946d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aded19109570d487698593471c32611db"><td class="memItemLeft" align="right" valign="top"><a id="aded19109570d487698593471c32611db"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetDeviceId</b> (const std::string &amp;device_name=&quot;&quot;)</td></tr>
+<tr class="separator:aded19109570d487698593471c32611db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b1b8204f961fa114e2c8530ed25f7da"><td class="memItemLeft" align="right" valign="top"><a id="a3b1b8204f961fa114e2c8530ed25f7da"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetVerbose</b> (bool in)</td></tr>
 <tr class="separator:a3b1b8204f961fa114e2c8530ed25f7da"><td class="memSeparator" colspan="2">&#160;</td></tr>
