@@ -67,6 +67,7 @@ namespace ToolFramework {
     size_t logging_batch_bytes=0;
     size_t monitoring_batch_bytes=0;
     uint32_t alarm_cooldown_ms;
+    std::map<std::string, uint64_t>* device_ids;
   };
   
   class Services{
@@ -91,9 +92,9 @@ namespace ToolFramework {
     bool SendCalibrationData(const std::string& json_data, const std::string& description, const std::string& device="", uint64_t timestamp=0, int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetCalibrationData(std::string& json_data, int& version, const std::string& device="", const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetCalibrationData(std::string& json_data, int&& version=-1, const std::string& device="", const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool SendDeviceConfig(const std::string& json_data, const std::string& author, const std::string& description, const std::string& device="", uint64_t timestamp=0, int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool SendBaseConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, uint64_t timestamp=0, int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
-    bool SendRunModeConfig(const std::string& json_data, const std::string& name, const std::string& author, const std::string& description, uint64_t timestamp=0, int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    bool SendDeviceConfig(const std::string& json_data, const uint32_t author_id, const std::string& description, const std::string& device="", uint64_t timestamp=0, int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    bool SendBaseConfig(const std::string& json_data, const std::string& name, const uint32_t author_id, const std::string& description, uint64_t timestamp=0, int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
+    bool SendRunModeConfig(const std::string& json_data, const std::string& name, const uint32_t author_id, const std::string& description, uint64_t timestamp=0, int* version=nullptr, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetDeviceConfig(std::string& json_data, const int version=-1, const std::string& device="", const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetRunConfig(std::string& json_data, const int base_config_id, const int runmode_config_id, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
     bool GetRunModeConfig(std::string& json_data, const std::string& runmode_name, const int version=-1, const unsigned int timeout=SERVICES_DEFAULT_TIMEOUT);
@@ -127,6 +128,7 @@ namespace ToolFramework {
     
     std::string PrintSlowControlVariables();
     std::string GetDeviceName();
+    uint32_t GetDeviceId(const std::string& device_name="");
     void SetVerbose(bool in);
     static std::string JsonEscape(std::string s);
     
@@ -146,11 +148,14 @@ namespace ToolFramework {
     static void BufferThread(Thread_args* args);
     static bool BatchAndSendMulticast(BufferThreadArgs* m_args, bool log_lock, bool mon_lock);
     std::string SCLocalConfig(const char*);
+    uint64_t GetDeviceID(const std::string& device_name, bool clear=false);
     
     //size_t GetMTU(std::string iface_name);
     //std::set<std::string> GetInterfaces();
     
     std::string m_name;
+    std::map<std::string, uint64_t> device_ids;
+    std::string device_id_path;
     std::string config_devicename;
     bool m_verbose;
     zmq::context_t* m_context;

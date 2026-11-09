@@ -2,6 +2,7 @@
 
 ##### Runtime Parameters #####
 UUID_path ./UUID         # UUID_path for fixed UUID; if doesn't exist, file will be generated. Remove option for always random 
+device_id_path ./deviceID # map of device names to IDs; if doesn't exist ID will be looked up via database and saved to this file 
 verbose 1                # Verbosity level of ToolChain
 error_level 0            # 0= do not exit, 1= exit on unhandled errors only, 2= exit on unhandled errors and handled errors
 attempt_recover 1        # 1= will attempt to finalise if an execute fails, 0= will not
