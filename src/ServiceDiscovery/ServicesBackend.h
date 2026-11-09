@@ -155,6 +155,8 @@ class ServicesBackend {
 	
 	ZSTD_CCtx* zstd_cctx=nullptr;
 	ZSTD_DCtx* zstd_dctx=nullptr;
+	ZSTD_CDict* zstd_cdict=nullptr;
+	std::string ReadBinaryFile(const std::string& filename);
 	int compression_level=1;
 	size_t compression_threshold=50;
 	char* compressed_msg_buf=nullptr;

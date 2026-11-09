@@ -127,6 +127,8 @@ bool ServicesBackend::Initialise(Store &variables_in){
 	int msg_compression=1;
 	m_variables.Get("msg_compression",msg_compression);
 	m_variables.Get("compression_level",compression_level);
+	std::string dict_file;
+	m_variables.Get("compression_dictionary",dict_file);
 	
 	get_ok = InitZMQ();
 	if(not get_ok) return false;
@@ -144,6 +146,10 @@ bool ServicesBackend::Initialise(Store &variables_in){
 		zstd_cctx = ZSTD_createCCtx();
 		compressed_msg_buf = new char[MAX_UDP_PACKET_SIZE];
 		zstd_dctx = ZSTD_createDCtx();
+		
+		//note we can create a CDict even without a dictionary; it just encapsulates the compression level
+		std::string dictBuffer = ReadBinaryFile(dict_file);
+		zstd_cdict = ZSTD_createCDict(dictBuffer.data(), dictBuffer.size(), compression_level);
 	}
 	
 	// initialise the message IDs based on the current time in unix seconds
@@ -414,7 +420,7 @@ bool ServicesBackend::SendMulticast(MulticastType type, std::string command, std
 	
 	// compress the message if applicable
 	std::unique_lock<std::mutex> locker(msg_buf_mtx);
-	std::pair<const char*, size_t> out = ZstdCompress(zstd_cctx, command.data(), command.size(), compressed_msg_buf, MAX_UDP_PACKET_SIZE, compression_threshold, compression_level);
+	std::pair<const char*, size_t> out = ZstdCompress(zstd_cctx, command.data(), command.size(), compressed_msg_buf, MAX_UDP_PACKET_SIZE, compression_threshold, compression_level, zstd_cdict);
 	
 	// check we're not going to exceed multicast message size limit
 	if(out.second > MAX_UDP_PACKET_SIZE){
@@ -473,7 +479,7 @@ bool ServicesBackend::SendCommand(const std::string& topic, const std::string& c
 	
 	// compress the message if applicable
 	std::unique_lock<std::mutex> locker(msg_buf_mtx);
-	std::pair<const char*, size_t> out = ZstdCompress(zstd_cctx, command.data(), command.size(), compressed_msg_buf, MAX_UDP_PACKET_SIZE, compression_threshold, compression_level);
+	std::pair<const char*, size_t> out = ZstdCompress(zstd_cctx, command.data(), command.size(), compressed_msg_buf, MAX_UDP_PACKET_SIZE, compression_threshold, compression_level, zstd_cdict);
 	
 	// In the case of pub sockets, we specify a 'topic' that the recipient can use with ZMQ_SUBSCRIBE
 	// to filter out particular messages.
@@ -874,6 +880,7 @@ bool ServicesBackend::Finalise(){
 	// cleanup zmq compression context
 	if(zstd_cctx) ZSTD_freeCCtx(zstd_cctx);
 	if(zstd_dctx) ZSTD_freeDCtx(zstd_dctx);
+	if(zstd_cdict) ZSTD_freeCDict(zstd_cdict);
 	
 	// can't use 'Log' since we may have deleted the Logging class / closed the multicast sockets
 	if(m_verbosity>3) std::cout<<"ServicesBackend finalise done"<<std::endl;
@@ -1110,3 +1117,25 @@ void ServicesBackend::CheckSocketEvents(int timeout_ms){
 	}
 	return;
 }
+
+std::string ServicesBackend::ReadBinaryFile(const std::string& filename){
+	
+	if(filename.empty()) return "";
+	
+	std::ifstream fin(filename, std::ios::in | std::ios::binary);
+	
+	if(!fin.is_open()){
+		if(m_verbosity) std::cerr<<"ServicesBackend::ReadBinaryFile could not open '"<<filename<<"'"<<std::endl;
+		return "";
+	}
+	
+	std::string contents;
+	fin.seekg(0, std::ios::end);
+	contents.resize(fin.tellg());
+	fin.seekg(0, std::ios::beg);
+	fin.read(&contents[0], contents.size());
+	fin.close();
+	
+	return(contents);
+}
+

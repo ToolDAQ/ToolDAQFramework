@@ -4,7 +4,7 @@
 
 namespace ToolFramework {
 
-std::pair<const char*, size_t>  ZstdCompress(ZSTD_CCtx* zstd_cctx, const char* msg, size_t msg_len, char* compress_buffer, size_t MAX_COMPRESSED_SIZE, std::string* compress_buffer2, size_t COMPRESS_THRESHOLD, int zstd_compression_level){
+std::pair<const char*, size_t>  ZstdCompress(ZSTD_CCtx* zstd_cctx, const char* msg, size_t msg_len, char* compress_buffer, size_t MAX_COMPRESSED_SIZE, std::string* compress_buffer2, size_t COMPRESS_THRESHOLD, int zstd_compression_level, const ZSTD_CDict* dict){
 	std::string errmsg="";
 	size_t bytes_to_send = msg_len;
 	
@@ -23,11 +23,21 @@ std::pair<const char*, size_t>  ZstdCompress(ZSTD_CCtx* zstd_cctx, const char* m
 		compress_buffer = (char*)compress_buffer2->data();
 		MAX_COMPRESSED_SIZE = bytes_to_send;
 	} else if(compress_buffer!=nullptr && bytes_to_send>MAX_COMPRESSED_SIZE){
-		errmsg = "Warning: compressed size "+std::to_string(bytes_to_send)+" exceeds compression buffer size "+std::to_string(MAX_COMPRESSED_SIZE);
+		errmsg = "Warning: compressed size "+std::to_string(bytes_to_send)+" may exceed compression buffer size "+std::to_string(MAX_COMPRESSED_SIZE)+", sending uncompressed"; // this is conservative as compressBound is an upper limit without dict
 		goto send_uncompressed;
 	}
 	
-	bytes_to_send = ZSTD_compressCCtx(zstd_cctx, (void*)compress_buffer, MAX_COMPRESSED_SIZE, msg, msg_len, zstd_compression_level);
+	if(dict==nullptr){
+		
+		bytes_to_send = ZSTD_compressCCtx(zstd_cctx, (void*)compress_buffer, MAX_COMPRESSED_SIZE, msg, msg_len, zstd_compression_level);
+		
+	} else {
+		
+		// compression level is specified at dictionary creation time
+		bytes_to_send = ZSTD_compress_usingCDict(zstd_cctx, (void*)compress_buffer, MAX_COMPRESSED_SIZE, msg, msg_len, dict);
+		
+	}
+	
 	if(ZSTD_isError(bytes_to_send)){
 		errmsg = std::string{"Warning: error compressing message "}+ZSTD_getErrorName(bytes_to_send);
 		goto send_uncompressed;
@@ -42,13 +52,13 @@ std::pair<const char*, size_t>  ZstdCompress(ZSTD_CCtx* zstd_cctx, const char* m
 
 
 // accept compression buffer char array, return pointer and size of data to send
-std::pair<const char*, size_t>  ZstdCompress(ZSTD_CCtx* zstd_cctx, const char* msg, size_t msg_len, char* compress_buffer, size_t MAX_COMPRESSED_SIZE, size_t COMPRESS_THRESHOLD, int zstd_compression_level){
-	return ZstdCompress(zstd_cctx, msg, msg_len, compress_buffer, MAX_COMPRESSED_SIZE, 0, COMPRESS_THRESHOLD, zstd_compression_level);
+std::pair<const char*, size_t>  ZstdCompress(ZSTD_CCtx* zstd_cctx, const char* msg, size_t msg_len, char* compress_buffer, size_t MAX_COMPRESSED_SIZE, size_t COMPRESS_THRESHOLD, int zstd_compression_level, const ZSTD_CDict* dict){
+	return ZstdCompress(zstd_cctx, msg, msg_len, compress_buffer, MAX_COMPRESSED_SIZE, 0, COMPRESS_THRESHOLD, zstd_compression_level, dict);
 }
 
 // accept compression buffer string, return pointer and size of data to send
-std::pair<const char*, size_t>  ZstdCompress(ZSTD_CCtx* zstd_cctx, const char* msg, size_t msg_len, std::string& compress_buffer, size_t COMPRESS_THRESHOLD, int zstd_compression_level){
-	return ZstdCompress(zstd_cctx, msg, msg_len, 0, 0, &compress_buffer, COMPRESS_THRESHOLD, zstd_compression_level);
+std::pair<const char*, size_t>  ZstdCompress(ZSTD_CCtx* zstd_cctx, const char* msg, size_t msg_len, std::string& compress_buffer, size_t COMPRESS_THRESHOLD, int zstd_compression_level, const ZSTD_CDict* dict){
+	return ZstdCompress(zstd_cctx, msg, msg_len, 0, 0, &compress_buffer, COMPRESS_THRESHOLD, zstd_compression_level, dict);
 }
 
 /*
@@ -77,7 +87,7 @@ zmq::message_t ZstdCompress(ZSTD_CCtx* zstd_cctx, const char* msg, size_t msg_le
 
 //////////////////////////////////////////////////
 
-bool ZstdDecompress(ZSTD_DCtx* zstd_dctx, const char* msg, size_t msg_len, std::string& decompress_buffer, size_t MAX_DECOMPRESSED_SIZE){
+bool ZstdDecompress(ZSTD_DCtx* zstd_dctx, const char* msg, size_t msg_len, std::string& decompress_buffer, size_t MAX_DECOMPRESSED_SIZE, const ZSTD_DDict* dict){
 	if(msg_len>sizeof(ZSTD_MAGIC_BYTES) && std::memcmp(msg,ZSTD_MAGIC_BYTES,sizeof(ZSTD_MAGIC_BYTES))==0){
 		size_t decompressed_bytes = ZSTD_getFrameContentSize(msg, msg_len);
 		if(decompressed_bytes==ZSTD_CONTENTSIZE_UNKNOWN || decompressed_bytes==ZSTD_CONTENTSIZE_ERROR){
@@ -90,7 +100,13 @@ bool ZstdDecompress(ZSTD_DCtx* zstd_dctx, const char* msg, size_t msg_len, std::
 			return false;
 		}
 		decompress_buffer.resize(decompressed_bytes);
-		decompressed_bytes = ZSTD_decompressDCtx(zstd_dctx,(void*)decompress_buffer.data(),decompressed_bytes, msg, msg_len);
+		
+		if(dict==nullptr){
+			decompressed_bytes = ZSTD_decompressDCtx(zstd_dctx,(void*)decompress_buffer.data(),decompressed_bytes, msg, msg_len);
+		} else {
+			decompressed_bytes = ZSTD_decompress_usingDDict(zstd_dctx,(void*)decompress_buffer.data(),decompressed_bytes, msg, msg_len, dict);
+		}
+		
 		if(ZSTD_isError(decompressed_bytes)){
 			decompress_buffer = std::string{"zstd error decompressing response: "}+ZSTD_getErrorName(decompressed_bytes);
 			return false;
@@ -102,8 +118,8 @@ bool ZstdDecompress(ZSTD_DCtx* zstd_dctx, const char* msg, size_t msg_len, std::
 	return true;
 }
 
-bool ZstdDecompress(ZSTD_DCtx* zstd_dctx, const std::string& msg, std::string& decompress_buffer, size_t MAX_DECOMPRESSED_SIZE){
-	return ZstdDecompress(zstd_dctx, msg.data(), msg.length(), decompress_buffer, MAX_DECOMPRESSED_SIZE);
+bool ZstdDecompress(ZSTD_DCtx* zstd_dctx, const std::string& msg, std::string& decompress_buffer, size_t MAX_DECOMPRESSED_SIZE, const ZSTD_DDict* dict){
+	return ZstdDecompress(zstd_dctx, msg.data(), msg.length(), decompress_buffer, MAX_DECOMPRESSED_SIZE, dict);
 }
 
 }
