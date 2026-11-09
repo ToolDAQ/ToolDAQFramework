@@ -12,12 +12,17 @@
 #include <zstd.h>
 //#include <msgpack.hpp>
 
-int main(){
+int main(int argc, const char* argv[]){
 
  // zmq::context_t * context = args->context;
 
  std::string multicastaddress="239.192.1.1"; ///< Multicast address to send beacons
  int multicastport=5000; ///< Port to use for multicast beacons
+ if(argc>1)multicastaddress=argv[1];
+ if(argc>2) multicastport=atoi(argv[2]);
+ std::cout<<"Listening on "<<multicastaddress<<":"<<multicastport<<std::endl;
+ bool sd_listen = (multicastaddress=="239.192.1.1");
+ // will only show multicast messages beginning with '{' if true
   
   struct sockaddr_in addr;
   int addrlen, sock, cnt;
@@ -72,7 +77,12 @@ int main(){
     perror("bind");
     printf("Failed to bind to multicast listen socket");
     exit(1);
-  }    
+  }
+  
+  // don't receive multicast from all groups, only the one we explicitly join
+  a=0;
+  setsockopt(sock, IPPROTO_IP, IP_MULTICAST_ALL, &a, sizeof(int));
+  
   mreq.imr_multiaddr.s_addr = inet_addr(multicastaddress.c_str());         
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);         
   if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,&mreq, sizeof(mreq)) < 0) {
@@ -97,7 +107,7 @@ int main(){
       
       
       cnt = recvfrom(sock, message, sizeof(message), 0, (struct sockaddr *) &addr, (socklen_t*) &addrlen);
-      if ((cnt > 0) && (message[0]=='{') ) {
+      if ((cnt > 0) && (!sd_listen || (message[0]=='{')) ) {
 	//perror("recvfrom");
 	// exit(1);
 	//	break;
