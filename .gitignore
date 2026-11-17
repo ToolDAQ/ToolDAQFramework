@@ -13,6 +13,7 @@
 *.pyc
 # core dumps
 core
+.vscode/*
 
 # lib folder is populated during build
 lib/

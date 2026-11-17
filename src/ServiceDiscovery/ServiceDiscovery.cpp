@@ -579,7 +579,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
           //if(message[0]!='[') break;
           
           Store* newservice= new Store();
-          newservice->Set("ip",inet_ntoa(addr.at(i).sin_addr));
+          newservice->Set("ip",(std::string)inet_ntoa(addr.at(i).sin_addr));
           newservice->JsonParser(message);
           
           std::string uuid;
