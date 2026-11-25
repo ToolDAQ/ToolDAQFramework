@@ -3,6 +3,7 @@
 
 #include <ServiceDiscovery.h>
 #include <zmq.hpp>
+#include <unistd.h>  // access file exists check
 #include <iostream>
 #include <string>
 #include <vector>

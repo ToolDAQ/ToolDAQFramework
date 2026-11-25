@@ -95,7 +95,7 @@ bool Services::Init(Store &m_variables, zmq::context_t* context_in, SlowControlC
   }
   
   // get device ID from file if we have it
-  if(m_variables.Get("device_id_path", device_id_path)){
+  if(m_variables.Get("device_id_path", device_id_path) && (access(device_id_path.c_str(), F_OK) == 0)){
     Store devnames;
     devnames.Initialise(device_id_path);
     for(std::string& devname : devnames.Keys()){
