@@ -108,17 +108,25 @@ int DAQUtilities::UpdateConnections(std::string ServiceName, zmq::socket_t* sock
   // long msg_id=0;
   
   zmq::socket_t Ireceive (*context, ZMQ_DEALER);
+  Ireceive.setsockopt(ZMQ_RCVTIMEO, 500);
+  Ireceive.setsockopt(ZMQ_SNDTIMEO, 500);
+  int linger=0;
+  Ireceive.setsockopt (ZMQ_LINGER, &linger, sizeof (linger));
   Ireceive.connect("inproc://ServiceDiscovery");
-  
   
   zmq::message_t send(4);
   snprintf ((char *) send.data(), 4 , "%s" ,"All") ;
   
-  
-  Ireceive.send(send);
+  if(!Ireceive.send(send)){
+    printf("UpdateConnections failed to send query to SD listen thread!\n");
+    return 0;
+  }
   
   zmq::message_t receive;
-  Ireceive.recv(&receive);
+  if(Ireceive.recv(&receive)<=0){
+    printf("UpdateConnections got no reply from SD listen thread\n");
+    return 0;
+  }
   //std::istringstream iss(static_cast<char*>(receive.data()));
   
   int size;

@@ -574,7 +574,7 @@ void* ServiceDiscovery::MulticastListenThread(void* arg){
           //        break;
           //} 
           //else if (cnt > 0){
-          //printf("SD receive from %s: message = \"%s\"\n", inet_ntoa(addr.at(i).sin_addr), message);
+          //printf("SD broadcast from %s: message = \"%s\"\n", inet_ntoa(addr.at(i).sin_addr), message);
           
           //if(message[0]!='[') break;
           
